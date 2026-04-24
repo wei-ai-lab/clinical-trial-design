@@ -1,0 +1,160 @@
+id: 2020_ACTT-1_remdesivir_covid
+family: platform
+source:
+  kind: design-paper
+  citation: "Beigel JH, Tomashek KM, Dodd LE, et al. Remdesivir for the treatment of Covid-19 — final report. N Engl J Med. 2020 Nov 5;383(19):1813-1826. Design: Beigel JH, Tomashek KM, Dodd LE, et al. ACTT Protocol v10 (NIAID). Initial preliminary report: Beigel JH, et al. N Engl J Med. 2020 Nov 5;383(19):1813-1826 (published May 2020 as preliminary)."
+
+design:
+  indication: "Hospitalized adults with COVID-19 with evidence of lower respiratory tract infection"
+  population: "Adults hospitalized with SARS-CoV-2 (RT-PCR confirmed), evidence of pneumonia or lower respiratory involvement (SpO2 ≤ 94% on room air, supplemental O2, mechanical ventilation, or ECMO, OR radiographic infiltrates)"
+  arms:
+    - name: "remdesivir 200 mg IV day 1, then 100 mg IV daily for up to 9 more days"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: ordinal
+    description: "Time to recovery (primary) on 8-category ordinal scale. Recovery = category 1-3 (no longer hospitalized or hospitalized not requiring ongoing care)."
+    measurement_time: "up to day 29 follow-up"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    scale: recovery-rate-ratio
+    assumed_rate_ratio: 1.35
+    control_median_recovery_days: 15
+    design_approach: |
+      Adaptive platform Phase 3 within the NIAID ACTT (Adaptive COVID
+      Treatment Trial) framework.
+      - Primary endpoint: time to recovery on ordinal scale (category
+        1-3).
+      - Ordinal-outcome recovery-rate-ratio (RRR) via stratified Cox
+        using recovery as "event" and category status as covariate.
+      - Pre-specified interim analyses via DSMB for efficacy, futility,
+        harm.
+      - Platform designed to enable subsequent sub-studies (ACTT-2
+        baricitinib, ACTT-3 interferon, ACTT-4 baricitinib vs dex).
+    adaptive_platform_structure: |
+      ACTT-1 established the first comparison (remdesivir vs placebo).
+      Platform protocol built to rapidly launch subsequent studies:
+      - ACTT-2: remdesivir + baricitinib vs remdesivir (Kalil 2021).
+      - ACTT-3: remdesivir + interferon β-1a vs remdesivir (Kalil 2021).
+      - ACTT-4: remdesivir + baricitinib vs remdesivir + dexamethasone
+        (Wolfe 2022).
+      Each sub-study shares infrastructure, DSMB, protocol scaffold.
+    stratification: |
+      By site and by disease severity at enrollment (categories 4-5
+      vs 6-7 on ordinal scale).
+    interim_analyses: |
+      Pre-specified DSMB interim analyses ~ every 2 weeks during rapid
+      pandemic enrollment. Formal efficacy/futility boundaries
+      O'Brien-Fleming style.
+  accrual:
+    duration_months: 3
+  followup:
+    planned_months: 1
+    median_actual_days: 29
+
+expected:
+  sample_size_total: 1062
+  sample_size_per_arm: [541, 521]
+  events_total_target: null
+  events_total_actual: 849
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 5
+  notes: |
+    **ACTT-1** was the **first major adaptive platform trial** of the
+    COVID-19 pandemic, establishing the NIAID framework subsequently
+    used across ACTT-2/3/4. Published preliminary report May 2020;
+    final report November 2020.
+
+    **Design**:
+    - 1,062 randomized globally (60 sites, 10 countries).
+    - Placebo-controlled, double-blind.
+    - Enrollment paused after preliminary analysis showed benefit.
+
+    **Results**:
+    - Primary (time to recovery): median 10 vs 15 days.
+    - Recovery rate ratio: 1.29 (95% CI 1.12-1.49), P < 0.001.
+    - Mortality at day 29: 11.4% vs 15.2% (HR 0.73, 0.52-1.03).
+    - Greatest benefit in patients requiring supplemental O2 (category 5).
+    - Minimal benefit in mechanically ventilated patients.
+
+    **Regulatory**:
+    - FDA EUA May 2020.
+    - FDA approval October 2020 (first COVID-19 therapeutic approval).
+    - Established ACTT framework for subsequent trials.
+
+r_packages:
+  - gsDesign
+  - rpact
+  - survival
+  - adaptr
+  - simtrial
+  - ordinal (ordinal regression)
+
+tags:
+  - actt-1
+  - remdesivir
+  - covid-19
+  - adaptive-platform
+  - ordinal-endpoint
+  - niaid
+  - pandemic-response
+  - landmark-trial
+  - rapid-development
+
+caveats: |
+  ACTT-1 design / analysis points:
+
+  - **Ordinal endpoint**: 8-category scale (1 = recovered / home, 2-3 =
+    hospitalized no O2, 4 = supplemental O2, 5-6 = high-flow / NIV,
+    7 = invasive ventilation, 8 = death). Primary: time to category 1-3.
+  - **Time-to-recovery**: analyzed as TTE using Cox-like stratified
+    method; recovery considered "event", ongoing hospitalization censored.
+  - **Adaptive enrollment**: enrollment rapidly scaled with pandemic
+    surges; DSMB reviews every 2 weeks to respond to evolving evidence.
+  - **Platform extension**: ACTT-2/3/4 followed within months using same
+    infrastructure — demonstrating platform-trial efficiency.
+  - **Heterogeneous effect by severity**: major benefit in category 5
+    (supplemental O2 not requiring high-flow); minimal in severe
+    mechanically ventilated. Subgroup analyses informed subsequent
+    ACTT-4 design.
+
+  **Analysis sketch**:
+  ```r
+  library(survival)
+
+  # Cox model for time to recovery with stratification
+  fit <- coxph(
+    Surv(time_to_recovery, recovered) ~ trt + strata(baseline_severity),
+    data = df
+  )
+  summary(fit)
+  # Hazard ratio = recovery rate ratio
+  ```
+
+  **Relationship to other adaptive platforms**:
+  - **Solidarity (WHO 2020, in corpus)**: broader global trial; different
+    endpoint (mortality).
+  - **RECOVERY (in corpus)**: MAMS platform; established dexamethasone.
+  - **REMAP-CAP (in corpus)**: domain-based adaptive platform for
+    community-acquired pneumonia; extended to COVID.
+  - **ACTT-1 (this case)**: time-to-recovery adaptive single-comparison
+    launching framework.
+
+  **Platform evolution**:
+  - ACTT-1: remdesivir vs placebo.
+  - ACTT-2: + baricitinib.
+  - ACTT-3: + interferon β-1a.
+  - ACTT-4: baricitinib vs dexamethasone.
+  - Within 2 years, 4 comparative trials on shared infrastructure.
+
+  **Methodology lessons**:
+  - Ordinal recovery scale proved practical pandemic endpoint.
+  - Adaptive-platform infrastructure enabled rapid response.
+  - Interim analyses critical but required frequent DSMB meetings.
+  - Heterogeneous treatment effects by severity → subgroup planning
+    essential.

@@ -1,0 +1,165 @@
+id: 2022_PANORAMIC_community-covid-antivirals
+family: platform
+source:
+  kind: design-paper
+  citation: "Butler CC, Hobbs FDR, Gbinigie OA, et al. Molnupiravir plus usual care versus usual care alone as early treatment for adults with COVID-19 at increased risk of adverse outcomes (PANORAMIC): an open-label, platform-adaptive randomised controlled trial. Lancet. 2023 Jan 28;401(10373):281-293. Protocol: Yu LM, Hobbs FDR, Butler CC, et al. PANORAMIC Platform trial protocol. BMJ Open. 2022;12:e060464."
+
+design:
+  indication: "Community (non-hospitalized) adults with COVID-19 at increased risk of severe disease"
+  population: "Adults ≥ 50 OR ≥ 18 with specified comorbidities (obesity, diabetes, cardiovascular, respiratory disease, immunocompromise), symptomatic COVID-19 confirmed by PCR or lateral flow, within 5 days of symptom onset"
+  arms:
+    - name: "usual care (UK NHS standard)"
+      allocation: 1
+    - name: "usual care + molnupiravir 800 mg PO BID × 5 days (initial sub-study)"
+      allocation: 1
+    - name: "additional arms added dynamically (e.g., nirmatrelvir-ritonavir, expected)"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Primary: all-cause hospitalization or death within 28 days of randomization"
+    measurement_time: "28 days post-randomization"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    scale: risk-difference
+    assumed_risk_difference: -0.015
+    control_event_rate: 0.03
+    design_approach: |
+      Open-label, pragmatic, community-based platform trial.
+      - Primary: binary composite (hospitalization or death within 28 d).
+      - Pragmatic: remote enrollment, mail-delivered study drug, online
+        symptom diary.
+      - Platform can add / drop treatment arms dynamically.
+      - Bayesian primary analysis with probability of benefit.
+      - Response-adaptive randomization not used; equal randomization
+        per sub-study.
+    bayesian_primary: |
+      Pre-specified Bayesian primary: posterior probability of
+      superiority P(risk_diff < 0 | data).
+      - Success: P > 0.98 for primary.
+      - Frequentist 95% CI reported secondarily.
+      - Flat prior (weakly informative).
+    platform_operating_model: |
+      Open-label pragmatic platform:
+      - Shared usual-care control across sub-studies.
+      - Sub-studies enrolled concurrently.
+      - Centralized randomization, data capture, endpoint adjudication.
+      - DMC reviews each sub-study separately + overall platform safety.
+    sample_size: |
+      Molnupiravir sub-study: 25,000 randomized (12,500 per arm).
+      Powered to detect absolute risk reduction 1.5% at control rate
+      ~ 3% hospitalization/death.
+      Large N required because community-vaccinated population has low
+      baseline event rate.
+  accrual:
+    duration_months: 14
+  followup:
+    planned_months: 1
+    actual_days: 28
+
+expected:
+  sample_size_total: 25783
+  sample_size_per_arm: [12821, 12962]
+  events_total_target: null
+  events_total_actual: 208
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **PANORAMIC** was the UK community-based open-label adaptive
+    platform trial for COVID-19 antivirals. First large-scale
+    pragmatic community platform for pandemic therapeutics.
+
+    **Design** (molnupiravir sub-study):
+    - 25,783 randomized (12,821 molnupiravir + 12,962 usual care).
+    - Open-label, community-based, pragmatic.
+    - Remote enrollment via GP referral or self-registration.
+    - Mail-delivered study drug within 24 hours.
+    - Online symptom diary + 28-day telephone follow-up.
+
+    **Results (molnupiravir 2023)**:
+    - Primary: 1.0% vs 1.0% (no significant difference).
+    - Absolute risk difference: -0.2% (-0.4% to 0.1%).
+    - Posterior probability of superiority: 0.57 (below 0.98 threshold).
+    - Secondary: faster recovery by 4 days (self-reported).
+    - Trial concluded molnupiravir NOT effective for hospitalization/death.
+
+    **Contemporary context**:
+    - Conducted during Omicron wave in highly vaccinated UK population.
+    - Extremely low baseline event rate (~ 1%) reduced effect detection.
+    - Informed NICE guidance limiting molnupiravir use.
+
+r_packages:
+  - rpact
+  - gsDesign
+  - BayesianTools
+  - adaptr
+  - rstanarm
+  - brms
+
+tags:
+  - panoramic
+  - covid-19
+  - community
+  - molnupiravir
+  - platform
+  - pragmatic
+  - open-label
+  - bayesian-primary
+  - nhs
+  - pandemic-response
+
+caveats: |
+  PANORAMIC design / analysis points:
+
+  - **Open-label pragmatic**: not placebo-controlled. Trade-off:
+    more realistic uptake, faster enrollment, simpler logistics vs
+    possible bias in self-reported symptoms (primary objective was
+    hospitalization / death, which is objective).
+  - **Vaccinated population baseline**: baseline hospitalization/death
+    rate ~ 1% — dramatically lower than pre-vaccine era. Required
+    massive sample size to detect small absolute differences.
+  - **Bayesian primary**: posterior probability threshold 0.98 for
+    superiority declaration. More stringent than frequentist P = 0.025
+    one-sided equivalent.
+  - **Platform openness**: designed to add / drop arms as new antivirals
+    became available (nirmatrelvir-ritonavir / Paxlovid arm planned
+    but not started due to changing landscape).
+
+  **Analysis sketch**:
+  ```r
+  library(rstanarm)
+
+  # Bayesian logistic regression for primary
+  fit <- stan_glm(
+    hospitalization_death ~ trt + age + comorbidity_score,
+    data = df,
+    family = binomial(link = "identity"),  # risk difference scale
+    prior = normal(0, 0.05),
+    prior_intercept = normal(0.03, 0.02)
+  )
+
+  # Posterior probability of superiority
+  post <- as.matrix(fit)
+  prob_superior <- mean(post[, "trt"] < 0)
+  ```
+
+  **Sample-size for pragmatic community platform**:
+  - Low event rate (~ 1%) + small expected absolute difference (0.5-1%)
+    → very large N (tens of thousands).
+  - Open-label reduces cost per patient, enabling feasibility.
+  - Remote pragmatic design enables speed.
+
+  **Relationship to other pandemic platforms**:
+  - **ACTT-1 (in corpus)**: hospitalized severe, randomized blinded.
+  - **RECOVERY (in corpus)**: hospitalized severe, MAMS platform.
+  - **REMAP-CAP (in corpus)**: hospitalized critical care.
+  - **Solidarity (in corpus)**: global hospitalized.
+  - **PANORAMIC (this case)**: community early-treatment, UK NHS.
+
+  **Methodology lessons**:
+  - Pragmatic community platforms viable for low-severity disease.
+  - Bayesian primary with probability threshold > frequentist equivalent.
+  - Vaccinated-era baseline event rates require much larger N.
+  - Platform flexibility important as therapeutic landscape evolves.
