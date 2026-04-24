@@ -1,0 +1,58 @@
+id: 1997_CAPTURE_abciximab
+family: fixed-superiority
+source:
+  kind: published-trial
+  citation: "The CAPTURE Investigators. Randomised placebo-controlled trial of abciximab before and during coronary intervention in refractory unstable angina: the CAPTURE Study. Lancet. 1997;349(9063):1429-1435."
+  doi: "10.1016/S0140-6736(96)10452-9"
+  url: "https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(96)10452-9/abstract"
+
+design:
+  indication: "Refractory unstable angina scheduled for coronary angioplasty"
+  population: "Adults with unstable angina unresponsive to medical therapy, planned PCI"
+  arms:
+    - name: "abciximab (bolus + 18-24h infusion)"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "30-day composite: death, MI, or urgent reintervention"
+    measurement_time: "30 days"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.8
+  effect:
+    control_rate: 0.15         # assumed ~15% event rate in placebo
+    treatment_rate: 0.09       # assumed ~9% event rate in abciximab
+  accrual:
+    duration_months: 15
+
+expected:
+  sample_size_total: 1400
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Classic 1990s acute-care fixed binary superiority design. Pre-NCT era;
+    registry ID not assigned. The 1,400 planned sample size was driven by
+    detecting a 6-percentage-point absolute risk reduction (15% → 9%) with
+    ~80% power.
+
+r_packages:
+  - stats::power.prop.test
+  - gsDesign::nBinomial
+  - rpact::getSampleSizeRates
+
+tags:
+  - acs
+  - unstable-angina
+  - pci
+  - antiplatelet
+  - binary-endpoint
+  - classic-trial
+  - pre-nct-era
+
+caveats: |
+  Pre-NCT era trial; design parameters extracted from the original publication.
+  The trial was actually stopped early (at 1,265 subjects) based on interim DSMB
+  analysis showing benefit — a DSMB-driven stop, not a pre-specified GS boundary.

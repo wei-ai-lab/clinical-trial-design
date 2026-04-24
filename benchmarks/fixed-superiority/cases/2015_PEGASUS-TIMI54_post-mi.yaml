@@ -1,0 +1,70 @@
+id: 2015_PEGASUS-TIMI54_post-mi
+family: fixed-superiority
+source:
+  kind: published-trial
+  citation: "Bonaca MP, Bhatt DL, Cohen M, et al. Long-term use of ticagrelor in patients with prior myocardial infarction. N Engl J Med. 2015;372(19):1791-1800."
+  doi: "10.1056/NEJMoa1500857"
+  nct_id: "NCT01225562"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1500857"
+
+design:
+  indication: "Prior myocardial infarction 1-3 years ago, plus ≥ 1 atherothrombotic risk factor"
+  population: "Adults ≥ 50 y, ASA on board, prior MI"
+  arms:
+    - name: "ticagrelor 90 mg bid + ASA"
+      allocation: 1
+    - name: "ticagrelor 60 mg bid + ASA"
+      allocation: 1
+    - name: "placebo + ASA"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "CV death, MI, or stroke (composite)"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.9
+  effect:
+    hr: 0.81               # assumed HR for each ticagrelor dose vs placebo
+    control_annual_rate: 0.033
+  accrual:
+    duration_months: 27
+  followup:
+    median_months: 33
+  dropout:
+    pct_per_year: 3.5
+  multiplicity:
+    strategy: "Hierarchical: test 90 mg first; if rejected, test 60 mg at full α"
+
+expected:
+  sample_size_total: 21162
+  events_total: 1360       # target events at primary analysis
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 3
+  notes: |
+    Three-arm trial with two active doses vs common placebo. Primary multiplicity
+    strategy was a fixed-sequence hierarchy (90 mg then 60 mg) without alpha split.
+    Sample size scaled for 1:1:1 allocation with each active arm powered separately
+    vs placebo under the hierarchical test.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - post-mi
+  - antiplatelet
+  - three-arm
+  - hierarchical-testing
+  - time-to-event
+  - composite-endpoint
+
+caveats: |
+  A three-arm trial with common control introduces a decision about whether to
+  maintain 1:1:1 allocation (inefficient for vs-placebo comparisons) or inflate
+  the control arm. PEGASUS kept 1:1:1 and accepted the slight inefficiency.
+  Benchmark replay should assume 1:1:1 and verify the events-needed calculation
+  for a two-group superiority comparison (one active dose vs placebo), then
+  scale up total N by 3/2 to get the three-arm total.

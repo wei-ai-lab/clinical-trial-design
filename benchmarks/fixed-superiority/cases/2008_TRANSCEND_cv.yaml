@@ -1,0 +1,55 @@
+id: 2008_TRANSCEND_cv
+family: fixed-superiority
+source:
+  kind: published-trial
+  citation: "TRANSCEND Investigators. Effects of the angiotensin-receptor blocker telmisartan on cardiovascular events in high-risk patients intolerant to angiotensin-converting-enzyme inhibitors: a randomised controlled trial. Lancet. 2008;372(9644):1174-1183."
+  doi: "10.1016/S0140-6736(08)61242-8"
+  nct_id: "NCT00153101"
+  url: "https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(08)61242-8/abstract"
+
+design:
+  indication: "High cardiovascular risk, ACE-inhibitor intolerant"
+  population: "Adults with CVD, DM with end-organ damage, or combination, intolerant to ACEI"
+  arms:
+    - name: "telmisartan 80 mg daily"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: CV death + MI + stroke + HF hospitalization"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.85
+  effect:
+    hr: 0.82
+    control_annual_rate: 0.04
+  accrual:
+    duration_months: 24
+  followup:
+    median_months: 56
+
+expected:
+  sample_size_total: 5926
+  events_total: 1145
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 5
+  notes: |
+    Companion trial to ONTARGET (which tested telmisartan vs ramipril vs
+    combination). TRANSCEND enrolled the ACEI-intolerant subset and used a
+    simple fixed superiority design against placebo.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - cardiovascular
+  - arb
+  - high-risk-primary-prevention
+  - time-to-event
+  - composite-endpoint
+  - fixed-design

@@ -1,0 +1,64 @@
+id: 2019_PARTNER3_tavr
+family: fixed-superiority
+source:
+  kind: published-trial
+  citation: "Mack MJ, Leon MB, Thourani VH, et al. Transcatheter aortic-valve replacement with a balloon-expandable valve in low-risk patients. N Engl J Med. 2019;380(18):1695-1705."
+  doi: "10.1056/NEJMoa1814052"
+  nct_id: "NCT02675114"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1814052"
+
+design:
+  indication: "Severe symptomatic aortic stenosis, low surgical risk (STS score < 4%)"
+  population: "Adults with low surgical risk aortic stenosis"
+  arms:
+    - name: "TAVR (SAPIEN 3)"
+      allocation: 1
+    - name: "Surgical AVR"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite of death, stroke, or rehospitalization at 1 year"
+    measurement_time: "1 year"
+  comparison: non-inferiority   # primary was NI then superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.85
+  effect:
+    assumed_event_rate_control: 0.14   # ~14% at 1y in surgery arm
+    assumed_event_rate_treatment: 0.10
+    risk_difference_null: 0.06          # NI margin on risk-difference scale
+  accrual:
+    duration_months: 18
+  followup:
+    primary_analysis_at_months: 12
+
+expected:
+  sample_size_total: 1000
+  events_total: 123
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    PARTNER 3 used a Bayesian analysis with non-informative priors for the
+    primary NI test. A frequentist approximation for benchmark replay is
+    reasonable (NI on risk difference, margin 6%, α=0.025, power=85%, expected
+    control rate 14%). Hierarchical superiority test followed NI.
+
+r_packages:
+  - gsDesign::nBinomial
+  - rpact::getSampleSizeRates
+  - Hmisc::bpower
+
+tags:
+  - device-trial
+  - cardiac-surgery
+  - tavr
+  - non-inferiority-then-superiority
+  - composite-endpoint
+  - bayesian-analysis-frequentist-sized
+
+caveats: |
+  The pre-specified primary analysis used Bayesian methods; the sample-size
+  calculation itself was frequentist. For benchmark replay, use the frequentist
+  NI calculation with risk-difference margin 6% — this matches the planned N
+  within tolerance. Modeling the Bayesian analysis exactly requires a prior
+  specification that is not fully detailed in the public SAP.
