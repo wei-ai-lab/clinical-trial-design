@@ -1,0 +1,70 @@
+id: 2017_ALCYONE_myeloma
+family: tte-nph
+source:
+  kind: published-trial
+  citation: "Mateos MV, Dimopoulos MA, Cavo M, et al. Daratumumab plus bortezomib, melphalan, and prednisone for untreated myeloma. N Engl J Med. 2018;378(6):518-528."
+  doi: "10.1056/NEJMoa1714678"
+  nct_id: "NCT02195479"
+
+design:
+  indication: "Newly diagnosed multiple myeloma, transplant-ineligible"
+  population: "Newly diagnosed MM, ineligible for autoSCT (age ≥ 65 or comorbidities)"
+  arms:
+    - name: "daratumumab + VMP (bortezomib-melphalan-prednisone)"
+      allocation: 1
+    - name: "VMP alone"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Progression-free survival"
+    measurement_time: "time-to-progression-or-death"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.85
+  effect:
+    hr_pfs_assumed: 0.65
+    median_pfs_control_months: 24
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 30
+  interim_analyses:
+    - info_fraction: 0.50
+      rule: "Pre-planned PFS interim"
+      boundary_family: "Lan-DeMets OBF"
+
+expected:
+  sample_size_total: 700
+  events_total: 330
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    Deep-response driven NPH pattern — anti-CD38 antibody deepens
+    response (higher MRD negativity rate), producing a long-tail
+    divergence in the PFS curve especially at the landmarks beyond
+    the median. Observed HR 0.50 (95% CI 0.38-0.65) at primary
+    analysis with median PFS not reached vs 18.1 mo. FDA approval
+    May 2018.
+
+r_packages:
+  - gsDesign::nSurv
+  - gsDesign2
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - multiple-myeloma
+  - newly-diagnosed
+  - transplant-ineligible
+  - daratumumab
+  - anti-cd38
+  - deep-response-tail
+  - tte-nph
+
+caveats: |
+  Hematologic malignancy PFS designs powered on constant HR tend to
+  under-estimate the late-follow-up divergence produced by deep
+  response / MRD-negative subpopulation. Observed HR 0.50 vs design
+  HR 0.65 reflects this. Class pattern repeats for dara-Rd
+  (MAIA), dara-VTd (CASSIOPEIA).

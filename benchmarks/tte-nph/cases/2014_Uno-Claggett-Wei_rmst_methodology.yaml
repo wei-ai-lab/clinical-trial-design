@@ -1,0 +1,66 @@
+id: 2014_Uno-Claggett-Wei_rmst_methodology
+family: tte-nph
+source:
+  kind: methodology-paper
+  citation: "Uno H, Claggett B, Tian L, et al. Moving beyond the hazard ratio in quantifying the between-group difference in survival analysis. J Clin Oncol. 2014;32(22):2380-2385."
+  doi: "10.1200/JCO.2014.55.2208"
+
+design:
+  indication: "any (methodology)"
+  population: "TTE Phase 3 trial population"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Restricted mean survival time (RMST) difference at τ"
+    measurement_time: "τ = pre-specified truncation time"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    rmst_control_months: 18.0
+    rmst_experimental_months: 22.0
+    delta_rmst_months: 4.0
+    tau_months: 36
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 36
+
+expected:
+  sample_size_total: 550
+  events_total: null
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Reference case for RMST-based design. Under NPH, RMST difference
+    Δ_RMST(τ) = ∫₀^τ [S_E(t) - S_C(t)] dt is a model-free causal estimand
+    with an interpretable units (months / years of life saved).
+    Paper shows RMST power ~= log-rank power under PH, and higher
+    power than log-rank under delayed effect. Uno-Tian-Wei variance
+    formula gives closed-form sample size.
+
+r_packages:
+  - survRM2
+  - nphDesign
+  - simtrial
+
+tags:
+  - rmst
+  - nph-methodology
+  - estimand
+  - model-free
+  - tte-nph
+  - methodology-canonical
+
+caveats: |
+  τ choice is non-trivial — must be < largest observed event time in
+  both arms; common choices: minimum of last event times, or
+  pre-specified clinically meaningful horizon. ICH E9(R1) estimand
+  framework favors RMST for NPH. Regulatory acceptance has grown
+  since 2020 (FDA oncology and cardiology). The 2014 paper is the
+  field-standard reference.

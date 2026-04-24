@@ -1,0 +1,71 @@
+id: 2017_MONALEESA-7_breast
+family: tte-nph
+source:
+  kind: published-trial
+  citation: "Tripathy D, Im SA, Colleoni M, et al. Ribociclib plus endocrine therapy for premenopausal women with hormone-receptor-positive, advanced breast cancer (MONALEESA-7): a randomised phase 3 trial. Lancet Oncol. 2018;19(7):904-915."
+  doi: "10.1016/S1470-2045(18)30292-4"
+  nct_id: "NCT02278120"
+
+design:
+  indication: "Premenopausal HR+/HER2- advanced breast cancer, 1L"
+  population: "Pre/peri-menopausal women, advanced/metastatic, no prior therapy for advanced"
+  arms:
+    - name: "ribociclib + NSAI/tamoxifen + goserelin"
+      allocation: 1
+    - name: "placebo + NSAI/tamoxifen + goserelin"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Investigator-assessed PFS"
+    measurement_time: "time-to-progression-or-death"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    hr_pfs_assumed: 0.67
+    median_pfs_control_months: 12.0
+    median_pfs_experimental_months: 17.9
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 24
+  interim_analyses:
+    - info_fraction: 0.67
+      rule: "Pre-planned PFS interim (primary)"
+      boundary_family: "Lan-DeMets OBF"
+
+expected:
+  sample_size_total: 672
+  events_total: 329
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 3
+  notes: |
+    CDK4/6 inhibitor design — characteristic NPH pattern of delayed
+    separation (first 3-6 months overlapping), then sustained wide
+    separation (cytostatic mechanism). Paper reports investigator-
+    assessed PFS HR 0.553 (95% CI 0.441-0.694), median 23.8 vs
+    13.0 mo — substantially better than assumed HR 0.67 because
+    late-follow-up divergence exceeded PH expectation.
+
+r_packages:
+  - gsDesign::nSurv
+  - gsDesign2
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - breast-cancer
+  - premenopausal
+  - cdk4-6-inhibitor
+  - ribociclib
+  - 1l-advanced
+  - delayed-separation
+  - tte-nph
+
+caveats: |
+  Classic CDK4/6i NPH: hazards essentially identical for first ~3 mo,
+  then progressive divergence. If powered on constant HR, event counts
+  under-estimate early and over-estimate late, but total events approximately
+  correct. Design powered on PH-based HR 0.67; observed later separation
+  exceeded this — pattern repeated across PALOMA-2, MONALEESA-2, -3, -7.

@@ -1,0 +1,69 @@
+id: 2017_ZUMA-1_axi-cel
+family: tte-nph
+source:
+  kind: published-trial
+  citation: "Neelapu SS, Locke FL, Bartlett NL, et al. Axicabtagene ciloleucel CAR T-cell therapy in refractory large B-cell lymphoma. N Engl J Med. 2017;377(26):2531-2544."
+  doi: "10.1056/NEJMoa1707447"
+  nct_id: "NCT02348216"
+
+design:
+  indication: "Refractory aggressive B-cell non-Hodgkin lymphoma (DLBCL, PMBCL, tFL)"
+  population: "Refractory to ≥ 2 prior lines or relapse post-ASCT"
+  arms:
+    - name: "axicabtagene ciloleucel (axi-cel) 2×10^6 CAR+ T cells/kg"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Objective response rate (primary); DOR and OS secondary with cure-fraction"
+    measurement_time: "response at 28 d post-infusion; DOR Kaplan-Meier"
+  comparison: "single-arm vs historical control ORR 26%"
+  sidedness: 1
+  alpha: 0.025
+  power: 0.975
+  effect:
+    target_orr: 0.50
+    historical_orr: 0.26
+    cure_fraction_expected: 0.40
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 112
+  events_total: null
+  tolerance:
+    sample_size_pct: 10
+  notes: |
+    Single-arm pivotal trial against historical control ORR. TTE is
+    secondary (DOR) but drives the regulatory story — cure-fraction
+    NPH pattern, where responders have a long-term plateau in the
+    survival curve while non-responders have short DOR. Classical
+    PH doesn't apply because the population mixture includes a
+    cured subgroup. Final N = 101 treated of 111 enrolled.
+    Observed ORR 82% (95% CI 73-89%) vs historical 26% → approval
+    (KTE-C19, now Yescarta).
+
+r_packages:
+  - gsDesign::nBinomial
+  - rpact::getSampleSizeRates
+  - flexsurvcure
+
+tags:
+  - lymphoma
+  - dlbcl
+  - car-t
+  - single-arm
+  - historical-control
+  - cure-fraction
+  - tte-nph
+  - response-based
+
+caveats: |
+  This is a single-arm pivotal — not a randomized NPH comparison.
+  Included in tte-nph corpus because it illustrates the cure-fraction
+  NPH pattern that all CAR-T confirmatory trials inherit; randomized
+  follow-ups (ZUMA-7 vs SOC) use similar cure-fraction modeling.
+  Sample size was ORR-driven (binomial), not TTE. Primary estimand
+  was ORR; DOR/OS analyzed descriptively with landmark percentages
+  rather than HR because of cure-fraction.

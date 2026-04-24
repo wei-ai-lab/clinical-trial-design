@@ -1,0 +1,70 @@
+id: 2011_Fleming-Harrington_weighted-lr_methodology
+family: tte-nph
+source:
+  kind: methodology-paper
+  citation: "Fleming TR, Harrington DP. Counting Processes and Survival Analysis (Wiley, 1991; reprint 2011). Ch 7. Weighted log-rank tests G(ρ,γ)."
+  doi: "10.1002/9781118150672"
+
+design:
+  indication: "any (methodology)"
+  population: "TTE Phase 3 trial population"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Weighted log-rank FH(ρ,γ) with w(t) = S(t)^ρ (1-S(t))^γ"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    rho: 0
+    gamma: 1
+    w_description: "FH(0,1) up-weights late events — optimal for delayed effect"
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 10
+  notes: |
+    Foundational reference for the G(ρ,γ) weighted log-rank family.
+    Weight function w(t) = S(t)^ρ (1-S(t))^γ where S(t) is the pooled
+    Kaplan-Meier. Special cases:
+      FH(0,0) = unweighted log-rank
+      FH(1,0) = Peto-Prentice (up-weights early)
+      FH(0,1) = up-weights late — canonical for delayed effect
+      FH(1,1) = middle up-weight
+    Under NPH, the G(0,1) statistic is approximately the score test for
+    proportional odds in logistic survival models — hence the natural
+    "late-effect" interpretation.
+
+r_packages:
+  - survival::survdiff
+  - nphDesign
+  - simtrial
+  - gsDesign2
+
+tags:
+  - fleming-harrington
+  - weighted-log-rank
+  - nph-methodology
+  - tte-nph
+  - methodology-canonical
+
+caveats: |
+  Under H0 (no treatment effect at any time) the weighted log-rank
+  statistic has correct Type I error. Under H1 with delayed effect,
+  FH(0,1) gives up to ~30% power gain vs unweighted log-rank; with
+  crossing hazards, FH weighted can have LOWER power than unweighted.
+  Pre-specification of ρ, γ is essential — post-hoc selection inflates
+  Type I error. Regulatory preference has moved toward max-combo over
+  single weighted log-rank for this reason.

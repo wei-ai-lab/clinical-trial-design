@@ -1,0 +1,74 @@
+id: 2020_CheckMate-9LA_nsclc
+family: tte-nph
+source:
+  kind: published-trial
+  citation: "Paz-Ares L, Ciuleanu TE, Cobo M, et al. First-line nivolumab plus ipilimumab combined with two cycles of chemotherapy in patients with non-small-cell lung cancer (CheckMate 9LA): an international, randomised, open-label, phase 3 trial. Lancet Oncol. 2021;22(2):198-211."
+  doi: "10.1016/S1470-2045(20)30641-0"
+  nct_id: "NCT03215706"
+
+design:
+  indication: "Previously untreated stage IV / recurrent NSCLC"
+  population: "No EGFR/ALK alterations; any PD-L1"
+  arms:
+    - name: "nivolumab + ipilimumab + 2 cycles chemo"
+      allocation: 1
+    - name: "chemo (4 cycles) ± pemetrexed maintenance"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Overall survival"
+    measurement_time: "time-to-death (any cause)"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    hr_os_assumed: 0.74
+    median_os_control_months: 12.0
+    median_os_experimental_months: 16.2
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 18
+  interim_analyses:
+    - info_fraction: 0.75
+      rule: "Pre-planned OS interim"
+      boundary_family: "Lan-DeMets OBF"
+
+expected:
+  sample_size_total: 719
+  events_total: 435
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    Dual-mechanism design: ipi-nivo provides IO "delayed but durable"
+    effect while 2 cycles of chemo covers the early period before IO
+    kicks in. This "early + late" combination design is intended to
+    mitigate the delayed-effect NPH penalty common in pure-IO trials.
+    Observed HR 0.69 (95% CI 0.55-0.87), OS 15.8 vs 11.0 mo →
+    superiority met at pre-planned interim. FDA approval May 2020.
+
+r_packages:
+  - gsDesign::nSurv
+  - gsDesign2
+  - simtrial
+  - nphDesign
+
+tags:
+  - nsclc
+  - 1l
+  - io-chemo-combo
+  - dual-mechanism
+  - delayed-effect
+  - tte-nph
+  - group-sequential
+
+caveats: |
+  HR 0.74 was chosen to reflect design expectation that the dual
+  mechanism would partially overcome the delayed-effect penalty.
+  Power was sized on log-rank despite NPH — pragmatic choice. The
+  IO+chemo combo is specifically designed to give a more PH-like
+  curve separation than pure IO (where delayed effect is more
+  pronounced). Observed curves showed early separation consistent
+  with this hypothesis.

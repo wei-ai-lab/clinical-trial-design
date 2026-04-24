@@ -1,0 +1,73 @@
+id: 2020_Lin-Chen-Yang_max-combo_methodology
+family: tte-nph
+source:
+  kind: methodology-paper
+  citation: "Lin RS, Lin J, Roychoudhury S, et al. Alternative analysis methods for time to event endpoints under nonproportional hazards: a comparative analysis. Stat Biopharm Res. 2020;12(2):187-198."
+  doi: "10.1080/19466315.2019.1697738"
+
+design:
+  indication: "Immuno-oncology (Phase 3)"
+  population: "solid tumor, delayed effect expected"
+  arms:
+    - name: "immunotherapy"
+      allocation: 1
+    - name: "control (chemo or SOC)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Overall survival with max-combo weighted log-rank test"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.85
+  effect:
+    hr_early_months_0_6: 1.00
+    hr_late_months_6_plus: 0.65
+    delay_months: 6
+    max_combo_weights:
+      - {rho: 0, gamma: 0, name: "unweighted log-rank"}
+      - {rho: 0, gamma: 1, name: "FH(0,1) late-weighted"}
+      - {rho: 1, gamma: 0, name: "FH(1,0) early-weighted"}
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 36
+
+expected:
+  sample_size_total: 620
+  events_total: 430
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 5
+  notes: |
+    Max-combo test: Z_max = max(Z_LR, Z_FH(0,1), Z_FH(1,0))
+    with correction for asymptotic correlation across weightings.
+    Paper compares power under 6 scenarios (PH, delayed, crossing,
+    middle-only, late-only, diminishing) — max-combo never worst,
+    often best. Cross-industry NPH working group adopted as primary
+    recommendation for IO trials with uncertain NPH shape.
+
+r_packages:
+  - simtrial
+  - nphDesign
+  - nph
+  - gsDesign2
+
+tags:
+  - max-combo
+  - fleming-harrington
+  - weighted-log-rank
+  - nph-methodology
+  - cross-industry
+  - tte-nph
+  - methodology-canonical
+
+caveats: |
+  Max-combo α-control relies on asymptotic joint normality of the
+  weighted log-rank components; simulation verification is standard
+  for confirmatory use. Combines FH(0,1) (late) and FH(1,0) (early)
+  plus unweighted for robustness across unknown NPH shape. Primary
+  FDA concern: pre-specification of the weight set and of any GS
+  boundaries computed under this test. Adopted as primary analysis
+  in several 2020+ IO Phase 3 designs.

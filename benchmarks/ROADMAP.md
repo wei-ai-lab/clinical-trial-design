@@ -103,7 +103,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | adaptive-selection | ✅ | 4 | 4 | ✅ |
 | mams | ✅ | 5 | 5 | ✅ |
 | tte-ph | ✅ | 8 | 8 | ✅ |
-| tte-nph | — | 0 | 8 | 🔲 |
+| tte-nph | ✅ | 8 | 8 | ✅ |
 | recurrent-events | — | 0 | 4 | 🔲 |
 | count-rate | — | 0 | 4 | 🔲 |
 | bayesian | — | 0 | 5 | 🔲 |

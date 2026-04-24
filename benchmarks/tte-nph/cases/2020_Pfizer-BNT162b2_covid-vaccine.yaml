@@ -1,0 +1,84 @@
+id: 2020_Pfizer-BNT162b2_covid-vaccine
+family: tte-nph
+source:
+  kind: published-trial
+  citation: "Polack FP, Thomas SJ, Kitchin N, et al. Safety and efficacy of the BNT162b2 mRNA Covid-19 vaccine. N Engl J Med. 2020;383(27):2603-2615."
+  doi: "10.1056/NEJMoa2034577"
+  nct_id: "NCT04368728"
+
+design:
+  indication: "Prevention of symptomatic COVID-19"
+  population: "≥ 16 years, no prior SARS-CoV-2 infection"
+  arms:
+    - name: "BNT162b2 30 μg × 2 doses (21 d apart)"
+      allocation: 1
+    - name: "placebo × 2 doses"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "First confirmed symptomatic COVID-19 ≥ 7 d post-dose 2"
+    measurement_time: "time-to-first-event, case-driven"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    ve_target: 0.60
+    ve_success_threshold: 0.30
+    prior_beta_0p700005: "β(0.700005, 1) weakly informative"
+  accrual:
+    duration_months: 4
+  followup:
+    planned_months: 6
+  interim_analyses:
+    - n_events: 32
+      rule: "VE > 0.30 (lower 95.0% posterior bound) → success"
+    - n_events: 62
+      rule: "Second interim"
+    - n_events: 92
+      rule: "Third interim"
+    - n_events: 120
+      rule: "Third interim (revised)"
+    - n_events: 164
+      rule: "Final"
+
+expected:
+  sample_size_total: 43448
+  events_total: 164
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 2
+  notes: |
+    Case-driven event count design with Bayesian posterior-based
+    success criterion. First interim at 32 cases used prior β(0.700005, 1)
+    which gives PP(VE > 0.30 | data) > 0.995 as success rule.
+    Vaccine efficacy waning — protection highest in first 2 months
+    post-dose-2, declining thereafter — is a canonical NPH pattern.
+    Final analysis at 170 observed cases (early interim hit) showed
+    VE 95.0% (95% CI 90.3-97.6%) — vastly exceeded 0.60 design target.
+
+r_packages:
+  - rpact::getDesignGroupSequential
+  - gsDesign::nBinomial
+  - simtrial
+  - nphDesign
+
+tags:
+  - covid-19
+  - vaccine
+  - mrna
+  - vaccine-efficacy
+  - bayesian-posterior
+  - waning-efficacy
+  - tte-nph
+  - case-driven
+
+caveats: |
+  Classical "vaccine trial" design is NOT a PH-TTE design — it is an
+  event-rate (person-time incidence) design with VE = 1 - RR. Under
+  waning efficacy the per-period RR changes over time, making the
+  single-VE summary a time-averaged estimand. For downstream boosters
+  and variants, sponsors use piecewise VE or cumulative-incidence
+  landmark analyses rather than single HR. The 95.0% observed VE
+  reflects the early-protection window — later analyses showed
+  waning to ~0.85 by 6 months.
