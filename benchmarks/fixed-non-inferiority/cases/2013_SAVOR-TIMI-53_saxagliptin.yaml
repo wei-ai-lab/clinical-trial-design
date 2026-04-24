@@ -1,0 +1,164 @@
+id: 2013_SAVOR-TIMI-53_saxagliptin
+family: fixed-non-inferiority
+source:
+  kind: design-paper
+  citation: "Scirica BM, Bhatt DL, Braunwald E, et al. Saxagliptin and cardiovascular outcomes in patients with type 2 diabetes mellitus. N Engl J Med. 2013 Oct 3;369(14):1317-26. Design: Mosenzon O, Raz I, Scirica BM, et al. Baseline characteristics of the patient population in the Saxagliptin Assessment of Vascular Outcomes Recorded in patients with diabetes mellitus-Thrombolysis in Myocardial Infarction (SAVOR-TIMI) 53 trial. Am Heart J. 2013 Aug;166(2):264-71.e1."
+
+design:
+  indication: "Type 2 diabetes mellitus at high risk for cardiovascular events (established CV disease or multiple risk factors)"
+  population: "Adults with T2DM, HbA1c 6.5-12.0%, with either established CV disease (prior MI, stroke, revascularization, PAD) or ≥ 2 CV risk factors if aged ≥ 55 (men) / ≥ 60 (women)"
+  arms:
+    - name: "saxagliptin 2.5-5 mg daily (DPP-4 inhibitor)"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Primary: 3-point MACE (CV death, non-fatal MI, non-fatal stroke). Primary objective: non-inferiority for CV safety under FDA 2008 Guidance for Industry on diabetes drugs."
+    measurement_time: "event-driven; median 2.1 years follow-up"
+  comparison: non-inferiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    scale: log-hazard-ratio
+    ni_margin_hr: 1.30
+    assumed_hr_actual: 1.00
+    control_event_rate_annual: 0.045
+    design_approach: |
+      Cardiovascular outcome trial (CVOT) under FDA 2008 Guidance for
+      Industry on diabetes drugs. Primary regulatory objective: rule
+      out CV harm (NI margin HR < 1.30 upper bound).
+      - Non-inferiority: upper 95% CI < 1.30 (FDA standard threshold).
+      - Event-driven: ≥ 1,040 adjudicated primary events.
+      - Two-sided α = 0.05; one-sided NI test at α = 0.025.
+      - No superiority testing pre-specified at primary — but tested
+        as post-hoc for completeness.
+    fda_2008_two_stage: |
+      FDA 2008 Guidance two-stage framework:
+      Pre-market stage: rule out HR > 1.80 (less stringent, smaller N).
+      Post-market stage: rule out HR > 1.30 (SAVOR-TIMI 53 primary
+        regulatory objective).
+      SAVOR-TIMI 53 was designed for the post-market (more stringent)
+      requirement.
+    hierarchical_testing: |
+      Pre-specified hierarchy:
+      1. Primary MACE NI (HR < 1.30 upper CI).
+      2. Expanded MACE secondary (add hospitalization for HF).
+      3. Component analyses.
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: null
+    median_actual_months: 25
+
+expected:
+  sample_size_total: 16492
+  sample_size_per_arm: [8280, 8212]
+  events_total_target: 1040
+  events_total_actual: 1222
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **SAVOR-TIMI 53** was the **first DPP-4 inhibitor CVOT** and
+    prototype for the FDA 2008 Guidance framework — CVOT designed
+    primarily to rule out CV harm (NI HR < 1.30) rather than to
+    demonstrate CV superiority.
+
+    **Design**:
+    - 16,492 randomized (1:1) across 26 countries.
+    - Placebo-controlled, double-blind.
+    - Event-driven: ≥ 1,040 adjudicated MACE events.
+    - Median follow-up 2.1 years.
+
+    **Results**:
+    - Primary MACE: HR 1.00 (0.89-1.12), P < 0.001 for NI.
+    - 95% CI upper 1.12 well below 1.30 margin.
+    - CV death: HR 1.03 (NS).
+    - Hospitalization for HF: HR 1.27 (1.07-1.51), P = 0.007 —
+      UNEXPECTED SAFETY SIGNAL.
+    - All-cause death: HR 1.11 (0.96-1.27).
+
+    **Clinical / regulatory impact**:
+    - Saxagliptin passed NI regulatory threshold.
+    - HF hospitalization signal was a watershed: first CVOT to detect
+      unexpected safety outcome for an approved drug.
+    - FDA updated saxagliptin label 2016 with HF warning.
+    - Motivated closer scrutiny of DPP-4 inhibitors (EXAMINE, TECOS
+      did NOT replicate HF signal for alogliptin, sitagliptin).
+    - Informed subsequent CVOT protocol design to pre-specify HF
+      hospitalization as key secondary.
+
+r_packages:
+  - gsDesign
+  - rpact
+  - survival
+  - nph
+
+tags:
+  - savor-timi-53
+  - saxagliptin
+  - dpp-4-inhibitor
+  - diabetes
+  - cvot
+  - non-inferiority
+  - fda-2008-guidance
+  - mace
+  - hf-hospitalization-signal
+  - landmark-trial
+
+caveats: |
+  SAVOR-TIMI 53 design / analysis points:
+
+  - **NI margin 1.30**: FDA 2008 Guidance standard. Translates roughly
+    to requiring that true HR cannot exceed 30% increase over placebo.
+    Less stringent than superiority; very large trials required
+    because null hypothesis is a boundary HR.
+  - **Event-driven on primary**: 1,040 target events. Actual 1,222 due
+    to enrollment continuation.
+  - **HF hospitalization signal**: prespecified secondary but not
+    primary — signal emerged from CVOT. Changed how subsequent CVOTs
+    design HF endpoints.
+  - **No superiority pre-specified**: consistent with NI framework;
+    no hierarchical superiority test in original protocol.
+
+  **Sample-size for NI CVOT**:
+  ```r
+  library(gsDesign)
+
+  # FDA 2008 NI CVOT design
+  d <- gsSurv(
+    k = 1,                      # no interim; fixed design
+    alpha = 0.025,              # one-sided NI at α = 0.025
+    beta = 0.10,                # 90% power
+    lambdaC = -log(1 - 0.045),  # 4.5% annual hazard
+    hr = 1.00,                  # true HR assumed
+    hr0 = 1.30,                 # NI margin
+    eta = 0,
+    T = 36, minfup = 24
+  )
+  print(d)
+  # ~ 1040 events, ~ 16500 randomized
+  ```
+
+  **Relationship to other NI CVOTs**:
+  - **SAVOR-TIMI 53 (this case)** (2013): saxagliptin NI.
+  - **EXAMINE** (2013): alogliptin NI (no HF signal).
+  - **TECOS** (2015): sitagliptin NI (no HF signal).
+  - **CARMELINA** (2019): linagliptin NI + renal.
+  - **EMPA-REG OUTCOME** (in corpus): NI → superiority (first positive).
+
+  **FDA 2008 Guidance framework** (simplified):
+  - Pre-market: HR upper CI < 1.80 (small to moderate trials).
+  - Post-market: HR upper CI < 1.30 (large CVOT).
+  - SAVOR-TIMI 53 addressed post-market requirement.
+  - Framework abandoned in 2019 (FDA Diabetes Drugs Guidance update):
+    now requires meta-analytic pooled safety assessment, less
+    stringent CVOT mandates.
+
+  **Methodology lessons**:
+  - NI margin (1.30) sets ceiling; trial powered under HR = 1.00.
+  - Very large sample required because null is point (HR = 1.30).
+  - Pre-specify HF hospitalization and all-cause death as secondaries.
+  - CVOT framework shaped diabetes drug development 2008-2020.

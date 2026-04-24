@@ -1,0 +1,151 @@
+id: 2014_ESTABLISH-2_tedizolid_abssi
+family: fixed-non-inferiority
+source:
+  kind: design-paper
+  citation: "Moran GJ, Fang E, Corey GR, Das AF, De Anda C, Prokocimer P. Tedizolid for 6 days versus linezolid for 10 days for acute bacterial skin and skin-structure infections (ESTABLISH-2): a randomised, double-blind, phase 3, non-inferiority trial. Lancet Infect Dis. 2014 Aug;14(8):696-705. Companion ESTABLISH-1 (oral tedizolid): Prokocimer P, De Anda C, Fang E, Mehra P, Das A. Tedizolid phosphate vs linezolid for treatment of acute bacterial skin and skin structure infections: the ESTABLISH-1 randomized trial. JAMA. 2013 Feb 13;309(6):559-69."
+
+design:
+  indication: "Acute bacterial skin and skin-structure infections (ABSSSI) — major cutaneous abscess, wound infection, or cellulitis/erysipelas"
+  population: "Adults with ABSSSI, lesion area ≥ 75 cm², systemic signs of infection, suspected or confirmed Gram-positive pathogen including MRSA"
+  arms:
+    - name: "tedizolid phosphate 200 mg IV QD × 6 days (IV + optional oral switch)"
+      allocation: 1
+    - name: "linezolid 600 mg IV BID × 10 days (IV + optional oral switch)"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Primary (FDA): early clinical response at 48-72 hours — ≥ 20% reduction in primary lesion area. Primary (EMA): investigator-assessed clinical success at post-therapy evaluation (day 11-13)."
+    measurement_time: "primary at 48-72 hours; secondary at end of treatment (day 11-13) and test-of-cure (day 18-25)"
+  comparison: non-inferiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    scale: risk-difference
+    ni_margin: -0.10
+    assumed_response_rate: 0.80
+    design_approach: |
+      Non-inferiority antibiotic trial under FDA 2013 ABSSSI Guidance.
+      - Primary endpoint: early clinical response (48-72 h).
+      - NI margin: -10% absolute risk difference (tedizolid - linezolid).
+      - Dual primary for US (FDA early response) + EU (EMA clinical
+        success at TOC) analysis.
+      - Event-driven: approximately 660 evaluable patients for 90% power.
+      - Two-sided 95% CI (equivalent to 97.5% one-sided).
+    ni_margin_justification: |
+      FDA ABSSSI Guidance (2013) recommends NI margin -10% for this
+      indication — based on meta-analytic estimate of active-drug-
+      versus-placebo effect in the ABSSSI historical record
+      (approximately 40% absolute difference; M1 = 40%, M2 = 10% = 25%
+      of M1, preserving the majority of the treatment effect).
+    stratification: |
+      Stratified by geographic region and ABSSSI type (cellulitis,
+      abscess, wound infection).
+    analysis_populations: |
+      - Intent-to-treat (ITT): all randomized.
+      - Modified ITT (mITT): ITT excluding randomized but not dosed.
+      - Clinically evaluable (CE): mITT with adherence and evaluability.
+      Primary analysis: both ITT and CE must demonstrate NI.
+  accrual:
+    duration_months: 12
+  followup:
+    planned_months: 1
+    actual_days: 25
+
+expected:
+  sample_size_total: 666
+  sample_size_per_arm: [332, 334]
+  events_total_target: null
+  events_total_actual: null
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **ESTABLISH-2** was one of two pivotal Phase 3 NI trials
+    (with ESTABLISH-1, oral) supporting tedizolid phosphate approval
+    for ABSSSI. Prototype of modern FDA 2013 ABSSSI Guidance NI design.
+
+    **Design**:
+    - 666 patients randomized (1:1) across 58 sites.
+    - Double-blind, double-dummy (6 vs 10 days).
+    - Tedizolid 6 days vs linezolid 10 days (shorter duration!).
+
+    **Results**:
+    - Primary (early clinical response 48-72 h): 85% vs 83%.
+    - Difference +2.0% (95% CI -3.0 to +7.0).
+    - NI margin: lower CI -3.0 > -10% → NI achieved.
+    - Test-of-cure (day 18-25): 88% vs 88% — similar.
+    - Safety: similar; tedizolid lower GI AEs, similar myelosuppression.
+
+    **Regulatory**:
+    - FDA approval June 2014 (Sivextro) for ABSSSI.
+    - EMA approval March 2015.
+    - 6-day regimen vs 10-day linezolid offers shorter therapy — clinical advantage despite NI design.
+
+r_packages:
+  - gsDesign
+  - rpact
+  - PropCIs (proportions CI)
+  - exact2x2 (exact binomial)
+  - pwr
+
+tags:
+  - establish-2
+  - tedizolid
+  - linezolid
+  - abssi
+  - antibiotic
+  - non-inferiority
+  - fda-2013-guidance
+  - oxazolidinone
+  - dual-primary-fda-ema
+  - landmark-abx-trial
+
+caveats: |
+  ESTABLISH-2 design / analysis points:
+
+  - **NI margin justification**: FDA 2013 ABSSSI Guidance recommends
+    10% margin based on meta-analytic placebo-controlled ABSSSI trial
+    history. M1 method: observe historical active-vs-placebo effect
+    (~ 40%), preserve 50-75% → M2 margin ~ 10-20%. 10% is conservative.
+  - **Dual primary for FDA/EMA**: early clinical response (FDA) +
+    end-of-treatment clinical cure (EMA). Both analyses must demonstrate
+    NI for dual-jurisdiction approval.
+  - **Analysis populations**: ITT + Clinically Evaluable (CE). NI must
+    hold in both. CE less conservative (excludes non-evaluable).
+  - **Shorter duration**: tedizolid 6 d vs linezolid 10 d is a clinical
+    advantage even under NI framework — shorter therapy = fewer AEs,
+    better adherence, lower cost.
+
+  **Sample-size calculation**:
+  ```r
+  library(gsDesign)
+
+  # NI for proportions with margin
+  n <- nNormal(
+    delta1 = 0,           # assumed true difference
+    sd = sqrt(0.8 * 0.2), # expected SD per arm
+    alpha = 0.025,        # one-sided NI
+    beta = 0.10,
+    ratio = 1
+  )
+  # Adjusted for binary with continuity:
+  # ~ 330 per arm for NI at -10% margin, 80% response rate
+  ```
+
+  **NI margin reasoning (ABSSSI)**:
+  - Historical placebo vs active ~ 40% absolute response difference.
+  - Preserve ≥ 50% of treatment effect → M2 ~ 10-20%.
+  - FDA 2013 chose 10% as conservative.
+  - With 80% response rate and 660 patients, 90% power at NI = -10%.
+
+  **Relationship to other ABSSSI NI trials**:
+  - **ESTABLISH-1 (2013)**: oral tedizolid vs linezolid, similar design.
+  - **SOLO-1 / SOLO-2** (2014, in corpus): dalbavancin vs vancomycin.
+  - **PROCEED** (2014): oritavancin single-dose.
+  - **DISCOVER-1/2 dalbavancin**: already in corpus.
+
+  **Methodology lessons**:
+  - Dual FDA/EMA primary enables global development.
+  - Shorter-duration NI wins clinically even with statistical tie.
+  - Analysis populations (ITT + CE) both required for NI inferences.
+  - M1/M2 margin derivation critical — must reference historical data.
