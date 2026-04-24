@@ -1,0 +1,163 @@
+id: 2015_EMPA-REG-OUTCOME_empagliflozin
+family: fixed-superiority
+source:
+  kind: design-paper
+  citation: "Zinman B, Wanner C, Lachin JM, et al. Empagliflozin, cardiovascular outcomes, and mortality in type 2 diabetes. N Engl J Med. 2015 Nov 26;373(22):2117-28. Design: Zinman B, Inzucchi SE, Lachin JM, et al. Rationale, design, and baseline characteristics of a randomized, placebo-controlled cardiovascular outcome trial of empagliflozin (EMPA-REG OUTCOME). Cardiovasc Diabetol. 2014 Jun 19;13:102."
+
+design:
+  indication: "Type 2 diabetes mellitus at high risk for cardiovascular events (established cardiovascular disease)"
+  population: "Adults with T2DM, BMI ≤ 45, eGFR ≥ 30, HbA1c 7.0-9.0% (or 7.0-10.0% if no glucose-lowering therapy), with established CV disease (prior MI, stroke, unstable angina, PAD, coronary artery disease)"
+  arms:
+    - name: "empagliflozin 10 mg daily"
+      allocation: 1
+    - name: "empagliflozin 25 mg daily"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Primary: 3-point MACE (composite of CV death, non-fatal MI, or non-fatal stroke). Hierarchically tested superiority after non-inferiority."
+    measurement_time: "event-driven; median 3.1 years follow-up"
+  comparison: non-inferiority-then-superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    scale: log-hazard-ratio
+    ni_margin_hr: 1.30
+    assumed_hr_superiority: 0.82
+    control_event_rate_annual: 0.04
+    design_approach: |
+      Cardiovascular outcome trial (CVOT) under FDA 2008 Guidance
+      for Industry on diabetes drugs. Primary regulatory objective:
+      rule out HR > 1.30 (non-inferiority). Secondary: superiority
+      if achieved.
+      - Non-inferiority: upper CI < 1.30 (FDA threshold).
+      - Superiority: if NI achieved, test HR < 1.0 at two-sided
+        α = 0.05 (one-sided 0.025).
+      - Pooled empagliflozin (10 mg + 25 mg) vs placebo.
+      - Event-driven: ≥ 691 adjudicated MACE events.
+    hierarchical_testing: |
+      Pre-specified hierarchy (if primary MACE superiority):
+      1. MACE (3-point) - primary.
+      2. 4-point MACE (add unstable angina hospitalization).
+      3. CV death alone.
+      4. All-cause death.
+      5. Hospitalization for HF.
+      Each tested only if prior significant.
+    adjudication: |
+      Blinded CEC (Clinical Events Committee) adjudication of all
+      MACE, HF hospitalization, CV death events.
+  accrual:
+    duration_months: 27
+  followup:
+    planned_months: null
+    median_actual_months: 37
+
+expected:
+  sample_size_total: 7020
+  sample_size_per_arm: [2345, 2342, 2333]
+  events_total_target: 691
+  events_total_actual: 772
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **EMPA-REG OUTCOME** was the **first SGLT2 inhibitor CVOT** to
+    demonstrate cardiovascular superiority in T2DM. Paradigm-shifting:
+    previously SGLT2i was a glucose-lowering class; this trial
+    established cardio-renal benefit.
+
+    **Design**:
+    - 7,020 randomized (1:1:1) across 42 countries.
+    - Placebo-controlled, double-blind.
+    - Event-driven: ≥ 691 adjudicated MACE events.
+    - Median follow-up 3.1 years.
+
+    **Results**:
+    - Primary (3-point MACE): HR 0.86 (0.74-0.99), P = 0.04 for superiority.
+    - NI achieved (upper CI 0.99 < 1.30).
+    - CV death: HR 0.62 (0.49-0.77), P < 0.001.
+    - All-cause death: HR 0.68 (0.57-0.82), P < 0.001.
+    - HF hospitalization: HR 0.65 (0.50-0.85), P = 0.002.
+
+    **Regulatory / clinical impact**:
+    - FDA CV mortality reduction label Dec 2016 (first glucose-lowering
+      drug with CV mortality indication).
+    - EMA: CV event reduction label.
+    - Spawned CANVAS (canagliflozin, in corpus), DECLARE (dapagliflozin),
+      VERTIS-CV (ertugliflozin), and HF outcome extensions.
+    - Redefined diabetes management paradigm — moved from purely
+      glucose-centric to CV/renal-centric.
+
+r_packages:
+  - gsDesign
+  - rpact
+  - survival
+  - nph
+  - simtrial
+  - gMCP (multiplicity)
+
+tags:
+  - empa-reg-outcome
+  - empagliflozin
+  - sglt2-inhibitor
+  - diabetes
+  - cvot
+  - mace
+  - non-inferiority-to-superiority
+  - landmark-trial
+  - fda-2008-guidance
+  - cardiorenal
+
+caveats: |
+  EMPA-REG OUTCOME design / analysis points:
+
+  - **NI → superiority testing**: CVOT standard design under FDA 2008
+    Guidance. If NI margin (HR < 1.30) met, no α penalty to test
+    superiority (closed testing).
+  - **Pooled dose analysis**: pre-specified pooling of 10 mg and 25 mg
+    vs placebo for primary; individual doses reported secondarily.
+  - **MACE composite**: 3-point (CV death, non-fatal MI, non-fatal
+    stroke). Each component contributes; adjudication essential.
+  - **Early effect**: CV death / HF hospitalization curves separated
+    within ~ 3 months — unexpected for a glucose-lowering drug;
+    led to theories about non-glucose mechanisms (natriuresis, ketone
+    metabolism, cardiac energetics).
+
+  **Sample-size calculation**:
+  ```r
+  library(gsDesign)
+
+  # CVOT NI + superiority
+  d <- gsSurv(
+    k = 2,                      # 1 interim + final
+    alpha = 0.025,              # one-sided
+    beta = 0.10,                # 90% power
+    lambdaC = -log(1 - 0.04)/1, # 4% annual hazard
+    hr = 0.82,
+    eta = 0,
+    T = 48, minfup = 24,
+    test.type = 2,              # OBF
+    sfu = sfLDOF,
+    ratio = 2                   # pooled 2:1 vs placebo
+  )
+  print(d)
+  # Target events ~ 691
+  # Sample size ~ 7000
+  ```
+
+  **Relationship to other CVOTs**:
+  - **TRANSCEND (2008, in corpus)**: telmisartan NI in ACE-intolerant.
+  - **CANVAS (2017, in corpus)**: canagliflozin SGLT2i CVOT.
+  - **LEADER (2016)**: liraglutide GLP-1.
+  - **SUSTAIN-6 (2016, in corpus)**: semaglutide CVOT.
+  - **DECLARE-TIMI 58 (2019)**: dapagliflozin.
+  - **VERTIS-CV (2020)**: ertugliflozin.
+
+  **Design lessons**:
+  - CVOT framework dominates diabetes drug development.
+  - NI → superiority hierarchical testing preserves α efficiently.
+  - Early curve separation suggested non-glycemic mechanisms.
+  - Motivated subsequent HF outcome trials (EMPEROR-Reduced,
+    EMPEROR-Preserved, DAPA-HF).

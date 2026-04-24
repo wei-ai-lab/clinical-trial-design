@@ -92,7 +92,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | Family | README | Cases done | Target | Status |
 |---|---|---|---|---|
 | framework (ROADMAP, GLOSSARY) | — | — | — | ✅ |
-| fixed-superiority | ✅ | 8 | 8 | ✅ |
+| fixed-superiority | ✅ | 10 | 8 | ✅ |
 | fixed-non-inferiority | ✅ | 8 | 6 | ✅ |
 | fixed-equivalence | ✅ | 6 | 4 | ✅ |
 | group-sequential | ✅ | 8 | 8 | ✅ |

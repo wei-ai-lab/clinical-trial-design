@@ -1,0 +1,161 @@
+id: 2017_FOURIER_evolocumab
+family: fixed-superiority
+source:
+  kind: design-paper
+  citation: "Sabatine MS, Giugliano RP, Keech AC, et al. Evolocumab and clinical outcomes in patients with cardiovascular disease. N Engl J Med. 2017 May 4;376(18):1713-1722. Design: Sabatine MS, Giugliano RP, Keech A, et al. Rationale and design of the Further cardiovascular OUtcomes Research with PCSK9 Inhibition in subjects with Elevated Risk trial. Am Heart J. 2016 Apr;173:94-101."
+
+design:
+  indication: "Clinically evident atherosclerotic cardiovascular disease (prior MI, prior stroke, or symptomatic PAD) with LDL-C ≥ 70 mg/dL on optimized statin therapy"
+  population: "Adults 40-85 with atherosclerotic CV disease on optimized high/moderate-intensity statin, LDL-C ≥ 70 mg/dL (or non-HDL ≥ 100 mg/dL)"
+  arms:
+    - name: "evolocumab (140 mg Q2W or 420 mg monthly; subcutaneous)"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Primary (key): 5-point MACE (CV death, MI, stroke, hospitalization for unstable angina, coronary revascularization). Secondary (also primary in hierarchy): 3-point MACE (CV death, MI, stroke)."
+    measurement_time: "event-driven; median 2.2 years follow-up"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    scale: log-hazard-ratio
+    assumed_hr_primary: 0.85
+    control_event_rate_annual_5point: 0.075
+    design_approach: |
+      CVOT for PCSK9 inhibitor on top of optimized statin therapy.
+      - Primary: 5-point MACE (broader; includes revascularization
+        and unstable angina hospitalization).
+      - Key secondary: 3-point MACE (more stringent, same as EMPA-REG).
+      - Hierarchical testing: 5-point primary → 3-point key secondary.
+      - Target HR 0.85 (15% relative reduction).
+      - Two-sided α = 0.05, power 90%.
+      - Event-driven: ≥ 1,630 primary events for 90% power.
+    early_interim: |
+      Single pre-specified interim analysis for efficacy (and futility,
+      non-binding). Haybittle-Peto-like conservative boundary
+      (Z > 3.5 or so).
+    hierarchical_testing: |
+      Pre-specified order:
+      1. 5-point MACE (primary) — α = 0.05.
+      2. 3-point MACE (key secondary) — α = 0.05 if primary
+         significant.
+      3. Individual components (CV death, MI, stroke).
+      4. Safety endpoints and all-cause mortality.
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: null
+    median_actual_months: 26
+
+expected:
+  sample_size_total: 27564
+  sample_size_per_arm: [13784, 13780]
+  events_total_target: 1630
+  events_total_actual: 2033
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **FOURIER** was the **first PCSK9 inhibitor CVOT** to demonstrate
+    MACE reduction — establishing evolocumab as effective for
+    secondary CV prevention on top of statins. Complemented by
+    ODYSSEY OUTCOMES (alirocumab 2018).
+
+    **Design**:
+    - 27,564 randomized (1:1) across 49 countries.
+    - Placebo-controlled, double-blind.
+    - Event-driven: ≥ 1,630 primary events.
+    - Median follow-up 2.2 years.
+
+    **Results**:
+    - Primary 5-point MACE: HR 0.85 (0.79-0.92), P < 0.001.
+    - Key secondary 3-point MACE: HR 0.80 (0.73-0.88), P < 0.001.
+    - CV death alone: HR 1.05 (0.88-1.25) — NS (criticized).
+    - All-cause death: HR 1.04 (NS).
+    - LDL-C reduced 59% (from 92 to 30 mg/dL median).
+
+    **Regulatory / clinical impact**:
+    - FDA CV event reduction label Dec 2017 (first PCSK9i with
+      outcome indication).
+    - Challenged cost-effectiveness debates — very effective but
+      expensive; led to ICER analyses.
+    - Informed 2018 ACC/AHA cholesterol guidelines.
+
+r_packages:
+  - gsDesign
+  - rpact
+  - survival
+  - nph
+  - simtrial
+
+tags:
+  - fourier
+  - evolocumab
+  - pcsk9-inhibitor
+  - ldl-cholesterol
+  - mace
+  - cvot
+  - secondary-prevention
+  - superiority
+  - landmark-trial
+  - hierarchical-mace
+
+caveats: |
+  FOURIER design / analysis points:
+
+  - **Two MACE definitions**: 5-point primary (broader, more events,
+    earlier readout) + 3-point key secondary (more stringent).
+    Common CVOT strategy: broader primary for power, narrower
+    secondary for clinical interpretation.
+  - **CV death not significant**: despite dramatic LDL reduction
+    and MACE benefit, individual CV death HR NS. Highlights that
+    MACE composite can be positive while components vary.
+  - **Short median follow-up (2.2 yr)**: event-driven stopped earlier
+    than originally anticipated due to unexpectedly high event rate.
+    Concern: longer-term trial might show larger effects (FOURIER-OLE
+    extension answered this).
+  - **Post-hoc FOURIER-OLE (2022)**: 5-year open-label extension
+    showed sustained benefit, including late-emerging CV mortality
+    reduction (originally underpowered).
+
+  **Sample-size calculation**:
+  ```r
+  library(gsDesign)
+
+  # FOURIER-like sizing
+  d <- gsSurv(
+    k = 2,
+    alpha = 0.025,               # one-sided
+    beta = 0.10,
+    lambdaC = -log(1 - 0.075),   # ~7.5% annual MACE rate
+    hr = 0.85,
+    eta = 0,
+    T = 48, minfup = 24,
+    test.type = 2,
+    sfu = sfLDOF
+  )
+  # ~ 1630 events at HR 0.85
+  # ~ 27,500 randomized
+  ```
+
+  **Relationship to other lipid CVOTs**:
+  - **IMPROVE-IT** (2015): ezetimibe + statin, HR 0.94 for MACE
+    (incremental modest benefit).
+  - **FOURIER (this case)** (2017): evolocumab + statin, HR 0.85.
+  - **ODYSSEY OUTCOMES** (2018): alirocumab, HR 0.85.
+  - **REDUCE-IT** (2019): icosapent ethyl, HR 0.75 (larger effect
+    in hypertriglyceridemia).
+  - **CLEAR Outcomes** (2023): bempedoic acid, HR 0.87 (statin-
+    intolerant population).
+
+  **Design lessons**:
+  - LDL reduction magnitude (59%) did not fully translate to mortality
+    benefit in short-term trial — LDL hypothesis has time dimension.
+  - Long-term extension trials important for durable endpoints.
+  - Hierarchical 5-point then 3-point testing is modern CVOT
+    standard for cardio-metabolic drugs.
+  - Cost-effectiveness analysis essential for biologics in secondary
+    prevention with modest ARR.
