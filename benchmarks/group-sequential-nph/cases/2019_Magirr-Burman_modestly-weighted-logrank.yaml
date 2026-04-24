@@ -1,0 +1,143 @@
+id: 2019_Magirr-Burman_modestly-weighted-logrank
+family: group-sequential-nph
+source:
+  kind: methodology-paper
+  citation: "Magirr D, Burman CF. Modestly weighted logrank tests. Stat Med. 2019 Sep 20;38(20):3782-3790. Also: Lin R, Lin J, Roychoudhury S, et al. Alternative analysis methods for time to event endpoints under non-proportional hazards: a comparative analysis. Stat Biopharm Res. 2020;12(2):187-198 (MaxCombo reference paper)."
+
+design:
+  indication: "Immuno-oncology and other TTE indications where delayed effect or non-proportional hazards is anticipated"
+  population: "Any TTE trial with potential NPH, especially delayed treatment effect from checkpoint inhibitors / adoptive cell therapy"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: tte
+    description: "PFS or OS with potential delayed effect — control dominates early, experimental dominates later"
+    measurement_time: "final analysis after target events observed"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    test_family: "Fleming-Harrington weighted logrank G(ρ,γ) with constrained / modest weighting"
+    magirr_burman_weight: "w(t) = max(S(t), 0.5) or similar floor — limits upweighting of late events"
+    comparison_to_fh: |
+      FH(0,1) test upweights late events strongly → good power
+      under delayed effect but sensitive to early crossing (can
+      show spurious rejection under null).
+      Modestly weighted logrank limits the weight floor → maintains
+      type I near boundary cases.
+    maxcombo_relationship: |
+      MaxCombo (Lin et al. 2020) = max of logrank + FH(0,1) +
+      FH(1,0) + FH(1,1); formally closed-testing adjusted. Provides
+      robust NPH power across scenarios.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **Magirr-Burman 2019 (Stat Med)** and the MaxCombo framework
+    (Lin et al. 2020) are the canonical modern methodology for
+    **weighted logrank tests under non-proportional hazards**, with
+    specific attention to the delayed-effect problem common in
+    immuno-oncology.
+
+    **The problem**:
+    - Fleming-Harrington G(0,1) test upweights late events, giving
+      power advantage under delayed effect.
+    - But if control and experimental curves cross early (unexpected
+      harm from experimental in early months), FH(0,1) can reject
+      H₀ even when the overall result is null or marginally negative.
+    - This 'perverse' behavior gave regulators pause about FH(0,1)
+      as primary test.
+
+    **Magirr-Burman modestly-weighted logrank**:
+    - Cap the upweighting: w(t) = max(S(t), 0.5) rather than w(t) = S(t).
+    - Retains most power under moderate delayed effect.
+    - Controls type I error even under crossing curves with harm
+      in early period.
+    - Formal properties: consistent with logrank under PH, near-
+      optimal under moderate delayed effect, conservative under
+      early-crossing harm.
+
+    **MaxCombo test (Lin et al. 2020)**:
+    - max of standardized logrank, FH(0,1), FH(1,0), FH(1,1).
+    - Closed-testing corrected for multiplicity — preserves
+      one-sided α at 0.025.
+    - Robust across delayed effect, early crossing, late crossing,
+      PH — minimal worst-case power loss vs best single test.
+    - Pragmatic compromise endorsed by FDA 2021 NPH workshop and
+      used in several recent IO Phase 3 designs.
+
+    **Sample-size / event-count design**:
+    - gsMaxCombo or simulation-based approach — closed-form formulas
+      do not exist for arbitrary NPH scenarios.
+    - `nph::nphparams` and `gsDesign2::gs_design_wlr` implement
+      weighted-logrank GS designs.
+    - Typically slightly higher events than logrank (5-15%) to
+      accommodate multiplicity adjustment in MaxCombo.
+
+    **Real applications**:
+    - **POLARIX** (2022) — DLBCL, used FH(0,1).
+    - Several recent CAR-T and checkpoint-inhibitor Phase 3 trials
+      pre-specified MaxCombo or modestly-weighted logrank.
+    - **CheckMate** and **KEYNOTE** programs consider MaxCombo in
+      sensitivity analyses.
+
+r_packages:
+  - nph (Magirr-Wason-Ristl weighted tests)
+  - gsDesign2 (group-sequential weighted logrank)
+  - simtrial (FDA TSCI — simulation NPH trials)
+  - survRM2 (RMST complement)
+  - npsurvSS (NPH sample sizing)
+  - rpact
+
+tags:
+  - magirr-burman
+  - modestly-weighted-logrank
+  - maxcombo
+  - fleming-harrington
+  - nph
+  - delayed-effect
+  - immuno-oncology
+  - methodology-canonical
+
+caveats: |
+  MaxCombo and modestly-weighted logrank have become the de-facto
+  modern NPH-aware test choices, but caveats remain:
+  - **Pre-specification critical**: choosing weights after seeing
+    data invalidates the test.
+  - **Power gain vs logrank**: modest (~5-15%) under realistic
+    delayed-effect scenarios; rarely transformative.
+  - **Sample-size savings**: typically 10-25% fewer events vs
+    logrank under well-specified delayed effect; near-neutral under
+    PH.
+
+  Other NPH-aware alternatives:
+  - **RMST** (Uno 2014, in corpus): complementary, model-free.
+  - **Milestone analysis**: survival at fixed t — extreme RMST.
+  - **Parametric / piecewise models**: Royston-Parmar flexible
+    parametric; sensitive to model specification.
+  - **Weighted Kaplan-Meier**: similar to RMST.
+
+  Regulatory acceptance:
+  - FDA 2021 NPH workshop endorsed MaxCombo and modestly-weighted
+    logrank as acceptable alternatives to logrank when NPH is
+    anticipated.
+  - EMA similar stance; requires pre-specification.
+  - PMDA familiar with MaxCombo from several Japanese Phase 3 IO
+    trial designs.
+
+  Open methodological questions:
+  - Best way to combine MaxCombo with group-sequential monitoring
+    (spending function choice under non-standard test statistic).
+  - Estimation of 'treatment effect' after MaxCombo rejection — HR
+    and RMST both needed.
