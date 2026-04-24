@@ -104,7 +104,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | mams | ✅ | 7 | 5 | ✅ |
 | tte-ph | ✅ | 10 | 8 | ✅ |
 | tte-nph | ✅ | 8 | 8 | ✅ |
-| recurrent-events | ✅ | 6 | 4 | ✅ |
+| recurrent-events | ✅ | 8 | 4 | ✅ |
 | count-rate | ✅ | 6 | 4 | ✅ |
 | bayesian | ✅ | 9 | 5 | ✅ |
 | platform | ✅ | 7 | 5 | ✅ |

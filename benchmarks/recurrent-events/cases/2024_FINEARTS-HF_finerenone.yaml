@@ -1,0 +1,150 @@
+id: 2024_FINEARTS-HF_finerenone
+family: recurrent-events
+source:
+  kind: primary-results
+  citation: "Solomon SD, McMurray JJV, Vaduganathan M, et al. Finerenone in heart failure with mildly reduced or preserved ejection fraction. N Engl J Med. 2024 Oct 17;391(16):1475-1485. Design: Vaduganathan M, Filippatos G, Claggett BL, et al. Finerenone in heart failure and chronic kidney disease with type 2 diabetes: the FINEARTS-HF trial design. Eur Heart J. 2024 Mar 21;45(12):1048-1058."
+
+design:
+  indication: "Heart failure with mildly reduced or preserved ejection fraction (HFmrEF/HFpEF), LVEF ≥ 40%, NYHA II-IV, elevated NT-proBNP, evidence of structural heart disease"
+  population: "Adults ≥ 40 with chronic HFmrEF/HFpEF on guideline-recommended therapy (SGLT2i allowed)"
+  arms:
+    - name: "finerenone (non-steroidal MRA, titrated 10-40 mg OD)"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: recurrent-events
+    description: "Composite of total (first and recurrent) worsening HF events (HF hospitalization or urgent HF visit) and cardiovascular death — primary analyzed with LWYY (Lin-Wei-Yang-Ying) semiparametric proportional rates model"
+    measurement_time: "event-driven with minimum follow-up"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    scale: rate-ratio
+    assumed_rate_ratio: 0.80
+    control_event_rate_annual_composite: 0.23
+    design_approach: |
+      Primary analysis: LWYY semiparametric model for recurrent
+      composite events + terminal CV death.
+      - Total worsening HF events (not just first) + CV death.
+      - LWYY model with robust sandwich variance.
+      - Rate ratio as primary effect measure.
+      - Target rate ratio 0.80.
+      - Two-sided α = 0.05, power 90%.
+      - Target total primary events ~ 1,450 (approximate event-driven).
+    hierarchical_testing: |
+      Pre-specified hierarchical order:
+      1. Primary composite rate ratio (LWYY).
+      2. Improvement in KCCQ-TSS at 6/9/12 months.
+      3. Change in NYHA class.
+      4. Composite renal endpoint.
+      5. All-cause death.
+  accrual:
+    duration_months: 26
+  followup:
+    planned_months: 32
+    median_actual_months: 32
+
+expected:
+  sample_size_total: 6001
+  sample_size_per_arm: [3003, 2998]
+  events_total_target: 1450
+  events_total_actual: 1624
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **FINEARTS-HF** is the first major HF trial with **recurrent
+    events + CV death as co-primary** analyzed with the LWYY model
+    as the primary statistical approach (versus historical first-event
+    time-to-event primary).
+
+    **Design**:
+    - 6,001 randomized (1:1) placebo-controlled.
+    - 37 countries, 653 sites.
+    - Background: ~ 14% on SGLT2i at baseline (reflected contemporary care).
+    - Recurrent-event primary reflects ICH / FDA preference for
+      total-event analyses in recurrent-disease settings.
+
+    **Positive result at final**:
+    - Primary (LWYY rate ratio): 0.84 (0.74-0.95), P = 0.007.
+    - Total worsening HF events: 842 finerenone vs 1,024 placebo.
+    - CV death: HR 0.93 (NS alone).
+    - KCCQ-TSS at 12 months: +1.6 points (P < 0.001).
+    - Subgroup by SGLT2i use at baseline: consistent treatment effect.
+
+    **Regulatory** (as of 2026):
+    - FDA accepted sNDA for HFmrEF/HFpEF indication extension (2025).
+    - EMA review ongoing.
+    - First non-steroidal MRA for HFmrEF/HFpEF.
+
+r_packages:
+  - WR (win ratio)
+  - frailtypack (recurrent events + terminal)
+  - reReg (recurrent events)
+  - survival (LWYY via Andersen-Gill coxph with robust SE)
+  - nlme
+
+tags:
+  - fineArts-hf
+  - finerenone
+  - hfpef
+  - hfmref
+  - lwyy
+  - recurrent-events
+  - non-steroidal-mra
+  - composite-with-death
+  - hierarchical-testing
+  - landmark-trial
+
+caveats: |
+  FINEARTS-HF design points:
+
+  - **LWYY primary**: Lin-Wei-Yang-Ying 2000 (in corpus) semiparametric
+    model for recurrent composite + CV death. Robust sandwich SE.
+  - **Terminal event handling**: CV death both contributes events
+    (each death = 1 event) and censors further observation. LWYY
+    handles this via pseudo-observations.
+  - **Rate ratio vs HR first event**: primary rate ratio captures total
+    disease burden, not just time to first event. Modern ICH and FDA
+    recurrent-event guidance (2018-2021) favor this in HF and COPD.
+  - **SGLT2i background**: at trial design (2019-2020), SGLT2i was not
+    yet HFpEF standard. By trial execution (2020-2024), EMPEROR-Preserved
+    (2021) and DELIVER (2022) had established SGLT2i. 14% baseline SGLT2i
+    rate in FINEARTS-HF reflects real-world uptake evolution.
+
+  **Analysis model**:
+  ```r
+  library(survival)
+  # LWYY via Andersen-Gill with robust sandwich variance
+  fit <- coxph(
+    Surv(start, stop, event) ~ trt + strata(region) + cluster(id),
+    data = recurrent_df,   # one row per event (Andersen-Gill format)
+    method = "breslow"
+  )
+  summary(fit)  # rate ratio + robust SE
+  ```
+
+  **Relationship to other HFpEF / HFmrEF trials**:
+  - **PARAGON-HF** (2019, in corpus): sacubitril/valsartan — narrowly
+    missed primary.
+  - **EMPEROR-Preserved** (2021): empagliflozin HR 0.79.
+  - **DELIVER** (2022): dapagliflozin HR 0.82.
+  - **FINEARTS-HF** (2024, this case): finerenone rate ratio 0.84.
+  - Quadruple therapy now emerging for HFpEF.
+
+  **Methodology lineage**:
+  - **LWYY 2000** (in corpus): methodology foundation.
+  - **Rogers-Pocock 2014** (in corpus): joint frailty for HF.
+  - **EMPEROR-Reduced** (2020, in corpus): first HF trial with LWYY
+    secondary.
+  - **FINEARTS-HF** (this case): first major HF trial with LWYY
+    recurrent + death primary.
+
+  **Regulatory acceptance of recurrent-event primaries**:
+  - EMA / FDA discussions 2018-2023 generally accept total-event
+    analyses in HF and COPD.
+  - FDA HF outcome endpoint guidance (2019 draft) preferred total events.
+  - FINEARTS-HF establishes recurrent-event LWYY as viable primary for
+    future HF Phase 3.

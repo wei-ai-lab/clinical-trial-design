@@ -1,0 +1,144 @@
+id: 2018_IMPACT_fluticasone-umeclidinium-vilanterol_copd
+family: recurrent-events
+source:
+  kind: design-paper
+  citation: "Lipson DA, Barnhart F, Brealey N, et al. Once-daily single-inhaler triple versus dual therapy in patients with COPD. N Engl J Med. 2018 May 3;378(18):1671-1680. Design paper: Pascoe S, Locantore N, Dransfield MT, et al. Blood eosinophil counts, exacerbations, and response to the addition of inhaled fluticasone furoate to vilanterol in patients with chronic obstructive pulmonary disease: a secondary analysis of data from two parallel randomised controlled trials. Lancet Respir Med. 2015 Jun;3(6):435-42. Statistical methods: Pascoe SJ, Lipson DA, Locantore N, et al. A phase III randomised controlled trial of single-dose triple therapy in COPD: the IMPACT protocol. Eur Respir J. 2016 Aug;48(2):320-30."
+
+design:
+  indication: "Moderate-to-severe COPD with history of exacerbations"
+  population: "Adults ≥ 40 with symptomatic COPD (CAT ≥ 10), post-bronchodilator FEV1 < 50% predicted OR 50-80% with ≥ 2 moderate or 1 severe exacerbation in prior year"
+  arms:
+    - name: "Triple: fluticasone furoate + umeclidinium + vilanterol (FF/UMEC/VI)"
+      allocation: 2
+    - name: "ICS/LABA: fluticasone furoate + vilanterol (FF/VI)"
+      allocation: 2
+    - name: "LAMA/LABA: umeclidinium + vilanterol (UMEC/VI)"
+      allocation: 1
+  endpoint:
+    type: recurrent-events
+    description: "Annual rate of on-treatment moderate or severe COPD exacerbations (primary). Negative binomial / recurrent-event model with on-treatment follow-up."
+    measurement_time: "52 weeks"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    scale: rate-ratio
+    assumed_rate_control: 1.10
+    assumed_rate_ratio_triple_vs_ICSLABA: 0.85
+    assumed_rate_ratio_triple_vs_LAMALABA: 0.83
+    design_approach: |
+      Negative binomial regression for exacerbation count with
+      log(on-treatment time) offset.
+      Hierarchical closed testing of multiple dual comparisons:
+      (1) Triple vs FF/VI.
+      (2) Triple vs UMEC/VI.
+      (3) FF/VI vs UMEC/VI.
+    multiplicity_control: |
+      Pre-specified Hochberg procedure across the two primary dual
+      comparisons of triple against each dual (FF/VI and UMEC/VI).
+    sample_size_calculation: |
+      Assumed annual exacerbation rate 1.1 on dual therapy.
+      15-17% relative reduction from triple.
+      Over-dispersion parameter k ~ 0.5.
+      Total N ~ 10,000 with 2:2:1 allocation achieves 90% power.
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 12
+
+expected:
+  sample_size_total: 10355
+  sample_size_per_arm: [4151, 4134, 2070]
+  events_total: null
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **IMPACT** was the largest single-inhaler triple-therapy COPD
+    exacerbations trial, establishing FF/UMEC/VI (Trelegy Ellipta)
+    as superior to either dual arm.
+
+    **Design**:
+    - 3 parallel arms with 2:2:1 allocation (triple : ICS/LABA : LAMA/LABA).
+    - Total 10,355 randomized; ~4,150 per major arm.
+    - 52-week double-blind treatment.
+    - 37 countries, ~1,000 sites.
+
+    **Primary analysis**:
+    - Negative binomial regression for annual exacerbation rate.
+    - Log(on-treatment time) offset.
+    - Covariate adjustment: smoking status, region, prior exacerbations,
+      baseline eosinophils.
+
+    **Key results**:
+    - Triple (0.91/yr) vs FF/VI (1.07/yr): RR 0.85 (0.80-0.90), P < 0.001.
+    - Triple (0.91/yr) vs UMEC/VI (1.21/yr): RR 0.75 (0.70-0.81), P < 0.001.
+    - Severe exacerbations (hospitalization): Triple vs UMEC/VI
+      HR 0.66 (0.56-0.78).
+    - All-cause mortality: pre-specified secondary favored triple
+      (HR 0.72, 0.53-0.99) — led to label expansion in 2020.
+
+    **Regulatory**:
+    - FDA approval 2017 (Trelegy Ellipta) for COPD maintenance.
+    - 2020 label expansion: reduced all-cause mortality in COPD.
+
+r_packages:
+  - glmmTMB (negative binomial regression)
+  - MASS (glm.nb)
+  - frailtypack
+  - sandwich (robust variance)
+  - survival
+
+tags:
+  - impact
+  - copd
+  - triple-therapy
+  - recurrent-events
+  - negative-binomial
+  - exacerbations
+  - fluticasone-umeclidinium-vilanterol
+  - trelegy
+  - fda-mortality-label
+  - three-arm
+
+caveats: |
+  IMPACT design points:
+
+  - **Run-in**: 2-week run-in on FF/VI standardized pre-randomization.
+    All patients on ICS prior to run-in, raising critique that UMEC/VI
+    arm required ICS withdrawal — potentially biasing comparison.
+  - **On-treatment follow-up**: exacerbations counted only while on
+    study drug. Discontinuations attenuate treatment effect (similar to
+    per-protocol) — ICH E9(R1) would now require estimand pre-spec.
+  - **Multiplicity**: Hochberg adjustment across two primary dual
+    comparisons. Pre-specified testing order.
+  - **Negative binomial assumption**: over-dispersion parameter k ~ 0.5
+    estimated from prior trials (TORCH in corpus, UPLIFT in corpus).
+
+  **Analysis model**:
+  ```r
+  library(MASS)
+  fit <- glm.nb(
+    exac_count ~ trt + region + smoke_status + prior_exac +
+                 offset(log(on_trt_years)),
+    data = df
+  )
+  summary(fit)  # rate ratio
+  ```
+
+  **Relationship to prior COPD trials**:
+  - **TORCH 2007** (in corpus): first major ICS/LABA mortality trial.
+  - **UPLIFT 2008** (in corpus): tiotropium monotherapy.
+  - **FLAME 2016**: indacaterol/glycopyrronium vs salmeterol/fluticasone.
+  - **ETHOS 2020**: replicated IMPACT findings for
+    budesonide/glycopyrrolate/formoterol; also showed mortality benefit.
+
+  **Methodology lessons**:
+  - Negative binomial with on-treatment exposure offset is standard for
+    COPD exacerbation primary endpoints.
+  - Over-dispersion critical: ignoring it underestimates SE.
+  - Pre-registered eosinophil subgroup analysis revealed effect
+    modification (larger benefit at eos ≥ 150).
+  - Win ratio / LWYY considered but negative binomial preferred for
+    regulatory clarity.
