@@ -1,0 +1,132 @@
+id: 2005_Murphy_SMART_methodology
+family: non-standard
+source:
+  kind: methodology-paper
+  citation: "Murphy SA. An experimental design for the development of adaptive treatment strategies. Stat Med. 2005 May 30;24(10):1455-81."
+
+design:
+  indication: "Chronic / relapsing conditions where sequential treatment decisions matter (addiction, depression, ADHD, schizophrenia, HIV adherence)"
+  population: "Patients eligible for an initial first-line therapy with a defined response assessment point"
+  arms:
+    - name: "initial treatment A; if responder → maintenance; if non-responder → switch/augment (second randomization)"
+      allocation: 1
+    - name: "initial treatment B; if responder → maintenance; if non-responder → switch/augment (second randomization)"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Typically final outcome at fixed time or sustained response; can be continuous, binary, or TTE"
+    measurement_time: "at end of stage 2 (typically 6-12 months total)"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    design_type: "Sequential Multiple Assignment Randomized Trial (SMART)"
+    stages: 2
+    first_randomization: "At baseline, to initial treatment (e.g., A vs B)"
+    response_assessment: "At interim decision point (typically 4-12 weeks)"
+    second_randomization: "Non-responders re-randomized to salvage strategies; sometimes responders also re-randomized to maintenance options"
+    target_estimand: "Mean outcome for each dynamic treatment regime (DTR) — a rule mapping observed response to stage-2 treatment"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **Foundational SMART methodology paper**. Susan Murphy's 2005
+    paper established the statistical framework for **Sequential
+    Multiple Assignment Randomized Trials (SMART)** — the canonical
+    design for developing **dynamic treatment regimes (DTRs)**.
+
+    **Design principle**:
+    - Recognize that many chronic conditions require sequences of
+      decisions, not single treatments.
+    - Pre-specify an 'embedded' set of DTRs (rules of the form
+      'start with A; if non-response by week 8, switch to C').
+    - Randomize at each decision point so that each DTR is
+      represented with positive probability.
+
+    **Structure**:
+    - Stage 1: randomize all patients to initial treatments.
+    - Response assessment at pre-specified time.
+    - Stage 2: re-randomize non-responders (and sometimes responders)
+      to stage-2 options.
+    - Each patient's path through the design represents one of
+      several embedded DTRs.
+
+    **Analysis target**:
+    - Primary estimand: mean outcome for each embedded DTR.
+    - Secondary: pairwise comparisons of DTRs.
+    - Weighted or g-computation analysis accounts for the multi-stage
+      randomization structure.
+
+    **Sample-size considerations**:
+    - DTR comparison requires larger N than two-arm fixed-design
+      because the embedded-DTR effective N is typically 50-60% of
+      total enrollment.
+    - Typical SMART has 200-500 patients.
+    - Power calculation via simulation; simple formulas exist for
+      two-DTR comparison (Oetting et al. 2011).
+
+    **Real-world SMART trials**:
+    - **CATIE schizophrenia** (2005) — large NIMH trial; complex
+      staged antipsychotic strategy.
+    - **STAR*D depression** (2006) — 4-stage MDD treatment algorithm,
+      closest SMART-flavored large trial.
+    - **ExTENd alcoholism** (Almirall 2012) — explicit SMART design.
+    - **ASTRA-2 childhood ADHD** (2014).
+
+    **Regulatory context**:
+    - FDA 2019 Adaptive Designs guidance briefly mentions SMART;
+      primarily a health-services-research and academic tool rather
+      than confirmatory pharma design.
+    - Traditionally used for behavioral / device / HSR interventions;
+      less common for drug registrations.
+
+r_packages:
+  - DynTxRegime (Holloway-Laber-Kosorok-Davidian)
+  - qLearn (Q-learning for DTRs)
+  - policytree (optimal DTR estimation)
+  - SMARTp, SMARTbayesR
+
+tags:
+  - murphy
+  - smart
+  - dynamic-treatment-regime
+  - sequential-randomization
+  - q-learning
+  - methodology-foundational
+  - behavioral-trials
+  - mental-health
+
+caveats: |
+  SMART designs are powerful for chronic-disease sequential-decision
+  settings but rarely used in confirmatory pharma Phase 3 because:
+  - Two-stage randomization complicates labeling and regulatory
+    review.
+  - Sample-size per DTR is effectively reduced.
+  - Most drug indications don't have a natural response/non-response
+    branching structure.
+
+  Real Phase 3 SMART-flavored trials include STAR*D (depression) and
+  some HIV adherence trials, but pure SMART designs are more common
+  in behavioral interventions, digital health apps (MRT/micro-
+  randomized trials, Liao-Klasnja-Murphy 2016), and implementation
+  science.
+
+  Related methodology:
+  - Q-learning (Watkins, reinforcement learning) applied to estimate
+    optimal DTR.
+  - Policy learning (Zhao-Laber-Davidian 2015, Luedtke-van der Laan).
+  - Bayesian SMART (Wathen-Thall 2008) for adaptive randomization
+    within SMART.
+
+  Extensions (post-2005):
+  - SMARTs with continuous responder classifications (Almirall 2014).
+  - Micro-randomized trials for digital health (Liao et al. 2016).
+  - Hybrid SMART + response-adaptive randomization.

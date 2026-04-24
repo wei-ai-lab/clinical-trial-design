@@ -1,0 +1,141 @@
+id: 2015_Rosenberger-Lachin_RAR
+family: non-standard
+source:
+  kind: methodology-textbook
+  citation: "Rosenberger WF, Lachin JM. Randomization in Clinical Trials: Theory and Practice. 2nd edition. Wiley Series in Probability and Statistics; 2015. ISBN 978-1-118-74299-9."
+
+design:
+  indication: "any (RAR methodology — most practical applications in dose-finding Phase 2, oncology, rare disease, pediatrics)"
+  population: "Ethically sensitive trials where minimizing assignment to inferior arms is paramount"
+  arms:
+    - name: "treatment 1 (allocation probability updates over trial)"
+      allocation: dynamic
+    - name: "treatment 2 (allocation probability updates over trial)"
+      allocation: dynamic
+  endpoint:
+    type: binary
+    description: "Most commonly response / success; RAR extends to continuous and TTE"
+    measurement_time: "early primary endpoint needed for responsive updates"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    design_type: "Response-Adaptive Randomization — allocation probability updated based on accumulating outcome data"
+    rar_schemes: |
+      (1) Play-the-winner (Wei-Durham) — simple urn scheme.
+      (2) Randomized Play-the-Winner (RPW).
+      (3) Doubly Adaptive Biased Coin Design (DBCD) — Eisele/Hu-Rosenberger.
+      (4) Bayesian Adaptive Randomization (BAR) — posterior probability
+          of best.
+      (5) Optimal allocation to minimize variance of treatment
+          effect estimate (Neyman allocation).
+    control_of_bias: "Permuted-block restriction or stratification within RAR to limit covariate imbalance"
+    regulatory_concerns: |
+      FWER control via simulation; bias due to selection effects;
+      chronological drift (patient characteristics change over time
+      while allocation probability evolves).
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **Rosenberger-Lachin 2015 (2nd ed)** is the canonical textbook
+    on randomization methodology, with comprehensive coverage of
+    response-adaptive randomization (RAR). It is the single best
+    reference for RAR design, analysis, and regulatory considerations.
+
+    **Core RAR schemes**:
+    1. **Play-the-winner (Wei-Durham 1978)**: urn with balls
+       representing treatments; success adds balls of winning arm,
+       failure adds opposing. Deterministic extreme; randomized
+       version RPW more practical.
+    2. **Doubly Adaptive Biased Coin (DBCD)**: Eisele 1995, Hu-
+       Rosenberger 2003, 2006. Asymptotically approaches target
+       allocation ρ* (e.g., Neyman-optimal or ethical allocation).
+    3. **Bayesian Adaptive Randomization**: allocation ~ P(best |
+       data); used in I-SPY2, BATTLE, many Phase 2 trials.
+
+    **Motivation**:
+    - Ethics: fewer patients assigned to apparently inferior arm.
+    - Efficiency: Neyman allocation minimizes variance of effect
+      estimate.
+    - Learning: favors allocation that maximally informs decision.
+
+    **Critiques** (addressed in textbook):
+    - Chronological bias: patient mix drifts over time while
+      allocation probability evolves — can invert analysis if not
+      stratified or time-adjusted.
+    - Small-sample type I error inflation under RAR when nuisance
+      parameters differ across treatment arms.
+    - Complexity of analysis: standard t-test invalid; randomization
+      test or re-randomization inference required.
+
+    **Analysis**:
+    - Randomization-based inference preferred (permutation on
+      actual randomization scheme).
+    - Maximum-likelihood analysis valid asymptotically.
+    - Logistic / Cox regression with time-adjustment strata.
+
+    **Regulatory stance**:
+    - FDA cautiously supportive — FDA 2019 Adaptive Designs guidance
+      discusses RAR with strong cautions.
+    - Used routinely in Phase 2 (e.g., I-SPY2) but rarely in
+      confirmatory Phase 3 for CAT approvals due to complexity.
+    - Platform trials (RECOVERY, REMAP-CAP) use stratified
+      adaptive-randomization that is a hybrid of fixed and RAR.
+
+r_packages:
+  - RARtool (R package for RAR simulation)
+  - BayesianTools (MCMC for Bayesian RAR)
+  - adaptr (platform/RAR simulation with JAGS back end)
+  - experiment (randomization inference)
+
+tags:
+  - rosenberger-lachin
+  - rar
+  - response-adaptive-randomization
+  - textbook
+  - bayesian-adaptive
+  - dbcd
+  - play-the-winner
+  - randomization-inference
+  - methodology-canonical
+
+caveats: |
+  RAR is a powerful but contested methodology. Rosenberger-Lachin
+  textbook is even-handed — presents benefits (fewer patients on
+  inferior arm, ethical appeal) but explicitly catalogues risks:
+
+  - **Chronological bias**: if patient mix changes over time (e.g.,
+    seasonality, evolving standard-of-care background), RAR can
+    produce biased treatment-effect estimates. Stratification or
+    time-adjustment essential.
+  - **Type I error inflation** under some nuisance-parameter
+    scenarios; requires simulation verification.
+  - **Operational complexity**: real-time outcome assessment needed,
+    data capture and allocation-probability update infrastructure
+    required.
+  - **Regulatory skepticism** for confirmatory use — FDA discusses
+    RAR in 2019 guidance with careful caveats about pre-specification.
+
+  Historical / modern real applications:
+  - **ECMO neonatal trial (Bartlett 1985)**: first major RPW
+    application, very controversial.
+  - **Fluoxetine suicidality trial** (Tamura 1994).
+  - **I-SPY2**: Bayesian adaptive randomization for breast cancer
+    Phase 2, platform-structured.
+  - **BATTLE/BATTLE-2** (umbrella): Bayesian adaptive randomization
+    by biomarker subgroup.
+  - **REMAP-CAP**: stratified adaptive-randomization hybrid.
+
+  Modern theoretical refinements:
+  - Hu-Zhang optimal allocation for binary (2004).
+  - Cheung 2013 constrained adaptive randomization.
+  - Thall-Wathen 2007 Bayesian adaptive randomization for oncology.
