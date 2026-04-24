@@ -1,0 +1,257 @@
+id: 2011_Rosenblum-vanderLaan_adaptive-enrichment
+family: adaptive-enrichment
+source:
+  kind: methodology-paper
+  citation: "Rosenblum M, van der Laan MJ. Optimizing randomized trial designs to distinguish which subpopulations benefit from treatment. Biometrika. 2011;98(4):845-860. Companion: Rosenblum M, Qian T, Du Y, Qiu H, Fisher A. Multiple testing procedures for adaptive enrichment designs: barely valid, exactly valid, and approximately valid. Biostatistics. 2016;17(4):732-746."
+
+design:
+  indication: "Generic methodology applicable to any Phase 3 trial with pre-specified subgroup of interest for potential enrichment"
+  population: "Any disease with candidate predictive biomarker defining a marker-positive subgroup embedded within overall population"
+  arms:
+    - name: "experimental treatment"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Continuous, binary, or time-to-event — methodology applies broadly"
+    measurement_time: "per protocol at each stage"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    scale: methodology
+    adaptive_enrichment_framework: |
+      Rosenblum-van der Laan (2011) presented an adaptive enrichment
+      design framework with PROSPECTIVE type I error control under
+      arbitrary adaptive enrollment rules.
+
+      **Two-stage structure**:
+
+      Stage 1: enroll ALL comers (both marker+ and marker-).
+        Estimate treatment effect Δ̂+ in marker+ and Δ̂- in marker-.
+
+      Interim decision rule (pre-specified) — choose ONE:
+        a) Continue enrolling ALL (if both subgroups show benefit).
+        b) ENRICH to marker+ only (if Δ̂+ large, Δ̂- small).
+        c) Stop for futility (if both subgroups show no benefit).
+
+      Stage 2: enroll per decision rule, continue to final analysis.
+
+      Final hypothesis testing addresses:
+        H_0^overall: Δ_overall ≤ 0
+        H_0^positive: Δ_+ ≤ 0
+
+      Multiple testing procedures (MTP) control family-wise error rate
+      (FWER) at α across both hypotheses.
+    key_contribution: |
+      **Prospective α control via pre-specified decision rules**:
+      - Unlike post-hoc subgroup analysis, α is protected by design.
+      - Any adaptation function F(Δ̂+, Δ̂-) specifying stage-2 enrollment
+        is allowed, provided it is pre-specified.
+      - Critical values computed via multivariate normal distribution
+        accounting for adaptive enrollment.
+
+      **Three MTP families (Rosenblum et al. 2016)**:
+      1. **Barely valid**: simplest, uses Bonferroni split.
+         - FWER = α strictly.
+         - Conservative.
+      2. **Exactly valid**: numerically computed critical values.
+         - FWER = α exactly.
+         - More powerful than Bonferroni.
+      3. **Approximately valid**: asymptotic normal approximations.
+         - FWER ≈ α (simulation-verified).
+         - Most powerful but requires careful simulation.
+    weighted_p_value_combination: |
+      At final analysis, stage-1 and stage-2 p-values combined via
+      pre-specified weights:
+        p_combined = w_1 · z_1 + w_2 · z_2   on z-scale
+
+      Weights can be pre-specified based on:
+      - Equal (w_1 = w_2 = 1/√2).
+      - Information-based (w_k ∝ √n_k).
+      - Decision-dependent (different if enriched vs all-comer).
+
+      Weighted inverse-normal combination preserves α under any
+      pre-specified adaptive rule (Cui-Hung-Wang principle).
+    advantages_over_fixed_enrichment: |
+      - Hedges against biomarker uncertainty: enrolls all initially,
+        enriches only if data supports it.
+      - Preserves option to claim overall population benefit.
+      - Protects α prospectively — no post-hoc inflation.
+      - More efficient than always-all-comer if marker-negative
+        benefit is minimal.
+    numerical_example: |
+      HER2+ breast cancer with uncertain marker-negative benefit:
+      - γ = 0.25 HER2+ prevalence.
+      - Stage 1: 200 patients (50 HER2+, 150 HER2-).
+      - Interim decision rule:
+          IF Δ̂+ > 0.3 AND Δ̂- < 0.1: ENRICH to HER2+ only.
+          IF Δ̂+ > 0.3 AND Δ̂- > 0.1: continue ALL-COMER.
+          IF Δ̂+ < 0.1: futility stop.
+      - Stage 2: 400 patients per chosen cohort.
+
+      MTP partitions α across:
+        H_0^positive: Δ_+ ≤ 0 (always tested)
+        H_0^overall: Δ_overall ≤ 0 (tested only if all-comer continued)
+
+      Exactly-valid MTP preserves overall FWER = 0.025 despite
+      adaptation.
+  comparison_to_other_methods: |
+    **Vs Wang-O'Neill-Hung (2007, in corpus)**:
+    - WOH focused on specific decision rules (rules 1-3).
+    - Rosenblum-vdL allows arbitrary pre-specified decision function.
+
+    **Vs Jenkins-Stone-Jennison (2011, in corpus)**:
+    - JSJ used combination tests with group-sequential boundaries.
+    - Rosenblum-vdL uses multiple testing procedures directly.
+    - Both control FWER; approaches complement.
+
+    **Vs Magnusson-Turnbull (2013, in corpus)**:
+    - MT derived OPTIMAL enrichment decision rules (minimize expected N).
+    - Rosenblum-vdL shows any rule is valid; doesn't optimize.
+
+    **Vs Brannath-Mehta (2009, in corpus)**:
+    - BM used Fisher combination + two hypotheses.
+    - Rosenblum-vdL generalizes combination approach.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **Rosenblum-van der Laan 2011** provided a rigorous framework for
+    adaptive enrichment designs with PROSPECTIVE type I error control
+    under **arbitrary** pre-specified decision rules — an important
+    generalization beyond specific methods like Wang-O'Neill-Hung.
+
+    **Core contributions**:
+    - Any F(Δ̂+, Δ̂-) stage-1 decision rule is allowed.
+    - Stage-2 critical values computed via multivariate normal
+      distribution accounting for selection.
+    - Three MTP families: barely valid (Bonferroni), exactly valid
+      (numerical), approximately valid (asymptotic).
+    - Weighted combination of stage-1 and stage-2 p-values via
+      Cui-Hung-Wang principle.
+
+    **Why this matters**:
+    - Fixed enrichment (Simon-Maitournam) requires committing a
+      priori to targeted vs untargeted.
+    - Adaptive enrichment (Rosenblum-vdL) defers commitment to
+      interim — hedges biomarker uncertainty.
+    - α is controlled prospectively — regulatory acceptable.
+
+    **R implementation**: `rpact` supports some enrichment designs.
+    Custom simulation typically required for optimal MTP selection.
+
+r_packages:
+  - rpact (some adaptive enrichment support)
+  - AdaptiveDesign
+  - adaptTest
+  - AGSDest
+  - Custom simulation for exact MTPs
+
+tags:
+  - rosenblum
+  - vanderlaan
+  - adaptive-enrichment
+  - multiple-testing-procedure
+  - mtp
+  - fwer-control
+  - prospective-alpha-control
+  - biomarker
+  - 2011
+  - biometrika
+  - methodology-foundational
+
+caveats: |
+  Rosenblum-van der Laan framework considerations:
+
+  - **Decision rule must be pre-specified**: any interim rule F(Δ̂+, Δ̂-)
+    is allowed but MUST be locked in the protocol. Post-hoc
+    modification invalidates α control.
+  - **MTP selection trade-off**: barely valid is simplest but
+    conservative (loses power). Exactly valid requires careful
+    numerical computation. Approximately valid requires extensive
+    simulation — can yield modest α inflation if asymptotics poor.
+  - **Weighted combination**: weights (w_1, w_2) must be pre-specified.
+    Common choices: equal (w_k = 1/√2), information-based (∝ √n_k),
+    or decision-dependent.
+  - **Information-fraction calibration**: for TTE, stage 1 information
+    = events at interim; for continuous, information = n.
+  - **Interim timing**: typically stage-1 enrolls ~ 30-50% of planned
+    N, sufficient for reliable subgroup estimation.
+
+  **Comparison of MTP families**:
+  | MTP | α control | Power | Complexity |
+  |---|---|---|---|
+  | Barely valid (Bonferroni) | Strictly ≤ α | Lowest | Trivial |
+  | Exactly valid | = α exactly | Highest | Numerical |
+  | Approximately valid | ≈ α | ~ Exactly | Simulation-required |
+
+  **Implementation outline**:
+  ```r
+  # Conceptual workflow (requires custom code):
+
+  # Stage 1
+  n1 <- 200                       # stage-1 sample size
+  # Enroll all comers, observe Δ̂+ and Δ̂-
+
+  # Pre-specified decision rule
+  enrichment_decision <- function(delta_plus, delta_minus) {
+    if (delta_plus > 0.3 & delta_minus < 0.1) return("enrich")
+    if (delta_plus > 0.3 & delta_minus >= 0.1) return("all_comer")
+    if (delta_plus < 0.1) return("futility")
+    return("all_comer")           # default
+  }
+
+  # Compute stage-2 critical values via multivariate normal
+  # (requires numerical integration accounting for selection)
+
+  # Weighted combination at final analysis
+  p_combined <- pnorm(
+    w1 * qnorm(1 - p_stage1) + w2 * qnorm(1 - p_stage2),
+    lower.tail = FALSE
+  )
+
+  # Compare to exactly-valid critical value (not 0.025 Bonferroni)
+  ```
+
+  **Relationship to other adaptive enrichment cases**:
+  - **Simon-Maitournam 2004** (in corpus): fixed enrichment foundation.
+  - **Freidlin-Simon 2005** (in corpus): adaptive signature.
+  - **Wang-O'Neill-Hung 2007** (in corpus): specific decision rules.
+  - **Brannath-Mehta 2009** (in corpus): combination tests.
+  - **Jenkins-Stone-Jennison 2011** (in corpus): two-stage GS boundaries.
+  - **Rosenblum-vdL 2011 (this case)**: arbitrary decision rules + MTPs.
+  - **Magnusson-Turnbull 2013** (in corpus): optimal decision rules.
+
+  **Historical context**:
+  - **Follmann 1997**: early combination-test enrichment.
+  - **Bauer-Kohne 1994**: conditional error function (foundation).
+  - **Müller-Schäfer 2001**: α-adaptive extension.
+  - **Cui-Hung-Wang 1999**: weighted-combination principle.
+  - **Rosenblum-vdL 2011** (this case): unified MTP framework.
+  - **Rosenblum et al. 2016**: tutorial + three MTP families.
+
+  **Regulatory acceptance**:
+  - **FDA 2019 Adaptive Designs Guidance**: adaptive enrichment
+    explicitly addressed, prospective α control required.
+  - **EMA 2007 CHMP Reflection Paper**: adaptive designs with
+    pre-specified rules accepted.
+  - **Challenge**: exactly-valid MTPs require numerical methods FDA
+    reviewers must verify — extensive simulation documentation
+    typically needed.
+
+  **Practical sample-size considerations**:
+  - Stage-1 n should be ~ 30-50% of planned N for reliable
+    subgroup estimation.
+  - Futility boundary helpful to cap trials with no signal.
+  - Weighted combination information-based (w_k ∝ √n_k) usually
+    near-optimal.

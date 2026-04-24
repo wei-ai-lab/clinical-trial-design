@@ -1,0 +1,268 @@
+id: 2004_Simon-Maitournam_targeted-design
+family: adaptive-enrichment
+source:
+  kind: methodology-paper
+  citation: "Simon R, Maitournam A. Evaluating the efficiency of targeted designs for randomized clinical trials. Clin Cancer Res. 2004 Oct 15;10(20):6759-6763. Companion: Maitournam A, Simon R. On the efficiency of targeted clinical trials. Stat Med. 2005 Feb 15;24(3):329-339. Simon R. Clinical trials for predictive medicine. Stat Med. 2012;31(25):3031-3040."
+
+design:
+  indication: "Oncology settings with candidate predictive biomarker suggesting differential treatment benefit"
+  population: "Patients with disease amenable to biomarker classification (e.g., HER2, EGFR, BRAF, MSI-H, KRAS)"
+  arms:
+    - name: "experimental treatment (e.g., targeted therapy)"
+      allocation: 1
+    - name: "control (standard of care)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Any primary endpoint — methodology applies to continuous, binary, or TTE"
+    measurement_time: "per protocol"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    scale: methodology
+    design_choices: |
+      Simon-Maitournam compared THREE design strategies for trials
+      with candidate predictive biomarker:
+
+      **1. Untargeted (all-comer) design**:
+         - Enroll all patients regardless of biomarker.
+         - Test treatment effect in overall population.
+         - Optional subgroup analysis in marker-positive.
+
+      **2. Targeted (enrichment) design**:
+         - Screen biomarker status before enrollment.
+         - Enroll ONLY marker-positive patients.
+         - Test treatment effect in marker-positive only.
+
+      **3. Stratified (interaction) design**:
+         - Enroll all patients.
+         - Stratify analysis by biomarker.
+         - Co-primary: treatment in marker+ AND overall (or
+           interaction test).
+    efficiency_comparison: |
+      Key finding: targeted design is MORE efficient than untargeted
+      ONLY when treatment is truly ineffective in marker-negative
+      patients.
+
+      If prevalence of marker-positive is γ ∈ (0, 1):
+      - Treatment effect Δ+ in marker-positive (effect size).
+      - Treatment effect Δ- in marker-negative (possibly 0).
+
+      Sample-size ratio (targeted / untargeted) depends on:
+      - Relative treatment effect Δ- / Δ+.
+      - Marker prevalence γ.
+
+      When Δ- / Δ+ = 0 (treatment useless in marker-negative):
+        Targeted n = γ · untargeted n × (signal-to-noise improvement)
+        → Targeted WINS.
+
+      When Δ- / Δ+ = 1 (no differential effect):
+        Targeted n = untargeted n × (1/γ)
+        → Targeted LOSES if γ < 1.
+
+      When Δ- / Δ+ moderate:
+        Depends on biomarker assay cost and screen burden.
+    simon_maitournam_formula: |
+      Number of patients to randomize (randomized, not screened):
+
+      Untargeted:
+        n_rand = 4(z_{α/2} + z_β)^2 · (var) / Δ_overall^2
+
+      where Δ_overall = γ · Δ+ + (1 - γ) · Δ- is the population-
+      average treatment effect (diluted).
+
+      Targeted:
+        n_rand = 4(z_{α/2} + z_β)^2 · (var+) / Δ+^2
+
+      where var+ and Δ+ refer to marker-positive subset.
+
+      Number of patients to SCREEN (targeted only):
+        n_screen = n_rand / γ
+    screen_burden_key_insight: |
+      Even when targeted design randomizes fewer patients, it may
+      need to SCREEN more:
+      - If γ = 0.1 (rare biomarker), need 10× screening volume.
+      - Assay cost (e.g., next-gen sequencing) can dominate total
+        cost.
+      - Targeted design optimal when assay is cheap + Δ- ≈ 0 +
+        γ moderate (0.2-0.5).
+    numerical_example: |
+      HER2+ breast cancer: trastuzumab benefit in HER2+ only.
+
+      Assume:
+      - γ = 0.25 (HER2+ prevalence).
+      - Δ+ (marker-positive OS benefit) = HR 0.67 (reduction of 33%).
+      - Δ- (marker-negative effect) = HR 1.00 (no benefit).
+      - α = 0.025 one-sided, power = 90%.
+
+      Untargeted design:
+      - Pooled HR = (0.25 × 0.67 + 0.75 × 1.00) = 0.917 weighted.
+        (on log scale: 0.25 × log 0.67 + 0.75 × 0 = -0.100)
+        Pooled log HR = -0.100 → HR = 0.905.
+      - Events needed: 4 × 1.96 × 1.28 /  (log 0.905)^2
+        ≈ 988 events to detect pooled 10% effect.
+
+      Targeted design (HER2+ only):
+      - Target Δ+ HR = 0.67 → log HR = -0.400.
+      - Events needed: 4 × 1.96 × 1.28 / (-0.400)^2 ≈ 62 events.
+      - Total randomized: ~ 62 / event-rate (much smaller).
+      - But must screen ~ n_rand / 0.25 = 4× to find enrollees.
+
+      Targeted dominates: 62 events vs 988 events.
+  r_packages_implementation: |
+    - `gsDesign::nSurv()` for TTE sample-size at each stratum.
+    - `rpact::getSampleSizeSurvival()` for single-endpoint.
+    - `SubgrpID` (R): subgroup identification.
+    - `adaptTest` (R): adaptive enrichment tests.
+    - Custom coding for Simon-Maitournam efficiency comparison.
+  relation_to_adaptive_enrichment: |
+    Simon-Maitournam is FIXED enrichment (biomarker decided a priori).
+    Adaptive enrichment extends this to INTERIM decision whether to:
+    - Continue enrolling all (all-comer proceed).
+    - Enrich to marker-positive only (enrichment decision).
+    - Stop for futility.
+
+    Adaptive methods (Wang-O'Neill-Hung 2007, Jenkins-Stone-Jennison
+    2011, Magnusson-Turnbull 2013, Brannath-Mehta 2009) all build on
+    the Simon-Maitournam targeted vs untargeted efficiency framework.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **Simon-Maitournam 2004** established the quantitative framework
+    for comparing **targeted (enrichment) vs untargeted (all-comer)
+    designs** in the presence of a predictive biomarker — the
+    foundational paper underlying modern oncology predictive-biomarker
+    trial design.
+
+    **Key findings**:
+    - Targeted design MORE efficient when Δ- / Δ+ ≪ 1 (minimal
+      marker-negative benefit).
+    - Targeted design LESS efficient when Δ- / Δ+ ≈ 1 (no
+      differential effect).
+    - Screen burden scales as 1/γ — must account for assay cost
+      and logistics.
+    - Optimal: Δ- ≈ 0, γ moderate (0.2-0.5), cheap assay.
+
+    **Impact**:
+    - Trastuzumab trials (HER2+ only): prototypical targeted design.
+    - Gefitinib/erlotinib EGFR-mutant: targeted enrichment.
+    - Vemurafenib BRAF V600E: targeted enrichment.
+    - Pembrolizumab PD-L1 ≥ 50% (KEYNOTE-024, in corpus): enrichment.
+    - Every modern oncology targeted therapy trial consulted this
+      framework implicitly or explicitly.
+
+    **Relationship to downstream methodology**:
+    - **Wang-O'Neill-Hung 2007** (in corpus): adaptive extension.
+    - **Jenkins-Stone-Jennison 2011** (in corpus): formal two-stage
+      enrichment.
+    - **Magnusson-Turnbull 2013** (in corpus): optimal enrichment.
+    - **Brannath-Mehta 2009** (in corpus): confirmatory adaptive.
+
+r_packages:
+  - gsDesign
+  - rpact
+  - SubgrpID
+  - adaptTest
+  - AdaptiveDesign
+
+tags:
+  - simon-maitournam
+  - targeted-design
+  - enrichment
+  - biomarker
+  - predictive-biomarker
+  - methodology-foundational
+  - efficiency-comparison
+  - 2004
+  - clin-cancer-res
+
+caveats: |
+  Simon-Maitournam targeted design considerations:
+
+  - **Biomarker validity assumption**: assumes the biomarker genuinely
+    predicts treatment effect (not prognostic only). If biomarker is
+    prognostic but not predictive, targeted design may be worse than
+    untargeted.
+  - **Assay availability / cost**: targeted design requires upfront
+    assay. If assay is expensive or slow, screen burden dominates total
+    cost. Next-gen sequencing (~ $500/sample) vs IHC (~ $20/sample)
+    makes big difference.
+  - **Marker prevalence (γ)**: lower γ → higher screen burden but
+    cleaner signal. Optimal sweet spot: γ ≈ 0.2-0.5.
+  - **Generalizability loss**: targeted trial answers question only
+    about marker-positive. Regulatory label may be restricted.
+  - **Marker-negative subgroup**: if Δ- > 0 (some benefit in marker-
+    negative), targeted design forfeits that patient population.
+
+  **Efficiency table (simple illustration, α = 0.025, 90% power)**:
+  | γ | Δ- / Δ+ | Untargeted n / Targeted n |
+  |---|---|---|
+  | 0.1 | 0.0 | 10 (targeted dominates) |
+  | 0.1 | 0.5 | 2 (targeted wins) |
+  | 0.1 | 1.0 | 0.5 (untargeted wins) |
+  | 0.3 | 0.0 | 11 (targeted dominates) |
+  | 0.3 | 0.5 | 2.8 (targeted wins) |
+  | 0.3 | 1.0 | 1 (tied) |
+  | 0.5 | 0.0 | 4 (targeted dominates) |
+  | 0.5 | 0.5 | 1.8 |
+  | 0.5 | 1.0 | 1 |
+
+  **R implementation example (sample-size comparison)**:
+  ```r
+  library(gsDesign)
+
+  # Scenario: TTE endpoint, prevalence γ = 0.25, Δ+ = HR 0.67, Δ- = HR 1.0
+  gamma <- 0.25
+  hr_pos <- 0.67                # marker-positive HR
+  hr_neg <- 1.00                # marker-negative HR
+
+  # Untargeted (pooled) log HR
+  log_hr_pooled <- gamma * log(hr_pos) + (1 - gamma) * log(hr_neg)
+
+  # Events needed for untargeted
+  events_untargeted <- nEvents(
+    hr = exp(log_hr_pooled),
+    alpha = 0.025, beta = 0.10, sided = 1
+  )
+
+  # Events needed for targeted (HER2+ only)
+  events_targeted <- nEvents(
+    hr = hr_pos,
+    alpha = 0.025, beta = 0.10, sided = 1
+  )
+
+  # Randomized sample size depends on event rate × accrual
+  # Screen sample size for targeted = randomized / γ
+  ```
+
+  **Historical context**:
+  - **Simon-Maitournam 2004** (this paper): efficiency comparison.
+  - **Maitournam-Simon 2005**: companion full proofs.
+  - **Sargent et al. 2005**: clinical trial designs for
+    predictive marker validation.
+  - **Freidlin-Simon 2005** (in corpus): adaptive signature design.
+  - **Simon 2008**: "Biomarker-based clinical trial designs"
+    (J Clin Oncol review).
+  - **Simon 2012**: "Clinical trials for predictive medicine"
+    (Stat Med overview).
+
+  **Modern applications**:
+  - **HER2+ breast cancer**: trastuzumab, pertuzumab, T-DM1, T-DXd.
+  - **EGFR-mutant NSCLC**: gefitinib, erlotinib, osimertinib.
+  - **BRAF V600E melanoma**: vemurafenib, dabrafenib.
+  - **MSI-H solid tumors**: pembrolizumab (KEYNOTE-164 / 158).
+  - **BRCA1/2 germline**: olaparib, talazoparib, niraparib.
+  - **PD-L1 ≥ 50%**: pembrolizumab first-line NSCLC (KEYNOTE-024).
+  - **FGFR alterations**: erdafitinib (urothelial).
+
+  All implement Simon-Maitournam targeted design logic.
