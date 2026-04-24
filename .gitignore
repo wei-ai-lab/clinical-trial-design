@@ -68,3 +68,4 @@ venv/
 # IDE
 .vscode/
 .idea/
+designr.Rcheck/

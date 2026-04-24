@@ -1,0 +1,85 @@
+#' JSON dispatcher for the designr MCP bridge
+#'
+#' Reads one JSON message `\{tool, args\}` from `con`, runs the matching
+#' exported design function, and writes a result JSON to stdout:
+#' \preformatted{
+#'   { "ok": true,  "result": {...} }
+#'   { "ok": false, "error":  { "class": "...", "message": "...", "field": "..." } }
+#' }
+#'
+#' Intended to be invoked one-shot per R subprocess:
+#' \preformatted{
+#'   Rscript -e 'designr::designr_dispatch(file("stdin","r"))'
+#' }
+#'
+#' @param con Text connection to read JSON from. Defaults to stdin.
+#' @export
+designr_dispatch <- function(con = file("stdin", "r")) {
+  input <- paste(readLines(con, warn = FALSE), collapse = "\n")
+  msg <- tryCatch(
+    jsonlite::fromJSON(input, simplifyVector = TRUE, simplifyDataFrame = FALSE),
+    error = function(e) {
+      .emit_error("parse_error", conditionMessage(e))
+      return(invisible(NULL))
+    }
+  )
+  if (is.null(msg)) return(invisible(NULL))
+  tool <- msg$tool
+  args <- if (is.null(msg$args)) list() else msg$args
+  if (!is.character(tool) || length(tool) != 1L) {
+    .emit_error("bad_request", "missing or invalid 'tool' field")
+    return(invisible(NULL))
+  }
+  fn <- .tool_registry[[tool]]
+  if (is.null(fn)) {
+    .emit_error("unknown_tool", sprintf("no tool named '%s'", tool))
+    return(invisible(NULL))
+  }
+  res <- tryCatch(
+    do.call(fn, as.list(args)),
+    error = function(e) e
+  )
+  if (inherits(res, "error")) {
+    .emit_designr_error(res)
+  } else {
+    .emit_ok(res)
+  }
+  invisible(NULL)
+}
+
+.emit_ok <- function(result) {
+  out <- list(ok = TRUE, result = result)
+  cat(jsonlite::toJSON(out, auto_unbox = TRUE, null = "null",
+                       na = "null", force = TRUE, digits = 10))
+  cat("\n")
+}
+
+.emit_error <- function(class, message, field = NULL) {
+  err <- list(class = class, message = message)
+  if (!is.null(field)) err$field <- field
+  out <- list(ok = FALSE, error = err)
+  cat(jsonlite::toJSON(out, auto_unbox = TRUE, null = "null", force = TRUE))
+  cat("\n")
+}
+
+.emit_designr_error <- function(e) {
+  m <- conditionMessage(e)
+  if (startsWith(m, "designr_input_error:")) {
+    parts <- strsplit(m, ":", fixed = TRUE)[[1]]
+    field <- trimws(parts[2])
+    why   <- trimws(paste(parts[-c(1, 2)], collapse = ":"))
+    .emit_error("input_error", why, field = field)
+  } else {
+    .emit_error("r_error", m)
+  }
+}
+
+.tool_registry <- list(
+  design_fixed_binary             = function(...) design_fixed_binary(...),
+  design_fixed_continuous         = function(...) design_fixed_continuous(...),
+  design_fixed_survival_ph        = function(...) design_fixed_survival_ph(...),
+  design_fixed_survival_maxcombo  = function(...) design_fixed_survival_maxcombo(...),
+  design_fixed_survival_rmst      = function(...) design_fixed_survival_rmst(...),
+  design_fixed_survival_milestone = function(...) design_fixed_survival_milestone(...)
+  # M2 adds: design_gs_*, validate_against_benchmark
+)
