@@ -1,0 +1,60 @@
+id: 2013_PLANETRA_infliximab-biosimilar
+family: fixed-equivalence
+source:
+  kind: published-trial
+  citation: "Yoo DH, Hrycaj P, Miranda P, et al. A randomised, double-blind, parallel-group study to demonstrate equivalence in efficacy and safety of CT-P13 compared with innovator infliximab when coadministered with methotrexate in patients with active rheumatoid arthritis: the PLANETRA study. Ann Rheum Dis. 2013;72(10):1613-1620."
+  doi: "10.1136/annrheumdis-2012-203090"
+  nct_id: "NCT01217086"
+  url: "https://ard.bmj.com/content/72/10/1613"
+
+design:
+  indication: "Moderate-to-severe rheumatoid arthritis, active despite MTX"
+  population: "Adults with RA on stable MTX"
+  arms:
+    - name: "CT-P13 (infliximab biosimilar) 3 mg/kg IV"
+      allocation: 1
+    - name: "Innovator infliximab 3 mg/kg IV"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "ACR20 response at week 30"
+    measurement_time: "30 weeks"
+  comparison: equivalence
+  sidedness: 2
+  alpha: 0.05
+  power: 0.8
+  effect:
+    control_rate: 0.60        # expected innovator ACR20
+    treatment_rate: 0.60      # assumed equal at planning
+    margin: 0.15              # symmetric ±15% on risk difference
+    margin_method: "EMA biosimilar guidance: ±15% on ACR20 rate difference"
+  accrual:
+    duration_months: 18
+
+expected:
+  sample_size_total: 606
+  tolerance:
+    sample_size_pct: 3
+  notes: |
+    First large-scale biosimilar Phase 3 equivalence trial for monoclonal
+    antibodies. ±15% margin on ACR20 rate difference is the EMA-accepted
+    standard for RA biosimilars. Sizing for 80% power under true δ = 0.
+
+r_packages:
+  - gsDesign::nBinomial
+  - PowerTOST::power.2TOST
+  - rpact::getSampleSizeRates
+
+tags:
+  - biosimilar
+  - rheumatoid-arthritis
+  - ema-guidance
+  - equivalence-margin-15pct
+  - binary-endpoint
+  - mab-biosimilar
+
+caveats: |
+  Analysis was on per-protocol set (primary) with ITT supportive. Biosimilar
+  equivalence trials typically mirror-require both PP and ITT to meet
+  equivalence, protecting against dilution from non-adherers in either
+  direction.

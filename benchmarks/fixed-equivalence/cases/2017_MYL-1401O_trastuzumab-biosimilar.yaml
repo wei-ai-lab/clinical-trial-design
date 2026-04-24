@@ -1,0 +1,62 @@
+id: 2017_MYL-1401O_trastuzumab-biosimilar
+family: fixed-equivalence
+source:
+  kind: published-trial
+  citation: "Rugo HS, Barve A, Waller CF, et al. Effect of a proposed trastuzumab biosimilar compared with trastuzumab on overall response rate in patients with ERBB2 (HER2)-positive metastatic breast cancer: a randomized clinical trial. JAMA. 2017;317(1):37-47."
+  doi: "10.1001/jama.2016.18305"
+  nct_id: "NCT02472964"
+  url: "https://jamanetwork.com/journals/jama/fullarticle/2596791"
+
+design:
+  indication: "HER2-positive metastatic breast cancer"
+  population: "Adults with HER2+ MBC, first-line chemotherapy + HER2 therapy"
+  arms:
+    - name: "MYL-1401O (proposed trastuzumab biosimilar) + taxane"
+      allocation: 1
+    - name: "Reference trastuzumab + taxane"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Overall response rate (ORR) at week 24"
+    measurement_time: "24 weeks"
+  comparison: equivalence
+  sidedness: 2
+  alpha: 0.05
+  power: 0.8
+  effect:
+    control_rate: 0.40
+    treatment_rate: 0.40
+    margin_ratio_lower: 0.81
+    margin_ratio_upper: 1.24
+    margin_method: "FDA oncology biosimilar guidance: ORR ratio equivalence bounds [0.81, 1.24]"
+  accrual:
+    duration_months: 24
+
+expected:
+  sample_size_total: 500
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    FDA oncology biosimilar guidance uses equivalence on ORR ratio scale (not
+    risk difference). The ratio bounds [0.81, 1.24] are approximately symmetric
+    on the log scale (log 0.81 = −0.21, log 1.24 = +0.22), covering ~20%
+    multiplicative equivalence.
+
+r_packages:
+  - gsDesign::nBinomial
+  - rpact::getSampleSizeRates
+
+tags:
+  - biosimilar
+  - oncology
+  - trastuzumab
+  - her2-positive-breast-cancer
+  - equivalence-orr-ratio
+  - fda-oncology-biosimilar
+  - ratio-scale-margin
+
+caveats: |
+  Analysis on PP set primary with ITT supportive. Ratio-scale margins are
+  standard for oncology biosimilars; different from RA biosimilars which
+  typically use risk-difference margins. Agent should recognize this shift
+  by therapeutic area.

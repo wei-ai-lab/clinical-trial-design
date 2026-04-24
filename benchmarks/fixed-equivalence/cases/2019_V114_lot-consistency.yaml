@@ -1,0 +1,65 @@
+id: 2019_V114_lot-consistency
+family: fixed-equivalence
+source:
+  kind: published-trial
+  citation: "Hammitt LL, Quinn D, Janczewska E, et al. Phase 3 randomized trial to evaluate lot-to-lot consistency of V114, a 15-valent pneumococcal conjugate vaccine, in healthy adults. Vaccine. 2022;40(36):5326-5332."
+  doi: "10.1016/j.vaccine.2022.07.040"
+  nct_id: "NCT03950856"
+  url: "https://www.sciencedirect.com/science/article/pii/S0264410X22008647"
+
+design:
+  indication: "Healthy adults ≥ 18 y, pneumococcal vaccine naive"
+  population: "Adults receiving first pneumococcal vaccination"
+  arms:
+    - name: "V114 lot A"
+      allocation: 1
+    - name: "V114 lot B"
+      allocation: 1
+    - name: "V114 lot C"
+      allocation: 1
+  endpoint:
+    type: continuous
+    description: "Log-transformed serotype-specific IgG geometric mean concentration (GMC) ratio at 30 days post-vaccination"
+    measurement_time: "30 days"
+  comparison: equivalence
+  sidedness: 2
+  alpha: 0.05
+  power: 0.9
+  effect:
+    mean_diff: 0            # on log GMC scale
+    sd: 0.8                 # approximate log GMC SD per serotype
+    margin_log: 0.405       # = log(1.5); corresponds to 2/3 to 3/2 ratio bounds
+    margin_method: "Standard vaccine lot-consistency: 90% CI of GMC ratio within [2/3, 3/2]"
+  accrual:
+    duration_months: 12
+
+expected:
+  sample_size_total: 1710
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Three-arm lot-consistency study with pairwise equivalence tests (A vs B,
+    A vs C, B vs C). Primary endpoint pooled across 15 serotypes with
+    multiplicity adjustment. Standard vaccine regulatory design to demonstrate
+    manufacturing lot consistency.
+
+r_packages:
+  - stats::power.t.test
+  - PowerTOST::sampleN.TOST
+  - rpact::getSampleSizeMeans
+
+tags:
+  - vaccine
+  - lot-consistency
+  - pneumococcal
+  - three-arm-pairwise
+  - gmc-ratio
+  - log-scale-equivalence
+  - multiplicity-across-serotypes
+
+caveats: |
+  Multiplicity across serotypes (15 for V114) requires Bonferroni-adjusted
+  α per serotype (~0.05/15 per test within a pairwise comparison) or a
+  more efficient approach (e.g. max-based global equivalence). Sponsors
+  often require all 15 × 3 = 45 pairwise-serotype comparisons to meet
+  equivalence at the adjusted α — conservative but regulatorily accepted.
