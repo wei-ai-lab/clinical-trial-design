@@ -1,0 +1,102 @@
+id: 2010_FDA_Bayesian_devices_guidance
+family: bayesian
+source:
+  kind: regulatory-guidance
+  citation: "FDA. Guidance for the Use of Bayesian Statistics in Medical Device Clinical Trials. U.S. Food and Drug Administration, Center for Devices and Radiological Health; February 2010."
+
+design:
+  indication: "any (medical device PMA/510(k) submissions)"
+  population: "Device clinical trials where prior information (e.g., prior-generation device data, OUS registry, bench performance) is relevant"
+  arms:
+    - name: "investigational device"
+      allocation: 1
+    - name: "control device or standard of care"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Typical device endpoints: procedural success, in-hospital MACE, 12-month device-related events, durability"
+    measurement_time: "per-study primary"
+  comparison: superiority, non-inferiority, or single-arm objective-performance-criterion
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    prior_specification: "MAP prior from prior-generation data OR power prior with α discount OR non-informative reference prior"
+    posterior_probability_threshold: "Typically P(device meets criterion) > 0.95 or 0.975"
+    operating_characteristic_simulation: "Required — type-I error under null simulated across reasonable prior-data-conflict scenarios"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **Landmark FDA regulatory document** codifying Bayesian methods
+    for medical device trials. Explicitly endorses:
+    (1) **Prior information from prior-generation devices** via
+        MAP priors or power priors, with discounting to preserve
+        operating characteristics.
+    (2) **Posterior probability decision rules** in place of
+        frequentist p-values (e.g., "P(PMA success criterion) > 0.95").
+    (3) **Adaptive sample-size re-estimation** under Bayesian
+        predictive probability.
+    (4) **Single-arm trials with objective performance criteria**
+        benchmarked against Bayesian synthesis of historical data.
+
+    **Operating characteristics requirements**:
+    - Type-I error rate ≤ pre-specified α under multiple prior-data-
+      conflict scenarios (prior centered correctly, biased toward
+      benefit, biased against benefit).
+    - Power meeting target under realistic effect assumptions.
+    - Simulation report: required as part of submission.
+
+    **Examples in guidance**:
+    - Coronary stents (DES) using prior-generation data.
+    - Implantable defibrillators with power-prior borrowing.
+    - Orthopedic devices with OPC + Bayesian synthesis.
+
+    Foundation for: subsequent TAVR, endovascular, orthopedic, and
+    neuromodulation device approvals using Bayesian designs. Extended
+    in FDA's 2018 "Use of Bayesian Methods in Clinical Trials for
+    Medical Devices" and the 2023 draft on Real-World Evidence for
+    devices.
+
+r_packages:
+  - rstan
+  - RBesT (MAP priors)
+  - bayesDP (discounted priors)
+  - rjags
+  - brms
+
+tags:
+  - fda-guidance
+  - bayesian
+  - medical-devices
+  - methodology-canonical
+  - map-prior
+  - power-prior
+  - regulatory
+  - operating-characteristics
+
+caveats: |
+  Device-focused guidance — most widely-cited Bayesian regulatory
+  document. Drug / biologic trials must reference EMA Reflection
+  Paper on the use of Bayesian Statistics (draft 2006, never
+  finalized) and case-by-case FDA/CDER / CBER positions. Key
+  regulatory requirement: **pre-specification of prior and operating-
+  characteristics simulation** before unblinding. Prior-data conflict
+  (observed data inconsistent with prior) can inflate type-I error —
+  must be simulated and reported. Power prior α discount typically
+  chosen by sponsor with FDA negotiation; typical values 0.25-0.75.
+  Posterior probability threshold typically 0.975 for regulatory
+  decision (analogous to 0.025 one-sided α). Bayesian adaptive
+  designs in devices increasingly common post-2010: examples include
+  TAVR trials (PARTNER, CoreValve), neurostimulation approvals.
+  Drug-side Bayesian regulatory practice lags device side — limited
+  FDA acceptance for confirmatory drug claims, though pediatric
+  extrapolation (Gamalo-Siebers 2014, already in corpus) is the
+  main drug-side exception.

@@ -1,0 +1,87 @@
+id: 2004_Spiegelhalter_Bayesian_textbook
+family: bayesian
+source:
+  kind: methodology-textbook
+  citation: "Spiegelhalter DJ, Abrams KR, Myles JP. Bayesian Approaches to Clinical Trials and Health-Care Evaluation. Wiley; 2004. ISBN 978-0-471-49975-5."
+
+design:
+  indication: "any (textbook)"
+  population: "Phase 3 trials employing Bayesian inference, prior elicitation, and decision-theoretic stopping"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Textbook covers continuous / binary / survival / longitudinal endpoints with Bayesian inference"
+    measurement_time: "per-study primary"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    prior_elicitation: "Sceptical, enthusiastic, reference, and community priors"
+    decision_rule: "Posterior probability of benefit > threshold"
+    predictive_probability: "For interim monitoring (Bayesian conditional power analog)"
+    loss_function: "Decision-theoretic framework for stopping"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    Canonical textbook for Bayesian clinical trial design and analysis.
+    Core content:
+    - **Prior elicitation**: sceptical (bounding scepticism of the
+      effect), enthusiastic (bounding optimism), reference (objective
+      / vague), community (formal elicitation from clinicians).
+    - **Bayesian monitoring**: posterior probability of benefit at
+      interim; predictive probability of eventual significance
+      (Bayesian conditional power).
+    - **Decision-theoretic stopping**: loss function for sponsor
+      (type-I error, futility), patient (harm, benefit), public
+      (cost, life-years).
+    - **Power-prior** for borrowing from historical data with discount
+      factor (α); foundation for subsequent RBesT / MAP-prior approaches.
+    - **Hierarchical models** for subgroups / biomarker-defined cells.
+    - Worked examples across CV, oncology, HIV, infectious disease,
+      device trials.
+    Reference for FDA Bayesian Medical Device Guidance (2010) and
+    the EMA Bayesian Reflection Paper.
+
+r_packages:
+  - rstan
+  - brms
+  - rjags
+  - RBesT (power / MAP priors per textbook chapters)
+  - bayesDP (discounted prior for historical borrowing)
+  - coda (posterior diagnostics)
+
+tags:
+  - spiegelhalter
+  - bayesian
+  - textbook
+  - methodology-canonical
+  - prior-elicitation
+  - posterior-probability
+  - predictive-probability
+  - decision-theoretic
+
+caveats: |
+  Most widely-cited textbook on Bayesian clinical trials (8,000+
+  citations as of 2024). Still the reference for prior-elicitation
+  taxonomies (sceptical / enthusiastic / reference / community) used
+  in modern Phase 3 Bayesian protocols. Later developments: power
+  priors with dynamic discount (Ibrahim-Chen), MAP priors
+  (Neuenschwander 2010 — already in corpus), and robust mixture priors
+  (Schmidli 2014). Text predates rstan / brms but the conceptual
+  framework is agnostic to the MCMC engine. For Phase 3 confirmatory
+  contexts, the posterior-probability and predictive-probability
+  monitoring rules are the most directly applicable. Companion
+  tutorial: Spiegelhalter (2004) StatMed 23:779-810.
