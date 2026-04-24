@@ -1,0 +1,125 @@
+id: 2003_Jennison-Turnbull_ssr-efficiency
+family: adaptive-ssr
+source:
+  kind: methodology-paper
+  citation: "Jennison C, Turnbull BW. Mid-course sample size modification in clinical trials based on the observed treatment effect. Stat Med. 2003 Mar 30;22(6):971-93. Also: Jennison C, Turnbull BW. Adaptive and nonadaptive group sequential tests. Biometrika. 2006;93(1):1-21."
+
+design:
+  indication: "any (methodology)"
+  population: "Confirmatory trial with CP-based or effect-based SSR"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Normal / binary / TTE"
+    measurement_time: "per primary endpoint"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    methodology_critique: "Show that Cui-Hung-Wang weighted-statistic SSR is inefficient relative to a well-designed non-adaptive GS"
+    efficiency_metric: "For the same max sample size, compare: (a) Cui-Hung-Wang SSR, (b) optimal non-adaptive GS, (c) ρ-family / power-family boundaries"
+    key_finding: |
+      Non-adaptive GS designs with well-chosen boundaries can match
+      or exceed the expected-N performance of CHW-SSR designs across
+      plausible effect ranges, without the operational complexity
+      of SSR.
+    proper_ssr_argument: "If SSR is used, base it on ancillary (blinded) data not on the observed treatment effect; otherwise, use pre-planned GS"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **Jennison-Turnbull 2003 (Stat Med) and 2006 (Biometrika)** are
+    the canonical methodological critique of CHW-style SSR — two
+    of the most influential papers arguing that **non-adaptive group-
+    sequential designs often dominate adaptive SSR in efficiency**.
+
+    **Main argument**:
+    - For a planned maximum sample size N_max and nominal power 1-β,
+      an optimally-designed GS design (Pampallona-Tsiatis, power-
+      family, or ρ-family boundaries) has expected-N properties
+      across the effect range that match or beat CHW-weighted SSR.
+    - CHW-SSR pays a price for flexibility: the weighted statistic
+      is less powerful than the full-information z-statistic.
+    - Proschan-Hunsberger CP-SSR avoids this weight penalty but
+      requires a non-standard boundary.
+
+    **Efficiency result**:
+    - Among all tests of fixed max N that preserve type I and have
+      a given interim schedule, the optimal test is achievable by
+      a non-adaptive GS — SSR adds no information, it only adds
+      operational flexibility.
+
+    **Recommendations**:
+    - If flexibility is purely administrative (unblinded team wants
+      options), use GS with pre-specified boundaries.
+    - If SSR is essential (e.g., nuisance-parameter uncertainty),
+      prefer **blinded SSR** on nuisance parameters (Friede-Kieser
+      2002, in corpus) rather than unblinded effect-based SSR.
+    - If unblinded SSR is required, prefer CP-SSR with Mehta-Pocock
+      promising zone (in corpus) over CHW weighted-statistic.
+
+    **Impact**:
+    - Influenced FDA 2019 Adaptive Designs guidance — SSR based on
+      blinded data is less contentious than unblinded effect-based
+      SSR.
+    - Shifted industry preference toward blinded SSR or pre-planned
+      GS with generous boundaries.
+    - Motivated Mehta-Pocock 2011 'promising zone' as a pragmatic
+      compromise — only resize when CP is in a specific range, avoiding
+      aggressive SSR-driven type I spending.
+
+r_packages:
+  - gsDesign (non-adaptive GS benchmark)
+  - rpact (non-adaptive and adaptive SSR)
+  - adaptTest
+  - pwr
+
+tags:
+  - jennison-turnbull
+  - efficiency
+  - ssr-critique
+  - group-sequential
+  - cui-hung-wang
+  - pampallona-tsiatis
+  - rho-family
+  - methodology-critique
+
+caveats: |
+  Jennison-Turnbull's critique is widely accepted in principle but
+  has practical limits:
+  - It assumes the interim information schedule is pre-specifiable.
+    When the effect size is highly uncertain (e.g., new mechanism
+    in a new indication), pre-specifying boundaries is hard.
+  - It assumes non-adaptive GS boundaries are feasible (regulator
+    and DSMB accept). Some sponsors prefer SSR because it is easier
+    to defend to internal leadership ('we only resize if interim
+    is weak').
+
+  Post-JT alternatives:
+  - **Blinded SSR** (Friede-Kieser 2002, in corpus): resize based
+    on nuisance parameter (variance, event rate) without breaking
+    the blind. Universally accepted.
+  - **Promising-zone SSR** (Mehta-Pocock 2011, in corpus): only
+    increase N when CP is 0.30-0.80; preserves type I without
+    boundary adjustment.
+  - **Information-based designs**: stop at fixed information rather
+    than fixed N; adapts naturally to effect-size uncertainty.
+
+  Regulatory landscape (FDA 2019 adaptive guidance):
+  - Blinded SSR: widely acceptable.
+  - CP-SSR / promising zone: acceptable with pre-specification.
+  - CHW weighted-stat SSR: acceptable but viewed as inefficient per
+    Jennison-Turnbull.
+  - Aggressive SSR with arbitrary rules: discouraged.

@@ -1,0 +1,128 @@
+id: 1995_Proschan-Hunsberger_conditional-power
+family: adaptive-ssr
+source:
+  kind: methodology-paper
+  citation: "Proschan MA, Hunsberger SA. Designed extension of studies based on conditional power. Biometrics. 1995 Dec;51(4):1315-24."
+
+design:
+  indication: "any (methodology — applicable whenever interim effect estimates can drive a resizing decision)"
+  population: "Single-comparison confirmatory trial; interim data-based sample size re-estimation"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Normal / binary / TTE; illustrated for normal means and proportions"
+    measurement_time: "per primary endpoint"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    design_framework: "Two-stage adaptive design in which stage-2 sample size is chosen based on stage-1 conditional power"
+    conditional_power: "CP(δ̂₁) = Pr(reject H₀ at final | stage-1 observed effect δ̂₁, proposed stage-2 N)"
+    decision_function: "Given target CP* (e.g., 0.80), solve for n₂ that achieves CP* conditional on stage-1 data"
+    boundaries: "Proschan-Hunsberger derive type-I-error-preserving boundary function A(z₁) such that final test stat compared to critical value α₂ conditional on z₁"
+    caps: "n₂ capped to n_max (typical 2-3× original stage-2 N) to limit operational burden"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **Proschan-Hunsberger 1995 (Biometrics)** is the foundational
+    paper for **conditional-power-based adaptive sample size
+    re-estimation (CP-SSR)** — one of two major lines (the other
+    being Cui-Hung-Wang weighted-stat 1999).
+
+    **Core framework**:
+    - Two-stage design: stage 1 observes interim test statistic z₁.
+    - Stage-2 sample size n₂(z₁) chosen to raise CP to target CP*
+      (typical 0.80).
+    - Final test uses a *boundary function* A(z₁) that preserves
+      type I error regardless of n₂ choice.
+
+    **Key mathematical result**:
+    - For type I error preservation, final test rejects if
+      z_final ≥ A(z₁) where A is defined so that Pr(reject | H₀)
+      = α.
+    - With normal endpoints, A(z₁) is computable in closed form.
+    - Self-correcting: even if stage-2 N is gamed, FWER holds.
+
+    **Advantages**:
+    - Fully efficient conditional on z₁ (unlike Cui-Hung-Wang's
+      weighted-statistic approach which uses pre-specified weights).
+    - Unbiased final test statistic (uses actual stage-2 data directly).
+    - Easy to explain to clinicians — 'boost the N if interim looks
+      weak so we reach 80% CP'.
+
+    **Disadvantages**:
+    - Requires boundary function A(z₁) which differs from standard
+      GS boundaries — harder for reviewers unfamiliar.
+    - Conditional on interim, the test is *not* the standard z-test
+      with critical value 1.96, so effect estimates and CIs are
+      non-standard.
+
+    **Modern usage**:
+    - Basis for Mehta-Pocock 2011 'promising zone' (in corpus) —
+      CP-SSR with a restricted promising zone (typical CP in 0.30-
+      0.80) to limit operational burden.
+    - Chen-DeMets-Lan 2004 (in corpus) showed CP-SSR with certain
+      decision rules preserves type I error without the boundary
+      adjustment — a major simplification used in practice.
+
+    **Operating characteristics** (from the paper):
+    - For target CP 0.80 and interim CP ~0.50, N inflation factor
+      typically 1.2-1.6×.
+    - Maximum inflation capped at n_max (typically 2-3× original).
+    - Power recovery to nominal 0.80-0.90 under the specified
+      interim effect.
+
+r_packages:
+  - rpact (CP-SSR with boundary adjustment)
+  - adaptTest
+  - gsDesign (conditional power utilities)
+  - rpact::getConditionalPower
+
+tags:
+  - proschan-hunsberger
+  - conditional-power
+  - ssr
+  - sample-size-reestimation
+  - two-stage
+  - adaptive
+  - methodology-foundational
+
+caveats: |
+  Proschan-Hunsberger remains foundational but pure CP-SSR is rarely
+  implemented exactly as in the 1995 paper because:
+  (1) Chen-DeMets-Lan 2004 showed that if the decision rule is
+      restricted to *only* increasing N when CP is in a promising
+      zone, the standard z-test preserves α without the A(z₁)
+      adjustment.
+  (2) Mehta-Pocock 2011 promising-zone extended this and is now
+      the go-to practical framework.
+
+  Related methodology lines:
+  - Cui-Hung-Wang 1999 weighted statistic (in corpus) — alternative
+    line that preserves type I by fixed weights on stage-1 and
+    stage-2 statistics, regardless of N change.
+  - Lehmacher-Wassmer 1999 — weighted inverse-normal combination.
+  - Müller-Schäfer 2001 — conditional error function generalization.
+
+  Regulatory context: FDA 2019 Adaptive Designs guidance discusses
+  CP-SSR; generally acceptable if the decision rule is pre-specified
+  and type-I-error preservation is demonstrated (either via the
+  Proschan-Hunsberger boundary or via the Chen-DeMets-Lan restricted-
+  rule argument).
+
+  Bias of final effect estimate under CP-SSR: modest (smaller than
+  under adaptive-selection or enrichment) but non-zero; bias-adjusted
+  estimators exist (Brannath-Posch).
