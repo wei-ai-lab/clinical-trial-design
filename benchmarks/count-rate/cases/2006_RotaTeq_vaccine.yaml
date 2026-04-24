@@ -1,0 +1,66 @@
+id: 2006_RotaTeq_vaccine
+family: count-rate
+source:
+  kind: published-trial
+  citation: "Vesikari T, Matson DO, Dennehy P, et al. Safety and efficacy of a pentavalent human-bovine (WC3) reassortant rotavirus vaccine (RotaTeq). N Engl J Med. 2006;354(1):23-33."
+  doi: "10.1056/NEJMoa052664"
+  nct_id: "NCT00090233"
+
+design:
+  indication: "Prevention of rotavirus gastroenteritis in infants"
+  population: "Healthy infants 6-12 weeks at enrollment"
+  arms:
+    - name: "RotaTeq pentavalent vaccine × 3 oral doses"
+      allocation: 1
+    - name: "placebo × 3 oral doses"
+      allocation: 1
+  endpoint:
+    type: count-rate
+    description: "First-year incidence of any rotavirus gastroenteritis; severe disease as co-primary"
+    measurement_time: "person-year incidence"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    ve_any_rotavirus: 0.60
+    ve_severe_rotavirus: 0.80
+    control_first_season_rate: 0.10
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 68038
+  events_total: null
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    Massive infant vaccine trial (>68,000) powered on prevention of
+    severe rotavirus gastroenteritis and intussusception safety.
+    Co-primary efficacy: severe RVGE (Clark severity ≥ 9), any RVGE.
+    Vaccine efficacy = 1 - RR where RR is Poisson rate ratio with
+    person-time offset. Sample size driven by intussusception safety
+    endpoint (historical background rate, rule-out 2x increase).
+
+r_packages:
+  - stats::glm(poisson)
+  - MASS::glm.nb
+  - rpact::getSampleSizeRates
+
+tags:
+  - vaccine
+  - rotavirus
+  - pediatric
+  - vaccine-efficacy
+  - poisson-rate
+  - intussusception-safety
+  - count-rate
+
+caveats: |
+  Combined efficacy + safety trial — N driven by safety rule-out
+  (intussusception after Rotashield withdrawal). Primary safety
+  analysis used rate-ratio 30-day post-dose window. Efficacy
+  vastly exceeded thresholds: 98% VE against severe G1-G4 RVGE,
+  74% against any RVGE. FDA approval February 2006.

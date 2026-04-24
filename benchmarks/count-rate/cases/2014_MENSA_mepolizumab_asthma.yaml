@@ -1,0 +1,70 @@
+id: 2014_MENSA_mepolizumab_asthma
+family: count-rate
+source:
+  kind: published-trial
+  citation: "Ortega HG, Liu MC, Pavord ID, et al. Mepolizumab treatment in patients with severe eosinophilic asthma (MENSA). N Engl J Med. 2014;371(13):1198-1207."
+  doi: "10.1056/NEJMoa1403290"
+  nct_id: "NCT01691521"
+
+design:
+  indication: "Severe eosinophilic asthma"
+  population: "Blood eosinophils ≥ 150/μL at screening or ≥ 300/μL prior year; ≥ 2 exacerbations in prior year on high-dose ICS + additional controller"
+  arms:
+    - name: "mepolizumab 75 mg IV q4w"
+      allocation: 1
+    - name: "mepolizumab 100 mg SC q4w"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: count-rate
+    description: "Annualized rate of clinically significant exacerbations (NB)"
+    measurement_time: "32-week treatment period"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    rate_ratio_target: 0.55
+    annual_rate_placebo: 2.40
+    dispersion_k: 2.0
+  accrual:
+    duration_months: 12
+  followup:
+    planned_months: 8
+
+expected:
+  sample_size_total: 576
+  events_total: null
+  tolerance:
+    sample_size_pct: 3
+  notes: |
+    Three-arm design (IV + SC mepolizumab + placebo) with NB annualized
+    exacerbation rate as primary. Stratified by baseline eosinophil
+    count. Multiple-testing hierarchy: SC then IV vs placebo. Observed
+    rate ratio SC vs placebo 0.47 (95% CI 0.35-0.64), p < 0.001;
+    median annualized rate 0.83 (SC) vs 1.74 (placebo). FDA approval
+    of mepolizumab (Nucala) November 2015.
+
+r_packages:
+  - MASS::glm.nb
+  - rpact::getSampleSizeCounts
+  - gsDesign2
+
+tags:
+  - asthma
+  - severe-eosinophilic
+  - mepolizumab
+  - anti-il-5
+  - negative-binomial
+  - annualized-rate
+  - three-arm
+  - count-rate
+
+caveats: |
+  Primary analysis used NB with over-dispersion; 32-week follow-up
+  annualized by offset = log(follow-up days/365). Stratified by
+  baseline eosinophils (≥150 vs ≥300) and prior OCS use. Three-arm
+  design allowed both routes-of-administration evaluated in one
+  pivotal trial. Rate ratio interpretation > HR for exacerbation
+  endpoints (patient-centric "% fewer attacks per year").

@@ -1,0 +1,67 @@
+id: 2007_Keene-Jones_nb_methodology
+family: count-rate
+source:
+  kind: methodology-paper
+  citation: "Keene ON, Jones MRK, Lane PW, Anderson J. Analysis of exacerbation rates in asthma and chronic obstructive pulmonary disease: example from the TRISTAN study. Pharm Stat. 2007;6(2):89-97."
+  doi: "10.1002/pst.250"
+
+design:
+  indication: "any (methodology) — asthma / COPD exacerbations archetype"
+  population: "Phase 3 respiratory trial"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: count-rate
+    description: "Annualized exacerbation rate; NB GLM with log follow-up offset"
+    measurement_time: "per-subject exposure-adjusted"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    rate_ratio: 0.75
+    annualized_rate_control: 1.2
+    dispersion_k: 1.5
+  accrual:
+    duration_months: 12
+  followup:
+    planned_months: 12
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 10
+  notes: |
+    Field-standard NB sample-size methodology paper for respiratory
+    exacerbation trials. Shows TRISTAN data fit NB better than
+    Poisson (variance >> mean), derives sample size formula with
+    over-dispersion φ:
+      n per arm = (z_{α/2} + z_β)² · [1/(λ_C·T) + 1/(λ_E·T) + 2φ] / (log RR)²
+    where T = average follow-up per subject. Poisson limit recovered
+    as φ → 0. Adopted in rpact::getSampleSizeCounts and gsDesign2.
+
+r_packages:
+  - MASS::glm.nb
+  - rpact::getSampleSizeCounts
+  - gsDesign2
+
+tags:
+  - asthma
+  - copd
+  - exacerbations
+  - negative-binomial
+  - over-dispersion
+  - methodology-canonical
+  - count-rate
+
+caveats: |
+  Assumes subjects have equal probability of being dropped across
+  arms (otherwise complete-case analysis biased). Extensions for
+  differential dropout exist but require simulation. Paper explicitly
+  warns against using Poisson when φ > 0 — Type I error inflated
+  ~2-3× in realistic respiratory settings. Remains the go-to
+  reference for NB sample size in Phase 3 SAPs.

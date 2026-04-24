@@ -1,0 +1,71 @@
+id: 2012_perampanel_epilepsy
+family: count-rate
+source:
+  kind: published-trial
+  citation: "French JA, Krauss GL, Biton V, et al. Adjunctive perampanel for refractory partial-onset seizures: randomized phase III study 304. Neurology. 2012;79(6):589-596."
+  doi: "10.1212/WNL.0b013e3182635735"
+  nct_id: "NCT00699972"
+
+design:
+  indication: "Refractory partial-onset epilepsy"
+  population: "Adults with ≥ 1 partial seizure/wk despite 1-3 AEDs"
+  arms:
+    - name: "perampanel 8 mg/d"
+      allocation: 1
+    - name: "perampanel 12 mg/d"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: count-rate
+    description: "Co-primary: median %Δ seizure frequency (Wilcoxon); ≥ 50% responder rate (binomial)"
+    measurement_time: "19-week double-blind (6 wk titration + 13 wk maintenance)"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    median_pct_change_placebo: -10
+    median_pct_change_perampanel_8: -26
+    median_pct_change_perampanel_12: -35
+  accrual:
+    duration_months: 12
+  followup:
+    planned_months: 5
+
+expected:
+  sample_size_total: 387
+  events_total: null
+  tolerance:
+    sample_size_pct: 3
+  notes: |
+    Classical FDA-convention adjunctive AED trial design with co-primary
+    median %Δ in seizure frequency (28-day) and ≥ 50% responder rate.
+    Wilcoxon rank-sum on individual %Δ is non-parametric — handles
+    skew and zero-inflation. NB rate-ratio is typical sensitivity /
+    EU primary. Stratified by region. Three-arm with two active doses
+    allows dose-response characterization.
+
+r_packages:
+  - stats::wilcox.test
+  - MASS::glm.nb
+  - gsDesign::nBinomial
+  - rpact::getSampleSizeCounts
+
+tags:
+  - epilepsy
+  - partial-onset-seizures
+  - perampanel
+  - adjunctive
+  - percent-change-primary
+  - responder-rate
+  - ampa-antagonist
+  - count-rate
+
+caveats: |
+  FDA AED adjunctive convention: median %Δ (Wilcoxon) + ≥ 50% responder
+  as co-primary is a statistical compromise with long history.
+  Regulatory shift toward NB rate-ratio primary observed in newer
+  AED trials (cannabidiol, cenobamate). Sample size formulas for
+  Wilcoxon %Δ require simulation or rank-based power; industry
+  typically uses historical effect sizes for sizing.
