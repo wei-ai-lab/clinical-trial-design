@@ -1,0 +1,71 @@
+id: 2014_Rogers-Pocock_joint-frailty_hf_methodology
+family: recurrent-events
+source:
+  kind: methodology-paper
+  citation: "Rogers JK, Pocock SJ, McMurray JJV, et al. Analysing recurrent hospitalizations in heart failure: a review of statistical methodology, with application to CHARM-Preserved. Eur J Heart Fail. 2014;16(1):33-40."
+  doi: "10.1002/ejhf.29"
+
+design:
+  indication: "Heart failure"
+  population: "HFrEF or HFpEF, recurrent HF hospitalization risk"
+  arms:
+    - name: "experimental HF therapy"
+      allocation: 1
+    - name: "control (SOC or placebo)"
+      allocation: 1
+  endpoint:
+    type: recurrent-event
+    description: "Joint frailty: recurrent HF hospitalizations + CV death (terminal)"
+    measurement_time: "time-to-multiple-events + terminal event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    rate_ratio_hf_hosp: 0.80
+    hr_cv_death: 0.90
+    annual_hosp_rate_control: 0.30
+    frailty_variance: 0.5
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 30
+
+expected:
+  sample_size_total: 3000
+  events_total: 1800
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 5
+  notes: |
+    Methodology reference for joint frailty modeling of recurrent
+    HF hospitalizations and CV death. CHARM-Preserved re-analysis
+    showed candesartan rate ratio for recurrent HF hosp 0.75 vs
+    time-to-first HR 0.85 — illustrating information loss when
+    TTE-to-first is used for a drug whose effect is on rate. Joint
+    frailty accounts for informative censoring by death. Adopted
+    in DAPA-HF, EMPEROR-Reduced/Preserved, PARADIGM-HF follow-ups.
+
+r_packages:
+  - frailtypack
+  - JM
+  - reReg
+  - survival
+
+tags:
+  - heart-failure
+  - joint-frailty
+  - recurrent-hospitalization
+  - cv-death
+  - terminal-event
+  - methodology-canonical
+  - recurrent-events
+
+caveats: |
+  Joint frailty requires frailty distribution assumption (typically
+  gamma frailty); LWYY with death-as-competing-event is a
+  semiparametric alternative. Regulatory evaluation of HF
+  hospitalization analyses now expects recurrent-event methodology
+  (win ratio, LWYY, or joint frailty) alongside TTE-to-first.
+  Rogers-Pocock paper is the practical field-standard reference
+  for HF trial statisticians adopting these methods.

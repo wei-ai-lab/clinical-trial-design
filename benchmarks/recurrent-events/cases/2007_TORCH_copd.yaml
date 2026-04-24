@@ -1,0 +1,76 @@
+id: 2007_TORCH_copd
+family: recurrent-events
+source:
+  kind: published-trial
+  citation: "Calverley PMA, Anderson JA, Celli B, et al. Salmeterol and fluticasone propionate and survival in chronic obstructive pulmonary disease (TORCH). N Engl J Med. 2007;356(8):775-789."
+  doi: "10.1056/NEJMoa063070"
+  nct_id: "NCT00268216"
+
+design:
+  indication: "Moderate-to-severe COPD"
+  population: "FEV1 < 60% predicted, ≥ 10 pack-year smoking, age 40-80"
+  arms:
+    - name: "salmeterol/fluticasone 50/500 μg BID"
+      allocation: 1
+    - name: "salmeterol 50 μg BID"
+      allocation: 1
+    - name: "fluticasone 500 μg BID"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "All-cause mortality (primary); annual exacerbation rate (key secondary, Poisson/NB)"
+    measurement_time: "3 years"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    primary_hr_os: 0.77
+    exacerbation_rate_ratio: 0.75
+    control_3yr_mortality: 0.17
+  accrual:
+    duration_months: 12
+  followup:
+    planned_months: 36
+
+expected:
+  sample_size_total: 6184
+  events_total: 875
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 3
+  notes: |
+    Four-arm COPD trial with primary OS (TTE) and recurrent-event
+    exacerbation rate as key secondary (Poisson regression with
+    over-dispersion → effectively NB). 2×2 factorial-like with all
+    four combinations. Primary OS missed p = 0.052 (HR 0.825);
+    exacerbation rate ratio strongly significant (RR 0.75 for
+    salm/flut vs placebo, p < 0.001). Archetype for rate-ratio
+    analysis as key secondary alongside TTE primary.
+
+r_packages:
+  - MASS::glm.nb
+  - stats::glm(poisson)
+  - rpact::getSampleSizeCounts
+  - gsDesign::nSurv
+
+tags:
+  - copd
+  - fluticasone
+  - salmeterol
+  - four-arm
+  - mortality
+  - exacerbations
+  - poisson
+  - negative-binomial
+  - recurrent-events
+
+caveats: |
+  Primary OS missed at α = 0.05 two-sided (p = 0.052); secondary
+  recurrent-event endpoint met. Illustrates the risk of specifying
+  TTE mortality as primary when the drug's mechanism acts on the
+  recurrent exacerbation rate — more powerful design would have
+  been rate-ratio primary with OS secondary. Poisson + over-
+  dispersion ≈ NB in this setting.

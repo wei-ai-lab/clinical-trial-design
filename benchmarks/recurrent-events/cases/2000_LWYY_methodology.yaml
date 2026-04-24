@@ -1,0 +1,68 @@
+id: 2000_LWYY_methodology
+family: recurrent-events
+source:
+  kind: methodology-paper
+  citation: "Lin DY, Wei LJ, Yang I, Ying Z. Semiparametric regression for the mean and rate functions of recurrent events. J R Stat Soc B. 2000;62(4):711-730."
+  doi: "10.1111/1467-9868.00259"
+
+design:
+  indication: "any (methodology)"
+  population: "Phase 3 trial with recurrent primary events"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: recurrent-event
+    description: "Mean cumulative function μ(t); rate ratio λ_E(t)/λ_C(t) assumed constant over time"
+    measurement_time: "cumulative events over follow-up"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    rate_ratio: 0.75
+    annualized_rate_control: 0.50
+    dispersion_assumed: "robust sandwich (no parametric over-dispersion needed)"
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 1200
+  events_total: null
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Foundational paper for the LWYY (Lin-Wei-Yang-Ying) marginal
+    means/rates model for recurrent events. Key idea: treat the
+    counting process N(t) as having a mean μ(t) = ∫₀^t dE[dN(s)]/ds,
+    and fit a Cox-style semiparametric model for the rate function.
+    Robust sandwich variance accounts for within-subject correlation
+    without requiring frailty distribution assumption. Regulatory
+    workhorse for HF hospitalization and COPD exacerbation designs
+    (SHIFT sub-analysis, DAPA-HF, PARADIGM-HF, CHARM).
+
+r_packages:
+  - survival::coxph (cluster=id)
+  - reReg
+  - frailtypack
+
+tags:
+  - lwyy
+  - mean-rate
+  - recurrent-events
+  - marginal-model
+  - robust-variance
+  - methodology-canonical
+
+caveats: |
+  LWYY rate ratio is a marginal-mean-based summary — interpretable
+  as "ratio of expected cumulative counts" rather than hazard ratio.
+  Model is validly fit via Cox with cluster(id) and Breslow ties,
+  reporting robust sandwich SE. FDA increasingly prefers LWYY (or
+  joint frailty) over time-to-first-event for HF hospitalization
+  because it uses all events. Power/sample size computed via rate-
+  ratio formula with over-dispersion correction when needed.

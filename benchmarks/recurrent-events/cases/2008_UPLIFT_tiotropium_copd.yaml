@@ -1,0 +1,68 @@
+id: 2008_UPLIFT_tiotropium_copd
+family: recurrent-events
+source:
+  kind: published-trial
+  citation: "Tashkin DP, Celli B, Senn S, et al. A 4-year trial of tiotropium in chronic obstructive pulmonary disease (UPLIFT). N Engl J Med. 2008;359(15):1543-1554."
+  doi: "10.1056/NEJMoa0805800"
+  nct_id: "NCT00144339"
+
+design:
+  indication: "Moderate-to-very-severe COPD"
+  population: "GOLD stage II-IV, FEV1 ≤ 70% predicted"
+  arms:
+    - name: "tiotropium 18 μg daily"
+      allocation: 1
+    - name: "placebo (allowed any other resp meds)"
+      allocation: 1
+  endpoint:
+    type: recurrent-event
+    description: "Annual rate of COPD exacerbations (NB); co-primary FEV1 decline slope"
+    measurement_time: "events/year over 4 years"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    rate_ratio: 0.85
+    annualized_rate_control: 1.00
+    dispersion_k: 1.5
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 48
+
+expected:
+  sample_size_total: 5992
+  events_total: null
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    Dual co-primary: (1) rate of decline in FEV1 pre/post-bronchodilator,
+    (2) time-to-first exacerbation (with recurrent-event rate as key
+    secondary). Published design did not meet FEV1 slope co-primary
+    but showed significant reduction in annual exacerbation rate
+    (RR 0.86, 95% CI 0.81-0.91) via NB. Large N driven by 4-year
+    follow-up and modest effect size. Benchmark case for COPD
+    exacerbation design.
+
+r_packages:
+  - MASS::glm.nb
+  - rpact::getSampleSizeCounts
+  - gsDesign2
+
+tags:
+  - copd
+  - tiotropium
+  - exacerbations
+  - negative-binomial
+  - long-term-followup
+  - fev1
+  - recurrent-events
+
+caveats: |
+  Co-primary with FEV1 slope (continuous) and TTE-to-first exacerbation.
+  Rate-based NB secondary became the more clinically interpretable
+  outcome. Prior COPD baseline exacerbation rate required for
+  stratification — effective sample size drops when stratification
+  dilution is not accounted for. Long 4-year follow-up common in
+  COPD for drug-class trials.
