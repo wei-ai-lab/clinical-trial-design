@@ -1,0 +1,156 @@
+id: 2015_RTS-S-AS01_malaria_vaccine
+family: count-rate
+source:
+  kind: design-paper
+  citation: "RTS,S Clinical Trials Partnership. Efficacy and safety of RTS,S/AS01 malaria vaccine with or without a booster dose in infants and children in Africa: final results of a phase 3, individually randomised, controlled trial. Lancet. 2015 Jul 4;386(9988):31-45. Design: RTS,S Clinical Trials Partnership. A phase 3 trial of RTS,S/AS01 malaria vaccine in African infants. N Engl J Med. 2012 Dec 13;367(24):2284-2295."
+
+design:
+  indication: "Prevention of clinical malaria (Plasmodium falciparum) in African children aged 6-12 weeks (infants) or 5-17 months (children)"
+  population: "Healthy African infants/children at 11 sites across 7 countries (Burkina Faso, Gabon, Ghana, Kenya, Malawi, Mozambique, Tanzania)"
+  arms:
+    - name: "RTS,S/AS01 primary series (3 doses) + booster at month 20"
+      allocation: 1
+    - name: "RTS,S/AS01 primary series (3 doses), no booster (control comparator)"
+      allocation: 1
+    - name: "Comparator vaccine (rabies for 5-17mo children; meningococcal C for 6-12wk infants)"
+      allocation: 1
+  endpoint:
+    type: count-rate
+    description: "Incidence of clinical malaria episodes (P. falciparum parasite density > 5,000 /μL with fever ≥ 37.5°C). Vaccine efficacy VE = 1 − IRR."
+    measurement_time: "event-driven; minimum 18 months post dose 3, extended to 48 months in final analysis"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    scale: incidence-rate-ratio
+    target_vaccine_efficacy: 0.50
+    assumed_control_incidence_per_pyr: 0.5
+    design_approach: |
+      Dual-cohort (infants 6-12 weeks, children 5-17 months) Phase 3.
+      - Primary: cumulative clinical malaria in 5-17 mo cohort over
+        18-month follow-up.
+      - Co-primary: 6-12 wk cohort.
+      - Event-driven: target sufficient cases for detecting VE > 30%
+        with 80% power, lower CI > 0% (superiority null).
+      - Extended follow-up to 32 months (no booster) and 48 months
+        (with booster).
+    event_definition: |
+      Clinical malaria episode: axillary T ≥ 37.5°C + parasitaemia
+      > 5,000 /μL (secondary case definitions: ≥ 500 /μL, severe malaria,
+      all-cause hospitalization, all-cause death).
+    statistical_model: |
+      Negative binomial regression for recurrent episodes (multiple
+      malaria episodes per child common in endemic regions).
+      Offset = log(person-time at risk).
+      Robust variance for clustering at site level.
+      Meta-analytic pooling across 11 sites.
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 32
+    extended_actual_months: 48
+
+expected:
+  sample_size_total: 15459
+  sample_size_per_arm: [5153, 5153, 5153]
+  events_total_target: null
+  events_total_actual: 3557
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **RTS,S/AS01** (trade name Mosquirix) was the **first malaria
+    vaccine** to complete Phase 3 and receive WHO recommendation.
+    Designed by PATH Malaria Vaccine Initiative + GSK over ~ 30 years.
+
+    **Design**:
+    - 15,459 randomized across 2 age cohorts, 11 African sites.
+    - 6-12 week cohort: 6,537 randomized.
+    - 5-17 month cohort: 8,922 randomized.
+    - Recurrent clinical malaria episodes per child — negative binomial
+      primary analysis (Keene-Jones 2007, in corpus).
+
+    **Results (final, 48 mo follow-up)**:
+    - 5-17 month cohort with booster:
+      - VE over 48 months: 36.3% (95% CI 31.8-40.5).
+      - VE vs severe malaria: 32.2% (13.7-46.9).
+    - 6-12 week cohort with booster:
+      - VE over 48 months: 25.9% (19.9-31.5).
+    - Booster important: efficacy wanes rapidly without it.
+    - ~ 1,774 clinical cases prevented per 1,000 vaccinated children.
+
+    **Regulatory / policy**:
+    - EMA positive opinion July 2015 under Art 58 (outside EU).
+    - WHO 2016 → pilot implementation recommendation (MVIP).
+    - WHO October 2021 → recommended for broad use in children in
+      moderate-to-high transmission areas.
+
+r_packages:
+  - epiR
+  - MASS (glm.nb)
+  - glmmTMB (NB with random effects)
+  - survival
+  - frailtypack (recurrent event)
+  - sandwich
+
+tags:
+  - rts-s
+  - mosquirix
+  - malaria
+  - vaccine
+  - count-rate
+  - negative-binomial
+  - recurrent-episodes
+  - who-recommended
+  - landmark-trial
+  - multi-country
+
+caveats: |
+  RTS,S/AS01 design / analysis points:
+
+  - **Recurrent episodes**: children in endemic regions experience
+    multiple malaria episodes per year. Total-event NB (Keene-Jones
+    2007, in corpus) more informative than time-to-first.
+  - **Negative binomial regression**: over-dispersion k ~ 0.5-1.0;
+    log person-time offset; site as random effect or stratifier.
+  - **Age-cohort effects**: VE higher in older cohort (5-17 mo) vs
+    6-12 wk cohort due to immune maturity + baseline risk.
+  - **Waning immunity**: sharp decline after primary series without
+    booster; booster critical.
+  - **Transmission heterogeneity**: VE varies across sites with different
+    transmission intensities; meta-analytic pooling essential.
+
+  **Analysis sketch**:
+  ```r
+  library(glmmTMB)
+
+  # Recurrent clinical malaria episodes with NB regression
+  fit <- glmmTMB(
+    n_episodes ~ arm + age_cohort + (1 | site) +
+                 offset(log(pyr)),
+    data = df,
+    family = nbinom2
+  )
+  summary(fit)
+  # IRR and VE = 1 - IRR
+  ```
+
+  **Sample size for IRR detection** (normal approximation on log IRR):
+  - Events = (z_α + z_β)² × (1 + 1/(1-VE)²) / ln(1-VE)²
+  - But recurrent events require inflation for dispersion k.
+  - Very large sample (15,000+) reflects modest VE (~ 35%) and
+    multiplicity across 2 cohorts + primary/booster.
+
+  **Relationship to other vaccine trials**:
+  - **Shingrix ZOE-50** (2015, in corpus): 97% VE in older adults.
+  - **BNT162b2** (2020, in corpus): 95% VE COVID.
+  - **RotaTeq** (2006, in corpus): 74% VE rotavirus.
+  - **R21/Matrix-M** (2023): 77% efficacy over 12 months in seasonal
+    transmission — potentially superseding RTS,S.
+
+  **Methodology lessons**:
+  - Modest VE (~ 35%) but high disease burden → public health impact.
+  - NB regression for recurrent episodes far better than time-to-first.
+  - Booster dose essential for durable efficacy.
+  - WHO real-world implementation pilot studies provide ongoing data.

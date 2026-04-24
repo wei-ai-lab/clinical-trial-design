@@ -105,7 +105,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | tte-ph | ✅ | 10 | 8 | ✅ |
 | tte-nph | ✅ | 10 | 8 | ✅ |
 | recurrent-events | ✅ | 8 | 4 | ✅ |
-| count-rate | ✅ | 6 | 4 | ✅ |
+| count-rate | ✅ | 8 | 4 | ✅ |
 | bayesian | ✅ | 9 | 5 | ✅ |
 | platform | ✅ | 7 | 5 | ✅ |
 | basket | ✅ | 8 | 4 | ✅ |

@@ -1,0 +1,151 @@
+id: 2015_ZOE-50_shingrix_zoster
+family: count-rate
+source:
+  kind: design-paper
+  citation: "Lal H, Cunningham AL, Godeaux O, et al. Efficacy of an adjuvanted herpes zoster subunit vaccine in older adults. N Engl J Med. 2015 May 28;372(22):2087-96. Complementary trial: Cunningham AL, Lal H, Kovac M, et al. Efficacy of the herpes zoster subunit vaccine in adults 70 years of age or older. N Engl J Med. 2016 Sep 15;375(11):1019-32. (ZOE-70)"
+
+design:
+  indication: "Prevention of herpes zoster (shingles) in adults ≥ 50 years old"
+  population: "Adults ≥ 50 years old with no prior zoster history, healthy or with stable chronic conditions; enrolled at 18 countries, 41 centers"
+  arms:
+    - name: "HZ/su adjuvanted subunit vaccine (glycoprotein E + AS01B adjuvant), 2 doses 2 months apart"
+      allocation: 1
+    - name: "placebo (saline)"
+      allocation: 1
+  endpoint:
+    type: count-rate
+    description: "Incidence of confirmed herpes zoster, expressed as cases per 1,000 person-years. Vaccine efficacy VE = 1 − IRR (incidence rate ratio)."
+    measurement_time: "mean 3.2 years follow-up post dose 2"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.95
+  effect:
+    scale: incidence-rate-ratio
+    target_vaccine_efficacy: 0.60
+    assumed_control_incidence_per_1000pyr: 7.0
+    design_approach: |
+      Primary endpoint: incidence of confirmed herpes zoster.
+      - Vaccine efficacy: VE = 1 − IRR.
+      - Confirmation required: PCR (preferred) or clinical adjudication
+        by Herpes Zoster Ascertainment Committee.
+      - Lower bound of CI for VE must exceed 25% for success.
+      - Event-driven: pre-specified accrual of ≥ 84 confirmed cases for
+        primary analysis.
+      - Poisson / exact binomial conditional for IRR.
+      - One-sided α = 0.025.
+      - Target success: VE ≥ 60%, lower CI > 25%.
+    efficacy_analysis: |
+      Conditional exact test given total confirmed cases:
+      P(X_vaccine ≤ k | X_vac + X_placebo = n)
+      Then VE = 1 − (X_vac/PYR_vac) / (X_placebo/PYR_placebo)
+      CI via exact Poisson / binomial.
+    co-primary_by_age: |
+      Pre-specified stratification by age group (50-59, 60-69, 70+).
+      Each stratum contributed to overall estimate; consistent efficacy
+      across strata was a secondary objective.
+    hierarchical_testing: |
+      1. Overall VE vs placebo.
+      2. VE by age group stratum.
+      3. VE against post-herpetic neuralgia.
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 36
+    mean_actual_months: 38.4
+
+expected:
+  sample_size_total: 15411
+  sample_size_per_arm: [7698, 7713]
+  events_total_target: 84
+  events_total_actual: 222
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **ZOE-50** established the HZ/su adjuvanted subunit vaccine
+    (later marketed as Shingrix) with exceptional 97.2% efficacy
+    against herpes zoster in adults ≥ 50. Paradigm-shifting over
+    the older Zostavax live vaccine (~ 51% VE).
+
+    **Design**:
+    - 15,411 randomized (1:1).
+    - Stratified by age (50-59, 60-69, 70+).
+    - 2 doses 2 months apart.
+    - Mean follow-up 3.2 years.
+
+    **Results**:
+    - Overall VE: 97.2% (95% CI 93.7-99.0).
+    - 6 zoster cases in vaccine arm vs 210 in placebo.
+    - Post-hoc against PHN (ZOE-70 combined): 91.2% (75.9-97.7).
+    - Consistent across 50-59, 60-69, 70+ strata.
+
+    **Regulatory**:
+    - FDA approval Oct 2017 (Shingrix, GSK).
+    - ACIP preferred recommendation over Zostavax (2018).
+    - 2021 label expanded to immunocompromised.
+
+r_packages:
+  - epiR (VE calculation + CI)
+  - exactci (exact conditional binomial)
+  - sampling
+  - gsDesign
+  - Hmisc
+
+tags:
+  - zoe-50
+  - shingrix
+  - zoster
+  - vaccine
+  - count-rate
+  - incidence-rate-ratio
+  - vaccine-efficacy
+  - event-driven
+  - landmark-trial
+  - age-stratified
+
+caveats: |
+  ZOE-50 design / analysis points:
+
+  - **Event-driven target**: 84 confirmed cases for primary analysis.
+    Actual accrual: 222 cases (strongly over-powered due to unexpectedly
+    high placebo rate + clean efficacy).
+  - **Exact conditional test**: given total cases n, Poisson assumption
+    reduces to exact binomial on X_vac ~ Binom(n, p) with null p = 0.5
+    (equal rates).
+  - **Stratified age analysis**: age is a dominant risk factor for
+    zoster; stratification critical for valid overall VE.
+  - **Confirmation required**: PCR or clinical adjudication. Reduces
+    misclassification which would bias VE toward null.
+
+  **Exact VE analysis (sketch)**:
+  ```r
+  library(epiR)
+
+  # 6 cases in vaccine arm, 210 in placebo
+  # Person-years: ~ 24,500 each arm
+  dat <- matrix(c(6, 24500, 210, 24500), nrow = 2, byrow = FALSE)
+  epi.2by2(dat, method = "cohort.time")
+  # VE = 1 - IRR = 1 - (6/24500) / (210/24500) = 97.1%
+
+  # Exact conditional CI
+  library(exactci)
+  poisson.exact(c(6, 210), c(24500, 24500), tsmethod = "central")
+  ```
+
+  **Sample-size for VE trials** (approximate):
+  - N_events = (z_α + z_β)² · (1 + 1/(1-VE)) / (ln(1-VE))²
+  - At VE 60%, α 0.025, β 0.05: ~ 84 events.
+  - Total PYR = events / incidence_rate.
+
+  **Relationship to other vaccine trials**:
+  - **Zostavax (2005)**: live zoster, VE ~ 51%.
+  - **Pfizer-BNT162b2** (2020, in corpus): COVID-19 vaccine (VE 95%).
+  - **RotaTeq** (2006, in corpus): rotavirus vaccine (VE 74%).
+  - **RTS,S/AS01** malaria Phase 3 (in corpus).
+
+  **Methodology lessons**:
+  - Count-rate / IRR analysis is standard for vaccine efficacy.
+  - Event-driven design: pre-specify event count, not PYR.
+  - Exact conditional tests preferred for small event counts.
+  - Age stratification critical for diseases with age-dependent incidence.
