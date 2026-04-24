@@ -1,0 +1,176 @@
+id: 1979_OBrien-Fleming_boundaries
+family: group-sequential
+source:
+  kind: methodology-paper
+  citation: "O'Brien PC, Fleming TR. A multiple testing procedure for clinical trials. Biometrics. 1979 Sep;35(3):549-56. Building on: Pocock SJ. Group sequential methods in the design and analysis of clinical trials. Biometrika. 1977;64(2):191-199."
+
+design:
+  indication: "Generic methodology applicable to any clinical trial with pre-specified interim analyses for efficacy stopping"
+  population: "Any disease setting with planned group-sequential interim analyses"
+  arms:
+    - name: "any two-arm or multi-arm comparison"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Normal, binary, or time-to-event — any endpoint reducible to a Z-statistic with known variance"
+    measurement_time: "at each pre-specified interim"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    scale: methodology
+    boundary_family: |
+      O'Brien-Fleming (OBF) efficacy boundaries for K interim analyses
+      at information fractions I_1 ≤ I_2 ≤ ... ≤ I_K = 1:
+
+        c_k = c_K · √(I_K / I_k)   (for two-sided test)
+
+      Where c_K is chosen so that overall type I error is α.
+      Key property: c_k DECREASES as I_k grows — conservative early,
+      approaches fixed-sample critical at final analysis.
+    comparison_to_pocock: |
+      Pocock 1977 boundary: constant critical value
+        c_k = c for all k
+      (chosen so overall α preserved).
+      - Pocock: easier to stop early, higher expected N under H0.
+      - OBF: very hard to stop early, lower α penalty at final.
+
+    numerical_example: |
+      K = 5 interim analyses, 2-sided α = 0.05:
+      - OBF boundary Z-values (final = 2.04):
+        2.04 × √(5/k) for k = 1..5
+        → 4.56, 3.23, 2.63, 2.28, 2.04
+      - Pocock boundary Z-values: 2.41, 2.41, 2.41, 2.41, 2.41
+
+      Translated to nominal P-values:
+      - OBF: 0.000005, 0.0013, 0.0085, 0.022, 0.041
+      - Pocock: 0.016, 0.016, 0.016, 0.016, 0.016
+
+    implementation: |
+      Original OBF 1979 assumed equally-spaced information looks.
+      Generalized via Lan-DeMets α-spending (1983, companion case) for
+      flexible timing.
+    sample_size_impact: |
+      - Fixed sample: N_fixed at α and power.
+      - With OBF boundaries at 5 interim looks:
+          Maximum N ≈ 1.026 × N_fixed (very small inflation).
+      - With Pocock boundaries at 5 looks:
+          Maximum N ≈ 1.206 × N_fixed.
+      OBF dominates because early boundaries are so conservative.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **O'Brien-Fleming 1979** established the **OBF boundary family**
+    as the de facto standard for group-sequential efficacy stopping
+    boundaries in clinical trials. Published in Biometrics, building on
+    Pocock 1977 Biometrika groundwork.
+
+    **Core contribution**:
+    - Formula c_k = c_K · √(I_K / I_k) produces boundaries that are
+      VERY conservative at early interims and approach the fixed-sample
+      critical value at the final analysis.
+    - Preserves most of the power at the final analysis.
+    - Minimal inflation of maximum sample size (~ 2-3%).
+    - Early stops occur only for truly large effects, minimizing
+      false-positive risk.
+
+    **Adopted by essentially all confirmatory GS trials**:
+    - FDA 2010 Guidance on Adaptive Designs: OBF is the default
+      recommended efficacy boundary.
+    - All GS oncology trials (CheckMate, KEYNOTE, etc.) use OBF.
+    - DMC charters routinely specify OBF for efficacy stopping.
+
+    **Modern generalization**:
+    - Lan-DeMets (1983, companion case): α-spending with OBF shape
+      for flexible information timing.
+    - Hwang-Shih-DeCani: exponential-family α-spending.
+    - Wang-Tsiatis power family: OBF / Pocock as special cases
+      (Δ = 0 and Δ = 0.5).
+
+    **Implementation in R**:
+    - `gsDesign::gsDesign(sfu = sfOF)` — Lan-DeMets OBF spending.
+    - `rpact::getDesignGroupSequential(typeOfDesign = "OF")`.
+
+r_packages:
+  - gsDesign (Keaven Anderson — canonical)
+  - rpact
+  - ldbounds
+  - gsDesign2
+  - Mediana
+
+tags:
+  - obrien-fleming
+  - obf
+  - group-sequential
+  - efficacy-boundary
+  - methodology-foundational
+  - interim-analysis
+  - 1979
+  - biometrics
+
+caveats: |
+  O'Brien-Fleming boundary methodology considerations:
+
+  - **Equal information spacing assumption (original 1979)**: the
+    closed-form OBF formula requires equally-spaced information fractions.
+    Modern implementations use Lan-DeMets spending function to generalize.
+  - **Type of bound**: two-sided OBF, one-sided OBF, and asymmetric
+    upper/lower boundaries all defined in the literature.
+  - **Relationship to Z-statistic**: OBF formulated for standardized
+    normal test statistic with independent increments. Approximations
+    apply to log-rank, Cox score, binary, t-tests, etc.
+  - **Power loss vs fixed**: very small (~ 1-2% under alternative) but
+    non-zero — cost of flexibility.
+
+  **Comparison with other boundary families**:
+  | Family | Early boundary | Final boundary | Expected N under H1 |
+  |---|---|---|---|
+  | Fixed (no interim) | — | 1.960 | 1.00 × N_fixed |
+  | OBF (5 looks) | 4.56 | 2.04 | ~ 0.85 × N_fixed |
+  | Pocock (5 looks) | 2.41 | 2.41 | ~ 0.73 × N_fixed |
+  | Wang-Tsiatis Δ=0.25 | 2.96 | 2.17 | ~ 0.78 × N_fixed |
+  | Triangular | asymmetric | — | ~ 0.70 × N_fixed |
+
+  **Implementation example**:
+  ```r
+  library(gsDesign)
+
+  # 5-look OBF design, α = 0.025 one-sided, 90% power
+  d <- gsDesign(
+    k = 5,
+    test.type = 2,      # symmetric OBF upper + lower
+    alpha = 0.025,
+    beta = 0.10,
+    sfu = sfOF,         # Lan-DeMets OBF spending function
+    sfl = sfOF,
+    timing = c(0.2, 0.4, 0.6, 0.8, 1.0)
+  )
+  print(d)
+  # Boundaries, sample-size inflation, OC
+  ```
+
+  **Historical context**:
+  - **Pocock 1977** (Biometrika): first systematic GS boundary treatment.
+  - **O'Brien-Fleming 1979** (Biometrics): more conservative boundary,
+    became dominant.
+  - **Lan-DeMets 1983** (Biometrika, companion case): α-spending function
+    framework generalizing OBF/Pocock to flexible timing.
+  - **Jennison-Turnbull 2000** textbook: canonical reference.
+  - **DeMets-Lan 1994** (Stat Med): practical application tutorial.
+
+  **Modern applications**:
+  - **FDA 2019 Adaptive Designs Guidance**: OBF default recommendation.
+  - **EMA 2007 CHMP Reflection Paper**: OBF preferred.
+  - **Essentially all modern confirmatory GS trials** use OBF or
+    OBF-style α-spending.

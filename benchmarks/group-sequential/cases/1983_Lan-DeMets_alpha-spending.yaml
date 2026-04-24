@@ -1,0 +1,281 @@
+id: 1983_Lan-DeMets_alpha-spending
+family: group-sequential
+source:
+  kind: methodology-paper
+  citation: "Lan KKG, DeMets DL. Discrete sequential boundaries for clinical trials. Biometrika. 1983;70(3):659-663. Companion: DeMets DL, Lan KKG. Interim analysis: the alpha spending function approach. Stat Med. 1994;13(13-14):1341-1352."
+
+design:
+  indication: "Generic methodology applicable to any clinical trial with interim analyses at non-prespecified or flexible timing"
+  population: "Any group-sequential confirmatory trial where information fractions cannot be pre-specified exactly (e.g., event-driven, calendar-scheduled, accrual-dependent)"
+  arms:
+    - name: "any two-arm or multi-arm comparison"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Any endpoint reducible to a Z-statistic with independent increments on the Brownian scale — includes log-rank (TTE), difference in means (continuous), log-odds (binary), log-rate ratio (counts)"
+    measurement_time: "at flexible interim times determined in-trial"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    scale: methodology
+    spending_function_framework: |
+      α-spending function α(t) where t ∈ [0, 1] is the information
+      fraction and α(t) is the cumulative type I error spent by time t.
+
+      Requirements:
+      - α(0) = 0
+      - α(1) = α (total type I error)
+      - α(t) non-decreasing on [0, 1]
+
+      Given α(t), the k-th interim boundary c_k is determined by:
+        P(|Z_1| ≤ c_1, ..., |Z_{k-1}| ≤ c_{k-1}, |Z_k| > c_k | H_0)
+          = α(t_k) - α(t_{k-1})
+
+      where t_k = I_k / I_K is the information fraction at look k.
+
+      This allows boundaries to be computed SEQUENTIALLY as information
+      accumulates — the number and timing of interims need NOT be
+      pre-specified, only the spending function α(·).
+    spending_functions_catalog: |
+      Canonical spending functions:
+
+      **OBF-like (Lan-DeMets approximation to O'Brien-Fleming)**:
+        α_OF(t) = 2 · [1 - Φ(z_{α/2} / √t)]
+        Gives boundaries very close to O'Brien-Fleming 1979 when
+        interims are equally spaced.
+
+      **Pocock-like**:
+        α_P(t) = α · log(1 + (e - 1) · t)
+        Gives near-constant nominal α boundaries, matching Pocock 1977.
+
+      **Power family (Kim-DeMets 1987)**:
+        α_ρ(t) = α · t^ρ
+        - ρ = 1: uniform spending (linear).
+        - ρ → ∞: approaches fixed-sample final.
+        - ρ → 0: approaches O'Brien-Fleming-like.
+
+      **Hwang-Shih-DeCani (1990)** — exponential family:
+        α_γ(t) = α · (1 - e^{-γt}) / (1 - e^{-γ})   for γ ≠ 0
+        α_0(t) = α · t                               for γ = 0
+        - γ = -4: OBF-like.
+        - γ = 1: Pocock-like.
+        - γ continuous → smooth interpolation.
+    key_property: |
+      **Independent-increments assumption**: Z-statistics Z_1, ..., Z_K
+      computed at successive information fractions t_1 < ... < t_K
+      satisfy:
+        Cov(Z_j · √t_j, Z_k · √t_k) = √(t_j / t_k)   for j ≤ k.
+      This is the canonical Brownian motion covariance — holds
+      (exactly or approximately) for:
+      - Sums of iid observations (normal/t tests).
+      - Score statistics from proportional hazards (log-rank).
+      - Standardized binomial.
+      - Cox partial-likelihood score.
+
+      Independence of increments is what makes sequential boundary
+      computation tractable.
+    flexibility_advantage: |
+      Original OBF (1979) and Pocock (1977) assumed:
+      - Pre-specified number K of interims.
+      - Equally-spaced information fractions t_k = k/K.
+
+      In practice, interims occur at:
+      - DMC meetings (calendar-driven).
+      - Event milestones (event-driven).
+      - Accrual-dependent timing.
+
+      None of these guarantee equally-spaced information. Lan-DeMets
+      α-spending handles ANY timing while preserving overall α.
+    numerical_example: |
+      K = 5 planned interims, actual info fractions t = (0.18, 0.35,
+      0.55, 0.78, 1.00) with OBF-like spending α_OF:
+
+      Cumulative α spent at each look:
+        α_OF(0.18) = 0.0000037
+        α_OF(0.35) = 0.0012
+        α_OF(0.55) = 0.0075
+        α_OF(0.78) = 0.0210
+        α_OF(1.00) = 0.0500
+
+      Corresponding Z-boundaries (sequential computation):
+        4.64, 3.35, 2.71, 2.31, 2.04
+
+      Matches OBF 1979 equally-spaced formula very closely despite
+      uneven timing.
+  comparison_to_obf_pocock: |
+    **OBF (1979)**: closed-form boundary, equally-spaced information.
+    **Pocock (1977)**: constant boundary, equally-spaced information.
+    **Lan-DeMets (1983)**: α-spending function generalizes BOTH to
+    arbitrary information timing.
+
+    Modern gsDesign workflow:
+    - `sfLDOF` = Lan-DeMets OBF-like spending (MOST COMMON).
+    - `sfLDPocock` = Lan-DeMets Pocock-like spending.
+    - `sfHSD` = Hwang-Shih-DeCani family.
+    - `sfPower` = Kim-DeMets power family.
+  implementation_notes: |
+    Sequential boundary computation requires multivariate normal
+    integration — nowadays standard in:
+    - gsDesign (Keaven Anderson, R).
+    - rpact (Gernot Wassmer, R).
+    - ldbounds (Reboussin et al., R / original EAST code).
+    - EAST (Cytel, commercial).
+
+    Numerical method: recursive evaluation of sequential probabilities
+    via Gaussian quadrature on each step.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **Lan-DeMets 1983** introduced the **α-spending function** concept
+    that generalized O'Brien-Fleming and Pocock boundaries to arbitrary
+    information timing — the foundational methodology enabling modern
+    group-sequential trials with flexible interim scheduling.
+
+    **Core contribution**:
+    - α(t) defines cumulative type I error spent by information time t.
+    - Boundaries computed sequentially as information accrues.
+    - Number and timing of interims NEED NOT be pre-specified.
+    - Preserves overall α regardless of actual interim schedule.
+
+    **Why it dominated**:
+    - Original OBF/Pocock required equal spacing — unrealistic for
+      event-driven or DMC-scheduled interims.
+    - Lan-DeMets allows interim at ANY pre-specified information
+      fraction (even determined in-trial).
+    - Enables modern event-driven oncology GS trials where interim
+      events are hit at uneven calendar times.
+
+    **Canonical spending functions**:
+    - OBF-like: `α_OF(t) = 2·[1 - Φ(z_{α/2}/√t)]` — matches OBF closely.
+    - Pocock-like: `α_P(t) = α·log(1 + (e-1)·t)` — matches Pocock.
+    - Hwang-Shih-DeCani: smooth exponential family.
+    - Kim-DeMets power: `α·t^ρ`.
+
+    **Modern adoption**:
+    - gsDesign default for most users: `sfLDOF`.
+    - rpact default: `typeOfDesign = "asOF"`.
+    - FDA 2019 Adaptive Designs Guidance: α-spending explicitly endorsed.
+    - ICH E9 R1: allows α-spending for flexible interim timing.
+
+r_packages:
+  - gsDesign (canonical — sfLDOF, sfLDPocock, sfHSD, sfPower)
+  - rpact (typeOfDesign = "asOF", "asP", "asKD", "asHSD")
+  - ldbounds (direct LD-bounds computation)
+  - gsDesign2
+  - Mediana
+
+tags:
+  - lan-demets
+  - alpha-spending
+  - spending-function
+  - group-sequential
+  - methodology-foundational
+  - interim-analysis
+  - flexible-timing
+  - 1983
+  - biometrika
+
+caveats: |
+  α-spending function methodology considerations:
+
+  - **Independent increments**: framework assumes the Z-statistics at
+    successive looks have independent increments on the Brownian scale.
+    Holds for canonical estimators (sums, log-rank, Cox score, binomial).
+    Fails for some non-standard statistics — simulation recommended
+    when in doubt.
+  - **Information-fraction calibration**: for TTE endpoints,
+    information ∝ events observed. For continuous/binary, information ∝
+    number of subjects. For Cox models with covariates, information
+    fraction is events/total-events at the interim.
+  - **Non-binding vs binding futility**: α-spending separately defines
+    efficacy and futility spending. Binding futility allows reclaiming
+    α; non-binding does not (and is preferred by FDA 2019 Guidance).
+  - **Mis-specified spending**: if actual information fractions differ
+    substantially from planned, α may be slightly mis-spent. Modern
+    practice: recalculate boundaries based on observed information
+    (error-spending approach).
+
+  **Comparison of spending functions at α = 0.025 one-sided, K = 5**:
+  | t | OBF-like α(t) | Pocock-like α(t) | Z-OBF | Z-Pocock |
+  |---|---|---|---|---|
+  | 0.2 | 0.000002 | 0.0052 | 4.56 | 2.44 |
+  | 0.4 | 0.0006 | 0.0094 | 3.23 | 2.42 |
+  | 0.6 | 0.0038 | 0.0129 | 2.63 | 2.41 |
+  | 0.8 | 0.0110 | 0.0181 | 2.28 | 2.40 |
+  | 1.0 | 0.0250 | 0.0250 | 2.04 | 2.41 |
+
+  **Implementation example (gsDesign)**:
+  ```r
+  library(gsDesign)
+
+  # Flexible 5-look design with OBF-like α-spending
+  d <- gsDesign(
+    k = 5,
+    test.type = 2,
+    alpha = 0.025,
+    beta = 0.10,
+    sfu = sfLDOF,                          # OBF-like spending
+    sfl = sfLDOF,
+    timing = c(0.18, 0.35, 0.55, 0.78, 1.0) # UNEQUAL timing ok!
+  )
+  print(d)
+
+  # If interim 1 happens at info = 0.20 instead of 0.18:
+  # Re-compute remaining boundaries given updated information fraction
+  d2 <- gsDesign(
+    k = 5,
+    alpha = 0.025, beta = 0.10,
+    sfu = sfLDOF, sfl = sfLDOF,
+    timing = c(0.20, 0.35, 0.55, 0.78, 1.0),
+    maxn.IPlan = d$n.I[5]                  # fix max sample size
+  )
+  ```
+
+  **Implementation example (rpact)**:
+  ```r
+  library(rpact)
+
+  design <- getDesignGroupSequential(
+    kMax = 5,
+    typeOfDesign = "asOF",                  # OBF-like α-spending
+    alpha = 0.025, beta = 0.10,
+    sided = 1,
+    informationRates = c(0.18, 0.35, 0.55, 0.78, 1.0)
+  )
+  ```
+
+  **Historical context**:
+  - **Pocock 1977** — Biometrika: GS constant-boundary.
+  - **O'Brien-Fleming 1979** — Biometrics: decreasing boundary.
+  - **Lan-DeMets 1983** (this paper) — Biometrika: α-spending.
+  - **Kim-DeMets 1987** — Biometrika: power family.
+  - **Hwang-Shih-DeCani 1990** — Stat Med: exponential family.
+  - **Pampallona-Tsiatis 1994** — JSPI: unified binding/non-binding.
+  - **DeMets-Lan 1994** — Stat Med (companion tutorial): practical use.
+  - **Jennison-Turnbull 2000** — textbook (canonical reference).
+
+  **Modern usage patterns**:
+  - **sfLDOF** (OBF-like): default for efficacy in confirmatory trials.
+  - **sfLDPocock**: rare, used when early stopping is prioritized.
+  - **sfHSD(γ = -4)**: close to OBF but smoother.
+  - **sfHSD(γ = 1)**: close to Pocock.
+  - **sfPower(ρ = 3)**: intermediate, sometimes used for futility.
+
+  **Applications in corpus**:
+  - All modern GS efficacy cases (PARADIGM-HF, DAPA-HF, FOURIER,
+    EMPA-REG OUTCOME, CheckMate, KEYNOTE series) use sfLDOF or
+    equivalent α-spending.
+  - sfHSD / sfPower used for binding/non-binding futility in futility
+    cases.
