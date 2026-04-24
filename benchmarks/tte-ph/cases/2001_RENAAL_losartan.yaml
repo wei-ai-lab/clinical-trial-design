@@ -1,0 +1,61 @@
+id: 2001_RENAAL_losartan
+family: tte-ph
+source:
+  kind: published-trial
+  citation: "Brenner BM, Cooper ME, de Zeeuw D, et al. Effects of losartan on renal and cardiovascular outcomes in patients with type 2 diabetes and nephropathy. N Engl J Med. 2001;345(12):861-869."
+  doi: "10.1056/NEJMoa011161"
+  nct_id: "NCT00308347"
+
+design:
+  indication: "Type 2 diabetes with nephropathy"
+  population: "T2D, proteinuria ≥ 0.5 g/d, serum Cr 1.3-3.0 mg/dL"
+  arms:
+    - name: "losartan 50-100 mg"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: doubling of serum Cr + ESRD + death"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.92
+  effect:
+    hr: 0.75
+    control_3_5yr_event_rate: 0.47
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 1513
+  events_total: 660
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 3
+  notes: |
+    Renal-progression PH TTE design. Observed HR 0.84 vs assumed 0.75 —
+    somewhat under-powered in retrospect but significant. ESRD component
+    (HR 0.72) was the strongest driver. Renoprotection benefit attributed
+    to ARB class effect beyond BP reduction.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - diabetic-nephropathy
+  - arb
+  - tte-ph
+  - renal-composite
+  - renoprotection
+  - t2d
+
+caveats: |
+  Composite includes mortality; renal-specific endpoint (ESRD) has
+  different PH character than serum Cr doubling. Post-hoc analyses
+  explored PH diagnostics by component; overall PH assumption held
+  reasonably.

@@ -1,0 +1,63 @@
+id: 2004_PROVE-IT_atorvastatin
+family: tte-ph
+source:
+  kind: published-trial
+  citation: "Cannon CP, Braunwald E, McCabe CH, et al. Intensive versus moderate lipid lowering with statins after acute coronary syndromes. N Engl J Med. 2004;350(15):1495-1504."
+  doi: "10.1056/NEJMoa040583"
+  nct_id: "NCT00382460"
+
+design:
+  indication: "Post-acute coronary syndrome"
+  population: "Within 10 days of ACS, stable"
+  arms:
+    - name: "atorvastatin 80 mg"
+      allocation: 1
+    - name: "pravastatin 40 mg"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite MACE: death + MI + unstable angina + revascularization + stroke"
+    measurement_time: "time-to-first-event"
+  comparison: "non-inferiority with pre-specified superiority testing"
+  sidedness: 2
+  alpha: 0.05
+  power: 0.95
+  effect:
+    hr: 0.80
+    ni_margin_rrr: 0.17   # 17% RRR margin for NI
+    control_2yr_mace: 0.25
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 18
+
+expected:
+  sample_size_total: 4162
+  events_total: 925
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 3
+  notes: |
+    Active-active head-to-head intensive vs moderate statin PH-TTE
+    design. Pre-specified NI-to-superiority pathway (if NI met, test
+    superiority). Observed HR 0.84 established intensive statin as
+    post-ACS SOC. High-event-rate ACS population enabled relatively
+    small N (~4200) to achieve 925 events in ~24 months.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - post-acs
+  - statin
+  - intensive-vs-moderate
+  - active-comparator
+  - tte-ph
+  - ni-to-superiority
+
+caveats: |
+  PH assumption verified post-hoc in published diagnostic plots.
+  Trial design's use of NI-to-superiority hierarchical testing
+  reflects regulatory convention for new-drug claims where
+  superiority is desired but NI is the floor.

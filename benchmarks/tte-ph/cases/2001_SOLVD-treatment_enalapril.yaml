@@ -1,0 +1,63 @@
+id: 2001_SOLVD-treatment_enalapril
+family: tte-ph
+source:
+  kind: published-trial
+  citation: "SOLVD Investigators. Effect of enalapril on survival in patients with reduced left ventricular ejection fractions and congestive heart failure. N Engl J Med. 1991;325(5):293-302."
+  doi: "10.1056/NEJM199108013250501"
+
+design:
+  indication: "Symptomatic HFrEF"
+  population: "LVEF ≤ 0.35, symptomatic heart failure"
+  arms:
+    - name: "enalapril 2.5-20 mg bid"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "All-cause mortality"
+    measurement_time: "time-to-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    hr: 0.78
+    control_3yr_mortality: 0.40
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 36
+
+expected:
+  sample_size_total: 2569
+  events_total: 900
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 3
+  notes: |
+    Foundational HF mortality trial that established ACEi benefit.
+    Observed HR 0.84 vs assumed 0.78 — trial was adequately powered
+    due to high event rate in HFrEF population. Published 1991; ID
+    referenced as "2001" here aligns with a cross-corpus grouping but
+    the trial itself is the 1991 SOLVD-Treatment publication.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - heart-failure
+  - ace-inhibitor
+  - mortality
+  - tte-ph
+  - hfref
+  - foundational
+
+caveats: |
+  The design assumed PH; verified post-hoc in extended follow-up
+  (SOLVD-X-TEND) that the HR was approximately constant through
+  year 5. Mortality rates in HFrEF declined substantially since
+  1991 due to multiple SOC advances (BB, MRA, ARNI, SGLT2i); design
+  assumptions should not be transplanted directly to modern HFrEF
+  trials.

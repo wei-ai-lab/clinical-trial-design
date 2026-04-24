@@ -1,0 +1,61 @@
+id: 1999_LIFE_losartan
+family: tte-ph
+source:
+  kind: published-trial
+  citation: "Dahlén B, Devereux RB, Kjeldsen SE, et al. Cardiovascular morbidity and mortality in the Losartan Intervention for Endpoint reduction in hypertension study (LIFE). Lancet. 2002;359(9311):995-1003."
+  doi: "10.1016/S0140-6736(02)08089-3"
+
+design:
+  indication: "Hypertension with LVH"
+  population: "Adults 55-80 with HTN and ECG-LVH"
+  arms:
+    - name: "losartan 50-100 mg"
+      allocation: 1
+    - name: "atenolol 50-100 mg"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: CV death + MI + stroke"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    hr: 0.85
+    control_4yr_mace: 0.11
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 48
+
+expected:
+  sample_size_total: 9193
+  events_total: 1040
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 2
+  notes: |
+    Active-comparator PH-superiority trial. Observed HR 0.87 vs assumed
+    0.85 — well-calibrated. BP reduction similar between arms; benefit
+    attributable to class-specific effects (reduction in new-onset
+    diabetes, stroke prevention).
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - hypertension
+  - arb
+  - beta-blocker
+  - active-comparator
+  - tte-ph
+  - lvh
+  - composite-endpoint
+
+caveats: |
+  Active-comparator design requires stronger PH assumption than placebo-
+  controlled because both arms have a non-trivial hazard. The composite
+  endpoint was stroke-driven; cardiologists debated whether losartan's
+  benefit over atenolol generalizes beyond LVH populations.

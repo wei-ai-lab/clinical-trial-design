@@ -1,0 +1,65 @@
+id: 2003_IDNT_irbesartan
+family: tte-ph
+source:
+  kind: published-trial
+  citation: "Lewis EJ, Hunsicker LG, Clarke WR, et al. Renoprotective effect of the angiotensin-receptor antagonist irbesartan in patients with nephropathy due to type 2 diabetes. N Engl J Med. 2001;345(12):851-860."
+  doi: "10.1056/NEJMoa011303"
+
+design:
+  indication: "Type 2 diabetes with nephropathy"
+  population: "T2D, proteinuria, elevated serum Cr"
+  arms:
+    - name: "irbesartan 300 mg"
+      allocation: 1
+    - name: "amlodipine 10 mg"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: doubling of serum Cr + ESRD + death"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  alpha_split: "Hochberg across 2 pairwise comparisons"
+  power: 0.90
+  effect:
+    hr_irbesartan_vs_placebo: 0.70
+    hr_amlodipine_vs_placebo: 1.00
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 30
+
+expected:
+  sample_size_total: 1715
+  events_total: 700
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 3
+  notes: |
+    Three-arm renal endpoint trial with Hochberg multiplicity across
+    2 pairwise comparisons. Observed HR irbesartan vs placebo 0.80
+    (vs assumed 0.70) — adequately powered. Amlodipine showed no
+    benefit (HR ≈ 1.00), supporting ARB class-specific renoprotection
+    rather than general BP-mediated effect.
+
+r_packages:
+  - gsDesign::nSurv
+  - gMCP   # for Hochberg verification
+
+tags:
+  - diabetic-nephropathy
+  - arb
+  - tte-ph
+  - three-arm
+  - renal-composite
+  - hochberg-multiplicity
+
+caveats: |
+  Hochberg procedure gives α-control across 2 comparisons but is
+  not closed-testing; unlike Holm, it requires independence or
+  positive correlation of test statistics (PRDS condition satisfied
+  by shared control). Worked in IDNT context but sponsors should
+  verify in their own design.

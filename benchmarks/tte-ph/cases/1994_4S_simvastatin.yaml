@@ -1,0 +1,60 @@
+id: 1994_4S_simvastatin
+family: tte-ph
+source:
+  kind: published-trial
+  citation: "Scandinavian Simvastatin Survival Study Group. Randomised trial of cholesterol lowering in 4444 patients with coronary heart disease: the Scandinavian Simvastatin Survival Study (4S). Lancet. 1994;344(8934):1383-1389."
+  doi: "10.1016/S0140-6736(94)90566-5"
+
+design:
+  indication: "Secondary prevention of CHD"
+  population: "Prior MI or angina; total cholesterol 5.5-8.0 mmol/L"
+  arms:
+    - name: "simvastatin 20-40 mg"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "All-cause mortality"
+    measurement_time: "time-to-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.95
+  effect:
+    hr: 0.70
+    control_5yr_mortality: 0.105
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 60
+
+expected:
+  sample_size_total: 4444
+  events_total: 440
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 2
+  notes: |
+    Landmark PH-design mortality trial that established statin class
+    benefit. Observed HR 0.70 matched assumed HR — design was well
+    calibrated. 5.4 y median follow-up; results transformed secondary
+    prevention.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - secondary-prevention
+  - statin
+  - mortality
+  - tte-ph
+  - simvastatin
+  - landmark-trial
+
+caveats: |
+  Single end-of-study analysis (no pre-specified GS). Later analyses
+  (extended follow-up, subgroups) confirmed PH assumption held
+  reasonably well. Foundational trial for lipid-lowering secondary
+  prevention.

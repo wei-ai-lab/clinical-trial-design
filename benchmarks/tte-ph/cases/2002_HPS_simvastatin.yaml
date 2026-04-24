@@ -1,0 +1,62 @@
+id: 2002_HPS_simvastatin
+family: tte-ph
+source:
+  kind: published-trial
+  citation: "Heart Protection Study Collaborative Group. MRC/BHF Heart Protection Study of cholesterol lowering with simvastatin in 20,536 high-risk individuals: a randomised placebo-controlled trial. Lancet. 2002;360(9326):7-22."
+  doi: "10.1016/S0140-6736(02)09327-3"
+
+design:
+  indication: "Primary/secondary CV prevention in high-risk adults"
+  population: "Adults 40-80 with CHD, stroke, PVD, or diabetes"
+  arms:
+    - name: "simvastatin 40 mg (± antioxidants)"
+      allocation: 1
+    - name: "placebo (± antioxidants)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "All-cause mortality (statin primary); CHD death (antioxidant primary)"
+    measurement_time: "time-to-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.01
+  power: 0.95
+  effect:
+    hr: 0.80
+    control_5yr_mortality: 0.12
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 60
+
+expected:
+  sample_size_total: 20536
+  events_total: 2500
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 3
+  notes: |
+    Largest single-drug statin Phase 3. 2×2 factorial with antioxidants;
+    each factor analyzed with its own primary endpoint. Stringent α = 0.01
+    for statin primary reflects sponsor desire for robust claim. Observed
+    HR 0.87 for all-cause mortality — underpowered assumption proved
+    conservative; trial still met endpoint due to large N.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - statin
+  - mrc
+  - bhf
+  - large-trial
+  - factorial-design
+  - tte-ph
+  - primary-secondary-prevention
+
+caveats: |
+  Factorial 2×2 design; HPS analyzed each factor independently assuming
+  no interaction between simvastatin and antioxidant arms. Post-hoc tests
+  confirmed no statistically significant interaction. Sample-size was
+  event-driven but trial enrolled aggressively to ensure timeliness.

@@ -1,0 +1,62 @@
+id: 2010_SHIFT_ivabradine
+family: tte-ph
+source:
+  kind: published-trial
+  citation: "Swedberg K, Komajda M, Böhm M, et al. Ivabradine and outcomes in chronic heart failure (SHIFT): a randomised placebo-controlled study. Lancet. 2010;376(9744):875-885."
+  doi: "10.1016/S0140-6736(10)61198-1"
+  nct_id: "NCT02441218"
+
+design:
+  indication: "Chronic HFrEF with elevated resting heart rate"
+  population: "LVEF ≤ 35%, NYHA II-IV, HR ≥ 70 bpm sinus rhythm, on optimal medical therapy"
+  arms:
+    - name: "ivabradine titrated to HR 50-60 bpm"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: CV death + HF hospitalization"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    hr: 0.82
+    control_annual_rate: 0.15
+  accrual:
+    duration_months: 30
+  followup:
+    planned_months: 22
+
+expected:
+  sample_size_total: 6558
+  events_total: 1580
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 3
+  notes: |
+    Baseline-enrichment design — only HFrEF patients with HR ≥ 70 bpm
+    enrolled because ivabradine's mechanism (If channel inhibition)
+    requires HR substrate. Observed HR 0.82 matched assumption
+    exactly — textbook design-to-outcome precision.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - heart-failure
+  - ivabradine
+  - if-channel
+  - baseline-enrichment
+  - tte-ph
+  - composite-endpoint
+
+caveats: |
+  "Enrichment" here is baseline (entry criterion) not adaptive — all
+  enrolled patients had HR ≥ 70, pre-specified from Phase 2 evidence
+  of HR-dependent benefit. This is a simpler pattern than adaptive
+  enrichment family. Composite was hospitalization-driven; CV death
+  alone was NS.
