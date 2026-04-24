@@ -109,7 +109,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | bayesian | ✅ | 7 | 5 | ✅ |
 | platform | ✅ | 7 | 5 | ✅ |
 | basket | ✅ | 8 | 4 | ✅ |
-| umbrella | ✅ | 6 | 4 | ✅ |
+| umbrella | ✅ | 8 | 4 | ✅ |
 | crossover | ✅ | 7 | 3 | ✅ |
 | factorial | ✅ | 5 | 3 | ✅ |
 | non-standard | ✅ | 5 | 3 | ✅ |

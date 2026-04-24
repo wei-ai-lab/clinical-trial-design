@@ -1,0 +1,146 @@
+id: 2017_FOCUS4_colorectal
+family: umbrella
+source:
+  kind: primary-results
+  citation: "Kaplan R, Maughan T, Crook A, Fisher D, Wilson R, Brown L, Parmar M. Evaluating many treatments and biomarkers in oncology: a new design. J Clin Oncol. 2013 Dec 20;31(36):4562-8. FOCUS4 protocol. Adams RA et al. 2018 (FOCUS4-N primary report). Papers on individual cohorts C, D, N through 2024."
+
+design:
+  indication: "Advanced / metastatic colorectal cancer (mCRC) after first-line chemotherapy, stable / responding"
+  population: "Adults with mCRC during a maintenance phase post first-line; molecular profiling to determine biomarker cohort"
+  arms:
+    - name: "FOCUS4-A: HER2-amplified — trastuzumab + lapatinib"
+      allocation: 1
+    - name: "FOCUS4-B: BRAF-mutant — encorafenib + binimetinib + cetuximab"
+      allocation: 1
+    - name: "FOCUS4-C: PIK3CA-mutant/PTEN-loss — capecitabine +/- aspirin"
+      allocation: 1
+    - name: "FOCUS4-D: KRAS-mutant — AZD6244 + AKT inhibitor"
+      allocation: 1
+    - name: "FOCUS4-N: all-comers — any molecular profile — capecitabine vs active monitoring"
+      allocation: 1
+  endpoint:
+    type: tte
+    description: "PFS (primary, per cohort); secondary: OS, QoL"
+    measurement_time: "continuous follow-up; DCO per cohort interim / final analysis"
+  comparison: superiority (each cohort vs control)
+  sidedness: 1
+  alpha: 0.05
+  power: 0.80
+  effect:
+    design_type: "Molecularly-stratified umbrella in maintenance setting"
+    per_cohort_design: "Multi-arm multi-stage (MAMS) within each biomarker cohort"
+    screening: "Molecular stratification done at enrollment; patients allocated to cohort matching their biomarker profile"
+    mams_structure: |
+      Each biomarker cohort is a MAMS: typically 2-3 stages with
+      interim efficacy/futility checks. Arms can drop at interim
+      for insufficient effect.
+    unique_feature: |
+      FOCUS4-N is a biomarker-agnostic cohort testing capecitabine
+      maintenance vs observation in all-comers — addresses the
+      maintenance-therapy question orthogonal to molecular
+      stratification.
+  accrual:
+    duration_months: 84
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 1400
+  events_total: null
+  sample_size_per_cohort: 200
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **FOCUS4 (UK colorectal cancer umbrella, 2014-2022)** is the
+    canonical molecular-stratified umbrella trial for mCRC
+    maintenance, led by the Medical Research Council (MRC) Clinical
+    Trials Unit. It applied the **MAMS design within each biomarker
+    cohort**, making it a hybrid umbrella-MAMS master protocol.
+
+    **Structure**:
+    - 5 parallel biomarker cohorts (A: HER2, B: BRAF, C: PIK3CA/
+      PTEN, D: KRAS, N: all-comers).
+    - Molecular stratification at enrollment.
+    - Each cohort uses a MAMS design — interim checks with
+      possibility to drop insufficiently effective arms.
+    - FOCUS4-N is a unique non-stratified maintenance comparison
+      running alongside the molecular cohorts.
+
+    **FOCUS4-N primary result** (Adams et al. 2018):
+    - 254 patients, capecitabine vs active monitoring in post-
+      first-line mCRC maintenance.
+    - Capecitabine prolonged PFS but not OS.
+    - Established capecitabine maintenance as an option.
+
+    **FOCUS4-C** (aspirin in PIK3CA-mutant mCRC): published
+    negative for aspirin addition; closed 2022.
+
+    **FOCUS4-B** (encorafenib combo in BRAF V600E): too few
+    patients accrued; sub-study closed.
+
+    **Sample-size per cohort**:
+    - HR target typically 0.6-0.7 for PFS.
+    - 100-200 events per cohort for full analysis.
+    - Interim events 40-60% through for futility check.
+
+    **Operational lessons**:
+    - Molecular prevalence (BRAF V600E ~ 8%, HER2 ~ 2-5%) limits
+      biomarker-cohort accrual speed.
+    - FOCUS4-N (all-comers) accrued fastest, reflecting the
+      broader population.
+    - Maintenance-setting umbrella is an under-used framework;
+      FOCUS4 showed feasibility.
+
+    **Impact**:
+    - Template for molecular-stratified umbrellas in Europe.
+    - Informed subsequent UK trials: CELESTIAL, STAMPEDE (platform).
+    - EMA reflection on master protocols cited FOCUS4.
+    - Spawned adjuvant umbrella efforts (ALCHEMIST-like in Europe).
+
+r_packages:
+  - MAMS (Jaki-Magirr — per-cohort MAMS design)
+  - rpact (per-cohort GS)
+  - gsDesign (per-cohort survival)
+  - nphsim (simulation-based sizing)
+
+tags:
+  - focus4
+  - uk
+  - mrc
+  - colorectal
+  - umbrella
+  - mams
+  - maintenance-therapy
+  - biomarker-stratified
+  - crc
+  - molecular-matching
+
+caveats: |
+  FOCUS4 illustrates key umbrella challenges:
+  - **Biomarker prevalence reality**: BRAF V600E in mCRC is ~ 8%,
+    HER2 ~ 2-5% — slow accrual to biomarker-positive cohorts.
+  - **FOCUS4-B and D closed early** due to insufficient accrual.
+  - **FOCUS4-N (all-comers)** accrued fastest and generated the
+    most-cited result.
+
+  FOCUS4 vs Lung-MAP:
+  - Both are molecular-stratified umbrellas for single cancer types.
+  - Lung-MAP screens ~ 6000 patients over 10 years; FOCUS4 ~ 1400
+    over 8 years — CRC cohort more tractable for screening.
+  - Lung-MAP uses Phase 2 Simon 2-stage mostly; FOCUS4 uses MAMS
+    with interim drop-arm possibility.
+  - Both inform FDA 2022 Master Protocols guidance.
+
+  Methodological distinction:
+  - Within-cohort MAMS is statistically more efficient than
+    sequential Phase 2 then Phase 3 trials.
+  - Molecular stratification within a larger master protocol
+    reduces per-patient cost but requires substantial infrastructure
+    (central biomarker testing, electronic case report form
+    integration).
+
+  Real-world adoption:
+  - UK NIHR / MRC-style umbrellas becoming more common
+    (MATCHPOINT, PRIMROSE, etc.).
+  - Commercial-sponsor umbrellas in CRC less frequent; industry
+    prefers single-biomarker Phase 3 (BEACON CRC for BRAF).

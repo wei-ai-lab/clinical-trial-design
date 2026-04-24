@@ -1,0 +1,150 @@
+id: 2014_Lung-MAP_squamous-nsclc
+family: umbrella
+source:
+  kind: primary-results
+  citation: "Herbst RS, Gandara DR, Hirsch FR, et al. Lung Master Protocol (Lung-MAP)-A Biomarker-Driven Protocol for Accelerating Development of Therapies for Squamous Cell Lung Cancer: SWOG S1400. Clin Cancer Res. 2015 Apr 1;21(7):1514-24. Subsequent sub-study reports: S1400A (durvalumab), S1400B (taselisib), S1400C (palbociclib), S1400D (AZD4547), S1400E (rilotumumab+erlotinib), S1400G (talazoparib), S1400I (nivolumab+ipilimumab vs nivolumab), S1800A (ramucirumab+pembrolizumab), and expansions through 2024."
+
+design:
+  indication: "Advanced squamous cell carcinoma of the lung (previously treated, stage IV)"
+  population: "Adults with refractory / recurrent squamous NSCLC after platinum chemotherapy; molecularly screened for actionable alterations"
+  arms:
+    - name: "S1400A: durvalumab (immunotherapy, non-biomarker-matched)"
+      allocation: 1
+    - name: "S1400B: taselisib (PI3K mutations)"
+      allocation: "1 if PIK3CA-mutant"
+    - name: "S1400C: palbociclib (CDK4/6 pathway)"
+      allocation: "1 if CDK4/6 amplified"
+    - name: "S1400D: AZD4547 (FGFR pathway)"
+      allocation: "1 if FGFR-amplified/mutated"
+    - name: "S1400E: rilotumumab+erlotinib (c-MET pathway)"
+      allocation: "1 if MET-positive"
+    - name: "S1400G: talazoparib (HR-deficient)"
+      allocation: "1 if HR-deficient"
+    - name: "S1400I: nivolumab+ipilimumab vs nivolumab monotherapy"
+      allocation: 1
+  endpoint:
+    type: tte
+    description: "PFS (primary sub-study endpoint) and OS (secondary / long-term)"
+    measurement_time: "continuous follow-up; DCO per sub-study"
+  comparison: superiority (each sub-study vs control / comparator)
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    design_type: "Biomarker-stratified umbrella protocol with per-sub-study Phase 2/3 design"
+    screening_platform: "FoundationOne CDx NGS panel for actionable alterations"
+    matching_algorithm: "Patient screened → biomarker profile → assigned to matched targeted arm or non-matched immunotherapy arm"
+    per_substudy_design: "Each sub-study (S1400A-I) independently designed — Phase 2 or Phase 2/3, various endpoints"
+    graduation_criteria: "Sub-study showing promising PFS can advance to Phase 3 with additional patients or combine with external comparator"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  sample_size_per_substudy: 100
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **Lung-MAP (SWOG S1400)** is the canonical **molecularly-
+    stratified umbrella** for squamous cell lung cancer, initiated
+    2014 with FDA / SWOG / NCI partnership. Over 10 sub-studies
+    have graduated through the platform since 2014.
+
+    **Design architecture**:
+    - Single screening protocol with FoundationOne CDx NGS.
+    - Up to 7-10 concurrent sub-studies, each targeting a specific
+      molecular alteration or immune biomarker.
+    - Each sub-study has its own statistical plan (Phase 2 or
+      2/3), primary endpoint, and hypothesis.
+    - Patients screened once; if biomarker-positive, assigned to
+      matched targeted sub-study; if biomarker-negative, assigned
+      to non-matched immunotherapy sub-study.
+
+    **Sub-study highlights** (selected):
+    - **S1400A (durvalumab)**: monotherapy arm for non-matched
+      patients; ORR ~ 16%.
+    - **S1400B (taselisib)**: PI3K pathway; discontinued due to
+      toxicity and lack of PFS benefit.
+    - **S1400C (palbociclib)**: CDK4/6 pathway; mixed results.
+    - **S1400I (nivolumab+ipilimumab vs nivolumab)**: Phase 3
+      randomized sub-study; closed 2020 due to futility.
+    - **S1800A (ramucirumab+pembrolizumab)**: graduated to a
+      larger confirmatory sub-study.
+
+    **Per-sub-study sample-size**:
+    - Phase 2 monotherapy: Simon 2-stage, n ≈ 40-60 per biomarker-
+      matched cohort.
+    - Phase 3 randomized: per standard GS methodology, ~ 200-400
+      per arm based on PFS HR target.
+
+    **Accrual dynamics**:
+    - ~6000 patients screened as of 2022-2024.
+    - ~50-60% biomarker-positive in some analyte bucket.
+    - ~30-40% assigned to a sub-study; rest declined or SoC.
+    - Retention rate reasonable — but accrual to individual
+      biomarker-defined sub-studies slow due to low prevalence.
+
+    **Impact**:
+    - Demonstrated feasibility of molecular umbrella in squamous NSCLC.
+    - Model for subsequent umbrellas: Precision Promise (pancreatic),
+      I-SPY2 (breast), NCI-MATCH (multi-tumor basket, in corpus).
+    - Informed FDA guidance on master protocols (FDA 2022 Master
+      Protocols guidance).
+
+r_packages:
+  - rpact (per-sub-study GS)
+  - gsDesign (per-sub-study primary design)
+  - clinfun::ph2simon (Phase 2 sub-studies)
+  - bhmbasket (borrowing across related biomarker sub-studies,
+    where biologically plausible)
+
+tags:
+  - lung-map
+  - s1400
+  - swog
+  - umbrella
+  - squamous-nsclc
+  - biomarker-stratified
+  - master-protocol
+  - foundationone
+  - simon-2-stage
+  - molecular-matching
+
+caveats: |
+  Lung-MAP's decade-long operation illustrates both strengths and
+  realities of umbrella trials:
+
+  **Strengths**:
+  - Shared screening infrastructure reduces per-sub-study costs.
+  - Patient screening paid once, applicable to many future
+    sub-studies.
+  - Biomarker-based accrual proves mechanistic hypotheses.
+
+  **Challenges**:
+  - Biomarker prevalences often lower than anticipated → slow
+    per-sub-study accrual.
+  - Squamous NSCLC has few highly prevalent driver mutations (unlike
+    adenocarcinoma with EGFR, ALK, ROS1, BRAF) — umbrella structure
+    less productive.
+  - Several sub-studies closed early for futility or toxicity.
+
+  **Methodological observations**:
+  - Per-sub-study designs range from classical Phase 2 to
+    randomized Phase 3 — Lung-MAP has evolved to allow each
+    sub-study to pick the right design.
+  - Minimal formal borrowing across sub-studies (Bayesian methods
+    applied case-by-case).
+  - FDA has accepted Lung-MAP-derived evidence for accelerated
+    approvals (S1400A durvalumab in some contexts).
+
+  Comparison with other umbrellas in corpus:
+  - **BATTLE / BATTLE-2**: smaller scale, earlier vintage, Bayesian
+    adaptive randomization.
+  - **NCI-MPACT / NCI-ComboMATCH**: cross-tumor rather than
+    single-tumor.
+  - **ALCHEMIST**: adjuvant setting, genomic surveillance.
+  - **Lung-MAP**: largest, most operationally mature, Phase 2 and
+    3 sub-studies in one platform.
