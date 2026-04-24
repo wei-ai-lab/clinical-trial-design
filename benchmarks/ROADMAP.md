@@ -100,7 +100,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | group-sequential-nph | ✅ | 6 | 6 | ✅ |
 | adaptive-ssr | ✅ | 5 | 5 | ✅ |
 | adaptive-enrichment | ✅ | 6 | 4 | ✅ |
-| adaptive-selection | ✅ | 4 | 4 | ✅ |
+| adaptive-selection | ✅ | 6 | 4 | ✅ |
 | mams | ✅ | 7 | 5 | ✅ |
 | tte-ph | ✅ | 8 | 8 | ✅ |
 | tte-nph | ✅ | 8 | 8 | ✅ |

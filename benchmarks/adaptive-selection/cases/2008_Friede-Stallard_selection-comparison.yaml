@@ -1,0 +1,129 @@
+id: 2008_Friede-Stallard_selection-comparison
+family: adaptive-selection
+source:
+  kind: methodology-paper
+  citation: "Friede T, Stallard N. A comparison of methods for adaptive treatment selection. Biom J. 2008 Oct;50(5):767-81."
+
+design:
+  indication: "any (methodology)"
+  population: "Multi-arm trial with k ≥ 2 experimental arms + control, with interim selection"
+  arms:
+    - name: "experimental arms 1..k"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Continuous (illustrated) — framework extends to binary / TTE"
+    measurement_time: "per primary endpoint"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    methods_compared: |
+      (1) Dunnett-based parallel GS (no adaptation).
+      (2) Thall-Simon-Ellenberg drop-the-loser (1988).
+      (3) Stallard-Todd seamless selection (2003) with sufficient
+          statistics.
+      (4) Bauer-Kieser / Posch-Koenig combination-test flexible design.
+    performance_metrics: |
+      - Type I error (FWER) under null / LFC / equal effects.
+      - Power to select best and reject H0.
+      - Expected sample size under each configuration.
+      - Bias of effect estimate for selected winner.
+    key_finding: "Flexible combination-test designs lose ~5-10% power relative to Stallard-Todd's sufficient-statistic approach when selection is rule-based, but are more robust to rule deviations"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **Friede-Stallard 2008** is the canonical methodological
+    comparison among adaptive-selection approaches. For a Phase 3
+    team choosing between methods, this paper is the single best
+    reference.
+
+    **Methods evaluated**:
+    1. **Classical Dunnett-based GS** — no adaptation. Baseline.
+    2. **Thall-Simon-Ellenberg drop-the-loser** — sufficient-stat
+       approach, but constrained selection rule (drop bottom arm
+       at interim).
+    3. **Stallard-Todd seamless** — sufficient-stat + flexible rule
+       but conservative.
+    4. **Bauer-Kieser / Posch-Koenig combination test** — most
+       flexible but with power cost from combining p-values.
+
+    **Simulation results**:
+    - All four control FWER at α.
+    - Power to reject with best arm: Stallard-Todd > Dunnett ≈
+      drop-the-loser > combination test (by ~5%).
+    - Expected N: combination test highest savings if selection is
+      aggressive; Stallard-Todd competitive.
+    - Bias in selected-winner estimate: worst for Dunnett (no
+      correction), best for combination test with conditional-error
+      bias adjustment.
+
+    **Design recommendations from the paper**:
+    - If selection rule is pre-specified and simple (drop bottom
+      arm), use Stallard-Todd.
+    - If flexibility (data-driven rules, mid-trial changes) is
+      required, use combination-test framework.
+    - If in doubt, simulate both.
+
+    **Why this matters**:
+    - Gives a quantitative basis for method selection — prior
+      literature advocates one framework or another without
+      head-to-head comparison.
+    - Informs FDA 2019 Adaptive Designs guidance which cross-
+      references these methods without prescribing one.
+
+r_packages:
+  - asd (Parsons-Friede-Stallard)
+  - adaptTest
+  - rpact
+  - gMCP (Dunnett and closed-testing)
+  - mvtnorm
+  - MAMS
+
+tags:
+  - friede-stallard
+  - comparison
+  - drop-the-loser
+  - stallard-todd
+  - bauer-kieser
+  - combination-test
+  - dunnett
+  - methodology
+
+caveats: |
+  Friede-Stallard 2008 remains the go-to when teams must choose
+  among adaptive-selection methods. Limitations of the comparison:
+  - Simulations are on continuous endpoints; relative performance
+    differs for binary (where overdispersion matters) and TTE
+    (where information fraction handling differs).
+  - No formal optimality analysis — just head-to-head under chosen
+    configurations.
+  - Later work (Magirr-Jaki-Whitehead 2012, in corpus) showed that
+    generalized Dunnett can recover much of the combination-test
+    flexibility while retaining sufficient-statistic power.
+
+  Real-world framework selection:
+  - Pfizer and Novartis have published adaptive-selection trial
+    protocols using both Stallard-Todd and Bauer-Kieser approaches
+    in the same clinical program depending on the specific decision
+    context.
+  - Regulatory acceptance has broadened post-FDA 2019 guidance;
+    EMA also pragmatic about method choice.
+
+  Modern alternatives not covered in the 2008 paper:
+  - MAMS (Jaki-Magirr 2013) for multi-arm multi-stage with flexible
+    selection.
+  - Royston-Parmar-Qian 2011 for TTE multi-arm selection.
+  - Bayesian optimal selection (Berry et al.) for small Phase 2b
+    selection.

@@ -1,0 +1,129 @@
+id: 2005_Posch-Koenig_gs-with-selection
+family: adaptive-selection
+source:
+  kind: methodology-paper
+  citation: "Posch M, Koenig F, Branson M, Brannath W, Dunger-Baldauf C, Bauer P. Testing and estimation in flexible group sequential designs with adaptive treatment selection. Stat Med. 2005 Dec 30;24(24):3697-714."
+
+design:
+  indication: "any (methodology — multiple initial treatments or doses)"
+  population: "Multi-arm trial with several experimental arms (e.g., dose levels, combinations, or distinct agents) plus control"
+  arms:
+    - name: "experimental arm 1 (may be dropped)"
+      allocation: 1
+    - name: "experimental arm 2 (may be dropped)"
+      allocation: 1
+    - name: "experimental arm k (may be dropped)"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Methodology endpoint-agnostic — illustrated for normal means and survival"
+    measurement_time: "per primary endpoint (may allow early short-term selection endpoint + long-term confirmatory endpoint)"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    design_framework: "Group-sequential multi-arm trial with adaptive treatment selection at one or more interim looks"
+    combination_tests: "Each stage yields p-values (or test statistics) that are combined across stages via Fisher combination, inverse-normal, or weighted combination"
+    closed_testing: "Multiple hypotheses (one per experimental arm vs control) tested via closed testing principle to control FWER"
+    selection_rules: |
+      At interim, choose to continue any subset of experimental arms
+      based on observed interim data. Rules can be:
+      (i) drop arms with posterior prob of best < threshold,
+      (ii) keep top r arms (drop-the-loser),
+      (iii) investigator choice as long as pre-specified rule class
+           is followed.
+    alpha_control: "Strong FWER control under any selection rule — key contribution of Posch et al."
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **Posch-Koenig-Branson-Brannath-Dunger-Bauer 2005** is the
+    canonical unified framework for **group-sequential trials with
+    adaptive treatment selection**. It integrates three earlier
+    streams:
+    - Bauer-Kieser combination tests (1999).
+    - Stallard-Todd seamless selection (2003).
+    - Group-sequential monitoring (Lan-DeMets, Proschan-Hunsberger).
+
+    **Key methodological contribution**:
+    - Unified machinery for combining interim p-values across stages
+      (Fisher / inverse-normal / weighted).
+    - Closed-testing principle applied across the multiple
+      experimental arms to control FWER ≤ α.
+    - Proof that *any* data-driven selection rule (even adversarial)
+      preserves type I error as long as the test construction uses
+      the combination principle correctly.
+
+    **Estimation aspects**:
+    - Naive point estimates of effect in the 'selected winners' arm
+      are biased upward (selection bias).
+    - Paper provides unbiased / bias-reduced estimators (Brannath-
+      Posch approach; conditional inference).
+    - Confidence intervals require repeated-testing-corrected
+      machinery (asd package) since naive CI under-covers.
+
+    **Design flexibility**:
+    - Number of interim looks.
+    - Number of experimental arms (pre-specified).
+    - Selection rule class (drop-the-loser, top-r, threshold-based).
+    - Combination function (Fisher p-values or inverse-normal).
+    - Alpha spending across stages.
+
+    **Why this matters**:
+    - Foundational reference cited by ~every subsequent adaptive-
+      selection paper including Magirr-Jaki-Whitehead 2012.
+    - Enables flexible mid-trial decisions without sacrificing FWER.
+    - Basis for numerous seamless Phase 2/3 implementations
+      (INHANCE 2010, many immunology trials).
+
+r_packages:
+  - asd (Parsons-Friede-Stallard adaptive seamless designs)
+  - adaptTest (Vandemeulebroecke)
+  - rpact (group-sequential + combination tests)
+  - gMCP (graphical multiple comparison)
+  - mvtnorm (closed testing FWER)
+
+tags:
+  - posch
+  - koenig
+  - combination-test
+  - closed-testing
+  - group-sequential
+  - treatment-selection
+  - adaptive
+  - methodology-canonical
+
+caveats: |
+  Posch et al. 2005 remains a core reference. Strengths:
+  - Strong FWER control under arbitrary selection rules.
+  - Flexibility in combination function and stopping boundaries.
+  - Extends naturally to the enrichment setting (Brannath-Posch-
+    Bauer 2002; Brannath-Mehta 2009).
+
+  Limitations in practice:
+  - Selection bias in effect estimates for 'winning' arm is a real
+    issue for post-trial decision-making (labeling, pricing).
+  - Combination-test framework yields p-values but not smooth
+    likelihood-based confidence intervals — reviewers sometimes
+    prefer conditional-power spending designs that retain
+    sufficiency.
+
+  Real implementations using this framework:
+  - INHANCE (indacaterol COPD, 2010) — seamless Phase 2/3.
+  - Several Pfizer / Novartis seamless dose-selection trials.
+  - TAPPAS (angiosarcoma, 2019) uses closely related machinery for
+    enrichment rather than pure selection.
+
+  FDA and EMA are familiar with this framework; the 2019 FDA Adaptive
+  Designs guidance explicitly discusses closed-testing combination-
+  test approaches for treatment selection.
