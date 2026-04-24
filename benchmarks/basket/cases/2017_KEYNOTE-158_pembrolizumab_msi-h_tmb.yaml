@@ -1,0 +1,77 @@
+id: 2017_KEYNOTE-158_pembrolizumab_msi-h_tmb
+family: basket
+source:
+  kind: published-trial
+  citation: "Marabelle A, Le DT, Ascierto PA, et al. Efficacy of pembrolizumab in patients with noncolorectal high microsatellite instability/mismatch repair-deficient cancer: results from the phase II KEYNOTE-158 study. J Clin Oncol. 2020;38(1):1-10."
+  doi: "10.1200/JCO.19.02105"
+  nct_id: "NCT02628067"
+
+design:
+  indication: "MSI-H / dMMR / TMB-H solid tumors (tissue-agnostic)"
+  population: "Advanced solid tumors progressed on prior therapy with MSI-H / dMMR (Cohort K) or TMB-H ≥ 10 mut/Mb (TMB analysis cohorts)"
+  arms:
+    - name: "pembrolizumab 200 mg IV q3w"
+      allocation: "single-arm, per basket"
+  endpoint:
+    type: binary
+    description: "Objective response rate (ORR, RECIST v1.1); DOR secondary"
+    measurement_time: "ongoing; ORR at best overall response"
+  comparison: "single-arm tissue-agnostic"
+  sidedness: 1
+  alpha: 0.05
+  power: 0.80
+  effect:
+    target_orr_msi_h: 0.30
+    target_orr_tmb_h: 0.30
+    baskets_msi_h:
+      - "Endometrial (n=49)"
+      - "Gastric (n=24)"
+      - "Cholangiocarcinoma (n=22)"
+      - "Pancreatic (n=22)"
+      - "Small intestine (n=19)"
+      - "Ovarian (n=15)"
+      - "Brain (n=13)"
+      - "Breast (n=9)"
+      - "Other (n=60)"
+  accrual:
+    duration_months: 60
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 233
+  events_total: null
+  tolerance:
+    sample_size_pct: 10
+  notes: |
+    Foundation of two tissue-agnostic FDA approvals:
+    (1) MSI-H / dMMR (2017, first-ever tissue-agnostic approval),
+    (2) TMB-H ≥ 10 mut/Mb (2020). Per-basket ORR 34.3% (MSI-H
+    non-CRC, 95% CI 28.3-40.8%). TMB-H cohort ORR 29% (n=102).
+    Durable responses: median DOR not reached at ~13 months.
+    Established TMB cutoff 10 mut/Mb from FoundationOne CDx for
+    TMB-H pan-tumor indication.
+
+r_packages:
+  - basket
+  - clinfun
+  - rstan
+
+tags:
+  - tissue-agnostic
+  - pembrolizumab
+  - msi-h
+  - dmmr
+  - tmb-h
+  - tumor-mutation-burden
+  - pan-tumor-approval
+  - basket-trial
+
+caveats: |
+  No formal cross-basket hierarchical borrowing in primary analysis;
+  pan-tumor claim supported by consistency of response across ≥ 8
+  histologies. For TMB-H, pre-specified cutoff was 10 mut/Mb on
+  FoundationOne assay — assay-specific claim. Subsequent tissue-
+  agnostic approvals (larotrectinib NTRK, entrectinib NTRK/ROS1,
+  dostarlimab dMMR) followed similar per-basket ORR aggregation
+  pattern.

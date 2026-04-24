@@ -1,0 +1,72 @@
+id: 2013_Berry_BHM_methodology
+family: basket
+source:
+  kind: methodology-paper
+  citation: "Berry SM, Broglio KR, Groshen S, Berry DA. Bayesian hierarchical modeling of patient subpopulations: efficient designs of phase II oncology clinical trials. Clin Trials. 2013;10(5):720-734."
+  doi: "10.1177/1740774513497539"
+
+design:
+  indication: "any (methodology) — multi-cohort basket trial"
+  population: "Multiple biomarker-defined or histology-defined subpopulations testing same drug"
+  arms:
+    - name: "experimental (single drug across baskets)"
+      allocation: "single arm per basket"
+  endpoint:
+    type: binary
+    description: "Response rate per basket with hierarchical borrowing"
+    measurement_time: "per-protocol timepoint"
+  comparison: "per-basket vs null rate with BHM shrinkage"
+  sidedness: 1
+  alpha: 0.10
+  power: 0.80
+  effect:
+    shrinkage_prior: "τ ~ Half-Cauchy or Half-Normal for between-basket SD"
+    null_response_rate: 0.15
+    alternative_response_rate: 0.35
+    baskets_k: 6
+    per_basket_n: 20
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 6
+
+expected:
+  sample_size_total: 120
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    Foundational paper for Bayesian Hierarchical Model (BHM) basket
+    design. Logistic model:
+      logit(p_k) = μ + γ_k, γ_k ~ Normal(0, τ²)
+    Small τ → strong borrowing (all baskets exchangeable);
+    large τ → near-independent per-basket analyses.
+    Compared to no-borrowing, BHM gains power in uniformly-active
+    scenarios at cost of inflated per-basket Type I error when one
+    basket is inactive and others active (shrinkage toward grand
+    mean). EXNEX (Neuenschwander 2016) robust extension adds
+    mixture prior allowing baskets to opt out of exchangeability.
+
+r_packages:
+  - basket
+  - bhmbasket
+  - rstan
+  - RBesT
+
+tags:
+  - bhm
+  - bayesian-hierarchical
+  - exchangeability
+  - shrinkage-prior
+  - basket-trial
+  - methodology-canonical
+
+caveats: |
+  Per-basket Type I error inflation is the key concern — if true
+  RR = 0.15 in basket j but RR = 0.35 in all others, BHM shrinks
+  toward 0.35 and inflates basket-j false-positive rate. EXNEX
+  (Neuenschwander et al. Clin Trials 2016) addresses via mixture:
+    γ_k ~ w · N(0, τ²) + (1-w) · N(0, σ²_nex)
+  where σ²_nex is large ("non-exchangeable" component). Regulatory
+  acceptance requires simulation across homogeneous / heterogeneous
+  truth scenarios.

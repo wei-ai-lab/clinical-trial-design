@@ -1,0 +1,72 @@
+id: 2015_VE-BASKET_vemurafenib
+family: basket
+source:
+  kind: published-trial
+  citation: "Hyman DM, Puzanov I, Subbiah V, et al. Vemurafenib in multiple nonmelanoma cancers with BRAF V600 mutations. N Engl J Med. 2015;373(8):726-736."
+  doi: "10.1056/NEJMoa1502309"
+  nct_id: "NCT01524978"
+
+design:
+  indication: "BRAF V600-mutated solid tumors (non-melanoma)"
+  population: "BRAF V600 mutation across multiple tumor types"
+  arms:
+    - name: "vemurafenib 960 mg BID"
+      allocation: "single arm, within basket"
+  endpoint:
+    type: binary
+    description: "Response rate at week 8 (RECIST)"
+    measurement_time: "8 weeks"
+  comparison: "single-arm vs pre-specified null hypothesis rate"
+  sidedness: 1
+  alpha: 0.10
+  power: 0.90
+  effect:
+    null_response_rate: 0.15
+    alternative_response_rate: 0.35
+    baskets:
+      - "NSCLC (n=20)"
+      - "Ovarian cancer (n=5)"
+      - "Colorectal cancer (n=10)"
+      - "Anaplastic thyroid (n=7)"
+      - "Cholangiocarcinoma (n=8)"
+      - "Other (n=122 total including ECD/LCH)"
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 12
+
+expected:
+  sample_size_total: 122
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    Seminal first-reported basket trial — vemurafenib across 6+ non-
+    melanoma BRAF V600-mutated tumor types. Per-basket Simon two-
+    stage with no cross-basket borrowing (conservative design). NSCLC
+    basket showed RR 42% (primary positive cohort); Erdheim-Chester
+    disease / Langerhans-cell histiocytosis basket dramatic RR 43%
+    (led to accelerated approval for ECD 2017); colorectal basket
+    negative (RR 0) demonstrating not all BRAF V600+ tumors respond —
+    basket heterogeneity caveat.
+
+r_packages:
+  - basket
+  - clinfun
+  - rstan
+
+tags:
+  - basket-trial
+  - braf-v600
+  - vemurafenib
+  - simon-two-stage
+  - tissue-agnostic-history
+  - heterogeneous-histology
+
+caveats: |
+  NO cross-basket hierarchical borrowing — each cohort independent.
+  Retrospectively, Bayesian hierarchical (Berry et al. 2013) would
+  have detected signals faster in small baskets (LCH, ECD) at cost
+  of higher Type I error in unresponsive baskets (colorectal).
+  Demonstrated that BRAF V600 is not fully tissue-agnostic — CRC
+  resistance pathway specific. First basket trial published in NEJM.

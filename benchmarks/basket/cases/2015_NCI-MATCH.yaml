@@ -1,0 +1,75 @@
+id: 2015_NCI-MATCH
+family: basket
+source:
+  kind: published-trial
+  citation: "Flaherty KT, Gray RJ, Chen AP, et al. The Molecular Analysis for Therapy Choice (NCI-MATCH) Trial: lessons for genomic trial design. J Natl Cancer Inst. 2020;112(10):1021-1029."
+  doi: "10.1093/jnci/djz245"
+  nct_id: "NCT02465060"
+
+design:
+  indication: "Advanced solid tumors, lymphomas, and myelomas with specific genomic alterations"
+  population: "Progressed on prior therapy; actionable biomarker per centralized NGS screening"
+  arms:
+    - name: "30+ biomarker-matched sub-study arms (single-agent targeted therapies)"
+      allocation: "biomarker-matched, single-arm per sub-study"
+  endpoint:
+    type: binary
+    description: "Per-sub-study objective response rate (RECIST); 6-month PFS"
+    measurement_time: "RECIST evaluation; 6-month landmark"
+  comparison: "single-arm per sub-study, pre-specified null rate"
+  sidedness: 1
+  alpha: 0.10
+  power: 0.90
+  effect:
+    null_response_rate: 0.05
+    alternative_response_rate: 0.16
+    sub_study_arms:
+      - "BRAF V600 → dabrafenib+trametinib (Arm H)"
+      - "HER2 amp → TDM-1 (Arm Q)"
+      - "EGFR mut → afatinib (Arm A)"
+      - "FGFR mut → AZD4547 (Arm W)"
+      - "MTOR → sapanisertib"
+      - "NTRK fusion → larotrectinib"
+      - "... 30+ arms total"
+  accrual:
+    duration_months: 60
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 6391
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    NCI-led master protocol basket trial with centralized NGS
+    screening (~6000 patients screened, ~20% biomarker-matched).
+    30+ treatment sub-studies, each a pre-defined single-arm
+    Simon-style design for a specific biomarker-drug pair. Published
+    learnings (Flaherty 2020): biomarker prevalence often lower than
+    expected, screen-to-enroll ratio high (~5:1). Several arms
+    positive (larotrectinib NTRK → approval path; dabrafenib+trametinib
+    BRAF V600 in non-melanoma → expansion approvals). Template for
+    TAPUR (ASCO) and Lung-MAP.
+
+r_packages:
+  - clinfun
+  - basket
+  - rpact
+
+tags:
+  - nci-match
+  - master-protocol-basket
+  - nci
+  - biomarker-matched
+  - pan-tumor
+  - simon-two-stage
+  - basket-trial
+
+caveats: |
+  NCI-MATCH is closer to a master-protocol umbrella-basket hybrid:
+  many biomarkers (umbrella-like) each matched to targeted drug
+  (single-agent basket-like across tumor types). Screening yield
+  and biomarker prevalence were key design-vs-execution learnings —
+  half of arms struggled to enroll. Architecture informed subsequent
+  ASCO TAPUR, PMCC ProspeR, and industry-sponsored master protocols.
