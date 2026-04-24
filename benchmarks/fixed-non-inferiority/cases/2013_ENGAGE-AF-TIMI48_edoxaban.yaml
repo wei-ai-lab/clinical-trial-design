@@ -1,0 +1,101 @@
+id: 2013_ENGAGE-AF-TIMI48_edoxaban
+family: fixed-non-inferiority
+source:
+  kind: published-trial
+  citation: "Giugliano RP, Ruff CT, Braunwald E, et al. Edoxaban versus warfarin in patients with atrial fibrillation. N Engl J Med. 2013;369(22):2093-2104. (ENGAGE AF-TIMI 48)"
+  doi: "10.1056/NEJMoa1310907"
+  nct_id: "NCT00781391"
+
+design:
+  indication: "Atrial fibrillation, CHADS2 ≥ 2"
+  population: "Non-valvular AF, moderate-to-high stroke risk (CHADS2 ≥ 2)"
+  arms:
+    - name: "edoxaban 60 mg QD (high-dose, dose-reduced 30 mg QD per CrCl / weight / P-gp)"
+      allocation: 1
+    - name: "edoxaban 30 mg QD (low-dose, dose-reduced 15 mg QD per same criteria)"
+      allocation: 1
+    - name: "warfarin (INR 2.0-3.0)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Stroke or systemic embolism (modified ITT — on-treatment)"
+    measurement_time: "time-to-first-event"
+  comparison: non-inferiority
+  sidedness: 1
+  alpha: 0.0125  # Hochberg for 2 doses vs warfarin
+  power: 0.80
+  effect:
+    ni_margin_hr: 1.38
+    assumed_true_hr: 1.00
+    annual_warfarin_event_rate: 0.015
+    preserved_effect_fraction: 0.50
+  accrual:
+    duration_months: 30
+  followup:
+    planned_months: 36  # median 2.8 years
+
+expected:
+  sample_size_total: 21105
+  events_total: 672
+  tolerance:
+    sample_size_pct: 1
+    events_pct: 3
+  notes: |
+    **Fourth NOAC vs warfarin NI trial in AF**, completing the
+    quartet with RE-LY (dabigatran 2009), ROCKET-AF (rivaroxaban
+    2011), and ARISTOTLE (apixaban 2011). Two doses of edoxaban
+    tested → Hochberg α-split (0.0125 per dose vs warfarin) to
+    control FWER at 0.025 one-sided.
+
+    **Warfarin comparator performance**: median time in therapeutic
+    range (TTR) 68.4% — higher than ROCKET-AF (58%), comparable to
+    RE-LY (64%) and ARISTOTLE (62.2%). Higher TTR makes the NI test
+    harder to win (tighter upper CI on HR).
+
+    **Results (on-treatment analysis)**:
+    - Edoxaban 60 mg: stroke/SE HR **0.79** (97.5% CI 0.63-0.99),
+      p < 0.001 for NI; narrowly missed superiority (p = 0.04
+      two-sided, not significant with α-split).
+    - Edoxaban 30 mg: HR 1.07 (0.87-1.31) — NI met but trending
+      higher; more ischemic strokes but fewer bleeds.
+    - Major bleeding: edoxaban 60 mg HR 0.80 (0.71-0.91) — major
+      benefit on safety.
+
+    **Approval outcome**: FDA approved edoxaban 60 mg (dose-reduced)
+    in Jan 2015 with boxed warning that patients with CrCl > 95
+    mL/min had reduced efficacy — unusual labeling, reflects
+    pharmacokinetic non-linearity at high renal function.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+  - survival
+  - gMCP (Hochberg adjustment for 2 doses)
+
+tags:
+  - engage-af-timi-48
+  - edoxaban
+  - atrial-fibrillation
+  - noac
+  - non-inferiority
+  - warfarin-comparator
+  - two-dose-hochberg
+  - ni-margin-1.38
+
+caveats: |
+  NI margin = 1.38 is the AF NOAC convention (RE-LY, ROCKET-AF,
+  ARISTOTLE, ENGAGE all used similar) — derived from preserving
+  50% of the warfarin-vs-placebo effect estimated from
+  meta-analyses of historical controlled AF trials (ATLAS, SPAF,
+  AFASAK). Two-dose design required α-split via Hochberg — novel in
+  NOAC quartet (others tested single dose). Dose-reduction criteria
+  (CrCl 30-50, weight ≤ 60 kg, P-gp inhibitor use) led to 25% of
+  subjects receiving reduced dose — important operational/
+  regulatory feature. TTR of warfarin arm (68.4%) was high,
+  increasing the bar for NI. **Reduced efficacy at high renal
+  function (CrCl > 95)** led to unique FDA labeling and an FDA-
+  required post-marketing study; later explained by edoxaban's
+  renal clearance being so high in normal renal function that target
+  drug exposure is not achieved. ENGAGE extended the NOAC evidence
+  base to 71,683 patients across the 4 trials; meta-analysis
+  (Ruff 2014 Lancet) showed class efficacy + safety.

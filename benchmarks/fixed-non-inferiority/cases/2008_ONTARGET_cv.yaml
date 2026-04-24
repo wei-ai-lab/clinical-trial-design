@@ -1,0 +1,99 @@
+id: 2008_ONTARGET_cv
+family: fixed-non-inferiority
+source:
+  kind: published-trial
+  citation: "ONTARGET Investigators; Yusuf S, Teo KK, Pogue J, et al. Telmisartan, ramipril, or both in patients at high risk for vascular events. N Engl J Med. 2008;358(15):1547-1559."
+  doi: "10.1056/NEJMoa0801317"
+  nct_id: "NCT00153101"
+
+design:
+  indication: "High-risk cardiovascular disease (vascular disease or high-risk diabetes)"
+  population: "≥ 55 y with coronary / peripheral / cerebrovascular disease, or high-risk diabetes with end-organ damage"
+  arms:
+    - name: "telmisartan 80 mg QD"
+      allocation: 1
+    - name: "ramipril 10 mg QD"
+      allocation: 1
+    - name: "telmisartan 80 mg QD + ramipril 10 mg QD (combination)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: CV death, MI, stroke, or HF hospitalization (4-point MACE+HHF)"
+    measurement_time: "time-to-first-event"
+  comparison: non-inferiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    ni_margin_hr: 1.13
+    assumed_true_hr: 1.00
+    annual_control_event_rate: 0.045
+    preserved_effect_fraction: 0.50
+  accrual:
+    duration_months: 36
+  followup:
+    planned_months: 66  # 5.5 years
+
+expected:
+  sample_size_total: 25620
+  events_total: 4002
+  tolerance:
+    sample_size_pct: 1
+    events_pct: 3
+  notes: |
+    **Landmark NI trial comparing ARB (telmisartan) to ACEi (ramipril)**
+    in high-risk vascular patients. Design motivated by ramipril's
+    HOPE-trial-established benefit (N = 9,297, 22% relative risk
+    reduction vs placebo) — telmisartan needed to preserve most of
+    that benefit to justify ARB as alternative.
+
+    **NI margin derivation**:
+    - HOPE established ramipril HR vs placebo ≈ 0.78 (22% RRR).
+    - 95% CI upper bound on placebo-vs-ramipril HR: 1.30.
+    - Preserve 50% of the effect: NI margin on telmisartan-vs-
+      ramipril HR = 1.13.
+    - This is a standard "50% preservation-of-effect" approach per
+      FDA 2010 / 2016 NI Guidance.
+
+    **Results**:
+    - Telmisartan vs ramipril: HR **1.01** (95% CI 0.94-1.09) —
+      NI declared (upper CI < 1.13).
+    - Combination vs ramipril: HR 0.99 (0.92-1.07) — NI (no
+      incremental benefit).
+    - Telmisartan better tolerated (lower cough / angioedema) but
+      more hypotension; combination had highest adverse-event rate
+      (hyperkalemia, renal dysfunction).
+    - Reshaped vascular-protection guidelines: ARB became
+      recommended alternative when ACEi intolerant.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+  - nph (NI under PH)
+  - survival
+
+tags:
+  - ontarget
+  - telmisartan
+  - ramipril
+  - cv
+  - non-inferiority
+  - ni-margin-derivation
+  - 50-percent-preservation
+  - arb-vs-acei
+  - high-risk-vascular
+
+caveats: |
+  Classic case for NI margin derivation using the "50% preservation
+  of effect" principle. HOPE trial's 22% RRR with ramipril vs placebo
+  → lower 95% CI bound on HR = 0.82; upper bound on placebo HR vs
+  ramipril = 1.30; preserving 50% gives NI margin of ~ 1.13. This
+  derivation process (HR-based, preservation-based) is canonical
+  per FDA 2010/2016 guidance and is the template for later cardio-
+  vascular NI trials (NOACs vs warfarin in AF, novel antiplatelets
+  vs clopidogrel, etc.). Combination arm demonstrated that dual RAS
+  blockade offers no incremental benefit but more adverse events —
+  important for understanding negative factorial-like arm results.
+  N = 25,620 reflects the event-driven design requiring ~4,000
+  primary events. Event-driven design adapted follow-up to achieve
+  target events (median 56 months).
