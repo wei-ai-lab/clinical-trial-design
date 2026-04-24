@@ -1,0 +1,90 @@
+id: 2020_ROAR_dabrafenib_trametinib
+family: basket
+source:
+  kind: published-trial
+  citation: "Subbiah V, Kreitman RJ, Wainberg ZA, et al. Dabrafenib plus trametinib in patients with BRAF V600E-mutant rare cancers: Phase 2 ROAR basket study. Nat Med. 2023;29(5):1103-1112. (Initial basket NCT02034110; primary analyses 2018, 2020)."
+  doi: "10.1038/s41591-023-02321-8"
+  nct_id: "NCT02034110"
+
+design:
+  indication: "BRAF V600E-mutant rare cancers (tissue-agnostic, rare histologies)"
+  population: "Adults with advanced/metastatic BRAF V600E-mutant rare cancer; histologies include anaplastic thyroid, biliary tract, gliomas (low- and high-grade), hairy cell leukemia, multiple myeloma, non-seminoma germ cell, adenocarcinoma of small intestine"
+  arms:
+    - name: "dabrafenib 150 mg BID + trametinib 2 mg QD"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Overall response rate (ORR) per RECIST 1.1 by investigator; RANO for gliomas"
+    measurement_time: "best response over treatment duration (data cutoff ~36 months)"
+  comparison: single-arm
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    per_histology_null_orr: 0.15
+    per_histology_alt_orr: 0.35
+    hierarchical_pooling: "Bayesian hierarchical (Berry BHM) with pre-specified shrinkage across histologies"
+  accrual:
+    duration_months: 60
+  followup:
+    planned_months: 36
+
+expected:
+  sample_size_total: 206
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    Phase 2 open-label basket across 9 rare BRAF V600E-mutant histologies.
+    Design target ~ 25 per histology (Simon 2-stage per cohort), with
+    Bayesian hierarchical analysis for cross-histology borrowing
+    sensitivity. Observed ORR (2023 pooled readout):
+      - Anaplastic thyroid: 56% (14/25) → FDA approval May 2018
+      - Biliary tract: 47% (17/36) → FDA approval May 2022
+      - Low-grade glioma: 54% (28/52, 2023 cohort) → FDA approval
+        June 2023 (pediatric low-grade glioma)
+      - High-grade glioma: 33% (15/45) → EMA acceptance pending
+      - Hairy cell leukemia: 89% (24/27) → FDA approval June 2022
+      - Multiple myeloma: 50% (2/4), too small for approval
+      - Non-seminoma germ cell: 0% (0/1), too small
+      - Small bowel adenocarcinoma: 43% (3/7)
+    Series of tissue-agnostic "next-wave" approvals after larotrectinib
+    NTRK (2018) and pembrolizumab MSI-H (2017). Regulatory innovation:
+    single-basket design yielded **5+ separate indication approvals**
+    over 5 years as each cohort matured.
+
+r_packages:
+  - clinfun::ph2simon (per-histology Simon 2-stage)
+  - basket (Bayesian hierarchical pooling)
+  - bhmbasket (hierarchical basket with EXNEX)
+  - gsDesign::nBinomial
+
+tags:
+  - roar
+  - dabrafenib
+  - trametinib
+  - braf-v600e
+  - basket
+  - tissue-agnostic
+  - rare-cancers
+  - anaplastic-thyroid
+  - biliary-tract
+  - glioma
+  - hairy-cell-leukemia
+
+caveats: |
+  BRAF V600E is a well-established driver in melanoma (COMBI-d / v)
+  and non-small-cell lung cancer (BRF113928). The ROAR basket
+  extended dabrafenib+trametinib to rare histologies where V600E
+  is uncommon but actionable. Per-histology sample sizes small
+  (4-52) — Simon 2-stage per basket with Bayesian hierarchical
+  sensitivity. Heterogeneity across histologies: ORR ranged 0% (germ
+  cell, n=1) to 89% (hairy cell leukemia). BHM pooling justified when
+  borrowed strength is clinically plausible. Contrast with LOXO-TRK:
+  ROAR showed **histology-dependent response** for the same mutation,
+  supporting EXNEX-style shrinkage over full pooling. Tissue-agnostic
+  label granted by FDA on June 22, 2022 for "adult and pediatric
+  patients ≥ 6 years with unresectable or metastatic solid tumors with
+  BRAF V600E mutation who have progressed following prior treatment
+  and have no satisfactory alternative treatment options". Single
+  most-cited precedent for BHM/EXNEX analyses in basket trials.

@@ -1,0 +1,84 @@
+id: 2018_LOXO-TRK_larotrectinib
+family: basket
+source:
+  kind: published-trial
+  citation: "Drilon A, Laetsch TW, Kummar S, et al. Efficacy of larotrectinib in TRK fusion-positive cancers in adults and children. N Engl J Med. 2018;378(8):731-739."
+  doi: "10.1056/NEJMoa1714448"
+  nct_id: "NCT02122913,NCT02576431,NCT02637687"
+
+design:
+  indication: "NTRK-fusion-positive solid tumors (tissue-agnostic)"
+  population: "Adults and children with advanced/metastatic solid tumors harboring NTRK1/2/3 gene fusion; ≥ 17 distinct histologies"
+  arms:
+    - name: "larotrectinib 100 mg BID (adults) / 100 mg/m² BID (pediatric)"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Overall response rate (ORR) per RECIST 1.1 by independent review"
+    measurement_time: "best response over treatment duration"
+  comparison: single-arm
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    null_orr: 0.30
+    alt_orr: 0.50
+    assumed_observed_orr: 0.75
+    histology_pooling: "Pooled across histologies (tissue-agnostic); per-basket ORR reported for transparency"
+  accrual:
+    duration_months: 36
+  followup:
+    planned_months: 12
+
+expected:
+  sample_size_total: 55
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    Pooled analysis of 3 single-arm basket studies (Phase 1 adult,
+    Phase 1/2 pediatric SCOUT, Phase 2 adult NAVIGATE) leading to the
+    **first-ever tissue-agnostic FDA approval** (Nov 2018, vitrakvi).
+    Observed ORR: 75% (95% CI 61-85%) across 55 evaluable patients
+    spanning ≥ 17 tumor types (salivary MASC, infantile fibrosarcoma,
+    thyroid, GIST, melanoma, colon, lung, breast, sarcoma, pancreas,
+    cholangiocarcinoma, congenital mesoblastic nephroma, ...).
+    Duration of response sustained (79% ongoing at 1 year). Paradigm-
+    setting basket demonstrating that a molecularly-defined target
+    response can transcend tissue-of-origin when the oncogenic driver
+    is dominant (NTRK fusion — rare but shared). Regulatory acceptance
+    of pooled evidence from small per-histology baskets was the key
+    design-level innovation.
+
+r_packages:
+  - gsDesign::nBinomial (single-arm exact binomial)
+  - binom (Clopper-Pearson CI for pooled ORR)
+  - rpact (single-stage or 2-stage Simon-like design)
+  - basket (Bayesian hierarchical pooling by histology)
+
+tags:
+  - basket
+  - larotrectinib
+  - ntrk-fusion
+  - tissue-agnostic
+  - pediatric-included
+  - first-agnostic-approval
+  - vitrakvi
+
+caveats: |
+  Regulatory-historic basket: the NTRK-fusion prevalence is rare
+  (<1% of common tumors, 90-100% in specific rare tumors like MASC
+  and infantile fibrosarcoma) so recruitment required pooling across
+  3 studies over 3 years. No randomized comparator — approval rested
+  on the dramatic ORR and duration signal, with external benchmarking
+  against historical single-agent ORR (typically 5-15% in refractory
+  solid tumors). Pediatric data critical for approval — pediatric ORR
+  93% (14/15) in infantile fibrosarcoma with TPM3-NTRK1. Statistical
+  rigor: exact binomial on pooled N; Bayesian hierarchical sensitivity
+  with EXNEX for per-histology shrinkage. Later NAVIGATE expansion
+  cohorts (n > 150) confirmed durability. Entrectinib (NCT02568267
+  STARTRK trials) is the sister tissue-agnostic TRK basket approved
+  Aug 2019. Reshaped oncology trial design → multiple subsequent
+  tissue-agnostic labels (pembrolizumab MSI-H/dMMR 2017, TMB-H 2020,
+  selpercatinib RET 2020, pralsetinib RET 2020, entrectinib ROS1/NTRK
+  2019, repotrectinib 2023).

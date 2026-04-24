@@ -108,7 +108,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | count-rate | ✅ | 4 | 4 | ✅ |
 | bayesian | ✅ | 5 | 5 | ✅ |
 | platform | ✅ | 5 | 5 | ✅ |
-| basket | ✅ | 4 | 4 | ✅ |
+| basket | ✅ | 6 | 4 | ✅ |
 | umbrella | ✅ | 4 | 4 | ✅ |
 | crossover | ✅ | 3 | 3 | ✅ |
 | factorial | ✅ | 3 | 3 | ✅ |
