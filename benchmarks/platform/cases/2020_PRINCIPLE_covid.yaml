@@ -1,0 +1,101 @@
+id: 2020_PRINCIPLE_covid
+family: platform
+source:
+  kind: published-trial
+  citation: "Butler CC, Dorward J, Yu LM, et al. Doxycycline for community treatment of suspected COVID-19 in people at high risk of adverse outcomes in the UK (PRINCIPLE): a randomised, controlled, open-label, adaptive platform trial. Lancet. 2021;397(10279):1063-1074. (Inhaled budesonide arm: Yu LM et al. Lancet 2021;398(10303):843-855.)"
+  doi: "10.1016/S0140-6736(21)00461-X"
+  nct_id: "ISRCTN86534580"
+
+design:
+  indication: "Mild-to-moderate COVID-19 in community (primary care)"
+  population: "Adults ≥ 50 (with comorbidity) or ≥ 65 with symptoms ≤ 14 d suggestive of COVID-19"
+  arms:
+    - name: "usual care"
+      allocation: 1
+    - name: "azithromycin 500 mg QD × 3 d + usual care"
+      allocation: 1
+    - name: "doxycycline 200 mg loading then 100 mg QD × 7 d + usual care"
+      allocation: 1
+    - name: "inhaled budesonide 800 µg BID × 14 d + usual care"
+      allocation: 1
+    - name: "colchicine + usual care (later arm)"
+      allocation: 1
+    - name: "favipiravir + usual care (later arm)"
+      allocation: 1
+    - name: "ivermectin + usual care (later arm)"
+      allocation: 1
+  endpoint:
+    type: co-primary
+    description: "Co-primary: (1) time to self-reported recovery; (2) hospitalization or death within 28 d. Bayesian co-primary analysis."
+    measurement_time: "within 28 d of randomization"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    recovery_hr_target: 1.20
+    hospitalization_death_or_target: 0.60
+    bayesian_decision_rule: "Posterior probability superior > 0.975 to declare efficacy"
+  accrual:
+    duration_months: 36
+  followup:
+    planned_months: 1
+  interim_analyses:
+    - info_fraction: null
+      rule: "Continuous Bayesian monitoring; arms dropped for futility (P(benefit) < 0.01) or declared effective (P(benefit) > 0.975)"
+      boundary_family: "Bayesian threshold"
+
+expected:
+  sample_size_total: 10000
+  events_total: null
+  tolerance:
+    sample_size_pct: 25
+  notes: |
+    **UK NHS primary-care COVID-19 adaptive platform** — largest
+    community-based COVID-19 trial. Launched April 2020, ran through
+    2023. Open-label adaptive multi-arm platform with Bayesian
+    decision framework. Shared usual-care control across all arms
+    (critical efficiency gain). Arms added / dropped over time as
+    candidate therapies emerged. Landmark results:
+    - **Inhaled budesonide** (Sep 2021 Lancet): median time to
+      recovery 3 d shorter (11.8 vs 14.7 d); posterior probability
+      superior > 0.999. Reshaped outpatient COVID management (NHS
+      guidance, fall 2021).
+    - **Azithromycin**: no benefit (Mar 2021 Lancet).
+    - **Doxycycline**: no benefit (Feb 2021 Lancet).
+    - **Colchicine, favipiravir, ivermectin**: no benefit.
+    First platform trial in **community primary care** (vs inpatient).
+    Extreme operational agility: decentralized consent, postal drug
+    dispatch, patient-reported outcomes. Template for pandemic
+    preparedness platform design.
+
+r_packages:
+  - rstan (Bayesian proportional-hazards co-primary)
+  - brms
+  - survival
+  - rpact (frequentist sensitivity)
+
+tags:
+  - principle
+  - covid-19
+  - platform
+  - primary-care
+  - community-trial
+  - bayesian-adaptive
+  - inhaled-budesonide
+  - uk-nhs
+
+caveats: |
+  Open-label (pragmatic; blinding inhaler vs tablet vs usual care
+  impractical in primary care) — self-reported recovery endpoint
+  susceptible to bias but hospitalization/death is objective.
+  Shared-control platform efficiency: each new therapy compared
+  against a continuously-accruing common control, not its own
+  contemporaneous placebo. Loss of contemporaneity (early-pandemic
+  control vs Omicron-era new arms) required era-stratified analyses.
+  Bayesian decision framework with continuous monitoring (not
+  traditional α-spending) supported by regulator (MHRA). Registry-
+  free: ISRCTN, not ClinicalTrials.gov. PRINCIPLE, RECOVERY (inpatient
+  MAMS), REMAP-CAP (ICU platform), and PANORAMIC (primary-care
+  follow-on, 2022) formed the UK COVID platform ensemble — covered
+  entire care spectrum.

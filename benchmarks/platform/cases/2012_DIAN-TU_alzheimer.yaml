@@ -1,0 +1,107 @@
+id: 2012_DIAN-TU_alzheimer
+family: platform
+source:
+  kind: published-trial
+  citation: "Salloway S, Farlow M, McDade E, et al. A trial of gantenerumab or solanezumab in dominantly inherited Alzheimer's disease. Nat Med. 2021;27(7):1187-1196. (DIAN-TU-001 primary analysis; design paper: Mills SM et al. Rev Neurol 2013;169:737-743)"
+  doi: "10.1038/s41591-021-01369-8"
+  nct_id: "NCT01760005"
+
+design:
+  indication: "Autosomal dominant Alzheimer's disease (familial AD mutation carriers)"
+  population: "PSEN1, PSEN2, or APP mutation carriers within ±15 years of expected symptom onset; cognitively normal to mildly symptomatic"
+  arms:
+    - name: "gantenerumab (anti-Aβ aggregated) SC monthly"
+      allocation: 1
+    - name: "solanezumab (anti-Aβ soluble) IV monthly"
+      allocation: 1
+    - name: "shared placebo (2:1 pooled)"
+      allocation: 2
+  endpoint:
+    type: continuous
+    description: "DIAN multivariate cognitive composite (DIAN-MCC): combines Mini-Mental State, logical memory delayed, WMS-R digit symbol, international shopping list test"
+    measurement_time: "4-year cognitive change from baseline; CSF Aβ42/tau biomarker secondary"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    target_slope_difference: 0.50   # SD units over 4 years
+    assumed_placebo_decline_sd: 1.0
+    shared_placebo_ratio: "2:1 placebo pooled across drug arms"
+  accrual:
+    duration_months: 60
+  followup:
+    planned_months: 48
+  interim_analyses:
+    - info_fraction: 0.67
+      rule: "Futility look on biomarker change; no efficacy stop planned"
+      boundary_family: "Conditional power + Bayesian posterior"
+
+expected:
+  sample_size_total: 194
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **Pioneering rare-disease / prevention platform** for autosomal
+    dominant AD (ADAD). Extraordinary features:
+    (1) Patient population global and ultra-rare (~500 families
+        worldwide) — single-drug trials infeasible.
+    (2) Pre-symptomatic / prevention focus: enroll **decade before**
+        expected symptom onset (estimated from parent's age).
+    (3) Shared-placebo platform: 2:1 placebo pooling across drug
+        arms saved ~1/3 of placebo exposure for this precious cohort.
+    (4) 4-year follow-up with annual cognitive + biomarker battery.
+    (5) Open-label extension for all participants (ethical imperative
+        — these are inevitably-progressing mutation carriers).
+
+    **Primary results (2020-2021)**:
+    - Gantenerumab: no benefit on DIAN-MCC cognitive slope; reduced
+      amyloid PET SUVR (biomarker effect present).
+    - Solanezumab: no benefit on cognition or amyloid.
+    - Both drugs discontinued.
+    Platform continued with next-generation arms (lecanemab
+    extension, anti-tau, combination). DIAN-TU-001 established
+    the **template for rare-disease prevention platforms** and
+    demonstrated the shared-placebo efficiency imperative.
+
+r_packages:
+  - nlme::lme (mixed-effects slope analysis)
+  - lme4
+  - rstan (Bayesian hierarchical slope)
+  - survival (time-to-dementia sensitivity)
+  - brms
+
+tags:
+  - dian-tu
+  - alzheimer
+  - familial-ad
+  - adad
+  - rare-disease
+  - prevention
+  - platform
+  - anti-amyloid
+  - gantenerumab
+  - solanezumab
+  - shared-placebo
+
+caveats: |
+  Ultra-rare population (autosomal dominant AD, ~500 families
+  worldwide) required:
+  - Global recruitment (US, UK, Germany, Australia, Argentina, etc.)
+  - Mutation-carrier-only enrollment (confirmed APP/PSEN1/PSEN2).
+  - Pre-symptomatic enrollment using estimated years to onset
+    (calculated from parent's age at diagnosis).
+  - 4-year follow-up with multi-domain cognitive composite (DIAN-MCC)
+    — designed specifically for this pre-symptomatic population
+    (CDR-SB floor effect in early stages).
+  - Biomarker co-primary: CSF Aβ42, tau, PET amyloid, PET tau.
+  Small N (~65 per arm) yet adequate power because of:
+  (a) highly-predictable decline trajectory (mutation carriers),
+  (b) 4-year follow-up (vs 18-24 months in sporadic AD trials),
+  (c) shared placebo (2:1 pooling).
+  Primary results null on cognition but positive on amyloid PET
+  for gantenerumab — motivated subsequent higher-dose regimens and
+  the DIAN-TU-001 open-label extension. DIAN-TU-002 (next-gen
+  therapies) ongoing 2024. Template for any mutation-defined
+  neurodegeneration prevention platform.
