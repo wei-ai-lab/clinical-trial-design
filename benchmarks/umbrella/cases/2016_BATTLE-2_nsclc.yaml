@@ -1,0 +1,80 @@
+id: 2016_BATTLE-2_nsclc
+family: umbrella
+source:
+  kind: published-trial
+  citation: "Papadimitrakopoulou V, Lee JJ, Wistuba II, et al. The BATTLE-2 study: a biomarker-integrated targeted therapy study in previously treated patients with advanced non-small-cell lung cancer. J Clin Oncol. 2016;34(30):3638-3647."
+  doi: "10.1200/JCO.2015.66.0084"
+  nct_id: "NCT01248247"
+
+design:
+  indication: "Previously treated advanced NSCLC (progressed on platinum chemo)"
+  population: "Advanced NSCLC with archival tumor for NGS biomarker profiling"
+  arms:
+    - name: "erlotinib"
+      allocation: "adaptive"
+    - name: "erlotinib + MK2206 (AKT inhibitor)"
+      allocation: "adaptive"
+    - name: "MK2206 + selumetinib (MEK inhibitor)"
+      allocation: "adaptive"
+    - name: "sorafenib"
+      allocation: "adaptive"
+  endpoint:
+    type: binary
+    description: "8-week disease control rate (DCR) with Bayesian adaptive allocation; predictive biomarkers tested"
+    measurement_time: "8 weeks"
+  comparison: "Bayesian adaptive, biomarker-informed"
+  sidedness: 1
+  alpha: null
+  power: null
+  effect:
+    stage_1_learning: "first 200 patients: Bayesian marker-based adaptive"
+    stage_2_validation: "next 200 patients: confirmatory with best-arm-per-marker"
+    pre_specified_biomarkers:
+      - "KRAS mutation"
+      - "PI3K/AKT/mTOR pathway (PTEN loss, PIK3CA mut)"
+      - "EGFR mutation"
+      - "FGFR"
+  accrual:
+    duration_months: 36
+  followup:
+    planned_months: 6
+
+expected:
+  sample_size_total: 334
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    BATTLE-2 extends BATTLE (2011) with a two-stage learn-then-confirm
+    architecture. Stage 1 (n=200): Bayesian adaptive randomization
+    across 4 arms with marker-informed allocation. Stage 2 (n=200):
+    confirmatory with biomarker-matched best arms identified in
+    stage 1. Primary endpoint 8-week DCR. Achieved enrollment but
+    validation was weaker than hoped — no single arm dominated
+    across KRAS mut subgroups. Demonstrated operational feasibility
+    of umbrella-adaptive but also limits of 8-week DCR as primary
+    in refractory NSCLC.
+
+r_packages:
+  - FACTS
+  - rstan
+  - BayesCT
+
+tags:
+  - nsclc
+  - refractory
+  - biomarker-umbrella
+  - bayesian-adaptive
+  - kras
+  - pi3k-akt-mtor
+  - two-stage-learn-confirm
+  - umbrella-trial
+
+caveats: |
+  BATTLE-2 is the direct successor to BATTLE (2011, Bayesian adaptive
+  biomarker trial for lung cancer). Two-stage learn-then-confirm is
+  distinctive; most umbrellas use per-sub-study fixed design.
+  Validation (stage 2) did not confirm a single dominant arm-marker
+  combination — cautionary tale on over-interpreting Bayesian
+  adaptive stage-1 signal. Nevertheless operational template for
+  subsequent lung cancer umbrellas (Lung-MAP).

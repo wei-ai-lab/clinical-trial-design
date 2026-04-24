@@ -1,0 +1,75 @@
+id: 2018_Renfro-Mandrekar_umbrella_methodology
+family: umbrella
+source:
+  kind: methodology-paper
+  citation: "Renfro LA, Mandrekar SJ. Definitions and statistical properties of master protocols for personalized medicine in oncology. J Biopharm Stat. 2018;28(2):217-228."
+  doi: "10.1080/10543406.2017.1372778"
+
+design:
+  indication: "any (methodology)"
+  population: "Single-disease multi-biomarker population"
+  arms:
+    - name: "biomarker-matched sub-studies"
+      allocation: "per biomarker"
+    - name: "shared control (optional)"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Per-sub-study binary / TTE with umbrella-level OC framework"
+    measurement_time: "per sub-study"
+  comparison: "per-sub-study vs control; optional cross-sub-study pooling"
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    alpha_framework:
+      - "per-comparison: each sub-study its own α"
+      - "family-wise: Bonferroni or Dunnett across sub-studies"
+      - "hierarchical Bayesian: shrinkage-controlled"
+    biomarker_prevalence_planning: "overestimate by 2-5x typical in retrospective comparison"
+    crossover_design_options:
+      - "enrichment (biomarker-positive only)"
+      - "stratified (both, biomarker as factor)"
+      - "hybrid (test biomarker-positive primary, all secondary)"
+  accrual:
+    duration_months: 36
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    Reference methodology paper for umbrella trial statistical
+    properties. Contrasts umbrella, basket, platform; defines
+    per-biomarker sub-study designs; α allocation options; effect
+    of biomarker prevalence uncertainty on operating characteristics.
+    Published alongside expanding NCI master-protocol portfolio
+    (Lung-MAP, NCI-MATCH, ALCHEMIST) and FDA draft master protocol
+    guidance. Considered a standard reference for umbrella SAP
+    writers.
+
+r_packages:
+  - gsDesign
+  - rpact
+  - basket
+  - FACTS
+
+tags:
+  - umbrella-trial
+  - master-protocol
+  - biomarker-matched
+  - alpha-control
+  - statistical-properties
+  - methodology-canonical
+
+caveats: |
+  Core message: umbrella trials are not a single design — they are a
+  family. Design choices (α control, shared vs separate controls,
+  enrichment vs stratified) must be explicitly specified and
+  simulated. Prevalence sensitivity is a major operational risk.
+  FDA-acceptable α frameworks include both per-comparison (for
+  independent biomarker-drug hypotheses) and family-wise (for
+  related arms like multiple drug doses).

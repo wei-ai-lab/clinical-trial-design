@@ -1,0 +1,79 @@
+id: 2014_ALCHEMIST_nsclc
+family: umbrella
+source:
+  kind: published-trial
+  citation: "Govindan R, Mandrekar SJ, Gerber DE, et al. ALCHEMIST Trials: a golden opportunity to transform outcomes in early-stage non-small cell lung cancer. Clin Cancer Res. 2015;21(24):5439-5444."
+  doi: "10.1158/1078-0432.CCR-15-0354"
+  nct_id: "NCT02194738"
+
+design:
+  indication: "Completely resected stage IB-IIIA NSCLC (adjuvant)"
+  population: "Post-resection non-squamous NSCLC; centrally screened for EGFR mutation and ALK fusion"
+  arms:
+    - name: "EGFR-mutant sub-study (A081105): erlotinib vs placebo ~2 yr"
+      allocation: 1
+    - name: "ALK-fusion sub-study (E4512): crizotinib vs observation ~2 yr"
+      allocation: 1
+    - name: "EGFR/ALK wild-type sub-study (EA5142/ANVIL): nivolumab vs observation"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Sub-study DFS (disease-free survival) primary; OS secondary"
+    measurement_time: "time-to-recurrence or death"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    target_hr_dfs: 0.67
+    expected_2yr_dfs_control: 0.60
+    expected_screened_total: 8300
+    expected_matched_to_substudy: 2100
+  accrual:
+    duration_months: 60
+  followup:
+    planned_months: 60
+  interim_analyses:
+    - info_fraction: 0.67
+      rule: "per-sub-study interim"
+      boundary_family: "Lan-DeMets OBF"
+
+expected:
+  sample_size_total: 2100
+  events_total: 420
+  tolerance:
+    sample_size_pct: 15
+    events_pct: 15
+  notes: |
+    NCI-sponsored early-stage NSCLC umbrella trial (NCI CTEP and
+    Alliance). Central NGS screens for EGFR and ALK post-resection;
+    patients flow to matched adjuvant sub-study (3 in total). Each
+    sub-study is a conventional randomized Phase 3 with DFS primary.
+    Early-stage setting is distinctive — most umbrellas focus on
+    advanced disease. Template for genomic-matched adjuvant
+    precision therapy.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+  - survival
+
+tags:
+  - nsclc
+  - adjuvant
+  - resected
+  - biomarker-umbrella
+  - egfr
+  - alk
+  - io-checkpoint
+  - nci-alliance
+  - umbrella-trial
+
+caveats: |
+  Adjuvant setting (not metastatic) is unusual for umbrella trials.
+  Each sub-study has independent FDA regulatory path. Operational
+  complexity high: screen ~8,300 patients, ~2,100 matched, three
+  sub-studies with different controls and durations. Central
+  testing turnaround (≤ 14 days post-resection) is operational
+  challenge. Results: EGFR sub-study (ADAURA superseded for
+  osimertinib); ALK sub-study still enrolling as of 2023.

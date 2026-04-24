@@ -1,0 +1,73 @@
+id: 2017_NCI-MPACT
+family: umbrella
+source:
+  kind: published-trial
+  citation: "Do KT, O'Sullivan Coyne G, Hays JL, et al. Phase I study of the mTOR inhibitor sapanisertib (TAK-228) in combination with the allosteric MEK inhibitor TAK-733 in patients with advanced solid tumors (NCI-MPACT). Clin Cancer Res. 2021;27(15):4229-4237."
+  doi: "10.1158/1078-0432.CCR-20-5022"
+  nct_id: "NCT01827384"
+
+design:
+  indication: "Advanced solid tumors with selected actionable alterations"
+  population: "Advanced pre-treated solid tumors, actionable alteration on NCI-MATCH / MPACT panel"
+  arms:
+    - name: "Biomarker-matched targeted therapy (4 drugs × 4 pathway groups)"
+      allocation: "biomarker-matched"
+    - name: "Biomarker-non-matched therapy (random assignment of available drugs)"
+      allocation: "non-match control"
+  endpoint:
+    type: binary
+    description: "Objective response rate (RECIST v1.1)"
+    measurement_time: "best response"
+  comparison: "matched vs non-matched therapy within biomarker subgroup"
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    target_response_delta: 0.20
+    matched_arm_expected_rr: 0.30
+    non_match_expected_rr: 0.10
+    pathway_groups:
+      - "DNA repair (e.g., BRCA, PALB2) → veliparib"
+      - "PI3K/mTOR (PIK3CA, PTEN) → everolimus"
+      - "RAS/RAF/MEK (KRAS, NRAS, BRAF) → trametinib"
+      - "Cell cycle (CDK inhibitors)"
+  accrual:
+    duration_months: 48
+  followup:
+    planned_months: 6
+
+expected:
+  sample_size_total: 180
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    NCI-MPACT (Molecular Profiling-based Assignment of Cancer
+    Therapy) tests the hypothesis that biomarker-matched therapy
+    improves ORR vs non-matched therapy. Randomized within biomarker
+    strata. Foundational early umbrella/precision-oncology trial
+    pre-dating NCI-MATCH. Small N but high scientific value for
+    establishing framework. Matched-vs-non-matched comparison
+    contrasts with NCI-MATCH (single-arm per-biomarker design).
+
+r_packages:
+  - gsDesign
+  - rpact
+  - basket
+
+tags:
+  - precision-oncology
+  - biomarker-matched
+  - pathway-matched
+  - nci-mpact
+  - randomized-umbrella
+  - umbrella-trial
+
+caveats: |
+  Distinct randomized-controlled design within umbrella: each patient
+  randomized to matched vs non-matched drug. Stronger design than
+  single-arm per-biomarker but operationally limited by availability
+  of multiple drugs per pathway. Non-match arm sees drugs mismatched
+  to biology — ethical question addressed by no-effective-SOC eligibility.
+  Small N limited conclusions; findings mixed (some pathways showed
+  signal, others did not). Template for ProfiLER, MASTER, MoTriColor.
