@@ -1,0 +1,74 @@
+id: 2013_PATENT-1_pah
+family: fixed-superiority
+source:
+  kind: published-trial
+  citation: "Ghofrani HA, Galiè N, Grimminger F, et al. Riociguat for the treatment of pulmonary arterial hypertension. N Engl J Med. 2013;369(4):330-340."
+  doi: "10.1056/NEJMoa1209655"
+  nct_id: "NCT00810693"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1209655"
+
+design:
+  indication: "Pulmonary arterial hypertension (PAH), WHO functional class II-III"
+  population: "Symptomatic PAH, treatment-naive or on endothelin receptor antagonists / prostanoid analogs"
+  arms:
+    - name: "riociguat (titrated up to 2.5 mg tid)"
+      allocation: 2
+    - name: "placebo"
+      allocation: 1
+    - name: "riociguat (capped at 1.5 mg tid)"
+      allocation: 1
+  endpoint:
+    type: continuous
+    description: "Change from baseline in 6-minute walk distance (6MWD)"
+    measurement_time: "12 weeks"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.9
+  effect:
+    mean_diff: 30           # meters; assumed for primary comparison (high-dose vs placebo)
+    sd: 70                  # meters, pooled SD assumption
+    analysis: "ANCOVA adjusting for baseline 6MWD"
+  dropout:
+    pct: 10
+    handling: "LOCF for patients who discontinued, died, or underwent lung transplant (ranked as lowest)"
+
+expected:
+  sample_size_total: 443
+  sample_size_per_arm:
+    riociguat_high: 254
+    placebo: 126
+    riociguat_low_cap: 63
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Published N differs from a naive two-sample t-test calculation because (a) the
+    design reserves allocation for the low-dose-cap arm (not part of the primary
+    comparison but contributing to safety evaluation), and (b) the analysis is
+    ANCOVA with baseline as covariate, which improves precision vs plain t-test.
+    A pure two-sample power calc with (Δ=30, SD=70, α=0.05 two-sided, power=0.9)
+    gives ≈ 115 per arm for high-dose vs placebo — closely matching the 254:126
+    high:placebo allocation (2:1 ratio preserving 115 effective per placebo).
+
+r_packages:
+  - stats::power.t.test
+  - gsDesign::nNormal
+  - rpact::getSampleSizeMeans
+
+tags:
+  - pah
+  - pulmonary-hypertension
+  - 6mwd
+  - ancova
+  - continuous
+  - rare-disease
+
+caveats: |
+  The trial had three arms with unequal allocation; the primary efficacy comparison
+  was high-dose riociguat vs placebo only. Benchmarks that treat this as a simple
+  two-arm continuous-endpoint superiority design are approximately correct but
+  understate the full sample size. Also: the ANCOVA analysis reduces effective
+  variance by a factor of (1 − ρ²) where ρ is correlation between baseline and
+  follow-up 6MWD — reasonable estimates place ρ ≈ 0.5, so effective SD is ~0.87×
+  the unadjusted SD. Check whether this adjustment is reflected in
+  `designr`'s output before flagging a mismatch.

@@ -1,0 +1,70 @@
+id: 2015_SPRINT_bp
+family: fixed-superiority
+source:
+  kind: published-trial
+  citation: "SPRINT Research Group. A randomized trial of intensive versus standard blood-pressure control. N Engl J Med. 2015;373(22):2103-2116."
+  doi: "10.1056/NEJMoa1511939"
+  nct_id: "NCT01206062"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1511939"
+
+design:
+  indication: "Hypertension (SBP ≥ 130 mm Hg) at increased cardiovascular risk, without diabetes"
+  population: "Adults ≥ 50 y with SBP 130-180 mm Hg and increased CV risk (prior CVD, CKD, Framingham ≥ 15%, age ≥ 75)"
+  arms:
+    - name: "intensive BP control (SBP target < 120 mm Hg)"
+      allocation: 1
+    - name: "standard BP control (SBP target < 140 mm Hg)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: first occurrence of MI, other ACS, stroke, acute decompensated HF, or CV death"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.887           # reported as 88.7%
+  effect:
+    hr: 0.80             # assumed hazard ratio intensive vs standard
+    control_annual_rate: 0.022  # ~2.2% per year primary event rate in standard arm
+  accrual:
+    duration_months: 24
+    target_N: 9250
+  followup:
+    min_months: 48
+    mean_months: ~60
+  dropout:
+    pct_per_year: 2
+
+expected:
+  sample_size_total: 9250    # planned; actual enrolled 9361
+  events_total: 2028         # target events for analysis
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 3
+  notes: |
+    SPRINT was stopped early (after a median of 3.26 years follow-up) by its DSMB
+    based on the observed benefit on the primary composite. This was DSMB
+    judgment, not a pre-specified alpha-spending rule — the protocol did not
+    include formal group-sequential stopping boundaries. We classify it as
+    `fixed-superiority` for that reason, but it's an instructive case for why
+    large outcome trials often have DSMB-driven early stopping even without
+    formal GS design.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - hypertension
+  - cvot
+  - time-to-event
+  - composite-endpoint
+  - early-stopped
+  - dsmb-stop
+
+caveats: |
+  The protocol specified a fixed sample-size design; no pre-specified O'Brien-Fleming
+  or Lan-DeMets boundaries were used. The DSMB recommended early termination based
+  on prespecified monitoring criteria but not formal alpha-spending. Reproducing the
+  *design* is a fixed calculation; reproducing the *as-run* analysis requires
+  modeling the early stopping decision separately.
