@@ -1,0 +1,73 @@
+id: 2020_STRENGTH_omega3
+family: group-sequential-futility
+source:
+  kind: published-trial
+  citation: "Nicholls SJ, Lincoff AM, Garcia M, et al. Effect of high-dose omega-3 fatty acids vs corn oil on major adverse cardiovascular events in patients at high cardiovascular risk: the STRENGTH randomized clinical trial. JAMA. 2020;324(22):2268-2280."
+  doi: "10.1001/jama.2020.22258"
+  nct_id: "NCT02104817"
+  url: "https://jamanetwork.com/journals/jama/fullarticle/2773538"
+
+design:
+  indication: "Established CVD or high CV risk with hypertriglyceridemia, on statin"
+  population: "Adults with TG 180-500, HDL < 42 (M)/47 (F), statin-treated"
+  arms:
+    - name: "omega-3 carboxylic acids 4 g daily"
+      allocation: 1
+    - name: "corn oil placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "5-component MACE: CV death + MI + stroke + coronary revascularization + hospitalization for UA"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.9
+  effect:
+    hr: 0.85
+    control_annual_rate: 0.055
+  accrual:
+    duration_months: 36
+  followup:
+    median_months: 42
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+    - number: 2
+      information_fraction: 0.75
+    - number: 3
+      information_fraction: 1.0
+    spending: "Lan-DeMets OBF α + HSD β (non-binding)"
+    futility: "Non-binding, DSMB discretion with conditional-power support"
+
+expected:
+  sample_size_total: 13078
+  events_total: 1600
+  boundaries:
+    efficacy_z:
+      - 2.80
+      - 2.34
+      - 2.04
+    futility_z:
+      - -0.5
+      - 0.90
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 3
+  notes: |
+    Stopped for futility at IF ~0.90 on DSMB recommendation based on conditional
+    power < 5%. HR 0.99 at stop. Contrast with REDUCE-IT (icosapent ethyl with
+    mineral oil placebo) which showed HR 0.75 — fueling ongoing debate about
+    placebo bioactivity.
+
+r_packages:
+  - gsDesign::gsSurv
+  - rpact::getDesignGroupSequential
+
+tags:
+  - dyslipidemia
+  - omega-3
+  - futility-stopped
+  - conditional-power-stop
+  - corn-oil-placebo
+  - contrast-with-reduce-it

@@ -1,0 +1,81 @@
+id: 2014_TOPCAT_hfpef
+family: group-sequential-futility
+source:
+  kind: published-trial
+  citation: "Pitt B, Pfeffer MA, Assmann SF, et al. Spironolactone for heart failure with preserved ejection fraction. N Engl J Med. 2014;370(15):1383-1392."
+  doi: "10.1056/NEJMoa1313731"
+  nct_id: "NCT00094302"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1313731"
+
+design:
+  indication: "Symptomatic HFpEF, LVEF ≥ 45%"
+  population: "Adults ≥ 50 y with HFpEF symptoms and elevated BNP or recent HF hospitalization"
+  arms:
+    - name: "spironolactone 15-45 mg daily"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: CV death + aborted cardiac arrest + HF hospitalization"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.8
+  effect:
+    hr: 0.80
+    control_annual_rate: 0.07
+  accrual:
+    duration_months: 48
+  followup:
+    median_months: 39
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+    - number: 2
+      information_fraction: 0.75
+    - number: 3
+      information_fraction: 1.0
+    spending: "Lan-DeMets OBF α + non-binding HSD β"
+    futility: "Non-binding"
+
+expected:
+  sample_size_total: 3445
+  events_total: 631
+  boundaries:
+    efficacy_z:
+      - 2.80
+      - 2.34
+      - 2.04
+    futility_z:
+      - 0.50
+      - 1.35
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 5
+  notes: |
+    Ran to final analysis. HR 0.89 (95% CI 0.77-1.04), p=0.14 — technically
+    negative but hotly debated. Regional heterogeneity: benefit in Americas
+    (HR 0.82), no benefit in Russia/Georgia (HR 1.10) — later attributed to
+    drug-level discrepancies suggesting possible non-adherence or drug supply
+    issues in Eastern European sites.
+
+r_packages:
+  - gsDesign::gsSurv
+  - rpact::getDesignGroupSequential
+
+tags:
+  - hfpef
+  - mra
+  - non-binding-futility
+  - regional-heterogeneity
+  - surrogate-adherence-issue
+  - marginal-result
+
+caveats: |
+  Trial is famous for the post-hoc regional analysis that revealed implausible
+  adherence/drug-level patterns in Eastern European sites. The "primary"
+  negative result is widely considered diluted by non-adherent sites. Regulators
+  did not accept new label claims. A teaching case for conduct risk in
+  multi-regional GS trials.

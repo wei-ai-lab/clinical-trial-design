@@ -1,0 +1,75 @@
+id: 2006_ILLUMINATE_torcetrapib
+family: group-sequential-futility
+source:
+  kind: published-trial
+  citation: "Barter PJ, Caulfield M, Eriksson M, et al. Effects of torcetrapib in patients at high risk for coronary events. N Engl J Med. 2007;357(21):2109-2122."
+  doi: "10.1056/NEJMoa0706628"
+  nct_id: "NCT00134264"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa0706628"
+
+design:
+  indication: "CAD or CAD equivalent, high CV risk"
+  population: "Adults with CVD or CVD equivalent, on statin"
+  arms:
+    - name: "torcetrapib 60 mg + atorvastatin"
+      allocation: 1
+    - name: "atorvastatin alone"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: CHD death + non-fatal MI + stroke + hospitalization for UA"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.9
+  effect:
+    hr: 0.75
+    control_annual_rate: 0.03
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 54
+    actual_months: 18
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.33
+    - number: 2
+      information_fraction: 0.67
+    - number: 3
+      information_fraction: 1.0
+    spending: "Lan-DeMets OBF + non-binding harm monitoring"
+    futility: "Non-binding, DSMB-driven"
+
+expected:
+  sample_size_total: 15067
+  events_total: 900
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 5
+  notes: |
+    Stopped at IF ~0.30 on DSMB recommendation. **Harm-stop**, not futility:
+    observed mortality and CV event rate higher with torcetrapib. HR 1.25 for
+    mortality, 1.61 excess CV events. Pharmacodynamic off-target effects
+    (raised blood pressure) implicated. Retrospectively, CETP inhibition for
+    CV benefit via HDL raising was discredited; subsequent CETP inhibitors
+    (anacetrapib, evacetrapib, dalcetrapib) all failed or were stopped.
+
+r_packages:
+  - gsDesign::gsSurv
+  - rpact::getDesignGroupSequential
+
+tags:
+  - dyslipidemia
+  - cetp-inhibitor
+  - torcetrapib
+  - harm-stopped
+  - early-stop
+  - off-target-effect
+  - drug-class-failure
+
+caveats: |
+  A very early stop (IF ~0.30) based on harm signals. No pre-specified harm
+  boundary in the classic sense; DSMB used clinical judgment supplemented by
+  mortality hazard ratio. Useful teaching case for the role of DSMB authority
+  in scenarios where formal stopping boundaries do not clearly apply.

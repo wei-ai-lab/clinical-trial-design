@@ -1,0 +1,74 @@
+id: 2008_ACCORD_glycemia
+family: group-sequential-futility
+source:
+  kind: published-trial
+  citation: "Action to Control Cardiovascular Risk in Diabetes Study Group. Effects of intensive glucose lowering in type 2 diabetes. N Engl J Med. 2008;358(24):2545-2559."
+  doi: "10.1056/NEJMoa0802743"
+  nct_id: "NCT00000620"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa0802743"
+
+design:
+  indication: "Type 2 diabetes at high CV risk"
+  population: "Adults with T2D, HbA1c ≥ 7.5, established CVD or ≥ 2 CV risk factors"
+  arms:
+    - name: "intensive glycemic control (HbA1c target < 6.0%)"
+      allocation: 1
+    - name: "standard glycemic control (HbA1c 7.0-7.9%)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: non-fatal MI + non-fatal stroke + CV death"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.89
+  effect:
+    hr: 0.85
+    control_annual_rate: 0.035
+  accrual:
+    duration_months: 24
+  followup:
+    median_months: 42          # before early termination
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.33
+    - number: 2
+      information_fraction: 0.67
+    - number: 3
+      information_fraction: 1.0
+    spending: "Lan-DeMets OBF efficacy + O'Brien-Fleming-style futility monitoring"
+    futility: "Non-binding; DSMB had authority to stop for harm on mortality"
+
+expected:
+  sample_size_total: 10251
+  events_total: 1011
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 5
+  notes: |
+    The glycemic-control arm of ACCORD was stopped early at median 3.5 years
+    of follow-up — not for futility on primary endpoint, but for **increased
+    all-cause mortality** in the intensive arm. A harm-stop rather than a
+    futility-stop. Included here because the same monitoring framework handles
+    both: asymmetric non-binding GS design supports DSMB decisions on
+    efficacy, futility, or harm.
+
+r_packages:
+  - gsDesign::gsSurv
+  - rpact::getDesignGroupSequential
+
+tags:
+  - diabetes
+  - glycemic-control
+  - harm-stopped
+  - mortality-monitoring
+  - non-binding-dsmb
+  - factorial-design
+
+caveats: |
+  ACCORD was a 2x2 factorial (glycemia × BP + glycemia × lipid in sub-trials).
+  The glycemia arm stop did not affect BP or lipid arms, which continued to
+  full planned follow-up. Harm-stop required unplanned unblinded DSMB decision
+  based on mortality signal; formal pre-specified harm boundaries were not
+  detailed in primary publications.

@@ -1,0 +1,74 @@
+id: 2011_AIM-HIGH_niacin
+family: group-sequential-futility
+source:
+  kind: published-trial
+  citation: "AIM-HIGH Investigators, Boden WE, Probstfield JL, Anderson T, et al. Niacin in patients with low HDL cholesterol levels receiving intensive statin therapy. N Engl J Med. 2011;365(24):2255-2267."
+  doi: "10.1056/NEJMoa1107579"
+  nct_id: "NCT00120289"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1107579"
+
+design:
+  indication: "Established CVD with low HDL, on statin therapy"
+  population: "Adults with CVD, HDL < 40 (M) / < 50 (F), TG 150-400"
+  arms:
+    - name: "extended-release niacin 1.5-2 g daily + simvastatin"
+      allocation: 1
+    - name: "placebo + simvastatin"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: CV death + MI + stroke + high-risk ACS + coronary/cerebral revascularization"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.85
+  effect:
+    hr: 0.75
+    control_annual_rate: 0.027
+  accrual:
+    duration_months: 48
+  followup:
+    planned_months: 60
+    actual_months: 36
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.33
+    - number: 2
+      information_fraction: 0.67
+    - number: 3
+      information_fraction: 1.0
+    spending: "Lan-DeMets OBF efficacy + HSD futility"
+    futility: "Non-binding, β-spent via HSD with γ = -2"
+
+expected:
+  sample_size_total: 3414
+  events_total: 800
+  boundaries:
+    efficacy_z:
+      - 3.71
+      - 2.62
+      - 2.03
+    futility_z:
+      - -0.76          # HSD γ=-2 β-spending at IF=0.33
+      - 0.92           # IF=0.67
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 5
+  notes: |
+    Stopped at second planned interim analysis for futility. Observed HR ≈ 1.02
+    at the stop — no evidence of benefit despite large HDL increases. Classic
+    example that surrogate-endpoint effect doesn't always translate to hard
+    clinical outcomes.
+
+r_packages:
+  - gsDesign::gsSurv
+  - rpact::getDesignGroupSequential
+
+tags:
+  - dyslipidemia
+  - niacin
+  - futility-stopped
+  - hsd-beta-spending
+  - non-binding-futility
+  - surrogate-to-outcome-failure
