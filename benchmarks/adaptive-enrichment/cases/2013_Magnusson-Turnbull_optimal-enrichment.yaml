@@ -1,0 +1,123 @@
+id: 2013_Magnusson-Turnbull_optimal-enrichment
+family: adaptive-enrichment
+source:
+  kind: methodology-paper
+  citation: "Magnusson BP, Turnbull BW. Group sequential enrichment design incorporating subgroup selection. Stat Med. 2013 Jul 30;32(17):2695-714."
+
+design:
+  indication: "any (methodology — illustrated in oncology)"
+  population: "All-comers with a pre-specified biomarker-defined subpopulation of interest (S1 ⊂ overall F)"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Methodology is endpoint-agnostic — illustrated for normal and TTE outcomes"
+    measurement_time: "per primary endpoint"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    design_framework: "Group-sequential enrichment with formal subgroup-selection decision rule at interim"
+    hypotheses_tested: "H_F (full population) and H_S (biomarker-positive subgroup)"
+    selection_rule: "At interim, based on interim effect estimates in F and S, choose to continue in F, enrich to S only, or stop for futility"
+    alpha_control: "Closed testing + group-sequential spending function across analyses"
+    optimality_criterion: "Minimize expected sample size under configurations of interest (e.g., subgroup effect only, overall effect, null)"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **Magnusson-Turnbull 2013 (Statistics in Medicine)** is the
+    canonical modern reference for **optimal group-sequential
+    adaptive enrichment designs**.
+
+    **Core framework**:
+    - Two populations: Full (F) and biomarker-defined Subset (S).
+    - Two hypotheses: H_F (effect in F) and H_S (effect in S).
+    - At each interim analysis, the trial may:
+      (1) Continue as is (enroll both F and S).
+      (2) Enrich — enroll only S going forward.
+      (3) Stop for efficacy (reject H_F or H_S).
+      (4) Stop for futility.
+
+    **Statistical machinery**:
+    - Group-sequential testing with a spending function on each
+      hypothesis family.
+    - Closed testing ensures FWER control across H_F and H_S.
+    - Selection rule at interim is formalized: pick the action that
+      maximizes conditional power or minimizes expected N under the
+      design's preferred configuration.
+
+    **Optimality**:
+    - Magnusson-Turnbull optimize across a 'configuration set' of
+      possible true effects — e.g., equal effect in F and S, effect
+      only in S, null.
+    - Designs minimize maximum expected N across configurations,
+      subject to α- and power-control constraints.
+    - Yields stopping boundaries and enrichment thresholds that are
+      provably optimal under the configuration set.
+
+    **Why this matters**:
+    - Adds *formal optimality* criteria to biomarker enrichment —
+      prior work (Freidlin-Simon, Brannath-Mehta, Jenkins-Stone)
+      gave valid designs but not optimal ones.
+    - Shows that the 'enrichment cost' in terms of sample size is
+      relatively modest if done with good rules.
+    - Informed the FDA 2019 Adaptive Designs guidance section on
+      biomarker enrichment.
+
+    **Parameters of a Magnusson-Turnbull design**:
+    - Number of analyses (K), typically 3-4 with one interim
+      enrichment decision point.
+    - Prevalence of S in F (π) — critical parameter.
+    - Effect assumptions in F and S.
+    - Weights on configurations for optimization.
+
+r_packages:
+  - asd (Parsons-Friede adaptive seamless designs)
+  - adaptTest (Vandemeulebroecke)
+  - rpact (group-sequential with closed testing)
+  - gsDesign (group-sequential core)
+  - mvtnorm (closed-testing FWER)
+
+tags:
+  - magnusson-turnbull
+  - optimal-design
+  - group-sequential-enrichment
+  - biomarker
+  - closed-testing
+  - subgroup-selection
+  - methodology
+
+caveats: |
+  Magnusson-Turnbull 2013 remains the canonical reference for optimal
+  group-sequential enrichment designs, but practical implementation
+  requires custom simulation code — no R package implements the full
+  optimization framework. The asd package covers the structural
+  elements (2-stage combination tests with selection) and rpact
+  covers the group-sequential machinery, but joining them into a
+  Magnusson-Turnbull optimal design requires integration.
+
+  Extensions to this framework:
+  - Stallard-Todd 2003 for treatment selection (not enrichment, but
+    related methodology).
+  - Friede-Parsons-Stallard 2011 for combined dose-and-enrichment
+    adaptive seamless designs.
+  - Rosenblum-van der Laan 2011 for fixed-threshold optimal
+    enrichment.
+
+  Regulatory context: FDA has accepted Magnusson-Turnbull-style
+  designs for registrational trials when the biomarker and threshold
+  are pre-specified and clinically justified (not data-driven
+  post-hoc). The TAPPAS trial (2019, in corpus) is a close real
+  implementation.

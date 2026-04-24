@@ -1,0 +1,116 @@
+id: 2005_Freidlin-Simon_adaptive-signature
+family: adaptive-enrichment
+source:
+  kind: methodology-paper
+  citation: "Freidlin B, Simon R. Adaptive signature design: an adaptive clinical trial design for generating and prospectively testing a gene expression signature for sensitive patients. Clin Cancer Res. 2005 Nov 1;11(21):7872-8."
+
+design:
+  indication: "Oncology (originally gene-expression signature; generalizable to any biomarker-defined sensitive subset)"
+  population: "All-comers with genomic / biomarker data; unknown prospectively which subset benefits"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Originally response / TTE in oncology; the method is endpoint-agnostic"
+    measurement_time: "per primary endpoint"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.05
+  power: 0.80
+  effect:
+    trial_structure: "Single confirmatory trial with built-in biomarker signature development"
+    split_alpha: "α = α1 (all-comers) + α2 (signature-defined subgroup); typical 0.04 + 0.01"
+    signature_development: "Use training subset (~50%) to develop classifier of 'sensitive' patients"
+    signature_testing: "Hold-out test subset — test hypothesis only in signature-positive patients at α2"
+    decision_rules: |
+      If overall-population test rejects at α1 → claim efficacy in all-comers.
+      Else if signature-positive subset test rejects at α2 → claim efficacy in signature+.
+      Signature is developed prospectively from the trial data, not externally.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **Foundational adaptive-signature methodology**. Freidlin and
+    Simon (2005, CCR) proposed the first formal **adaptive signature
+    design** — a single confirmatory trial that simultaneously:
+    (1) tests efficacy in the overall population,
+    (2) develops a biomarker-defined 'sensitive' subgroup classifier
+        from the trial's own training subset, and
+    (3) tests efficacy in that classifier-defined subgroup at a
+        reserved portion of α.
+
+    **Alpha split**:
+    - α1 (typical 0.04) for the all-comers primary test.
+    - α2 (typical 0.01) for the signature-positive subgroup test,
+      evaluated only if the overall test fails.
+    - Closed-testing principle preserves FWER at 0.05 one-sided.
+
+    **Signature development**:
+    - Training subset (~50% of patients) used to fit a classifier
+      (originally gene-expression compound covariate predictor).
+    - Test subset (~50%) used to evaluate classifier-defined subgroup.
+    - No biomarker is declared a priori — the signature emerges from
+      trial data.
+
+    **Why this matters**:
+    - Addresses the 'everything works in a subgroup somewhere'
+      problem with pre-specification of the analytic strategy.
+    - Foundation for all later adaptive-enrichment designs (Brannath
+      2009, Jenkins 2011, Wang 2009, Rosenblum-van der Laan 2011).
+    - Basis for NCI's signature-based trial templates and the
+      'biomarker-adaptive threshold' design (Jiang-Freidlin-Simon
+      2007).
+
+    **Modern relevance**:
+    - Rarely used as originally proposed (pure signature discovery
+      from scratch in a Phase 3) — mostly superseded by adaptive
+      enrichment with a pre-specified biomarker threshold.
+    - Conceptually foundational for all biomarker-enrichment RCT
+      methodology that followed.
+
+r_packages:
+  - adaptTest
+  - asd
+  - mvtnorm (closed-testing FWER calc)
+  - gsDesign (for overall-population component)
+
+tags:
+  - freidlin-simon
+  - adaptive-signature
+  - biomarker-discovery
+  - subgroup
+  - closed-testing
+  - alpha-splitting
+  - methodology-foundational
+  - oncology
+
+caveats: |
+  Freidlin-Simon adaptive signature design is foundational but rarely
+  used in its pure form today. Later refinements addressed key issues:
+  (1) Biomarker-adaptive threshold design (Jiang-Freidlin-Simon 2007,
+      JNCI) — same concept but for a continuous biomarker where the
+      threshold is learned from data.
+  (2) Brannath-Mehta 2009 (Biom J) — formalized the framework with
+      combination tests for the adaptive component.
+  (3) Jenkins-Stone-Jennison 2011 (SIM) — extended to seamless
+      Phase 2/3 with both adaptation decisions and alpha allocation.
+  (4) Rosenblum-van der Laan 2011 (JASA) — optimality properties
+      for fixed-threshold enrichment.
+
+  FDA rarely approves registrational submissions based on a signature
+  discovered de novo during the pivotal trial — companies and
+  regulators prefer signatures established in Phase 2 or prior
+  evidence. However, Freidlin-Simon remains the conceptual basis for
+  prospectively-specified biomarker-enrichment strategies in Phase
+  3, and directly informs the FDA 2019 adaptive designs guidance
+  enrichment section.
