@@ -1,0 +1,73 @@
+id: 2015_CheckMate-057_nsclc
+family: group-sequential-nph
+source:
+  kind: published-trial
+  citation: "Borghaei H, Paz-Ares L, Horn L, et al. Nivolumab versus docetaxel in advanced nonsquamous non-small-cell lung cancer. N Engl J Med. 2015;373(17):1627-1639."
+  doi: "10.1056/NEJMoa1507643"
+  nct_id: "NCT01673867"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1507643"
+
+design:
+  indication: "Advanced non-squamous NSCLC, pre-treated"
+  population: "Progression after platinum-based chemotherapy, ECOG 0-1"
+  arms:
+    - name: "nivolumab 3 mg/kg q2w"
+      allocation: 1
+    - name: "docetaxel 75 mg/m² q3w"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Overall survival"
+    measurement_time: "time-to-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    hr: 0.70
+    control_median_os_months: 8
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 18
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.75
+    - number: 2
+      information_fraction: 1.0
+    spending: "Lan-DeMets OBF α-spending"
+    futility: "Not pre-specified"
+
+expected:
+  sample_size_total: 582
+  events_total: 413
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 3
+  notes: |
+    Design assumed proportional hazards at HR 0.70; observed data displayed
+    pronounced crossing of survival curves around month 6-7. Log-rank p was
+    nominal; weighted log-rank (FH(0,1)) would have been stronger. PD-L1 ≥ 1%
+    subgroup showed HR ≈ 0.59, PD-L1 < 1% subgroup HR ≈ 0.90 — subgroup
+    heterogeneity drove post-hoc labeling considerations.
+
+r_packages:
+  - gsDesign::gsSurv
+  - gsDesign2::gs_design_ahr
+  - simtrial
+  - nphDesign
+
+tags:
+  - nsclc
+  - non-squamous
+  - pd-1
+  - crossing-hazards
+  - nph
+  - pd-l1-subgroup
+
+caveats: |
+  Trial was not pre-specified for weighted log-rank or max-combo despite the
+  immunotherapy-context risk of NPH. Interim analysis at IF 0.75 did not
+  trigger stopping (crossing pattern). Modern designs would pre-specify
+  max-combo or a Fleming-Harrington family test. Biomarker enrichment
+  (PD-L1 stratification) was not part of primary design.

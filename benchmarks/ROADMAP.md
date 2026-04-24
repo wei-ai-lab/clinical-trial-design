@@ -97,7 +97,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | fixed-equivalence | ✅ | 4 | 4 | ✅ |
 | group-sequential | ✅ | 8 | 8 | ✅ |
 | group-sequential-futility | ✅ | 5 | 5 | ✅ |
-| group-sequential-nph | — | 0 | 6 | 🔲 |
+| group-sequential-nph | ✅ | 6 | 6 | ✅ |
 | adaptive-ssr | — | 0 | 5 | 🔲 |
 | adaptive-enrichment | — | 0 | 4 | 🔲 |
 | adaptive-selection | — | 0 | 4 | 🔲 |

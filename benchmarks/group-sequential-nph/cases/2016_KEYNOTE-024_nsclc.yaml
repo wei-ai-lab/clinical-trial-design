@@ -1,0 +1,74 @@
+id: 2016_KEYNOTE-024_nsclc
+family: group-sequential-nph
+source:
+  kind: published-trial
+  citation: "Reck M, Rodríguez-Abreu D, Robinson AG, et al. Pembrolizumab versus chemotherapy for PD-L1-positive non-small-cell lung cancer. N Engl J Med. 2016;375(19):1823-1833."
+  doi: "10.1056/NEJMoa1606774"
+  nct_id: "NCT02142738"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1606774"
+
+design:
+  indication: "Advanced NSCLC, PD-L1 TPS ≥ 50%, first-line"
+  population: "Untreated stage IV NSCLC, PD-L1 ≥ 50%, EGFR/ALK wild-type"
+  arms:
+    - name: "pembrolizumab 200 mg q3w"
+      allocation: 1
+    - name: "platinum-doublet chemotherapy"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "PFS (BICR RECIST v1.1) primary; OS key secondary"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.97
+  effect:
+    hr_pfs: 0.55
+    control_median_pfs_months: 6
+  accrual:
+    duration_months: 9
+  followup:
+    planned_months: 12
+  interim_analyses:
+    - number: 1
+      endpoint: PFS
+      information_fraction: 0.70
+    - number: 2
+      endpoint: PFS
+      information_fraction: 1.0
+    spending: "Lan-DeMets OBF α-spending"
+    futility: "Not pre-specified"
+
+expected:
+  sample_size_total: 305
+  events_pfs: 175
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 3
+  notes: |
+    Biomarker-enriched (PD-L1 ≥ 50%) design produced an IO population with
+    fast-onset treatment effect, making the PH assumption more tenable than
+    in unselected populations. Trial hit primary at first interim with
+    observed HR 0.50 (vs assumed 0.55). Because biomarker enrichment tightens
+    the response-time distribution, NPH concerns are less severe than in
+    unselected KEYNOTE-189 / CheckMate-067 designs.
+
+r_packages:
+  - gsDesign::gsSurv
+  - gsDesign2::gs_design_ahr
+
+tags:
+  - nsclc
+  - pembrolizumab
+  - pd-l1-enrichment
+  - first-line
+  - early-separation
+  - biomarker-selection
+
+caveats: |
+  OS interpretation complicated by high crossover (> 40% of chemo arm
+  received anti-PD-(L)1 on progression). Primary OS analysis was
+  intent-to-treat; sensitivity analyses with RPSFT or IPCW confirmed
+  direction of effect. Biomarker selection was based on PD-L1 IHC 22C3
+  pharmDx companion diagnostic.
