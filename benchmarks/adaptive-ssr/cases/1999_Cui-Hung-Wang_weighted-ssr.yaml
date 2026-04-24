@@ -1,0 +1,72 @@
+id: 1999_Cui-Hung-Wang_weighted-ssr
+family: adaptive-ssr
+source:
+  kind: methodology-paper
+  citation: "Cui L, Hung HMJ, Wang S-J. Modification of sample size in group sequential clinical trials. Biometrics. 1999;55(3):853-857."
+  doi: "10.1111/j.0006-341X.1999.00853.x"
+
+design:
+  indication: "Phase 3 continuous endpoint — illustrative"
+  population: "Two-arm parallel, continuous primary"
+  arms:
+    - name: "treatment"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: continuous
+    description: "Mean difference on continuous scale"
+    measurement_time: "end of follow-up"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    mean_difference: 0.5
+    standard_deviation: 1.0   # unknown at design time, re-estimated at interim
+  accrual:
+    duration_months: 12
+  followup:
+    planned_months: 6
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+      action: "Re-estimate n₂ based on observed effect; apply CHW weighted z at final"
+    - number: 2
+      information_fraction: 1.0
+    spending: "Not GS — CHW weighted combination"
+  adaptation:
+    type: "unblinded SSR"
+    method: "Cui-Hung-Wang weighted statistic"
+    weights_prespecified: true
+    max_n_factor: 2.0
+    promising_zone: "optional — base CHW does not require PZ, but recommended"
+
+expected:
+  sample_size_total_planned: 86
+  sample_size_total_max_after_ssr: 172
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    CHW weighted statistic preserves α = 0.05 regardless of how n₂* is chosen,
+    provided the weights w₁ = √(n₁/N_planned), w₂ = √(n₂/N_planned) are
+    pre-specified. This is the foundational methodology for unblinded SSR
+    in Phase 3.
+
+r_packages:
+  - rpact::getSampleSizeMeans
+  - rpact::getAnalysisResults
+
+tags:
+  - methodology-canonical
+  - unblinded-ssr
+  - cui-hung-wang
+  - weighted-statistic
+  - continuous-endpoint
+
+caveats: |
+  This is a methodology-archetype case, not a specific trial. Published
+  Phase 3 trials using CHW (e.g., in oncology and neurology) rarely
+  make their full SAP public. The method is the canonical reference for
+  α-preserving unblinded SSR and underpins the more modern Mehta-Pocock
+  promising-zone design included elsewhere in this corpus.

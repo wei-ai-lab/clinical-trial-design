@@ -1,0 +1,78 @@
+id: 2004_Chen-DeMets-Lan_cp-ssr
+family: adaptive-ssr
+source:
+  kind: methodology-paper
+  citation: "Chen YHJ, DeMets DL, Lan KKG. Increasing the sample size when the unblinded interim result is promising. Statistics in Medicine. 2004;23(7):1023-1038."
+  doi: "10.1002/sim.1688"
+
+design:
+  indication: "Phase 3 TTE endpoint — illustrative CP-triggered SSR"
+  population: "Two-arm parallel"
+  arms:
+    - name: "treatment"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Time-to-event; HR assumed"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    hr: 0.75
+    control_annual_rate: 0.30
+  accrual:
+    duration_months: 12
+  followup:
+    planned_months: 24
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+      action: "Compute CP under assumed HR; if in promising zone, increase event target"
+    - number: 2
+      information_fraction: 1.0
+    spending: "None required — CDL proved α preserved if SSR restricted to promising zone"
+  adaptation:
+    type: "unblinded SSR"
+    method: "Chen-DeMets-Lan conditional-power promising zone"
+    weights_prespecified: false
+    max_n_factor: 1.5
+    promising_zone: "CP ∈ [0.5, 0.8) under assumed HR"
+
+expected:
+  events_planned: 250
+  events_max_after_ssr: 350
+  sample_size_total_planned: 400
+  sample_size_total_max_after_ssr: 560
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 2
+  notes: |
+    CDL proved that restricting SSR to the promising zone (CP ∈ [0.5, 0.8))
+    preserves Type-I error under the conventional z-test — no CHW weighting
+    required. This is the "free lunch" result. Mehta-Pocock 2011 generalized
+    this with cleaner operational guidance.
+
+r_packages:
+  - rpact::getDesignInverseNormal
+  - rpact::getSampleSizeSurvival
+  - gsDesign::nSurv
+
+tags:
+  - methodology-canonical
+  - unblinded-ssr
+  - chen-demets-lan
+  - conditional-power
+  - promising-zone
+  - time-to-event
+
+caveats: |
+  The "no α adjustment needed" result relies on CP computed under the
+  assumed effect π, not the observed effect. Using CP under observed
+  effect (a common implementation mistake) can inflate α. Mehta-Pocock
+  2011 elaborates this and provides a cleaner promising-zone formulation
+  that is easier to pre-specify and defend. Regulators accept both but
+  the PZ framing is now the modern default.

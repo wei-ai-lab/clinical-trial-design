@@ -1,0 +1,85 @@
+id: 2011_Mehta-Pocock_promising-zone
+family: adaptive-ssr
+source:
+  kind: methodology-paper
+  citation: "Mehta CR, Pocock SJ. Adaptive increase in sample size when interim results are promising: a practical guide with examples. Statistics in Medicine. 2011;30(28):3267-3284."
+  doi: "10.1002/sim.4102"
+
+design:
+  indication: "Phase 3 CV MACE — worked example from paper"
+  population: "High CV-risk adults"
+  arms:
+    - name: "treatment"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Time to first MACE"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    hr: 0.75
+    control_2yr_mace_rate: 0.10
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 24
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+      action: "Compute CP under observed effect; apply promising-zone rule"
+    - number: 2
+      information_fraction: 1.0
+    spending: "CHW inverse-normal weighted combination"
+  adaptation:
+    type: "unblinded SSR"
+    method: "Mehta-Pocock promising zone"
+    weights_prespecified: true
+    max_n_factor: 1.46
+    promising_zone:
+      cp_lower: 0.365
+      cp_upper: 0.80
+      target_cp_after_ssr: 0.80
+    unpromising_action: "continue at planned N (or stop for futility if pre-specified)"
+
+expected:
+  events_planned: 442
+  events_max_after_ssr: 645
+  sample_size_total_planned: 2400
+  sample_size_total_max_after_ssr: 3500
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 2
+  notes: |
+    Current modern standard for unblinded SSR. Cited in FDA Adaptive
+    Designs Guidance (2019). Framework: unfavorable zone → stop; promising
+    zone → increase N to target CP* = 0.80; favorable zone → continue.
+    CHW weighting preserves α. Worked example in paper uses a
+    cardiovascular MACE endpoint; the illustrative values above match the
+    paper's scenario.
+
+r_packages:
+  - rpact::getDesignInverseNormal
+  - rpact::getSampleSizeSurvival
+  - rpact::getAnalysisResults
+
+tags:
+  - methodology-canonical
+  - unblinded-ssr
+  - promising-zone
+  - mehta-pocock
+  - time-to-event
+  - chw-weighting
+  - modern-standard
+
+caveats: |
+  The choice of CP boundaries (0.365, 0.80) and the 1.46× cap in the
+  worked example are sponsor-specific and should be simulated before
+  SAP commitment. The paper argues against using CP under observed
+  effect in some formulations; instead, use the interim effect estimate
+  to compute CP under a pre-specified alternative, then trigger SSR
+  by the computed CP. This distinction matters for regulatory review.

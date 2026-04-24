@@ -1,0 +1,74 @@
+id: 2012_Gao-Liu-Mehta_blinded-binary-ssr
+family: adaptive-ssr
+source:
+  kind: methodology-paper
+  citation: "Gao P, Liu L, Mehta C. Exact inference for adaptive group sequential designs. Statistics in Medicine. 2013;32(23):3991-4005."
+  doi: "10.1002/sim.5847"
+
+design:
+  indication: "Phase 3 binary responder endpoint — illustrative"
+  population: "Two-arm parallel"
+  arms:
+    - name: "treatment"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Proportion responder at fixed week"
+    measurement_time: "week 12"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    p_treatment: 0.45
+    p_control:   0.30
+    risk_difference: 0.15
+  accrual:
+    duration_months: 12
+  followup:
+    planned_months: 3
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+      action: "Blinded re-estimate of pooled rate; recompute N; apply calibrated z_α'"
+    - number: 2
+      information_fraction: 1.0
+    spending: "Calibrated α via Gao-Liu-Mehta tables (z_α' ≈ 1.98 vs nominal 1.96)"
+  adaptation:
+    type: "blinded SSR with α calibration"
+    method: "Gao-Liu-Mehta pooled event rate recalculation with z-critical adjustment"
+    weights_prespecified: false
+    max_n_factor: 2.0
+
+expected:
+  sample_size_total_planned: 332
+  sample_size_total_max_after_ssr: 664
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    Blinded SSR for binary outcomes requires small α adjustment because
+    the pooled event rate indirectly carries treatment effect information.
+    Gao-Liu-Mehta 2012 provides calibration tables to preserve nominal α.
+    Alternative: unblinded CHW combination preserves α exactly but requires
+    DSMB unblinding (operational cost).
+
+r_packages:
+  - rpact::getSampleSizeRates
+  - rpact::getDesignInverseNormal
+
+tags:
+  - methodology-canonical
+  - blinded-ssr
+  - gao-liu-mehta
+  - binary-endpoint
+  - alpha-calibration
+
+caveats: |
+  The α inflation under naive blinded binary SSR is usually modest
+  (0.5-1.5% above nominal) but not zero. Regulators now expect either
+  (a) explicit calibration per Gao-Liu-Mehta tables, (b) simulation-
+  calibrated critical value, or (c) fixed-effect-assumption blinded SSR
+  (estimate nuisance p̄ = (p_T + p_C)/2 only, don't use arm-specific
+  data). Pre-specify the choice in SAP.

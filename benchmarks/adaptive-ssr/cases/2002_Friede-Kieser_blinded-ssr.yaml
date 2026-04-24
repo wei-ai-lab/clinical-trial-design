@@ -1,0 +1,73 @@
+id: 2002_Friede-Kieser_blinded-ssr
+family: adaptive-ssr
+source:
+  kind: methodology-paper
+  citation: "Friede T, Kieser M. A comparison of methods for adaptive treatment selection. Biometrical Journal. 2006. (Cumulative series from Friede & Kieser 2001-2006)"
+  doi: "10.1002/sim.977"
+
+design:
+  indication: "Phase 3 continuous endpoint — illustrative internal-pilot SSR"
+  population: "Two-arm parallel"
+  arms:
+    - name: "treatment"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: continuous
+    description: "Mean difference on continuous scale; σ unknown at design"
+    measurement_time: "end of follow-up"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    mean_difference: 3.0
+    standard_deviation_planned: 10.0
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 6
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+      action: "Blinded pooled-σ̂ re-estimation; recompute N; no α adjustment"
+    - number: 2
+      information_fraction: 1.0
+    spending: "None required — blinded SSR preserves α"
+  adaptation:
+    type: "blinded SSR (internal pilot)"
+    method: "Friede-Kieser pooled variance recalculation"
+    weights_prespecified: false   # not needed for blinded
+    max_n_factor: 2.0
+
+expected:
+  sample_size_total_planned: 176
+  sample_size_total_max_after_ssr: 352
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    Blinded SSR for continuous endpoint preserves α exactly (no adjustment
+    needed) because the pooled variance estimator does not use treatment-
+    assignment information. Power is restored if true σ > σ₀. Regulators
+    prefer blinded SSR when feasible.
+
+r_packages:
+  - rpact::getSampleSizeMeans
+  - Hmisc::spower   # simulation check
+
+tags:
+  - methodology-canonical
+  - blinded-ssr
+  - internal-pilot
+  - friede-kieser
+  - continuous-endpoint
+  - no-alpha-adjustment
+
+caveats: |
+  The simple pooled-σ̂ approach assumes equal variances between arms.
+  If variances differ systematically (e.g., treatment destabilizes
+  response), blinded σ̂ is a mixture overestimate. Sensitivity analysis
+  with EM-based un-mixing is an option but Friede-Kieser 2002 showed
+  the EM approach introduces bias; recommended practice is conservative
+  pooled σ̂ with an appropriate cap on N_new.
