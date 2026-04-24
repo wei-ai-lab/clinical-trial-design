@@ -1,0 +1,129 @@
+id: 2014_PARADIGM-HF_sacubitril-valsartan
+family: tte-ph
+source:
+  kind: design-paper
+  citation: "McMurray JJV, Packer M, Desai AS, et al. Angiotensin-neprilysin inhibition versus enalapril in heart failure. N Engl J Med. 2014 Sep 11;371(11):993-1004. Design paper: McMurray JJ, Packer M, Desai AS, et al. Dual angiotensin receptor and neprilysin inhibition as an alternative to angiotensin-converting enzyme inhibition in patients with chronic systolic heart failure: rationale for and design of the Prospective comparison of ARNI with ACEI to Determine Impact on Global Mortality and morbidity in Heart Failure trial (PARADIGM-HF). Eur J Heart Fail. 2013 Sep;15(9):1062-73."
+
+design:
+  indication: "Chronic heart failure with reduced ejection fraction (HFrEF), NYHA II-IV, LVEF ≤ 40% (amended to ≤ 35%), elevated BNP/NT-proBNP"
+  population: "Adults with chronic HF, LVEF ≤ 35%, elevated natriuretic peptides, on guideline-directed therapy"
+  arms:
+    - name: "sacubitril/valsartan (LCZ696 200 mg BID)"
+      allocation: 1
+    - name: "enalapril 10 mg BID (active comparator)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite of cardiovascular death or first hospitalization for heart failure (time to first event)"
+    measurement_time: "event-driven; targeted ~2,410 primary events"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    scale: log-hazard-ratio
+    hazard_ratio_alt: 0.85
+    control_event_rate_annual: 0.115
+    design_approach: |
+      Event-driven superiority design versus active comparator
+      (enalapril, itself standard of care from SOLVD).
+      - Estimated annual composite event rate ~11.5% on enalapril.
+      - Target HR 0.85 (15% relative reduction).
+      - Two-sided α = 0.05.
+      - Power 80%.
+      - Target events ~2,410 to detect HR = 0.85.
+      - Interim analyses planned (DSMB); O'Brien-Fleming-like boundaries.
+    run_in: |
+      Sequential single-blind run-in:
+      (1) Enalapril run-in (2 weeks) to establish tolerance.
+      (2) LCZ696 run-in (4-6 weeks) to establish tolerance.
+      Patients tolerant of both randomized. ~20% drop in run-in.
+  accrual:
+    duration_months: 27
+  followup:
+    planned_months: 34
+    median_actual_months: 27
+
+expected:
+  sample_size_total: 8442
+  sample_size_per_arm: [4209, 4187]
+  events_total_target: 2410
+  events_total_actual: 2031
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **PARADIGM-HF** was the landmark trial establishing ARNI (angiotensin
+    receptor neprilysin inhibitor) as superior to ACEi in HFrEF.
+    First major HF mortality/morbidity trial to show superiority over
+    an active comparator in decades.
+
+    **Design**:
+    - 8,442 randomized (1:1) from 47 countries.
+    - Event-driven: target 2,410 composite primary events.
+    - PH assumption: composite CV mortality + HF hospitalization.
+    - Enalapril 10 mg BID as active comparator (not placebo).
+
+    **Trial stopped early for efficacy**:
+    - Pre-specified interim at median 27 months follow-up.
+    - DSMB recommended early stop (March 2014).
+    - Observed HR = 0.80 (95% CI 0.73-0.87), P < 0.001.
+    - Prespecified efficacy boundary crossed.
+    - 2,031 events accrued at stop (below 2,410 target due to early stop).
+
+    **Key results**:
+    - Primary composite: 914 (21.8%) LCZ696 vs 1,117 (26.5%) enalapril.
+    - HR 0.80 (0.73-0.87).
+    - CV death: HR 0.80 (0.71-0.89).
+    - All-cause death: HR 0.84 (0.76-0.93).
+    - Consistent across subgroups.
+
+    **Regulatory**:
+    - FDA approval July 2015 (Entresto, Novartis).
+    - Class I recommendation in ACC/AHA/HFSA HF guidelines (2016+).
+
+r_packages:
+  - gsDesign
+  - rpact
+  - nphRCT
+  - npsurvSS
+  - survival
+
+tags:
+  - paradigm-hf
+  - sacubitril-valsartan
+  - arni
+  - hfref
+  - active-comparator
+  - event-driven
+  - superiority
+  - landmark-trial
+  - cardiology
+
+caveats: |
+  PARADIGM-HF design points:
+
+  - **Run-in design**: 2-week enalapril then 4-6-week LCZ696 run-in
+    excluded ~20% intolerant patients. Protects against power loss from
+    early discontinuation but limits generalizability.
+  - **Active comparator**: enalapril 10 mg BID (SOLVD dose). Some
+    critiqued the ACEi dose as lower than titration goal in practice.
+  - **Early stopping for benefit**: interim crossed pre-specified
+    O'Brien-Fleming efficacy boundary; DSMB unanimously recommended stop.
+    Classic teaching case for group-sequential success boundary.
+  - **PH assumption**: reasonably supported for this composite endpoint
+    over ~2 years. Log-rank and Cox valid.
+  - **Composite endpoint**: CV death + first HF hospitalization. Pragmatic
+    composite; recurrent-event analysis (LWYY) also performed as secondary.
+
+  **Relationship to subsequent trials**:
+  - **PARADISE-MI** (2021): ARNI post-MI — negative.
+  - **PARADIGM-MI/HFpEF**: follow-up programs.
+  - **PIONEER-HF** (2019): in-hospital initiation.
+  - **DAPA-HF** (2019, in corpus): SGLT2i on top of ARNI.
+
+  **Methodology lessons**:
+  - Active-comparator superiority requires larger N than placebo.
+  - Run-in periods trade generalizability for power.
+  - Event-driven composite with PH assumption → classic Cox + log-rank.
+  - Early stopping with O'Brien-Fleming preserved overall α.

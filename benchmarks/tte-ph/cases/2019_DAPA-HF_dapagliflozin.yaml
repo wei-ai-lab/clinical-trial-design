@@ -1,0 +1,133 @@
+id: 2019_DAPA-HF_dapagliflozin
+family: tte-ph
+source:
+  kind: design-paper
+  citation: "McMurray JJV, Solomon SD, Inzucchi SE, et al. Dapagliflozin in patients with heart failure and reduced ejection fraction. N Engl J Med. 2019 Nov 21;381(21):1995-2008. Design: McMurray JJV, DeMets DL, Inzucchi SE, et al. A trial to evaluate the effect of the sodium-glucose co-transporter 2 inhibitor dapagliflozin on morbidity and mortality in patients with heart failure and reduced ejection fraction (DAPA-HF). Eur J Heart Fail. 2019 May;21(5):665-675."
+
+design:
+  indication: "Heart failure with reduced ejection fraction (HFrEF), LVEF ≤ 40%, NYHA II-IV, elevated NT-proBNP, with or without type 2 diabetes"
+  population: "Adults with chronic HFrEF on guideline-directed therapy (≥ 90% on ACEi/ARB/ARNI, ≥ 95% on beta-blocker, ~ 70% on MRA)"
+  arms:
+    - name: "dapagliflozin 10 mg once daily"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite of worsening HF event (hospitalization or urgent IV therapy) or cardiovascular death"
+    measurement_time: "event-driven; target 844 primary events"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    scale: log-hazard-ratio
+    hazard_ratio_alt: 0.80
+    control_event_rate_annual: 0.11
+    design_approach: |
+      Event-driven superiority design versus placebo on top of guideline-
+      directed medical therapy (GDMT).
+      - Assumed annual composite event rate ~11% on placebo.
+      - Target HR 0.80 (20% relative reduction).
+      - Two-sided α = 0.05.
+      - Power 90%.
+      - Target primary events: 844.
+      - One interim analysis (Haybittle-Peto-like).
+    hierarchical_testing: |
+      Secondary endpoints tested hierarchically only if primary
+      significant:
+        1. Total HF hospitalizations + CV death (joint frailty).
+        2. KCCQ total symptom score change.
+        3. New or worsening kidney endpoint.
+        4. All-cause death.
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 24
+    median_actual_months: 18.2
+
+expected:
+  sample_size_total: 4744
+  sample_size_per_arm: [2373, 2371]
+  events_total_target: 844
+  events_total_actual: 921
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **DAPA-HF** established SGLT2 inhibitors as fourth pillar of HFrEF
+    therapy (alongside ARNI, beta-blocker, MRA). First HF outcomes trial
+    testing SGLT2i in non-diabetic HFrEF population.
+
+    **Design**:
+    - 4,744 randomized (1:1) placebo-controlled.
+    - 20 countries, 410 sites.
+    - ~55% diabetic, ~45% non-diabetic (stratification).
+    - Event-driven: target 844 composite events.
+    - On top of contemporary GDMT (ARNI ~10%, ACEi/ARB ~85%, BB ~95%, MRA ~70%).
+
+    **Positive result at final**:
+    - Primary composite: 386 (16.3%) dapa vs 502 (21.2%) placebo.
+    - HR 0.74 (0.65-0.85), P < 0.001.
+    - Exceeded assumed HR = 0.80 (observed 0.74).
+    - Consistent diabetic / non-diabetic (interaction P = 0.89).
+    - All-cause death: HR 0.83 (0.71-0.97).
+
+    **Regulatory**:
+    - FDA approval May 2020 (Farxiga for HFrEF).
+    - Expanded to HFpEF via DELIVER (2022).
+    - Class I recommendation in 2022 AHA/ACC/HFSA HF guidelines.
+
+r_packages:
+  - gsDesign
+  - rpact
+  - nphRCT
+  - survival
+
+tags:
+  - dapa-hf
+  - dapagliflozin
+  - sglt2-inhibitor
+  - hfref
+  - placebo-controlled
+  - event-driven
+  - superiority
+  - landmark-trial
+  - cardiology
+  - fourth-pillar
+
+caveats: |
+  DAPA-HF design points:
+
+  - **PH assumption**: reasonably held; Kaplan-Meier curves separated
+    early (~ 28 days) and continued to diverge proportionally.
+  - **Event-driven**: 844 target, accumulated 921 (overshoot due to
+    enrollment continuation during late follow-up).
+  - **Hierarchical secondary testing**: preserves FWER across 4+
+    secondary endpoints.
+  - **Stratification**: diabetic status (prespecified); pre-randomization
+    natriuretic peptide. No treatment-by-diabetes interaction.
+
+  **Methodology lessons**:
+  - Adding a new pillar on top of existing GDMT: still powered at
+    90% despite residual-risk setting, because HFrEF event rates
+    remain high (~11%/year) even on triple therapy.
+  - Contemporary with EMPEROR-Reduced (empagliflozin, Packer 2020),
+    which replicated the HR ~ 0.75 effect size.
+  - Placebo-controlled design justified because SGLT2i was not yet
+    standard in HFrEF (diabetes-only indication until this trial).
+
+  **Relationship to other trials**:
+  - **EMPEROR-Reduced** (2020): empagliflozin HFrEF — HR 0.75.
+  - **DELIVER** (2022): dapagliflozin HFpEF — HR 0.82.
+  - **EMPEROR-Preserved** (2021): empagliflozin HFpEF — HR 0.79.
+  - **DAPA-CKD** (2020): dapagliflozin CKD — HR 0.61.
+  - **CREDENCE** (2019): canagliflozin diabetic CKD — HR 0.70.
+
+  **Design evolution**:
+  - SOLVD (1991): ACEi foundational.
+  - COPERNICUS (2001): beta-blocker.
+  - EMPHASIS-HF (2011): MRA.
+  - PARADIGM-HF (2014, in corpus): ARNI.
+  - DAPA-HF (2019, this case): SGLT2i — fourth pillar.
+  - Full quadruple therapy now standard of care.
