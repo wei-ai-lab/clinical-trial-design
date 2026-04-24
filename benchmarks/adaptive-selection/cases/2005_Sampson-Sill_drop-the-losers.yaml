@@ -1,0 +1,277 @@
+id: 2005_Sampson-Sill_drop-the-losers
+family: adaptive-selection
+source:
+  kind: methodology-paper
+  citation: "Sampson AR, Sill MW. Drop-the-losers design: normal case. Biometrical Journal. 2005;47(3):257-268. Building on: Cohen A, Sackrowitz HB. Two-stage conditionally unbiased estimators of the selected mean. Stat Probab Lett. 1989;8(3):273-278. Thall PF, Simon R, Ellenberg SS. Two-stage selection and testing designs for comparative clinical trials. Biometrika. 1988;75(2):303-310."
+
+design:
+  indication: "Generic methodology applicable to any seamless Phase 2/3 trial where multiple experimental arms are evaluated and a single winner is selected for confirmatory comparison"
+  population: "Any disease where multiple doses / formulations / regimens of experimental treatment are candidates"
+  arms:
+    - name: "experimental arm 1 (e.g., dose 1)"
+      allocation: 1
+    - name: "experimental arm 2 (e.g., dose 2)"
+      allocation: 1
+    - name: "experimental arm k (e.g., dose k)"
+      allocation: 1
+    - name: "common control"
+      allocation: 1
+  endpoint:
+    type: continuous
+    description: "Continuous (normal) primary endpoint; Sampson-Sill 2005 addresses the normal case specifically; extensions exist for binary and TTE"
+    measurement_time: "stage 1 (interim selection), stage 2 (confirmatory comparison)"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    scale: methodology
+    drop_the_losers_framework: |
+      Seamless Phase 2/3 "drop-the-losers" design:
+
+      **Stage 1 (selection)**:
+      - Randomize patients across K experimental arms + control.
+      - Observe normal outcomes: X̄_1, ..., X̄_K from experimental arms,
+        Ȳ from control (all with stage-1 sample sizes n_1).
+      - Compute test statistic T_k = X̄_k - Ȳ for each experimental arm.
+
+      **Selection rule** (simple version): pick arm with largest T_k:
+        k* = argmax_k T_k
+
+      **Stage 2 (confirmation)**:
+      - Continue only arm k* vs control with additional sample size n_2.
+      - Drop all losing arms.
+      - Final statistic: weighted combination of stage-1 and stage-2
+        observations in arm k*.
+
+      **Key problem**: naive analysis of stage 1+2 combined overstates
+      Δ̂_{k*} due to selection bias ("winner's curse").
+    sampson_sill_contribution: |
+      Sampson-Sill 2005 provided:
+      1. **Exact conditional distribution** of T_{k*} given selection.
+      2. **Critical values** for hypothesis test controlling type I
+         error at α under the global null (all Δ_k = 0).
+      3. **Conditionally unbiased estimator** (extending Cohen-Sackrowitz
+         1989) of Δ_{k*} corrected for selection bias.
+      4. **Sample-size formulas** for stage 2 given stage-1 selection
+         power requirements.
+
+      **Test statistic after selection**:
+        Z_final = w_1 · Z_1(k*) + w_2 · Z_2(k*)
+      where w_1² + w_2² = 1 (weights based on information fractions).
+
+      **Critical value c**: computed so that:
+        sup_{H_0 global} P(Z_final > c | any arm selected) = α.
+      Requires numerical integration over multivariate normal
+      distribution of (T_1, ..., T_K) given selection.
+    winners_curse_correction: |
+      Naive Δ̂_{k*} = X̄_{k*} - Ȳ overestimates true Δ_{k*} because:
+        E[X̄_{k*} | selected] > μ_{k*}
+
+      Sampson-Sill conditionally unbiased estimator:
+        Δ̂_{unbiased} = Δ̂_naive - B(K, n_1, σ)
+
+      where B(·) is a bias-correction term depending on:
+      - K: number of arms.
+      - n_1: stage-1 sample size per arm.
+      - σ: known (or estimated) standard deviation.
+
+      Bias magnitude: substantial when K large and n_1 small.
+      Example: K = 4, n_1 = 20, σ = 1 → bias ≈ 0.3 standard errors.
+    sample_size_advantages: |
+      Drop-the-losers vs parallel fixed design:
+      - Fixed K-arm: n per arm, total K × n + n_control.
+      - DTL: n_1 per arm stage-1 + n_2 for selected arm stage-2.
+        Total: K × n_1 + n_2 + (K + 1) × n_control-share.
+
+      When properly calibrated, DTL saves ~ 20-40% of total sample
+      size vs running K separate Phase 3 trials sequentially.
+    comparison_to_other_methods: |
+      **Vs Thall-Simon-Ellenberg 1988** (in corpus):
+      - TSE: first general framework for two-stage selection.
+      - Sampson-Sill: normal-case exact critical values + unbiased
+        estimation.
+
+      **Vs Stallard-Todd 2003** (in corpus):
+      - ST: used α-spending + group-sequential boundaries.
+      - Sampson-Sill: conditional approach, exact MVN integration.
+
+      **Vs Bretz-Schmidli 2006** (in corpus):
+      - BS: Bretz-style closed-testing + combination functions.
+      - Sampson-Sill: simpler "pick winner" + corrected analysis.
+
+      **Vs Magirr-Jaki-Whitehead 2012** (in corpus):
+      - MJW: generalized Dunnett across K × J.
+      - Sampson-Sill: focus on drop-the-losers dual (stage 1 only).
+    numerical_example: |
+      K = 3 experimental arms + control, σ = 1 (known):
+
+      Stage 1: n_1 = 20 per arm (80 total).
+      Observe:
+        X̄_1 - Ȳ = 0.42
+        X̄_2 - Ȳ = 0.18
+        X̄_3 - Ȳ = 0.05
+      Select arm 1 (highest).
+
+      Stage 2: n_2 = 100 in arm 1 and 100 in control.
+      Stage-2 result: X̄_{1,2} - Ȳ_2 = 0.28.
+
+      Weighted combination:
+        Z_final = √(20/120) · Z_1 + √(100/120) · Z_2
+                = 0.41 · Z_1 + 0.91 · Z_2
+
+      Compare to Sampson-Sill critical value (not 1.96 — higher due
+      to selection).
+
+      Conditionally unbiased estimator of Δ_1:
+        Δ̂_unbiased = 0.42 - bias(K=3, n_1=20, σ=1)
+                   ≈ 0.42 - 0.18 = 0.24 (more realistic).
+  regulatory_acceptance: |
+    Drop-the-losers designs with Sampson-Sill framework (and related
+    methodology) accepted under:
+    - **FDA 2019 Adaptive Designs Guidance**: seamless Phase 2/3
+      with proper α control.
+    - **EMA 2007 CHMP Reflection Paper**: adaptive design accepted
+      if prospectively specified.
+    - **ICH E9 (R1)**: adaptive designs within framework.
+
+    Key requirement: all rules (selection, weighting, final test
+    critical value) pre-specified in protocol.
+  implementation_r: |
+    - `rpact::getDesignFisher()`: Fisher combination + selection.
+    - `AdaptiveDesign::TrialDesign()`: general adaptive.
+    - `gsDesign2`: some selection support.
+    - `asd` (R): adaptive seamless designs by Parsons/Friede.
+    - Custom simulation typically required for exact critical values.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **Sampson-Sill 2005** provided the canonical treatment of the
+    **drop-the-losers design for normal endpoints** — exact critical
+    values, conditionally unbiased estimation, and sample-size
+    formulas.
+
+    **Core contributions**:
+    - Exact conditional distribution of winner after selection.
+    - Critical values controlling type I error under global null.
+    - Conditionally unbiased estimator correcting winner's curse.
+    - Integration via multivariate normal for K arms.
+
+    **Why drop-the-losers matters**:
+    - Seamless Phase 2/3 saves 20-40% total N vs sequential trials.
+    - Accelerates development timeline.
+    - Selects best dose/formulation without losing α control.
+    - Winner's curse correction essential for unbiased labeling.
+
+    **Extensions**:
+    - **Binary case**: Stallard-Todd 2003, Friede-Stallard 2008.
+    - **TTE case**: Friede-Stallard et al.
+    - **Multiple winners**: Stallard-Friede 2008.
+    - **Nuisance-parameter estimation**: Bretz-Schmidli 2006.
+
+    **Modern applications**:
+    - **ADVENT-HF** (sleep apnea, 2 doses): drop-the-losers.
+    - **INITIATE** (neuroscience 3-dose): seamless Phase 2/3.
+    - **CRT-D cardiac** devices: adaptive dose selection.
+    - Pharmaceutical Phase 2b/3 dose-finding: common.
+
+r_packages:
+  - asd (Parsons/Friede — adaptive seamless designs, canonical)
+  - rpact (Fisher combination selection)
+  - AdaptiveDesign
+  - gsDesign2
+  - Custom simulation
+
+tags:
+  - sampson-sill
+  - drop-the-losers
+  - seamless-phase-2-3
+  - adaptive-selection
+  - winners-curse
+  - conditionally-unbiased
+  - methodology-foundational
+  - 2005
+  - biometrical-journal
+  - normal-case
+
+caveats: |
+  Sampson-Sill drop-the-losers considerations:
+
+  - **Winner's curse bias**: naive analysis of selected arm overestimates
+    true effect. Correction essential before product labeling or
+    subsequent confirmatory planning.
+  - **Known vs unknown σ**: original Sampson-Sill assumes known σ.
+    For unknown σ, estimator plugs in σ̂ with some precision loss.
+  - **Selection rule**: simple "pick maximum" is optimal under normal
+    case; alternative rules (threshold-based, ranked) may differ.
+  - **Multiple winners**: if ties or near-ties at interim, which arm
+    wins? Pre-specify tie-breaker in protocol.
+  - **Early-stopping for futility**: most designs add futility boundary;
+    Sampson-Sill framework extends.
+
+  **Sample-size calculation (illustrative)**:
+  ```r
+  # Conceptual (requires custom code):
+
+  library(mvtnorm)
+
+  # K = 3 experimental + control, normal endpoint
+  K <- 3
+  sigma <- 1
+  alpha <- 0.025
+  power <- 0.80
+  delta <- 0.5                     # expected effect size (best arm)
+
+  # Stage 1 per arm
+  n1 <- 25
+
+  # Stage 2 for selected arm
+  n2 <- 75
+
+  # Weights based on information fractions
+  w1 <- sqrt(n1 / (n1 + n2))
+  w2 <- sqrt(n2 / (n1 + n2))
+
+  # Critical value: numerical root-finding such that
+  # P(Z_final > c | any arm selected under H_0) = alpha
+  # For K = 3, c ≈ 2.15 (vs 1.96 for K = 1)
+  c_alpha <- 2.15
+
+  # Power: simulate across K-arm MVN with selection + final test
+  ```
+
+  **Critical-value adjustments (approximate)**:
+  | K arms | DTL critical value (α = 0.025) |
+  |---|---|
+  | 1 | 1.96 |
+  | 2 | 2.08 |
+  | 3 | 2.15 |
+  | 4 | 2.20 |
+  | 5 | 2.24 |
+  | 10 | 2.38 |
+
+  Increases slowly because selection is "free" when other arms
+  truly don't work under global null.
+
+  **Relationship to other cases in corpus**:
+  - **Thall-Simon-Ellenberg 1988**: first general framework; Sampson-
+    Sill provides exact normal-case details.
+  - **Stallard-Todd 2003**: binary endpoints, α-spending approach.
+  - **Posch-Koenig 2005**: GS + selection combined.
+  - **Bretz-Schmidli 2006**: Bretz closed-testing with combination.
+  - **Friede-Stallard 2008**: binary-case extensions, multiple winners.
+  - **Magirr-Jaki-Whitehead 2012**: unified MAMS framework.
+
+  **Why normal case first**:
+  - Exact MVN distribution of (T_1, ..., T_K) tractable.
+  - Critical values computable via multivariate normal integration.
+  - Conditionally unbiased estimator has closed form.
+  - Extensions to binary/TTE use approximations anchored to normal.

@@ -1,0 +1,262 @@
+id: 2008_Koenig-Brannath-Bretz-Posch_adaptive-dunnett
+family: adaptive-selection
+source:
+  kind: methodology-paper
+  citation: "König F, Brannath W, Bretz F, Posch M. Adaptive Dunnett tests for treatment selection. Statistics in Medicine. 2008;27(10):1612-1625. Related: Posch M, Koenig F, Branson M, Brannath W, Dunger-Baldauf C, Bauer P. Testing and estimation in flexible group sequential designs with adaptive treatment selection. Stat Med. 2005;24(24):3697-3714."
+
+design:
+  indication: "Generic methodology applicable to any multi-arm Phase 2/3 trial comparing multiple experimental treatments against a common control"
+  population: "Any disease where multiple candidate treatments are evaluated simultaneously with possible interim dropping of inferior arms"
+  arms:
+    - name: "experimental arm 1"
+      allocation: 1
+    - name: "experimental arm 2"
+      allocation: 1
+    - name: "experimental arm k"
+      allocation: 1
+    - name: "common control"
+      allocation: 1
+  endpoint:
+    type: continuous
+    description: "Normal endpoint in original formulation; extensions to binary and TTE via approximation"
+    measurement_time: "stage 1 (selection), stage 2 (confirmation)"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    scale: methodology
+    adaptive_dunnett_framework: |
+      König-Brannath-Bretz-Posch (2008) combined two classical ideas:
+
+      1. **Dunnett test** (1955): multiple comparisons vs common
+         control with FWER control accounting for correlated tests.
+      2. **Adaptive combination tests** (Bauer-Kohne 1994): allow
+         sample-size re-estimation or arm dropping between stages
+         via conditional error function.
+
+      Result: **adaptive Dunnett test** allowing:
+      - Interim arm selection (drop inferior arms).
+      - Sample-size re-estimation for remaining arms.
+      - Any pre-specified adaptation rule.
+      - Strong FWER control across K null hypotheses
+        H_0^k: μ_k ≤ μ_0 for k = 1, ..., K.
+    key_contribution: |
+      **Strong FWER control** via closed testing + adaptive combination:
+
+      For each subset J ⊆ {1, ..., K}:
+        - Stage-1 Dunnett statistic restricted to J: D_J^(1) = min_{k ∈ J} Z_k^(1)
+        - Stage-2 Dunnett statistic: D_J^(2) = min_{k ∈ J ∩ selected} Z_k^(2)
+        - Conditional error function: A_J(D_J^(1)) determines stage-2
+          critical value given stage-1 observed.
+        - Combination: reject H_0^J iff D_J^(2) > c_J
+          where c_J satisfies A_J(D_J^(1)) = P(D_J^(2) > c_J | stage 1).
+
+      Strong control: each individual H_0^k rejected only if all
+      intersection hypotheses containing it are rejected.
+
+      **Benefit over simple DTL (Sampson-Sill)**:
+      - Allows continuing multiple arms, not just one.
+      - Sample-size re-estimation for retained arms.
+      - Rejecting multiple Δ_k > 0 (not just single winner).
+    arm_dropping_rules: |
+      Typical adaptation rules:
+      - **Threshold**: drop arm k if T_k < threshold at interim.
+      - **Rank-based**: keep top m arms (m ≤ K).
+      - **Futility**: drop if conditional power < threshold.
+      - **Clinical**: drop based on safety or biomarker.
+
+      Any pre-specified rule preserves FWER via conditional error
+      function mechanism.
+    multiple_winners: |
+      Unlike drop-the-losers (single winner), adaptive Dunnett can:
+      - Reject multiple Δ_k > 0 simultaneously.
+      - Support dose-response claims spanning multiple doses.
+      - Enable follow-up trials for multiple retained arms.
+
+      Common in dose-finding when multiple doses may be clinically
+      relevant (e.g., low + high, different patient populations).
+    comparison_to_other_methods: |
+      **Vs drop-the-losers (Sampson-Sill 2005, in corpus)**:
+      - DTL: single winner, simpler but loses power for multi-winner.
+      - Adaptive Dunnett: flexible winners, proper FWER control.
+
+      **Vs Posch-Koenig 2005 (in corpus)**:
+      - PK: GS + selection combined.
+      - Adaptive Dunnett: closed testing + combination.
+
+      **Vs Bretz-Schmidli 2006 (in corpus)**:
+      - BS: closed testing with combination functions (overlapping).
+      - Adaptive Dunnett: explicit Dunnett correlation structure.
+
+      **Vs Magirr-Jaki-Whitehead 2012 (in corpus)**:
+      - MJW: unified MAMS generalized Dunnett with boundaries.
+      - Adaptive Dunnett: predecessor focused on 2-stage flexibility.
+    numerical_example: |
+      K = 3 experimental + control, normal endpoint:
+
+      Stage 1: n_1 = 30 per arm.
+      Observe:
+        Z_1^(1) = 2.1 (arm 1 vs control)
+        Z_2^(1) = 1.3
+        Z_3^(1) = 0.4
+
+      Adaptation decision: drop arm 3 (lowest), continue arms 1 and 2.
+
+      Stage 2: n_2 = 60 per retained arm.
+      Observe:
+        Z_1^(2) = 2.4
+        Z_2^(2) = 1.8
+
+      Closed testing:
+      - H_0^{1,2,3}: Dunnett across all 3 arms at stage 1.
+        D_{1,2,3}^(1) = max(Z_1, Z_2, Z_3) = 2.1.
+        Conditional error A_{1,2,3}(2.1) determines stage-2 critical.
+      - H_0^{1,2}: Dunnett across retained arms.
+      - H_0^1, H_0^2: individual hypotheses.
+
+      Reject H_0^1 iff all containing intersections rejected.
+      Final: strong FWER control at α = 0.025 across K = 3 null
+      hypotheses.
+  conditional_error_function: |
+    Central concept (Bauer-Kohne 1994, Muller-Schafer 2001):
+
+    For any pre-specified adaptation rule, the conditional error
+    function A(D_1) gives the probability of rejecting H_0 in
+    stage 2 given stage-1 observation D_1:
+
+      A(D_1) = P(reject H_0 at final | stage 1 observed D_1, H_0)
+
+    Pre-specified A(·) preserves α regardless of adaptation:
+      E_{H_0}[A(D_1)] = α
+
+    Koenig et al. extended this to Dunnett's multi-comparison
+    structure with closed testing.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **König-Brannath-Bretz-Posch 2008** developed the **adaptive
+    Dunnett test** — combining Dunnett's multiple-comparison
+    correction with adaptive combination tests to allow interim arm
+    dropping and sample-size re-estimation while maintaining strong
+    FWER control.
+
+    **Core contributions**:
+    - Closed testing across 2^K − 1 intersection hypotheses.
+    - Conditional error function adapted to Dunnett structure.
+    - Any pre-specified adaptation rule (drop arms, modify n, etc.)
+      preserves α.
+    - Strong FWER control at both intersection and individual level.
+
+    **Why adaptive Dunnett matters**:
+    - Generalizes drop-the-losers (single winner) to flexible winners.
+    - Handles multi-dose trials where several doses may be clinically
+      relevant.
+    - Enables sample-size re-estimation alongside arm selection.
+    - Strong FWER control — rigorous for confirmatory use.
+
+    **R implementation**: `asd` package by Parsons/Friede supports
+    adaptive Dunnett via combination-test framework. `MAMS` package
+    overlaps methodologically.
+
+r_packages:
+  - asd (Parsons/Friede — canonical)
+  - MAMS
+  - rpact (combination tests)
+  - AdaptiveDesign
+  - gsDesign2
+  - mvtnorm (Dunnett correlation)
+
+tags:
+  - koenig
+  - brannath
+  - bretz
+  - posch
+  - adaptive-dunnett
+  - closed-testing
+  - multiple-comparisons
+  - conditional-error-function
+  - fwer-control
+  - arm-selection
+  - 2008
+  - stat-med
+  - methodology-foundational
+
+caveats: |
+  Adaptive Dunnett test considerations:
+
+  - **Pre-specification required**: adaptation rules, stage-1 critical
+    values, combination weights — all locked in protocol. Post-hoc
+    changes invalidate FWER.
+  - **Closed testing complexity**: 2^K − 1 intersection hypotheses
+    grows exponentially. Practical for K ≤ 5-6; larger K uses
+    hierarchical simplifications (gatekeeping).
+  - **Dunnett correlation assumption**: tests assumed correlated per
+    Dunnett's formula (common control). Violations (e.g., stratified
+    analysis) may slightly inflate FWER.
+  - **Normal-case derivation**: exact formulas for normal; binary/TTE
+    use asymptotic approximations.
+  - **Information fraction**: weighted combination uses pre-specified
+    weights (equal, or n-based). Information-based w ∝ √n_k is
+    near-optimal.
+
+  **Operating characteristics (illustrative, K = 3, n = 30 + 60)**:
+  | Scenario | DTL single winner | Adaptive Dunnett |
+  |---|---|---|
+  | All 3 arms Δ = 0 | FWER 0.025 | FWER 0.025 |
+  | Arm 1 Δ = 0.5, others 0 | Power reject H_0^1 = 0.80 | Similar |
+  | Arm 1 Δ = 0.5, arm 2 Δ = 0.3, arm 3 Δ = 0 | P(reject H_0^1) = 0.80, P(reject H_0^2 too) ≈ 0 | P(reject H_0^1) = 0.80, P(reject H_0^2) = 0.45 |
+
+  Adaptive Dunnett advantage: can establish multiple doses
+  simultaneously, supporting dose-response labels.
+
+  **Implementation example (conceptual)**:
+  ```r
+  library(asd)
+
+  # 3-arm design with adaptive Dunnett
+  sim <- sim.adaptive.dunnett(
+    K = 3,                          # experimental arms
+    n1 = 30, n2 = 60,               # stage sizes
+    alpha = 0.025,
+    delta_true = c(0.5, 0.3, 0.0),  # true effects
+    sigma = 1,
+    adaptation = "drop_worst",      # pre-specified rule
+    n_sim = 10000
+  )
+  sim$fwer                          # should be ≤ 0.025
+  sim$power_by_arm                  # power to reject each H_0^k
+  ```
+
+  **Extensions and related**:
+  - **Dunnett (1955)**: original multiple-comparison correction.
+  - **Bauer-Kohne (1994)**: conditional error function foundation.
+  - **Muller-Schafer (2001)**: α-adaptive extension.
+  - **Posch-Koenig (2005)**: GS + selection combined.
+  - **Koenig et al. 2008 (this case)**: adaptive Dunnett unification.
+  - **Friede-Kieser 2013**: combining selection + SSR.
+  - **Magirr-Jaki-Whitehead 2012 (in corpus)**: generalized Dunnett
+    MAMS framework (companion case).
+
+  **Regulatory framing**:
+  - **FDA 2019 Adaptive Designs Guidance**: multi-arm adaptive with
+    FWER control explicitly addressed.
+  - **EMA 2007 CHMP Reflection Paper**: Bauer-Kohne framework
+    explicitly acknowledged.
+  - Key requirement: strong FWER control (all individual null
+    hypotheses protected).
+
+  **Modern applications**:
+  - **STAMPEDE** (multiple prostate cancer arms, in corpus): multi-arm
+    platform uses adaptive Dunnett-like logic.
+  - **RECOVERY**: COVID platform with multiple drugs.
+  - **Dose-finding**: Phase 2b/3 seamless with 2-3 doses.
+  - **RA / IBD trials**: multiple JAK or biologic doses simultaneously.
