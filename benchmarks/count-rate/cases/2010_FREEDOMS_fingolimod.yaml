@@ -1,0 +1,98 @@
+id: 2010_FREEDOMS_fingolimod
+family: count-rate
+source:
+  kind: published-trial
+  citation: "Kappos L, Radue EW, O'Connor P, et al. A placebo-controlled trial of oral fingolimod in relapsing multiple sclerosis. N Engl J Med. 2010;362(5):387-401. (FREEDOMS)"
+  doi: "10.1056/NEJMoa0909494"
+  nct_id: "NCT00289978"
+
+design:
+  indication: "Relapsing-remitting multiple sclerosis (RRMS)"
+  population: "Adults 18-55 with RRMS, EDSS ≤ 5.5, ≥ 1 relapse in prior year or ≥ 2 in prior 2 years"
+  arms:
+    - name: "fingolimod 1.25 mg QD"
+      allocation: 1
+    - name: "fingolimod 0.5 mg QD"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: count-rate
+    description: "Annualized relapse rate (ARR) over 24 months"
+    measurement_time: "24-month treatment period"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.95
+  effect:
+    arr_placebo: 0.40
+    arr_fingolimod_05: 0.20  # 50% reduction target
+    rate_ratio: 0.50
+    analysis_method: "Negative binomial regression adjusted for region, prior relapses, baseline EDSS"
+    over_dispersion_expected: true
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 1272
+  events_total: null
+  tolerance:
+    sample_size_pct: 3
+  notes: |
+    **First oral disease-modifying therapy approved for MS**
+    (fingolimod / Gilenya, FDA Sep 2010). Canonical count-rate
+    Phase 3 trial:
+    - Primary: annualized relapse rate (ARR), negative binomial.
+    - Offset-log exposure time per patient (accounts for drop-in/
+      drop-out asymmetry).
+    - Over-dispersion confirmed (variance > mean); Poisson
+      inappropriate.
+    - Sample-size formula based on Keene-Jones (2007): 1272 total
+      for 95% power at 50% relapse rate reduction assuming
+      over-dispersion parameter k = 0.5.
+
+    **Results**:
+    - Fingolimod 0.5 mg: ARR 0.18 vs placebo 0.40, RR **0.46**
+      (95% CI 0.40-0.52, p < 0.001) — primary met.
+    - Fingolimod 1.25 mg: ARR 0.16 vs placebo 0.40, RR 0.40
+      (95% CI 0.34-0.47, p < 0.001).
+    - Secondary: 3-month confirmed disability progression reduced
+      (HR 0.70, p = 0.02 for 0.5 mg dose).
+    Template for subsequent oral MS DMT approvals
+    (teriflunomide TEMSO 2011, dimethyl fumarate DEFINE/CONFIRM 2013,
+    ozanimod SUNBEAM 2019).
+
+r_packages:
+  - MASS::glm.nb (primary NB regression)
+  - emmeans (rate ratio with CI)
+  - gsDesign (rate-ratio sizing, NB)
+  - rpact
+  - epiR (ARR CI via exact methods)
+
+tags:
+  - freedoms
+  - fingolimod
+  - multiple-sclerosis
+  - rrms
+  - annualized-relapse-rate
+  - negative-binomial
+  - count-rate
+  - first-oral-dmt-ms
+
+caveats: |
+  Annualized relapse rate is the de facto regulatory endpoint for
+  RRMS DMTs, established through PRISMS (IFN-β-1a), AVONEX, and
+  FREEDOMS. Negative binomial with exposure-time offset is the
+  standard analysis. Over-dispersion parameter k is highly variable
+  across MS trials (0.3-1.5); sample-size calculations require
+  pre-specification of a plausible k (FREEDOMS assumed 0.5). Relapse
+  definition: new neurological symptoms lasting ≥ 24 h in absence of
+  fever, confirmed by neurological exam, at least 30 days from a
+  prior relapse. Central adjudication used. Fingolimod 0.5 mg was
+  the marketed dose (1.25 mg dropped for cardiac conduction and
+  infection safety). FREEDOMS II (2014) confirmed the primary
+  finding. Modern MS trials have shifted to higher-potency anti-CD20
+  mAbs (ocrelizumab OPERA, ofatumumab ASCLEPIOS) with lower ARRs
+  (0.15 vs 0.25) — requiring larger N for same effect size.

@@ -1,0 +1,95 @@
+id: 2017_STRIVE_erenumab_migraine
+family: count-rate
+source:
+  kind: published-trial
+  citation: "Goadsby PJ, Reuter U, Hallström Y, et al. A controlled trial of erenumab for episodic migraine. N Engl J Med. 2017;377(22):2123-2132. (STRIVE)"
+  doi: "10.1056/NEJMoa1705848"
+  nct_id: "NCT02456740"
+
+design:
+  indication: "Episodic migraine (4-14 migraine days per month)"
+  population: "Adults 18-65 with ≥ 1-year history of migraine meeting ICHD-3 criteria; 4-14 migraine days/month at baseline"
+  arms:
+    - name: "erenumab 70 mg SC monthly"
+      allocation: 1
+    - name: "erenumab 140 mg SC monthly"
+      allocation: 1
+    - name: "placebo SC monthly"
+      allocation: 1
+  endpoint:
+    type: continuous-count
+    description: "Change from baseline in mean monthly migraine days (MMD) over months 4-6 of treatment"
+    measurement_time: "baseline vs average of months 4, 5, 6"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    baseline_mmd: 8.3
+    target_mmd_reduction_erenumab: -3.2
+    target_mmd_reduction_placebo: -1.8
+    target_difference: -1.4
+    analysis_method: "Mixed model repeated measures (MMRM) on change from baseline; sensitivity by negative binomial on raw MMD count"
+  accrual:
+    duration_months: 12
+  followup:
+    planned_months: 6
+
+expected:
+  sample_size_total: 955
+  events_total: null
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    **Pivotal Phase 3 for erenumab (Aimovig, first CGRP-receptor mAb
+    approved for migraine prevention, FDA May 2018)**. First-in-class
+    anti-CGRP biologic for migraine. STRIVE established monthly
+    migraine days (MMD) as regulatory endpoint and the MMRM analysis
+    framework for migraine preventive trials.
+
+    **Results**:
+    - Erenumab 70 mg: MMD change -3.2 vs placebo -1.8, diff **-1.4**
+      (95% CI -1.9 to -0.9), p < 0.001 — primary met.
+    - Erenumab 140 mg: MMD change -3.7 vs placebo -1.8, diff -1.9
+      (95% CI -2.3 to -1.4), p < 0.001.
+    - ≥ 50% responder rate: 43% (70 mg), 50% (140 mg), vs 27% placebo.
+    - MIDAS and HIT-6 functional secondary endpoints improved.
+    Both doses approved; 70 mg starting, 140 mg for inadequate response.
+    Template for subsequent CGRP mAb Phase 3 trials: fremanezumab
+    HALO-EM, galcanezumab EVOLVE-1/2, eptinezumab PROMISE.
+
+r_packages:
+  - nlme::lme (MMRM primary)
+  - mmrm (restricted MLE MMRM)
+  - MASS::glm.nb (NB sensitivity on raw counts)
+  - emmeans
+  - gsDesign (continuous endpoint sizing)
+
+tags:
+  - strive
+  - erenumab
+  - migraine
+  - cgrp-mab
+  - monthly-migraine-days
+  - mmd
+  - mmrm
+  - negative-binomial-sensitivity
+  - aimovig
+
+caveats: |
+  STRIVE used **continuous change-from-baseline** in MMD as primary
+  (MMRM analysis), not raw count; NB on raw counts served as
+  pre-specified sensitivity. Most modern migraine Phase 3 trials
+  follow this convention (continuous change, NB sensitivity) because
+  (a) change from baseline is more intuitive clinically, (b) MMRM
+  handles missing data well, (c) NB sensitivity confirms robustness.
+  MMD baseline typical range 8-10 days (episodic migraine definition
+  is < 15 days/month; ≥ 15 is chronic). Placebo response is large
+  in migraine (~1.8 d reduction at 6 months) — drives N up vs
+  assumption of small placebo effect. Sensitivity analyses: ≥ 50%
+  responder (binary), MIDAS (functional), HIT-6 (quality of life).
+  Chronic migraine Phase 3 (≥ 15 MMD) uses similar design with
+  larger baseline MMD (~17-18) — e.g., fremanezumab HALO-CM,
+  galcanezumab REGAIN. CGRP-ligand mAbs (fremanezumab,
+  galcanezumab, eptinezumab) vs CGRP-receptor mAb (erenumab) — same
+  class, very similar effect sizes.
