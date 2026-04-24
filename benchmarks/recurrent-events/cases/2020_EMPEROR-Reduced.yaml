@@ -1,0 +1,95 @@
+id: 2020_EMPEROR-Reduced
+family: recurrent-events
+source:
+  kind: published-trial
+  citation: "Packer M, Anker SD, Butler J, et al. Cardiovascular and renal outcomes with empagliflozin in heart failure. N Engl J Med. 2020;383(15):1413-1424. (EMPEROR-Reduced)"
+  doi: "10.1056/NEJMoa2022190"
+  nct_id: "NCT03057977"
+
+design:
+  indication: "Heart failure with reduced ejection fraction (HFrEF, LVEF ≤ 40%)"
+  population: "NYHA II-IV HFrEF, LVEF ≤ 40%, elevated NT-proBNP, with or without type 2 diabetes"
+  arms:
+    - name: "empagliflozin 10 mg QD"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: composite-tte
+    description: "Primary: time to first event of CV death or HF hospitalization; key secondary: total (first + recurrent) HF hospitalizations analyzed by joint frailty"
+    measurement_time: "event-driven, median 16 months"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    primary_hr_target: 0.80
+    total_hfh_rate_ratio_target: 0.70
+    analysis_primary: "Cox PH stratified by diabetes, region, baseline eGFR"
+    analysis_secondary_total: "Negative binomial (marginal rates) and semiparametric joint frailty (LWYY-style with death terminal)"
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 16
+  interim_analyses:
+    - info_fraction: null
+      rule: "No interim efficacy; event-driven"
+      boundary_family: "Fixed design"
+
+expected:
+  sample_size_total: 3730
+  events_total: 841
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 3
+  notes: |
+    **Canonical modern HFrEF trial** demonstrating SGLT2 inhibitor
+    benefit in HF (not just diabetes). Primary time-to-first composite
+    met (HR 0.75, 95% CI 0.65-0.86). Key secondary total HF
+    hospitalizations analyzed by **joint frailty model** (handles
+    informative censoring of recurrent hospitalizations by death):
+    rate ratio 0.70 (95% CI 0.58-0.85), reinforcing primary finding.
+
+    Negative binomial marginal analysis: RR 0.67 (95% CI 0.55-0.82)
+    — consistent with joint frailty result.
+
+    Effect emerged early (separation at ~1 month), maintained over
+    follow-up. Reshaped HFrEF SOC globally:
+    empagliflozin + dapagliflozin (DAPA-HF 2019) established SGLT2i
+    as 4th pillar of HFrEF therapy (alongside ARNI, MRA, β-blocker).
+
+r_packages:
+  - frailtypack (joint frailty)
+  - MASS::glm.nb (negative binomial)
+  - reReg
+  - survival::coxph
+  - gsDesign::nSurv (primary sizing)
+
+tags:
+  - emperor-reduced
+  - empagliflozin
+  - hfref
+  - sglt2-inhibitor
+  - recurrent-events
+  - joint-frailty
+  - negative-binomial
+  - time-to-first-primary
+  - total-hfh-secondary
+
+caveats: |
+  Primary was **time-to-first-event** composite (CV death + HF
+  hospitalization), not total events — reflects that the design
+  paper was written before PARAGON-HF's total-event primary
+  precedent was established (EMPEROR-Reduced protocol 2016-2017,
+  PARAGON-HF publication 2019). Total HFH as key secondary was
+  pre-specified with joint frailty and negative binomial. Rate-
+  ratio target 0.70 for secondary (stronger than HR 0.80 for primary)
+  reflects expectation that recurrent analysis captures more
+  incremental events and larger effect. Short median follow-up
+  (16 months) due to rapid event accrual in HFrEF population with
+  elevated NT-proBNP inclusion criterion. Diabetes status neutral:
+  benefit observed in both diabetic and non-diabetic subgroups,
+  supporting HF (not diabetes) as the indication. Established
+  joint-frailty analysis as the default for HF trial total-HFH
+  secondaries. EMPEROR-Preserved (HFpEF, 2021) and DELIVER (HFpEF,
+  2022) followed the same template.

@@ -1,0 +1,98 @@
+id: 2019_PARAGON-HF
+family: recurrent-events
+source:
+  kind: published-trial
+  citation: "Solomon SD, McMurray JJV, Anand IS, et al. Angiotensin-neprilysin inhibition in heart failure with preserved ejection fraction. N Engl J Med. 2019;381(17):1609-1620. (PARAGON-HF)"
+  doi: "10.1056/NEJMoa1908655"
+  nct_id: "NCT01920711"
+
+design:
+  indication: "Heart failure with preserved ejection fraction (HFpEF, LVEF ≥ 45%)"
+  population: "NYHA class II-IV; elevated natriuretic peptides; evidence of structural heart disease"
+  arms:
+    - name: "sacubitril/valsartan 97/103 mg BID"
+      allocation: 1
+    - name: "valsartan 160 mg BID"
+      allocation: 1
+  endpoint:
+    type: recurrent-event-composite
+    description: "Total (first + recurrent) heart failure hospitalizations + death from CV causes — semiparametric joint analysis"
+    measurement_time: "event-driven, median follow-up ~35 months"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    rate_ratio_target: 0.80
+    total_hfh_rate_control: 0.13  # per patient-year
+    cv_death_rate_control: 0.036  # per patient-year
+    analysis_method: "Semiparametric joint frailty model (LWYY for total HFH + Cox for CV death, combined via semi-parametric approach per Rogers-Pocock 2014)"
+  accrual:
+    duration_months: 48
+  followup:
+    planned_months: 28
+  interim_analyses:
+    - info_fraction: null
+      rule: "No interim efficacy look; event-driven"
+      boundary_family: "None (fixed design)"
+
+expected:
+  sample_size_total: 4822
+  events_total: 1571
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 5
+  notes: |
+    **First Phase 3 HF trial to use a total-event (recurrent) primary
+    composite** in a confirmatory setting. Previous HF trials (CHARM,
+    PARADIGM-HF) used time-to-first-event composites. PARAGON-HF
+    tested sacubitril/valsartan vs valsartan in HFpEF using the
+    semiparametric joint frailty analysis recommended by Rogers-
+    Pocock (2014). Total HF hospitalizations + CV death were the
+    primary; total hospitalizations alone were the key component.
+
+    **Primary result**: rate ratio 0.87 (95% CI 0.75-1.01), p = 0.06
+    — **narrowly missed** significance. Extensive pre-specified
+    subgroup analyses: LVEF 45-57% subgroup (n = 2,495) showed
+    RR 0.78 (0.64-0.95), p = 0.017, motivating FDA approval for
+    "below-normal EF" in Feb 2021.
+
+    Reshaped how HFpEF trials are designed — EMPEROR-Preserved (2021)
+    and DELIVER (2022) both used time-to-first but with total-event
+    key secondary; DELIVER primary incorporated urgent HF visits.
+    PARAGON's analytical template (joint frailty) is now the HF-trial
+    standard.
+
+r_packages:
+  - frailtypack (semiparametric joint frailty)
+  - reReg (recurrent-event regression)
+  - survival::coxph (terminal event)
+  - gsDesign (event-driven sizing)
+
+tags:
+  - paragon-hf
+  - hfpef
+  - sacubitril-valsartan
+  - valsartan
+  - recurrent-events
+  - total-event-primary
+  - joint-frailty
+  - rogers-pocock
+  - narrow-miss
+
+caveats: |
+  Primary result narrowly missed (p = 0.059), but FDA granted
+  "labeling expansion" to Entresto for "below-normal EF" (LVEF
+  ≤ ~57%) based on pre-specified subgroup results (Feb 2021).
+  This subgroup approval set a **precedent for partial-benefit HF
+  labeling** — controversial but accepted. Analytical method: joint
+  frailty with gap-time formulation for recurrent HF hospitalizations
+  (LWYY-style marginal) coupled to Cox for CV death (terminal),
+  handles informative censoring of the recurrent process by death.
+  Comparator was valsartan (not placebo) — dose-matched ARB — which
+  raised the bar vs pure placebo-controlled trials; contributed to
+  narrow-miss interpretation. Sensitivity analyses: win ratio (WR
+  1.13, 95% CI 1.03-1.23), time-to-first composite (HR 0.87, 0.75-
+  1.01) — consistent with primary. PARAGON-HF + PARADIGM-HF (HFrEF)
+  + EMPEROR-Preserved + DELIVER = modern HF trial quartet using
+  total-event analyses.
