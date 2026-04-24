@@ -1,0 +1,57 @@
+id: 2011_ROCKET-AF_af
+family: fixed-non-inferiority
+source:
+  kind: published-trial
+  citation: "Patel MR, Mahaffey KW, Garg J, et al. Rivaroxaban versus warfarin in nonvalvular atrial fibrillation. N Engl J Med. 2011;365(10):883-891."
+  doi: "10.1056/NEJMoa1009638"
+  nct_id: "NCT00403767"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1009638"
+
+design:
+  indication: "Non-valvular atrial fibrillation with history of stroke/TIA or ≥ 2 CV risk factors (moderate-to-high stroke risk)"
+  population: "Adults with CHADS2 ≥ 2"
+  arms:
+    - name: "rivaroxaban 20 mg daily (15 mg if CrCl 30-49)"
+      allocation: 1
+    - name: "warfarin (INR 2-3)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Stroke or systemic embolism"
+    measurement_time: "time-to-first-event"
+  comparison: non-inferiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.95
+  effect:
+    hr: 0.83                # design anticipated modest improvement
+    margin: 1.46
+    control_annual_rate: 0.022
+  accrual:
+    duration_months: 24
+  followup:
+    median_months: 23
+  blinding: "Double-blind, double-dummy"
+
+expected:
+  sample_size_total: 14264
+  events_total: 405
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 5
+  notes: |
+    Powered higher (95% power) than RE-LY due to double-blind double-dummy
+    design and 2-arm structure (vs 3 arms in RE-LY). Enrolled higher-risk AF
+    population (CHADS2 ≥ 2 required, vs ≥ 1 in RE-LY).
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - atrial-fibrillation
+  - anticoagulation
+  - noac
+  - ni-margin-1.46
+  - double-blind
+  - higher-risk-population

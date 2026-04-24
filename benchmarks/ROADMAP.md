@@ -93,7 +93,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 |---|---|---|---|---|
 | framework (ROADMAP, GLOSSARY) | — | — | — | ✅ |
 | fixed-superiority | ✅ | 8 | 8 | ✅ |
-| fixed-non-inferiority | — | 0 | 6 | 🔲 |
+| fixed-non-inferiority | ✅ | 6 | 6 | ✅ |
 | fixed-equivalence | — | 0 | 4 | 🔲 |
 | group-sequential | — | 0 | 8 | 🔲 |
 | group-sequential-futility | — | 0 | 5 | 🔲 |

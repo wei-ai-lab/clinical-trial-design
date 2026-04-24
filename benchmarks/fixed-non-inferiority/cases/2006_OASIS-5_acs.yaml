@@ -1,0 +1,54 @@
+id: 2006_OASIS-5_acs
+family: fixed-non-inferiority
+source:
+  kind: published-trial
+  citation: "The Fifth Organization to Assess Strategies in Acute Ischemic Syndromes Investigators. Comparison of fondaparinux and enoxaparin in acute coronary syndromes. N Engl J Med. 2006;354(14):1464-1476."
+  doi: "10.1056/NEJMoa055443"
+  nct_id: "NCT00139815"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa055443"
+
+design:
+  indication: "Non-ST-segment elevation acute coronary syndromes (NSTE-ACS)"
+  population: "Adults with UA or NSTEMI"
+  arms:
+    - name: "fondaparinux 2.5 mg SC daily"
+      allocation: 1
+    - name: "enoxaparin 1 mg/kg SC bid"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "9-day composite: death, MI, or refractory ischemia"
+    measurement_time: "9 days"
+  comparison: non-inferiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.9
+  effect:
+    control_rate: 0.045
+    treatment_rate: 0.045
+    margin: 1.185            # relative margin (HR-like for binary)
+    margin_method: "Fixed-margin retaining 50% of enoxaparin-vs-UFH effect"
+  accrual:
+    duration_months: 24
+
+expected:
+  sample_size_total: 20000
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Binary NI with a multiplicative margin (treatment rate ratio upper bound 1.185).
+    Large N driven by low event rate and tight margin. Secondary superiority
+    testing on the same endpoint + hierarchical testing on bleeding.
+
+r_packages:
+  - gsDesign::nBinomial
+  - rpact::getSampleSizeRates
+  - Hmisc::bpower
+
+tags:
+  - acs
+  - anticoagulation
+  - binary-endpoint
+  - short-term-endpoint
+  - non-inferiority
+  - relative-margin

@@ -1,0 +1,64 @@
+id: 2013_EXCEL_cabg
+family: fixed-non-inferiority
+source:
+  kind: published-trial
+  citation: "Stone GW, Sabik JF, Serruys PW, et al. Everolimus-eluting stents or bypass surgery for left main coronary artery disease. N Engl J Med. 2016;375(23):2223-2235."
+  doi: "10.1056/NEJMoa1610227"
+  nct_id: "NCT01205776"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1610227"
+
+design:
+  indication: "Left main coronary artery disease with low-to-intermediate SYNTAX score"
+  population: "Adults with unprotected left main CAD eligible for both PCI and CABG"
+  arms:
+    - name: "PCI with everolimus-eluting stents"
+      allocation: 1
+    - name: "CABG"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: death, stroke, or MI at 3 years"
+    measurement_time: "3 years"
+  comparison: non-inferiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.8
+  effect:
+    control_rate_3y: 0.11
+    treatment_rate_3y: 0.11
+    margin: 0.0425         # absolute risk difference margin at 3y
+    margin_method: "FDA device convention: 50% of CABG-vs-medical effect retention"
+  accrual:
+    duration_months: 48
+  followup:
+    primary_analysis_at_months: 36
+
+expected:
+  sample_size_total: 1900
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Device-trial NI with absolute risk-difference margin on a 3-year
+    composite endpoint. Primary analysis uses Kaplan-Meier 3y rates, not
+    raw HR. Superiority testing followed hierarchically if NI was met.
+
+r_packages:
+  - gsDesign::nBinomial         # 3y rate difference
+  - rpact::getSampleSizeRates
+  - survival::survdiff           # for event timing
+
+tags:
+  - left-main-cad
+  - pci-vs-cabg
+  - device-trial
+  - ni-absolute-risk-difference
+  - 3-year-endpoint
+  - kaplan-meier-rate-analysis
+
+caveats: |
+  Analysis at fixed 3-year landmark (not time-to-event HR) is standard for
+  device NI where timing differences matter less than overall proportion
+  with event. Reproducing requires K-M rate estimation, not Cox HR. Trial
+  subsequently became controversial (BBC investigation) over definition of
+  MI — illustrates the importance of endpoint definition in NI trials where
+  small margin shifts can change conclusion.

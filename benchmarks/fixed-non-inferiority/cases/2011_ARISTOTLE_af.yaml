@@ -1,0 +1,59 @@
+id: 2011_ARISTOTLE_af
+family: fixed-non-inferiority
+source:
+  kind: published-trial
+  citation: "Granger CB, Alexander JH, McMurray JJV, et al. Apixaban versus warfarin in patients with atrial fibrillation. N Engl J Med. 2011;365(11):981-992."
+  doi: "10.1056/NEJMoa1107039"
+  nct_id: "NCT00412984"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1107039"
+
+design:
+  indication: "Non-valvular atrial fibrillation with ≥ 1 additional stroke risk factor"
+  population: "Adults with non-valvular AF"
+  arms:
+    - name: "apixaban 5 mg bid (2.5 mg bid in reduced-dose criteria)"
+      allocation: 1
+    - name: "warfarin (INR 2-3)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Stroke or systemic embolism"
+    measurement_time: "time-to-first-event"
+  comparison: non-inferiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.9
+  effect:
+    hr: 0.85
+    margin: 1.44               # slightly tighter than RE-LY/ROCKET
+    control_annual_rate: 0.016
+  accrual:
+    duration_months: 24
+  followup:
+    median_months: 22
+  blinding: "Double-blind, double-dummy"
+  multiplicity:
+    strategy: "NI primary; if met, hierarchical superiority test on primary, then major bleeding, then all-cause mortality"
+
+expected:
+  sample_size_total: 18201
+  events_total: 448
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 5
+  notes: |
+    Pre-specified hierarchical testing chain: NI on stroke/SE → superiority on
+    stroke/SE → superiority on major bleeding → superiority on all-cause
+    mortality. All four hypotheses rejected in final analysis.
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - atrial-fibrillation
+  - noac
+  - ni-margin-1.44
+  - double-blind
+  - hierarchical-multi-endpoint
+  - mortality-benefit

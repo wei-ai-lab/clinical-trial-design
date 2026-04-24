@@ -1,0 +1,54 @@
+id: 2014_SOLO_dalbavancin
+family: fixed-non-inferiority
+source:
+  kind: published-trial
+  citation: "Boucher HW, Wilcox M, Talbot GH, et al. Once-weekly dalbavancin versus daily conventional therapy for skin infection. N Engl J Med. 2014;370(23):2169-2179."
+  doi: "10.1056/NEJMoa1310480"
+  nct_id: "NCT01339091"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1310480"
+
+design:
+  indication: "Acute bacterial skin and skin-structure infection (ABSSSI)"
+  population: "Adults with ABSSSI requiring IV therapy"
+  arms:
+    - name: "dalbavancin IV, two-dose weekly regimen"
+      allocation: 1
+    - name: "vancomycin/linezolid IV/PO × ≥ 10 days"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Early clinical response at 48-72 h (≥ 20% reduction in lesion size, afebrile, no rescue antibiotic)"
+    measurement_time: "48-72 hours"
+  comparison: non-inferiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.9
+  effect:
+    control_rate: 0.80
+    treatment_rate: 0.80
+    margin: 0.10               # absolute margin on response rate
+    margin_method: "FDA ABSSSI guidance 2013: 10% absolute NI margin on early clinical response"
+  accrual:
+    duration_months: 18
+
+expected:
+  sample_size_total: 1289     # SOLO I; pooled across two identical trials (SOLO I + II) total ~2,598
+  tolerance:
+    sample_size_pct: 3
+  notes: |
+    SOLO consisted of two identically-designed trials (SOLO I and SOLO II) per
+    FDA ABSSSI guidance requiring two adequate and well-controlled trials for
+    approval. Each sized for the NI hypothesis independently. The 10% absolute
+    margin on early clinical response is the FDA-specified standard for ABSSSI.
+
+r_packages:
+  - gsDesign::nBinomial
+  - rpact::getSampleSizeRates
+
+tags:
+  - abssi
+  - antibiotic
+  - ni-binary-absolute-margin-10pct
+  - fda-abssi-guidance
+  - two-trial-requirement
+  - early-clinical-response
