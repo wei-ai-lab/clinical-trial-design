@@ -1,0 +1,65 @@
+id: 2020_EMPEROR-Reduced_hfref
+family: group-sequential
+source:
+  kind: published-trial
+  citation: "Packer M, Anker SD, Butler J, et al. Cardiovascular and renal outcomes with empagliflozin in heart failure. N Engl J Med. 2020;383(15):1413-1424."
+  doi: "10.1056/NEJMoa2022190"
+  nct_id: "NCT03057977"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa2022190"
+
+design:
+  indication: "HFrEF NYHA II-IV, LVEF ≤ 40%, elevated NT-proBNP"
+  population: "Adults with chronic HFrEF on GDMT"
+  arms:
+    - name: "empagliflozin 10 mg daily"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: CV death or HF hospitalization"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.9
+  effect:
+    hr: 0.80
+    control_annual_rate: 0.145
+  accrual:
+    duration_months: 18
+  followup:
+    median_months: 16
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.80
+    - number: 2
+      information_fraction: 1.0
+    spending: "Lan-DeMets O'Brien-Fleming"
+
+expected:
+  sample_size_total: 3730
+  events_total: 841
+  boundaries:
+    efficacy_z:
+      - 2.25
+      - 2.00
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 3
+  notes: |
+    Parallel to DAPA-HF with empagliflozin. Minimalist 2-look GS (IF=0.80
+    plus final) for efficient α-spending. Ran to final; superiority
+    demonstrated.
+
+r_packages:
+  - gsDesign::gsSurv
+  - rpact::getDesignGroupSequential
+
+tags:
+  - hfref
+  - sglt2
+  - empagliflozin
+  - two-look-gs
+  - obf-spending
+  - parallel-to-dapa-hf

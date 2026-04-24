@@ -95,7 +95,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | fixed-superiority | ✅ | 8 | 8 | ✅ |
 | fixed-non-inferiority | ✅ | 6 | 6 | ✅ |
 | fixed-equivalence | ✅ | 4 | 4 | ✅ |
-| group-sequential | — | 0 | 8 | 🔲 |
+| group-sequential | ✅ | 8 | 8 | ✅ |
 | group-sequential-futility | — | 0 | 5 | 🔲 |
 | group-sequential-nph | — | 0 | 6 | 🔲 |
 | adaptive-ssr | — | 0 | 5 | 🔲 |
