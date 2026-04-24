@@ -1,0 +1,177 @@
+id: 2019_ICH_E9-R1_estimands
+family: non-standard
+source:
+  kind: regulatory-guidance
+  citation: "International Council for Harmonisation. ICH E9(R1): Addendum on Estimands and Sensitivity Analysis in Clinical Trials to the Guideline on Statistical Principles for Clinical Trials. Step 4, 20 November 2019. Finalized and adopted by CHMP (Feb 2020), FDA (May 2021), PMDA."
+
+design:
+  indication: "All confirmatory clinical trials (every family in this corpus is affected)"
+  population: "any — framework is population-agnostic"
+  arms:
+    - name: "intervention arm A"
+      allocation: 1
+    - name: "comparator arm B"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "any — estimand framework defines the target of estimation prior to choice of endpoint"
+    measurement_time: "per pre-specified estimand attributes"
+  comparison: any
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    estimand_attributes: |
+      An estimand is defined by five attributes:
+      (1) Population (target population).
+      (2) Variable / endpoint (measurement).
+      (3) Intercurrent events (how handled: treatment policy, composite,
+          hypothetical, principal stratum, while-on-treatment).
+      (4) Summary measure (mean, median, HR, OR, proportion, etc.).
+      (5) Population-level summary (treatment effect).
+    intercurrent_event_strategies: |
+      Five pre-defined strategies for handling intercurrent events:
+      1. **Treatment-policy**: ignore occurrence, measure outcome
+         regardless. Canonical ITT.
+      2. **Composite**: combine the intercurrent event with the
+         outcome (e.g., 'death or treatment failure').
+      3. **Hypothetical**: estimate what the outcome would have
+         been in a world without the intercurrent event.
+      4. **Principal-stratum**: restrict to subset defined by
+         potential intercurrent event (e.g., 'always-taker' in
+         compliance).
+      5. **While-on-treatment**: measure outcome only while still
+         on assigned treatment.
+    estimand_specification: "Pre-specification required in protocol and SAP — pre-defines the scientific question before the statistical analysis"
+    sensitivity_analyses: "Defined to probe robustness of estimand to assumptions about intercurrent events"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **ICH E9(R1) Estimands Addendum (2019)** is the single most
+    important regulatory / methodological framework for modern
+    clinical trial design. It reshaped how trials are specified,
+    analyzed, and reported across all therapeutic areas.
+
+    **Core innovation**:
+    - Separates the **scientific question** (estimand) from the
+      **statistical method** (estimator). The estimand is agreed
+      first; the estimator is chosen to target that estimand.
+
+    **Key attributes**:
+    1. **Population**: target for inference (e.g., ITT, modified
+       ITT, per-protocol). Pre-defined explicitly.
+    2. **Endpoint**: what is measured (e.g., FEV1 at 24 weeks).
+    3. **Intercurrent events**: what happens between baseline and
+       endpoint that affect interpretation — discontinuation,
+       rescue medication, death (non-primary), protocol deviation.
+       Must pre-specify strategy for each.
+    4. **Summary measure**: statistical summary (mean difference,
+       HR, OR).
+    5. **Population-level summary**: population-level treatment
+       effect (e.g., 'mean difference between arms in hypothetical
+       world without rescue').
+
+    **Intercurrent event strategies**:
+    - **Treatment-policy**: follow everyone regardless of
+      deviation. Gives 'real-world treatment effect' including
+      rescue effects.
+    - **Composite**: combine deviation with unfavorable outcome.
+    - **Hypothetical**: counterfactual — 'what would have happened
+      without rescue'. Requires assumptions about missing data.
+    - **Principal-stratum**: restrict to always-compliers or
+      always-survivors.
+    - **While-on-treatment**: outcome only during protocol therapy.
+
+    **Impact across design families**:
+    - **Fixed superiority / NI / equivalence**: estimand defines
+      the effect — 'treatment-policy difference in FEV1 at 12 wks'
+      vs 'hypothetical difference without rescue'.
+    - **Group-sequential**: each analysis targets the pre-
+      specified estimand; MI or tipping-point sensitivity.
+    - **Adaptive designs**: estimands can be pre-specified for the
+      adapted population (e.g., enriched subgroup).
+    - **TTE**: intercurrent events include treatment switching,
+      non-compliance, non-cancer death. RMST, IPCW, RPSFTM are
+      analytical tools for specific estimands.
+    - **Recurrent events**: terminal event (death) is intercurrent
+      event with composite or principal-stratum strategies.
+    - **Count / rate**: exposure-time changes (discontinuation) are
+      intercurrent; handled via treatment-policy or hypothetical.
+    - **Platform / basket / umbrella**: each sub-study has its own
+      estimand.
+
+    **Operational implications**:
+    - Protocol and SAP must pre-specify estimand(s) explicitly.
+    - Sensitivity analyses pre-defined — not a 'we'll see at
+      analysis' retrospective process.
+    - Traditional ITT analysis is now formally framed as the
+      treatment-policy estimand.
+    - Per-protocol analysis is now formally framed as while-on-
+      treatment or principal-stratum estimand.
+
+r_packages:
+  - mice (multiple imputation for hypothetical estimands)
+  - ipw (inverse probability weighting, principal stratum)
+  - mmrm (mixed model for repeated measures — canonical for
+    continuous endpoints with estimand-aware handling)
+  - survey (IPCW for TTE)
+  - cmprsk (competing risks for composite estimands)
+  - tipr (tipping-point sensitivity analysis)
+
+tags:
+  - ich-e9
+  - estimand
+  - intercurrent-event
+  - treatment-policy
+  - hypothetical
+  - principal-stratum
+  - while-on-treatment
+  - composite
+  - cross-cutting
+  - methodology-foundational
+  - regulatory-framework
+
+caveats: |
+  ICH E9(R1) is universally applicable but requires significant
+  infrastructure:
+  - **Protocol writing**: estimand section now mandatory; requires
+    trial teams (statistics, medical, regulatory) to negotiate the
+    scientific question explicitly.
+  - **SAP pre-specification**: handling of each intercurrent event
+    defined before analysis.
+  - **Sensitivity analysis**: alternative estimands pre-defined
+    as sensitivity analyses.
+
+  Key real-world applications:
+  - **NEJM papers since 2022** routinely include an estimand
+    section per ICH E9(R1).
+  - **FDA guidance documents** increasingly reference estimand
+    language (e.g., FDA Missing Data 2022 update).
+  - **EMA** explicit endorsement; clinical trial applications in
+    the EU must now state estimand.
+
+  Related documents:
+  - **ICH E9 original** (1998): statistical principles.
+  - **ICH E9(R1)** (2019): estimand addendum (this entry).
+  - **ICH E10** (2000): choice of control.
+  - **FDA Demonstrating Substantial Evidence (2019)**.
+  - **ICH E20** (draft): adaptive designs (aligning with E9(R1)).
+
+  Open areas under discussion:
+  - **Principal-stratum estimation methods**: IV, sensitivity,
+    direct comparison of compliers.
+  - **Hypothetical estimands for mortality**: censoring vs imputing
+    is still debated.
+  - **Dynamic estimands** (changes during trial): not yet addressed.
+
+  For `designr`: estimand pre-specification should be a design-
+  level input, affecting sample-size (e.g., MI-based variance
+  inflation) and analysis plan generation.

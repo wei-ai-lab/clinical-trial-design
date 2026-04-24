@@ -1,0 +1,161 @@
+id: 2010_NAS_missing-data
+family: non-standard
+source:
+  kind: regulatory-guidance
+  citation: "National Research Council. The Prevention and Treatment of Missing Data in Clinical Trials. Panel on Handling Missing Data in Clinical Trials. Committee on National Statistics. Washington DC: The National Academies Press; 2010. Also: Little RJ, D'Agostino R, Cohen ML, Dickersin K, Emerson SS, Farrar JT, Frangakis C, Hogan JW, Molenberghs G, Murphy SA, Neaton JD, Rotnitzky A, Scharfstein D, Shih WJ, Siegel JP, Stern H. The prevention and treatment of missing data in clinical trials. N Engl J Med. 2012 Oct 4;367(14):1355-60."
+
+design:
+  indication: "All confirmatory clinical trials"
+  population: "any — missing data methodology is population-agnostic"
+  arms:
+    - name: "any arms"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "any"
+    measurement_time: "any"
+  comparison: any
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    mechanism_classification: |
+      Three canonical missing-data mechanisms:
+      1. **MCAR (Missing Completely At Random)**: missingness is
+         independent of both observed and unobserved data.
+      2. **MAR (Missing At Random)**: conditional on observed data,
+         missingness is independent of unobserved values.
+      3. **MNAR (Missing Not At Random)**: missingness depends on
+         unobserved values.
+    primary_recommendations: |
+      1. **Prevent missing data** by design (run-in, training,
+         logistics) — most important recommendation.
+      2. **Pre-specify** assumed mechanism, primary estimand
+         (ICH E9(R1) alignment), and handling approach.
+      3. **Preferred methods**: multiple imputation (MI), inverse
+         probability weighting (IPW), likelihood-based methods
+         (MMRM) when MAR is plausible.
+      4. **LOCF (Last Observation Carried Forward)** not
+         recommended as primary — can bias, does not quantify
+         uncertainty.
+      5. **Sensitivity analyses**: tipping-point, jump-to-reference,
+         delta-method imputation to probe MNAR robustness.
+    controlled_imputation: |
+      Tipping-point analyses vary the imputed values in the study
+      arm systematically until a pre-specified conclusion changes
+      (e.g., significant → non-significant).
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **NAS 2010 Report + Little et al. 2012 NEJM** is the canonical
+    cross-cutting framework for handling missing data in clinical
+    trials. It shaped FDA Missing Data Guidance (2022), ICH E9(R1)
+    Estimands, and modern best practices.
+
+    **Key findings / recommendations**:
+    1. **Missing data is a major threat** to trial validity — more
+       than most design choices.
+    2. **Prevention via design** (run-in, proactive retention,
+       adherence protocols) is the single most effective approach.
+    3. **Primary analysis** should use a method aligned with the
+       estimand (MAR MMRM for treatment-policy; MI for hypothetical).
+    4. **LOCF bias**: LOCF is not recommended as primary analysis
+       because it conflates effects of treatment, discontinuation,
+       and time.
+    5. **Sensitivity analyses** should be pre-specified — tipping
+       point, pattern-mixture models, delta-adjustments.
+
+    **Canonical methods alignment**:
+    - MCAR: complete-case analysis valid.
+    - MAR: MMRM (continuous), GEE (binary), or MI with observed-
+      data covariates — all valid.
+    - MNAR: requires models making explicit assumptions — pattern-
+      mixture, selection, shared-parameter models. Sensitivity
+      essential.
+
+    **Impact**:
+    - FDA Missing Data Guidance (2022 update) directly aligned.
+    - ICH E9(R1) Estimands (2019) framework grew from NAS 2010
+      recommendations + CHMP parallel work.
+    - Gold-standard 2012 NEJM summary widely cited.
+    - Mesh pharma workshops and industry guidance all trace to
+      this document.
+
+    **Real-world implications for design**:
+    - Sample-size inflation for MI variance: typically 10-30% per
+      20-40% rate of missing data.
+    - Stratified accrual / run-in designs favored in chronic
+      disease pharma trials post-2010.
+    - MMRM becoming default for continuous longitudinal endpoints;
+      LOCF phased out.
+    - MNAR sensitivity pre-specified in all major pharma pivotal
+      trials post-2015.
+
+r_packages:
+  - mice (van Buuren — MI by PMM, logistic, polreg, etc.)
+  - mitools (pool MI estimates)
+  - mmrm (novartis — MMRM with multiple covariance structures)
+  - geeM / geepack (GEE)
+  - jomo (multilevel MI)
+  - rbmi (FDA-endorsed reference-based MI)
+  - BayesLogit / rstanarm (Bayesian MI alternatives)
+  - Hmisc (transcan + aregImpute)
+
+tags:
+  - nas
+  - little-rubin
+  - missing-data
+  - mar
+  - mcar
+  - mnar
+  - multiple-imputation
+  - locf
+  - tipping-point
+  - cross-cutting
+  - methodology-foundational
+
+caveats: |
+  NAS 2010 is a cross-cutting foundational document. Key real-
+  world nuances:
+
+  - **MCAR is rarely plausible** in real trials — patients drop
+    out for reasons related to treatment, disease progression, or
+    AEs.
+  - **MAR is the standard working assumption** — but requires
+    rich observed data (baseline covariates, mid-trial outcomes)
+    to be plausible.
+  - **MNAR sensitivity** should not be a checkbox — results
+    should be robust to clinically plausible MNAR mechanisms.
+
+  Key tensions resolved (or ongoing):
+  - **LOCF vs MMRM**: LOCF phased out in pivotal analyses.
+  - **MI vs likelihood**: approximately equivalent under MAR for
+    well-specified models.
+  - **Reference-based MI (J2R, Copy-Reference)**: canonical for
+    hypothetical estimands with rescue / discontinuation.
+
+  Post-NAS developments:
+  - **rbmi (Roche)**: validated FDA-endorsed reference-based MI
+    package (2021+).
+  - **Delta-adjusted MI**: pattern-mixture with pre-specified
+    clinically-meaningful shift per unit of missingness.
+  - **Doubly robust estimation**: Robins-Rotnitzky-Zhao class.
+  - **DIA Scientific Working Group on Missing Data**: ongoing
+    harmonization between NAS, FDA, EMA, and academic literature.
+
+  ICH E9(R1) estimand interaction:
+  - Treatment-policy estimand + MAR → MMRM or MI-PMM primary.
+  - Hypothetical estimand → reference-based MI (J2R, copy-reference).
+  - Principal-stratum + compliance → IV methods or Bayesian.
+
+  For `designr`: missing-data assumptions should drive sample-
+  size inflation, sensitivity-analysis pre-specification, and
+  MMRM/MI method selection in the analysis plan generation.
