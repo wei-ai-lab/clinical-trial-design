@@ -1,0 +1,96 @@
+id: 2010_INHANCE
+family: non-standard
+source:
+  kind: published-trial
+  citation: "Barnes PJ, Pocock SJ, Magnussen H, et al. Integrating indacaterol dose selection in a clinical study in COPD using an adaptive seamless design. Pulm Pharmacol Ther. 2010;23(3):165-171. (INHANCE)"
+  doi: "10.1016/j.pupt.2010.01.003"
+  nct_id: "NCT00393458"
+
+design:
+  indication: "Moderate-to-severe COPD"
+  population: "Patients aged ≥ 40 with moderate-to-severe COPD, smoking history ≥ 20 pack-years"
+  arms:
+    - name: "indacaterol 75 µg QD (Stage 1)"
+      allocation: 1
+    - name: "indacaterol 150 µg QD (Stage 1 + 2)"
+      allocation: 1
+    - name: "indacaterol 300 µg QD (Stage 1 + 2)"
+      allocation: 1
+    - name: "indacaterol 600 µg QD (Stage 1)"
+      allocation: 1
+    - name: "formoterol 12 µg BID (active comparator)"
+      allocation: 1
+    - name: "tiotropium 18 µg QD (open-label active comparator)"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: continuous
+    description: "Trough FEV1 at 26 weeks (change from baseline); interim primary was 14-day FEV1 AUC"
+    measurement_time: "Stage 1: 14-day FEV1 AUC for dose selection; Stage 2: 26-week trough FEV1 vs placebo/comparators"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    selection_rule: "Select 2 of 4 indacaterol doses at interim based on 14-day FEV1 AUC + safety"
+    combination_test: "Inverse-normal combination of Stage-1 + Stage-2 p-values (Cui-Hung-Wang)"
+    closed_testing: "Yes — protects FWER across indacaterol doses"
+    target_mean_difference_fev1: 0.12  # L vs placebo, 26-week trough
+    sd_fev1: 0.30
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 6
+  interim_analyses:
+    - info_fraction: 0.2
+      rule: "Dose selection: keep 2 of 4 indacaterol doses based on Stage-1 FEV1 AUC + safety"
+      boundary_family: "Inverse-normal combination test"
+
+expected:
+  sample_size_total: 1683
+  events_total: null
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Landmark **real-world seamless Phase 2/3** trial. Stage 1 evaluated
+    4 indacaterol doses (75, 150, 300, 600 µg QD) vs placebo + active
+    comparators on 14-day FEV1 AUC endpoint; 2 doses (150, 300 µg)
+    were selected to carry forward into Stage 2 for confirmatory
+    26-week trough FEV1 analysis. Inverse-normal combination test
+    merged Stage-1 + Stage-2 p-values for the selected doses with
+    pre-specified weights. Closed testing across the indacaterol dose
+    family preserved family-wise error at 0.05. Placebo and active
+    comparator arms continued in both stages to provide within-trial
+    context. Design saved ~1 year of development time vs separate
+    Phase 2 + Phase 3. Approved by EMA / FDA based on this trial
+    (indacaterol / Onbrez / Arcapta).
+
+r_packages:
+  - rpact::getDesignInverseNormal
+  - adaptTest
+  - asd
+
+tags:
+  - inhance
+  - indacaterol
+  - copd
+  - seamless
+  - phase-2-3
+  - adaptive-selection
+  - inverse-normal-combination
+  - fev1
+
+caveats: |
+  Early and influential example of an approved-drug registration
+  based on a single seamless trial. Two doses carried forward, not
+  one — so closed testing across the two selected doses had to
+  preserve FWER. Final approved dose (150 µg QD for most indications,
+  300 µg for severe) validated the Stage-1 ranking. Critiques:
+  (1) Stage-1 endpoint (14-day FEV1 AUC) was a short-term
+  pharmacodynamic endpoint, not the confirmatory 26-week trough —
+  so selection was based on a surrogate for the confirmatory
+  response; (2) placebo and active comparators ran in both stages,
+  inflating exposure. Still, INHANCE became the reference case for
+  regulatory acceptability of inferential-seamless Phase 2/3 in
+  chronic respiratory disease.

@@ -1,0 +1,86 @@
+id: 1999_Bauer-Kieser_seamless_methodology
+family: non-standard
+source:
+  kind: methodology-paper
+  citation: "Bauer P, Kieser M. Combining different phases in the development of medical treatments within a single trial. Stat Med. 1999;18(14):1833-1848."
+  doi: "10.1002/(SICI)1097-0258(19990730)18:14<1833::AID-SIM221>3.0.CO;2-3"
+
+design:
+  indication: "any (methodology)"
+  population: "Seamless Phase 2/3 — dose-selection + confirmation in one trial"
+  arms:
+    - name: "dose 1 (Stage 1)"
+      allocation: 1
+    - name: "dose 2 (Stage 1)"
+      allocation: 1
+    - name: "dose 3 (Stage 1)"
+      allocation: 1
+    - name: "control (Stage 1)"
+      allocation: 1
+    - name: "selected dose (Stage 2)"
+      allocation: 1
+    - name: "control (Stage 2)"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Any continuous/binary/TTE endpoint; worked example is continuous normal"
+    measurement_time: "per-stage primary endpoint"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    combination_test: "Fisher product of stage-wise p-values (Bauer-Köhne 1994); or inverse-normal with pre-specified weights"
+    closed_testing: "intersection hypotheses tested in closed family to preserve FWER"
+    selection_rule: "highest observed treatment effect at interim (or predictive-probability)"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    Canonical methodology for combining Phase 2 dose-selection and
+    Phase 3 confirmation into a single seamless trial with strict
+    type-I-error control. Two key ingredients:
+    (1) A combination function (Fisher or inverse-normal) that merges
+        Stage-1 and Stage-2 p-values into a single test statistic whose
+        distribution under H0 is known without conditioning on the
+        interim decision.
+    (2) Closed testing to control family-wise error across the selected
+        dose and all non-selected doses (whose hypotheses are dropped
+        but still "tested" implicitly via intersection hypotheses).
+    Stage 2 must enroll *new* patients independent of Stage 1 so that
+    Stage-1 and Stage-2 p-values are independent — requirement for the
+    combination-function theory.
+
+r_packages:
+  - adaptTest
+  - asd
+  - rpact::getDesignInverseNormal
+  - gMCP
+
+tags:
+  - seamless
+  - phase-2-3
+  - adaptive-selection
+  - combination-test
+  - closed-testing
+  - bauer-kieser
+  - methodology-canonical
+
+caveats: |
+  Selection-bias in the Stage-1 estimate of the selected dose is real
+  and can inflate the point estimate even though type-I error is
+  preserved by the combination-test machinery. Report both naive and
+  bias-adjusted (conditional or shrinkage) estimates. Inverse-normal
+  combination with pre-specified weights is the modern default
+  (easier to pre-plan information fractions); Fisher product is
+  simpler but less tunable when Stage-2 re-estimates sample size.
+  EMA Reflection Paper (2007) and FDA Adaptive Design Guidance
+  (2019) both explicitly accept seamless designs built on this
+  framework.

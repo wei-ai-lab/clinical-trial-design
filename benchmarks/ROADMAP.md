@@ -112,4 +112,4 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | umbrella | ✅ | 4 | 4 | ✅ |
 | crossover | ✅ | 3 | 3 | ✅ |
 | factorial | ✅ | 3 | 3 | ✅ |
-| non-standard | — | 0 | 3 | 🔲 |
+| non-standard | ✅ | 3 | 3 | ✅ |

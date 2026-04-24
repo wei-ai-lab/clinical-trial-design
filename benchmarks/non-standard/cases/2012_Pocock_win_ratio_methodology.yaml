@@ -1,0 +1,87 @@
+id: 2012_Pocock_win_ratio_methodology
+family: non-standard
+source:
+  kind: methodology-paper
+  citation: "Pocock SJ, Ariti CA, Collier TJ, Wang D. The win ratio: a new approach to the analysis of composite endpoints in clinical trials based on clinical priorities. Eur Heart J. 2012;33(2):176-182."
+  doi: "10.1093/eurheartj/ehr352"
+
+design:
+  indication: "any (methodology) — worked examples in heart failure and CV"
+  population: "Trials with hierarchical composite endpoints (e.g. CV death > HF hospitalization > functional status)"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: hierarchical-composite
+    description: "Hierarchical composite: pairwise comparison of patients across treatment groups on ranked components"
+    measurement_time: "per-trial follow-up"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    win_ratio_target: 1.25
+    component_order: "1. CV death → 2. HF hospitalization → 3. continuous functional endpoint (e.g. KCCQ, 6MWD)"
+    tie_handling: "if higher-priority component tied, move to next component; if all tied, count as tie"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    Defines the **win ratio** estimand as an alternative to time-to-
+    first-event composite. For every possible pair (one experimental,
+    one control patient), compare on highest-priority component first
+    (e.g. CV death at matched follow-up times); if tied, move to
+    next component (e.g. HF hospitalization); continue hierarchy.
+    Each pair results in "win", "loss", or "tie". Win ratio =
+    (#wins for experimental) / (#losses for experimental).
+
+    Advantages over time-to-first-event:
+    - Respects clinical priority (death > hospitalization > symptom).
+    - Uses full follow-up data on secondary components even after a
+      primary event (time-to-first-event ignores post-event data).
+    - Avoids the "death pulls in hospitalization" averaging issue.
+
+    Disadvantages:
+    - Dependence on follow-up matching (sensitive to censoring pattern).
+    - Interpretation (ratio of pairs, not a hazard) less intuitive to
+      clinicians.
+    - Requires pre-specified component priority + tie-breaking.
+
+    Adopted in: EMPEROR-Preserved, EMPULSE, ATTR-ACT, DapaHF sensitivity,
+    and the CDER Guidance for Industry (2023) draft on composite endpoints.
+
+r_packages:
+  - WINS
+  - wwr
+  - WR
+  - survival (for component time-to-event inputs)
+
+tags:
+  - win-ratio
+  - hierarchical-composite
+  - pocock
+  - methodology-canonical
+  - finkelstein-schoenfeld
+  - cv-composite
+
+caveats: |
+  Win ratio reduces to Finkelstein-Schoenfeld statistic in special
+  cases. Power depends on the join distribution of components — not
+  just the marginal hazards — so sample sizing typically requires
+  simulation (no clean closed-form). Rule of thumb: if the primary
+  component (death) is rare relative to secondary components (HF
+  hospitalization), win ratio can be substantially more powerful than
+  time-to-first-event. When primary component dominates, both methods
+  give similar power. Win odds (= wins / (losses + 0.5·ties)) is a
+  related estimand that handles ties more robustly. The 2023 FDA
+  Guidance on Multiple Endpoints explicitly acknowledges win-ratio-
+  class estimands as acceptable for labeling claims when pre-specified.
