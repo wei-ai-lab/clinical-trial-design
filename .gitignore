@@ -39,11 +39,32 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# pkgdown site
-docs/
+# pkgdown site (we want docs/ tracked; only ignore generated pkgdown output)
+docs/_site/
+docs/pkgdown/
 
 # translation temp files
 po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Node / TS (future MCP server)
+node_modules/
+dist/
+*.log
+.env
+.env.local
+
+# Python (if we go that route for MCP)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

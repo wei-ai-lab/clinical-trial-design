@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/wei-ai-lab/designr/benchmarks/schema/design.schema.json",
+  "title": "designr benchmark case",
+  "description": "Machine-readable specification of a single real-world Phase 3 trial design used as a benchmark for the designr agent.",
+  "type": "object",
+  "required": ["id", "family", "source", "design", "expected"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable identifier. Convention: <YYYY>_<TRIAL-OR-AUTHOR>_<slug>.",
+      "pattern": "^[0-9]{4}_[A-Za-z0-9-]+_[a-z0-9-]+$"
+    },
+    "family": {
+      "type": "string",
+      "enum": [
+        "fixed-superiority",
+        "fixed-non-inferiority",
+        "fixed-equivalence",
+        "group-sequential",
+        "group-sequential-futility",
+        "group-sequential-nph",
+        "adaptive-ssr",
+        "adaptive-enrichment",
+        "adaptive-selection",
+        "mams",
+        "tte-ph",
+        "tte-nph",
+        "recurrent-events",
+        "count-rate",
+        "bayesian",
+        "platform",
+        "basket",
+        "umbrella",
+        "crossover",
+        "factorial",
+        "non-standard"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "required": ["kind", "citation"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["published-trial", "published-sap", "fda-guidance", "ich-guidance", "ema-guidance", "textbook", "methodology-paper", "package-vignette"]
+        },
+        "citation": { "type": "string", "description": "Full citation or document title." },
+        "doi": { "type": "string" },
+        "nct_id": { "type": "string", "pattern": "^NCT[0-9]{8}$" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "design": {
+      "type": "object",
+      "description": "Design inputs — what you'd hand to a biostatistician to reproduce the calculation.",
+      "required": ["endpoint", "comparison", "alpha", "power"],
+      "properties": {
+        "indication": { "type": "string" },
+        "population": { "type": "string" },
+        "arms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "allocation": { "type": "number", "minimum": 0 }
+            }
+          }
+        },
+        "endpoint": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["binary", "continuous", "time-to-event", "count-rate", "recurrent-event", "ordinal", "composite"]
+            },
+            "description": { "type": "string" },
+            "measurement_time": { "type": "string" }
+          }
+        },
+        "comparison": {
+          "type": "string",
+          "enum": ["superiority", "non-inferiority", "equivalence"]
+        },
+        "sidedness": { "enum": [1, 2] },
+        "alpha": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "power": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "effect": {
+          "type": "object",
+          "description": "Assumed treatment effect. Shape varies by endpoint type.",
+          "additionalProperties": true
+        },
+        "margin": {
+          "description": "NI or equivalence margin (when applicable).",
+          "additionalProperties": true
+        },
+        "accrual": {
+          "type": "object",
+          "description": "For time-to-event: enrollment rate(s), duration, ramp-up.",
+          "additionalProperties": true
+        },
+        "dropout": {
+          "description": "Dropout / loss-to-followup assumption.",
+          "additionalProperties": true
+        },
+        "interim_analyses": {
+          "type": "array",
+          "description": "For GS and adaptive designs.",
+          "items": { "type": "object", "additionalProperties": true }
+        },
+        "adaptation": {
+          "type": "object",
+          "description": "SSR, enrichment, selection, etc.",
+          "additionalProperties": true
+        },
+        "extras": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "description": "Expected outputs we'd like designr to reproduce within tolerance.",
+      "properties": {
+        "sample_size_total": { "type": "integer", "minimum": 1 },
+        "sample_size_per_arm": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 1 }
+        },
+        "events_total": { "type": "integer", "minimum": 1 },
+        "events_per_analysis": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "boundaries": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "tolerance": {
+          "type": "object",
+          "description": "Allowed absolute or relative deviation when matching.",
+          "properties": {
+            "sample_size_pct": { "type": "number" },
+            "events_pct": { "type": "number" },
+            "boundary_abs": { "type": "number" }
+          }
+        },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "r_packages": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Established R packages that can reproduce this design."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "caveats": {
+      "type": "string",
+      "description": "Anything a user of the benchmark should know — e.g. the trial's PH assumption failed in practice, or the published SAP is ambiguous on a detail."
+    }
+  },
+  "additionalProperties": false
+}
