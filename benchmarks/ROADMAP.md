@@ -110,6 +110,6 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | platform | ✅ | 5 | 5 | ✅ |
 | basket | ✅ | 4 | 4 | ✅ |
 | umbrella | ✅ | 4 | 4 | ✅ |
-| crossover | — | 0 | 3 | 🔲 |
+| crossover | ✅ | 3 | 3 | ✅ |
 | factorial | — | 0 | 3 | 🔲 |
 | non-standard | — | 0 | 3 | 🔲 |

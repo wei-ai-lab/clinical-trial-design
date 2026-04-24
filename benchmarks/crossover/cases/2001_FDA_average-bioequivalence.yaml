@@ -1,0 +1,74 @@
+id: 2001_FDA_average-bioequivalence
+family: crossover
+source:
+  kind: regulatory-guidance
+  citation: "U.S. Food and Drug Administration. Guidance for Industry: Statistical Approaches to Establishing Bioequivalence. CDER, January 2001."
+  url: "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/statistical-approaches-establishing-bioequivalence"
+
+design:
+  indication: "generic drug bioequivalence (ANDA)"
+  population: "Healthy adult volunteers or patient subjects as scientifically justified"
+  arms:
+    - name: "Test (T) — generic formulation"
+      allocation: 1
+    - name: "Reference (R) — innovator formulation"
+      allocation: 1
+  endpoint:
+    type: continuous
+    description: "Log-transformed AUC_inf and C_max; PK-derived"
+    measurement_time: "multiple PK timepoints post-dose, each period"
+  comparison: "bioequivalence via two one-sided tests (TOST) on geometric mean ratio"
+  sidedness: "two one-sided (2 × 0.05)"
+  alpha: 0.05
+  power: 0.80
+  effect:
+    bioequivalence_limit_lower: 0.80
+    bioequivalence_limit_upper: 1.25
+    expected_geometric_mean_ratio: 1.00
+    cv_within_log: 0.20
+  accrual:
+    duration_months: 2
+  followup:
+    planned_months: 0
+
+expected:
+  sample_size_total: 24
+  events_total: null
+  tolerance:
+    sample_size_pct: 10
+  notes: |
+    Canonical 2-period 2-sequence (2×2) crossover for average
+    bioequivalence (ABE). Regulatory standard for ANDA generic drug
+    approval. Success: 90% CI for GMR of T/R must lie entirely
+    within (0.80, 1.25) for log-AUC and log-Cmax (and Cmin for
+    modified-release). TOST framework: two one-sided tests each at
+    α = 0.05 → overall α = 0.05. Typical N 24-48 for standard PK
+    variability (CV_w ~ 20-30%). Higher CV requires replicate
+    designs (2×4 or 2×3 partial replicate) with scaled BE limits.
+
+r_packages:
+  - PowerTOST
+  - replicateBE
+  - bear
+
+tags:
+  - bioequivalence
+  - anda
+  - generic-drug
+  - fda-guidance
+  - tost
+  - crossover
+  - pk-study
+  - log-auc
+  - log-cmax
+  - regulatory-canonical
+
+caveats: |
+  Two one-sided tests (TOST) — each H0 tested at α = 0.05 one-sided.
+  Consumer risk (declaring BE when not BE) controlled at 5% by TOST
+  construction. Producer risk (failing to declare BE when BE) set at
+  ≤ 20% (power ≥ 0.80). For highly-variable drugs (CV_w > 30%), scaled
+  average bioequivalence (SABE) per FDA 2010 draft guidance widens
+  acceptance limits proportional to σ_w — enables smaller N than
+  unscaled ABE. Narrow-therapeutic-index drugs have tighter limits
+  (e.g., (0.90, 1.1111)).

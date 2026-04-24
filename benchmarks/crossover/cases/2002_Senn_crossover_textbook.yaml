@@ -1,0 +1,72 @@
+id: 2002_Senn_crossover_textbook
+family: crossover
+source:
+  kind: textbook
+  citation: "Senn S. Cross-over Trials in Clinical Research. 2nd ed. Wiley, 2002. ISBN 978-0-471-49653-3."
+
+design:
+  indication: "any (textbook)"
+  population: "Chronic stable disease"
+  arms:
+    - name: "treatment A (e.g., experimental)"
+      allocation: 1
+    - name: "treatment B (e.g., control/placebo)"
+      allocation: 1
+  endpoint:
+    type: continuous
+    description: "Within-subject paired difference on primary continuous endpoint"
+    measurement_time: "end of each period"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    delta: "clinically meaningful within-subject difference"
+    sigma_within: "within-subject SD (typically 0.3-0.5× between-subject SD)"
+    correlation_within_subject: 0.5
+    washout_half_lives: 5
+  accrual:
+    duration_months: 6
+  followup:
+    planned_months: 3
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    Field-standard textbook reference for crossover trial design by
+    Stephen Senn. Key statistical content:
+    (1) 2×2 AB/BA: sample size N = 2·(z_{α/2}+z_β)²·σ²_w / δ² per sequence,
+        where σ²_w is within-subject variance.
+    (2) Period effect and sequence effect estimation.
+    (3) Grizzle 1965 critique of testing carryover within 2×2:
+        no unbiased test exists; washout design is better answer.
+    (4) Williams designs for balanced carryover in ≥ 3 treatments.
+    (5) N-of-1 meta-analysis via Bayesian hierarchical.
+    Widely cited in FDA / EMA bioequivalence and crossover guidance.
+
+r_packages:
+  - nlme
+  - lme4
+  - Crossover
+  - PowerTOST
+
+tags:
+  - crossover
+  - ab-ba
+  - within-subject-variance
+  - senn
+  - williams-design
+  - carryover
+  - textbook-canonical
+  - methodology-canonical
+
+caveats: |
+  Senn is particularly vocal against post-hoc testing for carryover
+  in 2×2 (the Grizzle two-stage procedure): recommends pre-specified
+  washout long enough for pharmacological half-life plus buffer
+  (≥ 5 half-lives). For rare disease and bioequivalence, crossover
+  efficiency advantage can be decisive. Not suitable for diseases
+  with rapid progression or cure within trial period.
