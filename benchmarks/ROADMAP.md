@@ -111,5 +111,5 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | basket | ✅ | 8 | 4 | ✅ |
 | umbrella | ✅ | 8 | 4 | ✅ |
 | crossover | ✅ | 7 | 3 | ✅ |
-| factorial | ✅ | 5 | 3 | ✅ |
+| factorial | ✅ | 7 | 3 | ✅ |
 | non-standard | ✅ | 7 | 3 | ✅ |

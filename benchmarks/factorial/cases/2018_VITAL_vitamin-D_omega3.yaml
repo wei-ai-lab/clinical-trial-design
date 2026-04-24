@@ -1,0 +1,232 @@
+id: 2018_VITAL_vitamin-D_omega3
+family: factorial
+source:
+  kind: design-paper
+  citation: "Manson JE, Cook NR, Lee IM, et al. Vitamin D supplements and prevention of cancer and cardiovascular disease. N Engl J Med. 2019 Jan 3;380(1):33-44. Manson JE, Cook NR, Lee IM, et al. Marine n-3 fatty acids and prevention of cardiovascular disease and cancer. N Engl J Med. 2019 Jan 3;380(1):23-32. Bassuk SS, Manson JE, Lee IM, et al. Baseline characteristics of participants in the VITamin D and OmegA-3 TriaL (VITAL). Contemp Clin Trials. 2016 Mar;47:235-243."
+
+design:
+  indication: "Primary prevention of cancer and cardiovascular disease in older U.S. adults"
+  population: "25,871 men aged ≥ 50 and women aged ≥ 55 from general U.S. population (including racially/ethnically diverse), no prior cancer (except non-melanoma skin) or CV disease"
+  arms:
+    - name: "vitamin D3 2000 IU/d + omega-3 (1 g/d EPA+DHA)"
+      allocation: 1
+    - name: "vitamin D3 2000 IU/d + omega-3 placebo"
+      allocation: 1
+    - name: "vitamin D placebo + omega-3 (1 g/d EPA+DHA)"
+      allocation: 1
+    - name: "vitamin D placebo + omega-3 placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Two primary endpoints: (1) invasive cancer of any type, (2) major cardiovascular events (composite of MI, stroke, CV death)"
+    measurement_time: "median 5.3 years"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.85
+  effect:
+    scale: hazard-ratio
+    vitamin_d_assumed_effect:
+      cancer_hr: 0.85
+      cv_hr: 0.85
+      control_annual_cancer_rate: 0.0065
+      control_annual_cv_rate: 0.0075
+    omega_3_assumed_effect:
+      cancer_hr: 1.00
+      cv_hr: 0.85
+      control_annual_cancer_rate: 0.0065
+      control_annual_cv_rate: 0.0075
+    design_approach: |
+      Modern **2×2 factorial** primary-prevention trial:
+      - Factor A: vitamin D3 2000 IU/d vs placebo.
+      - Factor B: omega-3 1 g/d EPA+DHA vs placebo.
+      - 4 arms with 1:1:1:1 randomization.
+      - Two co-primary endpoints per factor:
+        - Invasive cancer (any type).
+        - Major CV events (MI, stroke, CV death).
+      - α = 0.05 split 0.025/0.025 between primary endpoints.
+      - Racially/ethnically diverse cohort (20% African American) —
+        addresses historical under-representation.
+    sample_size_rationale: |
+      Sample size driven by each factor-endpoint pair:
+
+      Vitamin D → cancer:
+      - Control incidence 6.5/1000/year.
+      - Assumed HR 0.85 (15% reduction).
+      - α = 0.025 (Bonferroni split for 2 primary), 85% power.
+      - Events needed ~ 1,500.
+      - 25,871 × 0.0065 × 5 yrs = 841 → extended follow-up needed.
+
+      Vitamin D → CV:
+      - Control incidence 7.5/1000/year.
+      - Assumed HR 0.85.
+      - Events needed ~ 1,300.
+
+      Omega-3 → CV:
+      - Similar calculation; secondary question for vitamin D.
+
+      Total N = 25,871 provides adequate power for both factors'
+      co-primary endpoints given ~ 5-year follow-up.
+    split_alpha: |
+      Two co-primary per factor:
+      - Bonferroni split: α = 0.025 each for cancer and CV.
+      - Or hierarchical: cancer first at α = 0.05, then CV at
+        α = 0.05 (no split if cancer "wins").
+      - VITAL chose Bonferroni (more conservative).
+    racial_ethnic_diversity: |
+      Deliberate recruitment:
+      - 20% African American.
+      - Enabled pre-specified race subgroup analyses (vitamin D
+        hypothesis especially).
+      - Addressed gap in prior supplement trials (typically white,
+        male, educated cohorts).
+  interaction_tests: |
+    Pre-specified vitamin D × omega-3 interaction tests:
+    - Cancer: interaction test at α = 0.10.
+    - CV events: interaction test at α = 0.10.
+    - Neither expected based on mechanism.
+  accrual:
+    duration_months: 36
+  followup:
+    planned_months: 60
+    actual_months: 64
+
+expected:
+  sample_size_total: 25871
+  sample_size_per_arm: [6464, 6466, 6468, 6473]
+  events_cancer_total: 1617
+  events_cv_total: 805
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **VITAL** (VITamin D and OmegA-3 TriaL) was a modern 2×2 factorial
+    primary-prevention trial in 25,871 diverse U.S. adults testing
+    vitamin D3 and omega-3 fatty acids for cancer and cardiovascular
+    disease prevention.
+
+    **Design**:
+    - 25,871 adults (men ≥ 50, women ≥ 55).
+    - 20% African American (deliberate diversity).
+    - 2×2 factorial: vitamin D3 2000 IU × omega-3 1 g daily.
+    - Two primary endpoints per factor (cancer + CV).
+    - Median 5.3-year follow-up.
+
+    **Vitamin D results**:
+    - Cancer: HR 0.96 (95% CI 0.88-1.06), P = 0.47.
+    - Cancer death (secondary): HR 0.83 (95% CI 0.67-1.02) — suggestive.
+    - Major CV events: HR 0.97 (95% CI 0.85-1.12), P = 0.69.
+    - **Neither primary endpoint met**.
+
+    **Omega-3 results**:
+    - Cancer: HR 1.03 (95% CI 0.93-1.13), P = 0.56.
+    - Major CV events: HR 0.92 (95% CI 0.80-1.06), P = 0.24.
+    - MI (secondary): HR 0.72 (95% CI 0.59-0.90) — significant.
+    - **Neither primary endpoint met** but MI reduction supportive.
+
+    **Interaction tests**:
+    - No significant vitamin D × omega-3 interaction for either
+      primary endpoint.
+
+    **Subgroup findings**:
+    - Vitamin D cancer death: stronger effect with ≥ 2 years exposure.
+    - Omega-3 CV: stronger benefit in low-fish-intake subgroup.
+    - African Americans: suggestion of greater vitamin D benefit.
+
+    **Impact**:
+    - Dampened enthusiasm for universal vitamin D supplementation.
+    - Nuanced omega-3 story (MI benefit, not total CV).
+    - Confirmed methodology of 2×2 factorial for prevention.
+    - Most ethnically diverse prevention trial of its size.
+
+r_packages:
+  - survival (Cox factorial model)
+  - gsDesign
+  - rpact
+  - pwr
+  - epiR (2x2 factorial effect estimation)
+
+tags:
+  - vital
+  - vitamin-d
+  - omega-3
+  - 2x2-factorial
+  - primary-prevention
+  - cardiovascular
+  - cancer-prevention
+  - landmark-trial
+  - 2018
+  - nejm
+  - diverse-cohort
+
+caveats: |
+  VITAL design / analysis points:
+
+  - **Two co-primary per factor**: Bonferroni split α = 0.025 each
+    for cancer and CV. Alternative: hierarchical at α = 0.05 (no
+    split if first wins).
+  - **Long latency for supplement effects**: 5 years may be too short
+    for maximal cancer prevention benefit (often requires 8-10+ years).
+    Post-hoc 2-year exclusion analyses partially addressed.
+  - **Baseline 25(OH)D and fish intake**: did NOT stratify on baseline
+    levels — may dilute effects in already-sufficient participants.
+    Pre-specified subgroup analyses by baseline levels addressed this.
+  - **Open-label supplement use**: ~ 20% participants took outside
+    vitamin D or fish oil (allowed per protocol), diluting contrast.
+  - **Race subgroup (African American)**: 20% representation enabled
+    rare opportunity for race-specific supplement effect analysis.
+
+  **Sample-size calculation (vitamin D cancer arm)**:
+  ```r
+  library(gsDesign)
+
+  # Assumed control cancer incidence 6.5/1000/year
+  # HR 0.85, α = 0.025 (Bonferroni split), 85% power
+  # 5-year follow-up
+
+  nSurv(
+    lambdaC = -log(1 - 0.0065),
+    hr = 0.85,
+    eta = 0.02,                      # dropout/discontinuation
+    T = 60, minfup = 36,
+    alpha = 0.025, beta = 0.15,
+    sided = 2
+  )
+  # Events needed ~ 1,500; achievable with 25,000 × 5 yrs = 812 +
+  # extended follow-up
+  ```
+
+  **Interaction structure**:
+  - 2×2 factorial allows 4-arm comparison.
+  - Main effects = marginal analyses (collapsing over other factor).
+  - Interaction = difference of differences.
+  - No significant interaction reported → marginal analysis valid.
+
+  **Relationship to other factorial trials in corpus**:
+  - **ISIS-2 (1988)**: aspirin × streptokinase for acute MI.
+  - **PHS (1989, companion)**: aspirin × beta-carotene prevention.
+  - **HPS (2002)**: simvastatin × antioxidants.
+  - **COMMIT (2005)**: clopidogrel × metoprolol for acute MI.
+  - **HOPE-3 (2016)**: rosuvastatin × candesartan-HCTZ primary prevention.
+  - **VITAL (this case)**: modern vitamin D × omega-3 prevention.
+
+  **Supplement-prevention landscape**:
+  - Vitamin D: VITAL + D-Health Trial (2022) → minimal benefit.
+  - Omega-3: VITAL + REDUCE-IT (icosapent ethyl, different formulation)
+    → conflicting results, purification matters.
+  - Aspirin: ASPREE, ARRIVE (2018) → neutral/harm in low-risk;
+    reversed PHS era primary prevention enthusiasm.
+  - Beta-carotene: PHS, CARET, ATBC → no benefit, possible harm.
+
+  **Regulatory / guideline context**:
+  - USPSTF 2021: vitamin D supplementation not recommended for
+    primary prevention.
+  - AHA/ACC: omega-3 (icosapent ethyl) recommended in specific
+    high-TG patients (not general population).
+  - VITAL informed both updates.
+
+  **Design innovations**:
+  - Diverse recruitment (20% African American) enabled race-specific
+    effects.
+  - Two-primary per factor with Bonferroni split — modern practice.
+  - Pre-specified subgroup analyses by baseline levels (25(OH)D, fish).
+  - Long follow-up extension (VITAL-2 ongoing).

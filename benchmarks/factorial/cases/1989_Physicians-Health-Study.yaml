@@ -1,0 +1,216 @@
+id: 1989_Physicians-Health-Study
+family: factorial
+source:
+  kind: design-paper
+  citation: "Steering Committee of the Physicians' Health Study Research Group. Final report on the aspirin component of the ongoing Physicians' Health Study. N Engl J Med. 1989 Jul 20;321(3):129-135. Hennekens CH, Eberlein K. A randomized trial of aspirin and beta-carotene among U.S. physicians. Prev Med. 1985;14(2):165-168. Hennekens CH, Buring JE, Manson JE, et al. Lack of effect of long-term supplementation with beta carotene on the incidence of malignant neoplasms and cardiovascular disease. N Engl J Med. 1996 May 2;334(18):1145-1149."
+
+design:
+  indication: "Primary prevention of cardiovascular disease and cancer in a male physician cohort"
+  population: "22,071 US male physicians aged 40-84 without prior MI, stroke, TIA, cancer, or contraindication to aspirin/beta-carotene"
+  arms:
+    - name: "aspirin 325 mg every other day + beta-carotene 50 mg every other day"
+      allocation: 1
+    - name: "aspirin 325 mg every other day + beta-carotene placebo"
+      allocation: 1
+    - name: "aspirin placebo + beta-carotene 50 mg every other day"
+      allocation: 1
+    - name: "aspirin placebo + beta-carotene placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Aspirin primary: fatal or non-fatal myocardial infarction. Beta-carotene primary: incidence of malignant neoplasm (all cancers combined)."
+    measurement_time: "median 5 years for aspirin arm, 12 years for beta-carotene arm"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    scale: hazard-ratio
+    aspirin_assumed_effect:
+      relative_risk: 0.77
+      control_annual_rate: 0.0050
+    beta_carotene_assumed_effect:
+      relative_risk: 0.80
+      control_annual_rate: 0.0035
+    design_approach: |
+      Classic **2×2 factorial** primary-prevention trial:
+      - Factor A: aspirin (active) vs placebo.
+      - Factor B: beta-carotene (active) vs placebo.
+      - Four arms: A+B+, A+B-, A-B+, A-B-.
+      - 1:1:1:1 randomization (N ≈ 5,500 per arm).
+      - Primary analysis: main effects of each factor (marginal).
+      - Interaction test as secondary.
+
+      Key efficiency: ONE trial tests TWO hypotheses at cost close
+      to a single 2-arm trial (if no interaction).
+    sample_size_rationale: |
+      Factorial gain:
+      - Each main effect uses ALL 22,071 participants (marginal
+        comparison of active vs placebo for that factor).
+      - If no interaction, efficiency = two separate 2-arm trials
+        in the same sample.
+      - Loss only if interaction exists.
+
+      Sample size for aspirin (MI prevention):
+      - Assumed control MI rate 5 per 1,000 per year.
+      - Assumed aspirin RR = 0.77 (23% reduction).
+      - α = 0.05 two-sided, power = 90%.
+      - Median 5 years follow-up.
+      - Need ~ 400 MI events total (200 per arm).
+      - Expected events at 22,071 × 0.005 × 5 = 552 → adequate.
+
+      Sample size for beta-carotene (cancer prevention):
+      - Cancer incidence ~ 3.5 per 1,000 per year.
+      - Longer follow-up (12 years) needed for cancer outcomes.
+      - 22,071 × 0.0035 × 12 = 927 events → adequate power for RR 0.80.
+    factorial_efficiency: |
+      If no interaction (main effects additive on log scale):
+      - Aspirin arm N (A+): 11,037 (A+B+ and A+B-)
+      - Aspirin placebo N (A-): 11,034 (A-B+ and A-B-)
+      - Same for beta-carotene analysis (marginal).
+
+      Equivalent to running two separate 22,071-patient trials
+      simultaneously — enormous cost savings.
+
+      If interaction exists:
+      - Factorial loses power to detect it (subgroup analysis).
+      - Main-effect estimates may be biased if interaction substantial.
+  stopping_rules: |
+    - Aspirin component: stopped early (December 1987) after 5 years
+      due to overwhelming benefit for MI prevention.
+    - Beta-carotene component: continued to planned completion (12 years).
+    - DMC used O'Brien-Fleming-like boundaries for aspirin interim
+      efficacy stopping.
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 144
+    actual_months_aspirin: 60
+    actual_months_beta_carotene: 144
+
+expected:
+  sample_size_total: 22071
+  sample_size_per_arm: [5517, 5520, 5517, 5517]
+  events_aspirin_primary: 239
+  events_beta_carotene_primary: 1273
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **Physicians' Health Study** was one of the largest and most
+    influential 2×2 factorial primary-prevention trials ever conducted,
+    testing aspirin (MI prevention) and beta-carotene (cancer prevention)
+    simultaneously in 22,071 male physicians.
+
+    **Design**:
+    - 22,071 male physicians randomized 1:1:1:1.
+    - Aspirin 325 mg every other day vs placebo.
+    - Beta-carotene 50 mg every other day vs placebo.
+    - Primary endpoints: MI (aspirin) + cancer (beta-carotene).
+    - Median follow-up: 5 years aspirin, 12 years beta-carotene.
+
+    **Aspirin results (1988, stopped early)**:
+    - Fatal or non-fatal MI: 139 aspirin vs 239 placebo.
+    - RR = 0.56 (95% CI 0.45-0.70, P < 0.00001).
+    - Stroke: RR 1.22 (non-significant).
+    - Overall CV death: RR 1.00 (no effect).
+    - Established aspirin for primary MI prevention.
+
+    **Beta-carotene results (1996, completed)**:
+    - Cancer incidence: RR 0.98 (95% CI 0.91-1.06).
+    - No benefit on cancer incidence.
+    - No effect on cardiovascular events or overall mortality.
+    - Reversed enthusiasm for antioxidant cancer prevention.
+
+    **Interaction tests**:
+    - No significant aspirin × beta-carotene interaction for either
+      primary endpoint.
+    - Factorial design vindicated (no interaction to complicate).
+
+    **Impact**:
+    - Low-dose aspirin primary prevention became standard (later
+      refined in 2018-2021 guidelines).
+    - Beta-carotene enthusiasm collapsed (also CARET, ATBC trials).
+    - Established 2×2 factorial as efficient design for multiple
+      independent interventions.
+
+r_packages:
+  - survival (Cox model with two factors)
+  - gsDesign (factorial GS boundaries)
+  - rpact
+  - epiR (2x2 factorial effect estimation)
+  - pwr
+
+tags:
+  - physicians-health-study
+  - phs
+  - aspirin
+  - beta-carotene
+  - 2x2-factorial
+  - primary-prevention
+  - cardiovascular
+  - cancer-prevention
+  - landmark-trial
+  - 1989
+
+caveats: |
+  Physicians' Health Study factorial design points:
+
+  - **Interaction assumption**: factorial design assumes no (or modest)
+    interaction between factors. Pre-specified interaction test as
+    secondary. PHS showed no interaction — validated design.
+  - **Different timeframes**: aspirin (MI) vs beta-carotene (cancer)
+    have different event rates → different statistical power timelines.
+    Aspirin stopped early; beta-carotene continued.
+  - **Early stopping asymmetry**: aspirin arm stopped at 5 years for
+    efficacy, beta-carotene arm continued to 12 years. Creative design
+    allowed independent monitoring.
+  - **Selection bias**: US male physicians — limits generalizability
+    (high baseline health literacy, medication adherence).
+  - **Marginal analysis**: primary test is marginal (pooling across
+    other factor). Subgroup by other factor is interaction test.
+
+  **Sample-size calculation**:
+  ```r
+  library(gsDesign)
+
+  # Aspirin arm sample size for MI prevention
+  # Assumed: MI rate 5/1000/year in placebo, RR = 0.77
+  # Median 5-year follow-up, α = 0.05 two-sided, 90% power
+
+  nSurv(
+    lambdaC = -log(1 - 0.005),      # control hazard
+    hr = 0.77,
+    eta = 0.01,                     # dropout hazard (low in physicians)
+    T = 60,                         # planned 5 years
+    minfup = 36,                    # minimum 3 years follow-up
+    alpha = 0.025, beta = 0.10,
+    sided = 2
+  )
+  # Events needed ~ 400; achievable with 22,000 × 5 years
+  ```
+
+  **Factorial efficiency illustration**:
+  - **Separate trials**: 2 trials × 22,000 each = 44,000 subjects total.
+  - **Factorial**: 1 trial × 22,000 total.
+  - **Savings**: 50% subjects, 50% time, 50% infrastructure.
+  - **Caveat**: only if interaction is truly absent.
+
+  **Historical context for 2×2 factorial**:
+  - **ISIS-2 (1988, in corpus)**: aspirin × streptokinase for acute MI.
+  - **PHS (this case, 1989)**: aspirin × beta-carotene for prevention.
+  - **HPS (2002, in corpus)**: simvastatin × antioxidant vitamins.
+  - **COMMIT (2005, in corpus)**: clopidogrel × metoprolol for acute MI.
+  - **HOPE-3 (2016, in corpus)**: rosuvastatin × candesartan-HCTZ.
+  - **VITAL (2018)**: vitamin D × omega-3 (companion corpus case).
+
+  **PHS II (2001-2011)**:
+  - Extension trial in different cohort.
+  - Tested vitamin E, vitamin C, beta-carotene, multivitamin.
+  - None showed CV or cancer benefit → antioxidant hypothesis refuted.
+
+  **Modern regulatory framing**:
+  - FDA generally cautious about 2×2 factorial for confirmatory
+    licensure (concerns about interaction risks).
+  - Academic prevention trials continue to use factorial for
+    efficiency.
+  - Pre-specified interaction tests essential.
