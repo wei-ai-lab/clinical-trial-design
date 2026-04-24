@@ -1,0 +1,104 @@
+id: 2014_EMA_biosimilar_similarity
+family: fixed-equivalence
+source:
+  kind: regulatory-guidance
+  citation: "European Medicines Agency. Guideline on similar biological medicinal products containing biotechnology-derived proteins as active substance: non-clinical and clinical issues. EMEA/CHMP/BMWP/42832/2005 Rev.1; 2014."
+
+design:
+  indication: "any (biosimilar development)"
+  population: "Phase 3 confirmatory similarity study for a proposed biosimilar"
+  arms:
+    - name: "proposed biosimilar"
+      allocation: 1
+    - name: "reference biologic"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Most sensitive clinical endpoint where small differences can be detected (typically continuous efficacy measure at a defined timepoint, or surrogate PK)"
+    measurement_time: "per-study primary"
+  comparison: equivalence
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    equivalence_margin: "Pre-specified; typically ±15% on relative scale or ±0.5 SD on continuous; derived from historical reference-product efficacy variability"
+    totality_of_evidence: "Clinical similarity complements analytical + PK/PD similarity — not standalone"
+    sensitive_population: "Choose indication / population where subtle differences in PK/PD translate to clinical effect (e.g., neoadjuvant vs metastatic)"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **Canonical EMA regulatory framework for biosimilar similarity
+    demonstration.** EMA has been the world leader in biosimilar
+    regulatory science (first biosimilar approval 2006, somatropin
+    Omnitrope). Key principles:
+
+    (1) **Totality of evidence**: biosimilarity is demonstrated by
+        the entire dossier (analytical comparability, PK, PD,
+        immunogenicity, clinical efficacy/safety), NOT by the Phase
+        3 clinical trial alone. A Phase 3 equivalence trial is
+        confirmatory of similarity, not the foundation.
+
+    (2) **Sensitive indication / population**: the Phase 3 trial is
+        conducted in the indication where differences between
+        biosimilar and reference are most likely to be detected —
+        typically the indication with the steepest dose-response,
+        shortest endpoint latency, and lowest placebo response.
+
+    (3) **Equivalence margin**: pre-specified, two-sided, symmetric
+        around 1 (for ratios) or 0 (for differences). Derivation
+        typically based on (a) 50% preservation of reference-vs-
+        placebo effect, (b) clinical judgment on minimum clinically
+        relevant difference, (c) regulatory convention for the
+        specific indication.
+
+    (4) **Extrapolation of indications**: once similarity is
+        established in one sensitive indication, the biosimilar
+        label extends to all approved reference indications —
+        subject to scientific justification that the mechanism is
+        the same.
+
+    (5) **Interchangeability**: a separate regulatory standard
+        (FDA only; EU does not have interchangeability designation)
+        requiring additional switching studies.
+
+r_packages:
+  - PowerTOST (two one-sided t-tests / TOST equivalence)
+  - equivalence
+  - rpact (equivalence sample sizing)
+  - gsDesign (when sequential / adaptive extensions used)
+
+tags:
+  - ema-guidance
+  - biosimilar
+  - equivalence
+  - methodology-canonical
+  - totality-of-evidence
+  - extrapolation
+  - sensitive-indication
+
+caveats: |
+  EMA (2014) remains the gold-standard biosimilar regulatory
+  framework; FDA 2015 and ICH Q5E extensions largely align.
+  Post-2014 developments:
+  - Interchangeability (US-only): FDA 2019 guidance on
+    interchangeability switching studies.
+  - Reduced clinical data packages for mAbs: FDA 2022 draft guidance
+    hints that some mAb biosimilars may forgo Phase 3 if analytical
+    + PK similarity are robust.
+  - Real-world evidence supplementation: EMA increasingly accepts
+    post-marketing RWE to support biosimilar use.
+  Equivalence margin derivation remains indication-specific and
+  often controversial — regulators increasingly prefer tight margins
+  (± 10-12% rather than ± 15-20%). Sensitive-indication choice:
+  trastuzumab biosimilars → neoadjuvant HER2+ breast cancer (not
+  metastatic); adalimumab biosimilars → psoriasis (fast response);
+  rituximab biosimilars → RA (low placebo response, established
+  PRIMARY endpoint at week 24).

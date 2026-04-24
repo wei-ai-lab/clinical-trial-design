@@ -1,0 +1,99 @@
+id: 2018_CT-P10_rituximab_biosimilar
+family: fixed-equivalence
+source:
+  kind: published-trial
+  citation: "Park W, Yoo DH, Miranda P, et al. Efficacy and safety of CT-P10 (rituximab biosimilar) versus innovator rituximab in patients with rheumatoid arthritis: results of a 54-week randomised controlled trial. Arthritis Res Ther. 2018;20:245."
+  doi: "10.1186/s13075-018-1758-x"
+  nct_id: "NCT01693151"
+
+design:
+  indication: "Moderate-to-severe rheumatoid arthritis, inadequate response to TNF inhibitor"
+  population: "Adults with RA, active disease (DAS28 ≥ 5.1, SJC ≥ 6 + TJC ≥ 6), prior inadequate response to TNFi"
+  arms:
+    - name: "CT-P10 (proposed rituximab biosimilar, Truxima) 1000 mg × 2"
+      allocation: 1
+    - name: "reference rituximab (MabThera EU source) 1000 mg × 2"
+      allocation: 1
+  endpoint:
+    type: continuous
+    description: "Change from baseline in DAS28-ESR at week 24 — regulatory primary for similarity assessment"
+    measurement_time: "week 24"
+  comparison: equivalence
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    equivalence_margin: 0.6  # DAS28 units, symmetric ± 0.6
+    assumed_true_difference: 0.0
+    expected_sd_das28_change: 1.4
+    expected_week24_das28_change: -2.3
+  accrual:
+    duration_months: 15
+  followup:
+    planned_months: 18
+
+expected:
+  sample_size_total: 372
+  events_total: null
+  tolerance:
+    sample_size_pct: 10
+  notes: |
+    **First rituximab biosimilar approved by EMA and FDA** (Truxima /
+    CT-P10, Celltrion). Pivotal Phase 3 equivalence trial in RA,
+    chosen as sensitive indication per EMA biosimilar guidance.
+    Template for subsequent rituximab biosimilars (GP2013 Rixathon,
+    BI 695500 Riabni).
+
+    **Design**:
+    - Two-stage: initial 24-week equivalence primary, then 30-week
+      maintenance / safety extension.
+    - **Primary equivalence test**: 95% CI on difference in DAS28
+      change at week 24 within ± 0.6 margin.
+    - Margin derivation: ~ 50% of expected clinically meaningful
+      improvement (1.2 DAS28 units = minimally important difference).
+    - Sample size: 186 per arm for 90% power; increased to 372
+      total to accommodate dropout, operational factors.
+
+    **Results (week 24)**:
+    - DAS28 change CT-P10: -2.3 (SD 1.4)
+    - DAS28 change reference: -2.4 (SD 1.5)
+    - Difference: -0.01 (95% CI -0.31 to 0.29) — well within
+      ± 0.6 margin → **equivalence declared**.
+    - Immunogenicity (anti-drug antibodies): similar rates
+      (17% vs 14%).
+    - Safety profile superimposable.
+
+    Extrapolated to CLL, NHL, GPA/MPA indications without additional
+    Phase 3 trials per EMA extrapolation principle.
+
+r_packages:
+  - PowerTOST (parallel-design equivalence)
+  - equivalence::equivalence
+  - rpact::getSampleSizeMeans
+  - emmeans (CI on difference)
+
+tags:
+  - ct-p10
+  - truxima
+  - rituximab-biosimilar
+  - rheumatoid-arthritis
+  - das28
+  - equivalence
+  - celltrion
+  - first-rituximab-biosimilar
+
+caveats: |
+  RA chosen as sensitive indication for rituximab biosimilar per
+  EMA guidance — established endpoint (DAS28), low placebo response,
+  well-characterized reference response. Equivalence margin ± 0.6
+  DAS28 units is the standard for RA biosimilar trials (~50% of
+  MCID). Extrapolation: after RA equivalence, label extended to
+  all rituximab indications (CLL, NHL, GPA/MPA) based on analytical
+  similarity + PK/PD + safety data — not additional clinical
+  trials. This extrapolation approach is both EMA and FDA accepted
+  for mAb biosimilars. CT-P10 pathway: filed 2015 → EMA approval
+  2017 → FDA approval 2018. Other rituximab biosimilars approved
+  subsequently: Rixathon (GP2013, Sandoz 2017), Riabni (BI 695500,
+  Boehringer-Ingelheim 2019), Ruxience (PF-05280586, Pfizer 2019).
+  Class-wide price reduction ~ 30-50% vs reference after biosimilar
+  market entry.
