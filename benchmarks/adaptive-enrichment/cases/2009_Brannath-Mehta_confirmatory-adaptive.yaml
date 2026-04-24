@@ -1,0 +1,75 @@
+id: 2009_Brannath-Mehta_confirmatory-adaptive
+family: adaptive-enrichment
+source:
+  kind: methodology-paper
+  citation: "Brannath W, Zuber E, Branson M, Bretz F, Gsponer T, Racine-Poon A, König F. Confirmatory adaptive designs with Bayesian decision tools for a targeted therapy in oncology. Statistics in Medicine. 2009;28(10):1445-1463."
+  doi: "10.1002/sim.3559"
+
+design:
+  indication: "Advanced gastrointestinal stromal tumor (GIST) — illustrative"
+  population: "All-comers with KIT/PDGFRA genotyping at entry"
+  arms:
+    - name: "experimental targeted therapy"
+      allocation: 1
+    - name: "imatinib (standard)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Progression-free survival"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    hr_biomarker_positive: 0.60   # KIT exon 11 mut
+    hr_biomarker_negative: 0.85
+    biomarker_prevalence: 0.60
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 18
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+      action: "Bayesian posterior on HR_F and HR_B+; select full / B+ / stop per τ thresholds"
+    - number: 2
+      information_fraction: 1.0
+    spending: "Inverse-normal combination test"
+  adaptation:
+    type: "subgroup selection"
+    method: "Bayesian decision with frequentist combination test"
+    weights_prespecified: true
+    bayesian_prior: "log-normal on HR, centered 0.70, modest variance"
+
+expected:
+  sample_size_stage1: 360
+  sample_size_max_total: 720
+  tolerance:
+    sample_size_pct: 3
+  notes: |
+    Hybrid Bayesian-decision / frequentist-test approach. Bayesian posterior
+    on HR drives selection at interim; inverse-normal combination test
+    preserves α at final regardless of selection outcome. Illustrative
+    context is GIST with KIT exon 11 mutation as enrichment biomarker.
+
+r_packages:
+  - rpact::getDesignInverseNormal
+  - rpact::getSampleSizeSurvival
+  - rstan   # for Bayesian posterior
+  - BRugs
+
+tags:
+  - methodology-canonical
+  - bayesian-decision
+  - adaptive-enrichment
+  - gist
+  - kit-biomarker
+  - hybrid-bayesian-frequentist
+
+caveats: |
+  Two-layer calibration required: (a) Bayesian posterior thresholds τ_F
+  and τ_+ for selection, (b) frequentist combination-test weights for
+  α control. Simulation is essential. Regulators accept this class of
+  design provided the prior is justified by external evidence (Phase 2,
+  RWE, literature), not sponsor-optimistic.

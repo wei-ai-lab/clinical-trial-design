@@ -99,7 +99,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | group-sequential-futility | ✅ | 5 | 5 | ✅ |
 | group-sequential-nph | ✅ | 6 | 6 | ✅ |
 | adaptive-ssr | ✅ | 5 | 5 | ✅ |
-| adaptive-enrichment | — | 0 | 4 | 🔲 |
+| adaptive-enrichment | ✅ | 4 | 4 | ✅ |
 | adaptive-selection | — | 0 | 4 | 🔲 |
 | mams | — | 0 | 5 | 🔲 |
 | tte-ph | — | 0 | 8 | 🔲 |

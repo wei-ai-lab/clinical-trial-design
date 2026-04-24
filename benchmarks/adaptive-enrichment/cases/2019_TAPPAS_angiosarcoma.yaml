@@ -1,0 +1,84 @@
+id: 2019_TAPPAS_angiosarcoma
+family: adaptive-enrichment
+source:
+  kind: published-trial
+  citation: "Jones RL, Ravi V, Brohl AS, et al. Results of the TAPPAS trial: an adaptive enrichment phase III trial of TRC105 and pazopanib versus pazopanib alone in patients with advanced angiosarcoma (AS). Annals of Oncology. 2019;30(suppl_5):v683-v684."
+  doi: "10.1093/annonc/mdz283"
+  nct_id: "NCT02979899"
+  url: "https://oncologypro.esmo.org/meeting-resources/esmo-2019-congress/Results-of-the-TAPPAS-trial-An-adaptive-enrichment-phase-III-trial-of-TRC105-and-pazopanib-vs-pazopanib-alone-in-patients-with-advanced-angiosarcoma-AS"
+
+design:
+  indication: "Advanced angiosarcoma (cutaneous and non-cutaneous)"
+  population: "Pre-treated or treatment-naive advanced angiosarcoma"
+  arms:
+    - name: "TRC105 (carotuximab) + pazopanib"
+      allocation: 1
+    - name: "pazopanib"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Progression-free survival"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    hr_full: 0.67
+    hr_cutaneous: 0.50
+    biomarker_prevalence_cutaneous: 0.50
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 18
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.35
+      action: "Select full / cutaneous-only / stop per pre-specified combination-test rule"
+    - number: 2
+      information_fraction: 1.0
+    spending: "Inverse-normal combination test with closed testing over H_F, H_cutaneous"
+  adaptation:
+    type: "subpopulation selection"
+    method: "Jenkins-Stone-Jennison adaptive enrichment"
+    weights_prespecified: true
+    biomarker: "cutaneous vs non-cutaneous subtype (clinical)"
+
+expected:
+  sample_size_planned: 340
+  actual_sample_size: 128
+  early_stopped: true
+  early_stop_reason: "futility"
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Real Phase 3 adaptive enrichment trial that stopped at interim per the
+    pre-specified decision rule. Neither full-population nor cutaneous-
+    subgroup HR met thresholds. Trial illustrates the futility-stopping
+    capability of well-specified adaptive enrichment designs: when the
+    drug does not work, the rule correctly detects this and saves
+    sponsor resources.
+
+r_packages:
+  - asd::treatsel.sim
+  - rpact::getDesignInverseNormal
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - angiosarcoma
+  - rare-cancer
+  - adaptive-enrichment
+  - cutaneous-subtype
+  - futility-stop
+  - subpopulation-selection
+  - real-trial
+
+caveats: |
+  TAPPAS used a clinical (not molecular) biomarker for enrichment —
+  cutaneous vs non-cutaneous angiosarcoma. This is simpler to
+  operationalize (no assay) but biologically less specific than
+  mutation-based enrichment. Rare-disease context means stage-1
+  sample size is small; biomarker-subgroup power at interim is
+  therefore low. Full SAP details available from Tracon Pharma
+  sponsor materials and ESMO 2019 presentation; primary publication
+  is the ESMO abstract.

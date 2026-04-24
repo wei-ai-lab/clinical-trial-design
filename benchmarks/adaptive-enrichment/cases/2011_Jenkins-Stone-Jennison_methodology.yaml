@@ -1,0 +1,75 @@
+id: 2011_Jenkins-Stone-Jennison_methodology
+family: adaptive-enrichment
+source:
+  kind: methodology-paper
+  citation: "Jenkins M, Stone A, Jennison C. An adaptive seamless phase II/III design for oncology trials with subpopulation selection using correlated survival endpoints. Pharmaceutical Statistics. 2011;10(4):347-356."
+  doi: "10.1002/pst.472"
+
+design:
+  indication: "Oncology Phase II/III seamless — illustrative"
+  population: "All-comers with pre-specified biomarker at entry"
+  arms:
+    - name: "test"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Phase 2 PFS (interim), Phase 3 OS (final); correlated survival endpoints"
+    measurement_time: "time-to-first-event (PFS), time-to-event (OS)"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.85
+  effect:
+    hr_full: 0.80
+    hr_biomarker_positive: 0.65
+    biomarker_prevalence: 0.50
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 24
+  interim_analyses:
+    - number: 1
+      information_fraction: "end of stage 1 accrual or event-driven"
+      action: "Select full / B+ / stop based on PFS conditional power"
+    - number: 2
+      information_fraction: 1.0
+    spending: "Inverse-normal combination test; closed testing over H_F, H_B+, H_B−"
+  adaptation:
+    type: "subpopulation selection + seamless II/III"
+    method: "Jenkins-Stone-Jennison combination test with closed testing"
+    weights_prespecified: true
+
+expected:
+  sample_size_stage1: 300
+  sample_size_max_total: 900
+  tolerance:
+    sample_size_pct: 3
+  notes: |
+    Canonical seamless Phase II/III design for adaptive enrichment in
+    oncology with correlated survival endpoints (interim PFS informs OS
+    at final). Closed testing over H_F, H_B+, H_B− with inverse-normal
+    combination preserves strong FWER. Widely cited template for real
+    adaptive Phase 3s.
+
+r_packages:
+  - asd::treatsel.sim
+  - rpact::getDesignInverseNormal
+  - rpact::getSampleSizeSurvival
+
+tags:
+  - methodology-canonical
+  - seamless-phase-ii-iii
+  - adaptive-enrichment
+  - subpopulation-selection
+  - closed-testing
+  - jenkins-stone-jennison
+
+caveats: |
+  Requires pre-specified biomarker and stratified randomization at
+  stage 1. Surrogate endpoint correlation (PFS → OS) must be strong;
+  if correlation is weak, selection rule may misfire. FWER control
+  via closed testing costs ~15-30% in sample size vs a single-
+  hypothesis design; sponsors should weigh this against the flexibility
+  gained. TAPPAS is an example of this template applied in practice.

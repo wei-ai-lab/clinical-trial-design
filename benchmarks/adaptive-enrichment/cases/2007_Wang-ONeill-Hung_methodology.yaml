@@ -1,0 +1,76 @@
+id: 2007_Wang-ONeill-Hung_methodology
+family: adaptive-enrichment
+source:
+  kind: methodology-paper
+  citation: "Wang S-J, O'Neill RT, Hung HMJ. Approaches to evaluation of treatment effect in randomized clinical trials with genomic subset. Pharmaceutical Statistics. 2007;6(3):227-244."
+  doi: "10.1002/pst.300"
+
+design:
+  indication: "Phase 3 solid tumor with candidate predictive biomarker — illustrative"
+  population: "All-comers at stage 1; possibly biomarker+ only at stage 2"
+  arms:
+    - name: "treatment"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Overall survival"
+    measurement_time: "time-to-event"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.85
+  effect:
+    hr_biomarker_positive: 0.70
+    hr_biomarker_negative: 0.85
+    biomarker_prevalence: 0.40
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 24
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.4
+      action: "Pre-specified selection: continue all-comers / restrict to biomarker+ / stop"
+    - number: 2
+      information_fraction: 1.0
+    spending: "Inverse-normal combination test (Lehmacher-Wassmer)"
+  adaptation:
+    type: "subgroup selection"
+    method: "Wang-O'Neill-Hung framework (broad → possibly restrict to biomarker+)"
+    weights_prespecified: true
+
+expected:
+  sample_size_stage1: 300
+  sample_size_max_total: 900
+  tolerance:
+    sample_size_pct: 3
+  notes: |
+    FDA-authored methodology paper establishing the regulatory perspective
+    on biomarker-adaptive Phase 3 trials. Taxonomy: targeted / broad /
+    adaptive. Under the adaptive strategy, α is controlled via inverse-
+    normal combination test across stage 1 (all-comers) and stage 2
+    (possibly restricted). Precursor to FDA Enrichment Strategies
+    Guidance (2019).
+
+r_packages:
+  - rpact::getDesignInverseNormal
+  - rpact::getSampleSizeSurvival
+  - adaptest
+
+tags:
+  - methodology-canonical
+  - fda-authored
+  - adaptive-enrichment
+  - biomarker
+  - subgroup-selection
+  - inverse-normal-combination
+
+caveats: |
+  Selection rules must be fully pre-specified in SAP — thresholds for
+  restricting to biomarker+, α allocation across H_F / H_B+, and
+  combination-test weights. Regulators are skeptical of data-driven
+  cutoff optimization at interim; pre-specified binary biomarker
+  status (mutation yes/no, PD-L1 ≥ threshold) is strongly preferred
+  over continuous biomarker with adaptive cutoff.
