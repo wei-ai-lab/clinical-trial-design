@@ -1,0 +1,76 @@
+id: 2019_Angus_platform_methodology
+family: platform
+source:
+  kind: methodology-paper
+  citation: "Angus DC, Alexander BM, Berry S, et al. Adaptive platform trials: definition, design, conduct and reporting considerations. Nat Rev Drug Discov. 2019;18(10):797-807."
+  doi: "10.1038/s41573-019-0034-3"
+
+design:
+  indication: "any (methodology review)"
+  population: "Phase 2 / 3 platform trial population"
+  arms:
+    - name: "multiple experimental (open-ended addition)"
+      allocation: "adaptive"
+    - name: "shared control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Platform-level design considerations: adding/dropping arms, α control, operating characteristics"
+    measurement_time: "per-arm as defined"
+  comparison: "per-arm vs shared control"
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    arm_entry_process: "pre-specified scientific and operational criteria, IRB re-review"
+    alpha_framework: "per-comparison vs platform-family-wise"
+    control_framework: "concurrent vs non-concurrent trade-offs"
+    reporting_standard: "Adaptive Platform Trials Coalition 2019 consensus"
+  accrual:
+    duration_months: "perpetual"
+  followup:
+    planned_months: "per arm"
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    Seminal cross-industry consensus review of platform trial design
+    by the Adaptive Platform Trials Coalition. Lays out:
+    (1) Definition: single master protocol, multiple interventions,
+        open-ended, adaptive rules for adding/dropping.
+    (2) Design: Bayesian vs frequentist, RAR, shared vs concurrent
+        control, biomarker stratification, α control options.
+    (3) Conduct: governance (SAC, DSMB, arm-entry committee),
+        operational standing infrastructure.
+    (4) Reporting: new ICMJE-aligned standards for platform outputs,
+        per-arm + platform-level reporting.
+    Underpins FDA 2018 master protocol guidance and EMA 2022
+    reflection paper.
+
+r_packages:
+  - FACTS
+  - RBesT
+  - rstan
+  - MAMS
+
+tags:
+  - platform-trial
+  - master-protocol
+  - adaptive-platform
+  - bayesian
+  - frequentist
+  - governance
+  - reporting
+  - methodology-canonical
+
+caveats: |
+  Methodology review — no specific numerical example. Key trade-off
+  discussions: (1) per-comparison α acceptable for platforms where
+  arms are "independent" scientific questions; platform-family-wise
+  α when arms tested are related (e.g., multiple doses of same drug).
+  (2) Concurrent control is the gold standard; non-concurrent requires
+  explicit time-trend modeling. (3) Platforms demand pre-specified
+  simulation-based operating characteristics.

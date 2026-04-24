@@ -1,0 +1,82 @@
+id: 2019_GBM-AGILE
+family: platform
+source:
+  kind: published-trial
+  citation: "Alexander BM, Ba S, Berger MS, et al. Adaptive Global Innovative Learning Environment for Glioblastoma: GBM AGILE. Clin Cancer Res. 2018;24(4):737-743."
+  doi: "10.1158/1078-0432.CCR-17-0764"
+  nct_id: "NCT03970447"
+
+design:
+  indication: "Newly diagnosed or recurrent glioblastoma multiforme"
+  population: "Adults with GBM, MGMT-methylated or unmethylated subgroups"
+  arms:
+    - name: "Regorafenib"
+      allocation: "adaptive"
+    - name: "Paxalisib (GDC-0084)"
+      allocation: "adaptive"
+    - name: "VAL-083"
+      allocation: "adaptive"
+    - name: "Temozolomide + radiation (standard; common control)"
+      allocation: "common-control"
+    - name: "Further arms added over time (open-ended)"
+      allocation: "adaptive"
+  endpoint:
+    type: time-to-event
+    description: "Overall survival; Bayesian posterior probability of superiority over common control"
+    measurement_time: "time-to-death"
+  comparison: "Bayesian posterior vs concurrent common control within biomarker subgroup"
+  sidedness: 1
+  alpha: null
+  power: null
+  effect:
+    superiority_threshold: 0.975
+    graduation_stage: "Stage 2 confirmatory"
+    futility_threshold: 0.025
+    common_control_median_os_months: 12-15
+    target_hr: 0.70
+    mgmt_subgroups:
+      - "methylated (better prognosis)"
+      - "unmethylated"
+  accrual:
+    duration_months: 60
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 150
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    GBM AGILE is an adaptive Bayesian platform (Berry Consultants /
+    FACTS) for glioblastoma — arms flow through a two-stage funnel:
+    Stage 1 (screening, ~100 patients per arm) with Bayesian RAR
+    allocation; Stage 2 (confirmatory, ~120-150) with fixed
+    allocation. Common control arm (TMZ + RT) shared across all
+    experimental arms within calendar window to avoid time-trend
+    bias. MGMT methylation status is a key covariate. First-in-
+    disease platform trial in GBM; FDA registration pathway.
+
+r_packages:
+  - FACTS
+  - rstan
+  - brms
+  - RBesT
+
+tags:
+  - glioblastoma
+  - gbm
+  - brain-cancer
+  - bayesian-platform
+  - mgmt-methylation
+  - rar
+  - two-stage-funnel
+  - platform
+
+caveats: |
+  Two-stage architecture: Stage 1 response-adaptive screening feeds
+  Stage 2 fixed-allocation confirmatory. Common control is concurrent
+  within calendar window (explicit time-trend control). Sample size
+  per arm depends on response-adaptive dynamics and final stage-2
+  allocation — simulation-based operating characteristics. Launched
+  July 2019; multiple arms added since.

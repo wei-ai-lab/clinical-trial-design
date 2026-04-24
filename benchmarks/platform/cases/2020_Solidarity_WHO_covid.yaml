@@ -1,0 +1,76 @@
+id: 2020_Solidarity_WHO_covid
+family: platform
+source:
+  kind: published-trial
+  citation: "WHO Solidarity Trial Consortium. Repurposed antiviral drugs for Covid-19 — interim WHO Solidarity Trial results. N Engl J Med. 2021;384(6):497-511."
+  doi: "10.1056/NEJMoa2023184"
+  nct_id: "NCT04315948"
+
+design:
+  indication: "Hospitalized COVID-19"
+  population: "Adults hospitalized with COVID-19 from 405 hospitals across 30 countries"
+  arms:
+    - name: "remdesivir"
+      allocation: 1
+    - name: "hydroxychloroquine"
+      allocation: 1
+    - name: "lopinavir/ritonavir"
+      allocation: 1
+    - name: "interferon β-1a"
+      allocation: 1
+    - name: "local standard of care (shared control)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "In-hospital mortality; secondary: initiation of ventilation, duration of hospitalization"
+    measurement_time: "time-to-death in hospital, censored at discharge"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    target_rr: 0.80
+    control_in_hospital_mortality: 0.12
+  accrual:
+    duration_months: 6
+  followup:
+    planned_months: 0
+
+expected:
+  sample_size_total: 11266
+  events_total: 1253
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 5
+  notes: |
+    WHO-led pragmatic global platform trial testing 4 candidate
+    therapies vs SOC in hospitalized COVID-19. Open-label (pragmatic)
+    to enable rapid deployment in resource-constrained settings.
+    Arms could be dropped based on interim results; 3 of 4 were
+    (HCQ, lop/rit, IFN). Remdesivir showed no OS benefit in this
+    unselected hospitalized population (RR 0.95, 95% CI 0.81-1.11).
+    Demonstrated that global pragmatic platforms are feasible even
+    in pandemic conditions.
+
+r_packages:
+  - survival
+  - gsDesign
+  - rpact
+
+tags:
+  - covid-19
+  - who
+  - pragmatic-platform
+  - global
+  - open-label
+  - repurposed-drugs
+  - platform
+
+caveats: |
+  Open-label (not blinded) and pragmatic — trades internal validity
+  for rapid, global deployment and generalizability. Unequal
+  recruitment per-arm due to local availability. SOC varies by
+  country and time (non-concurrent control concern for late arms).
+  Results concordant with RECOVERY for HCQ and lop/rit (both no
+  benefit), but diverged from ACTT-1 for remdesivir (Solidarity
+  showed no benefit where ACTT-1 showed faster time to recovery).

@@ -1,0 +1,79 @@
+id: 2014_Lung-MAP
+family: platform
+source:
+  kind: published-trial
+  citation: "Herbst RS, Gandara DR, Hirsch FR, et al. Lung Master Protocol (Lung-MAP)-a biomarker-driven protocol for accelerating development of therapies for squamous cell lung cancer: SWOG S1400. Clin Cancer Res. 2015;21(7):1514-1524."
+  doi: "10.1158/1078-0432.CCR-13-3473"
+  nct_id: "NCT02154490"
+
+design:
+  indication: "Previously treated squamous cell NSCLC"
+  population: "Stage IV squamous NSCLC progressing on/after platinum-based chemotherapy"
+  arms:
+    - name: "Sub-study arms (targeted therapy matched to biomarker)"
+      allocation: "biomarker-matched"
+    - name: "Non-match sub-study (immunotherapy or other)"
+      allocation: "non-match"
+    - name: "SOC (docetaxel, erlotinib, or gemcitabine)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Sub-study primary: OS or PFS"
+    measurement_time: "per sub-study protocol"
+  comparison: "per-sub-study biomarker-matched vs SOC"
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    biomarker_panel: "FoundationOne CDx NGS of ~200 cancer genes"
+    sub_studies:
+      - "PI3KCA mutation → taselisib"
+      - "CDK4/6 alt → palbociclib"
+      - "FGFR alt → AZD4547"
+      - "HGF/MET alt → rilotumumab + erlotinib"
+      - "Non-match → immunotherapy"
+  accrual:
+    duration_months: 60
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 1000
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    First NCI-MATCH-style master protocol platform trial in NSCLC.
+    Single screening tissue biomarker panel assigns patient to
+    matched sub-study; mismatched patients flow to non-match arm
+    (later immunotherapy). Each sub-study is a conventional Phase 2/3
+    design within the umbrella, with shared infrastructure, DSMB,
+    and regulatory interaction. SWOG-sponsored public-private
+    partnership with FDA, Friends of Cancer Research, FNIH. Template
+    for NCI-MATCH (multi-cancer basket), Lung-MAP has evolved to
+    include immunotherapy and non-squamous since 2018.
+
+r_packages:
+  - survival
+  - rpact
+  - gsDesign
+  - FACTS
+
+tags:
+  - nsclc
+  - squamous
+  - biomarker-umbrella
+  - master-protocol
+  - swog
+  - foundation-medicine
+  - public-private-partnership
+  - platform
+
+caveats: |
+  Lung-MAP is an umbrella-style platform (single disease, multiple
+  biomarker-defined sub-groups). Each sub-study has own sample size
+  / power; platform-level α not explicitly controlled because each
+  sub-study is a distinct question. Shared biomarker screening
+  reduces per-subject screening cost. Sub-studies can launch/close
+  independently. Adaptive elements are limited (accrual-based
+  futility per sub-study, not outcome-based).

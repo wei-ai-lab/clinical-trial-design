@@ -107,7 +107,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | recurrent-events | ✅ | 4 | 4 | ✅ |
 | count-rate | ✅ | 4 | 4 | ✅ |
 | bayesian | ✅ | 5 | 5 | ✅ |
-| platform | — | 0 | 5 | 🔲 |
+| platform | ✅ | 5 | 5 | ✅ |
 | basket | — | 0 | 4 | 🔲 |
 | umbrella | — | 0 | 4 | 🔲 |
 | crossover | — | 0 | 3 | 🔲 |

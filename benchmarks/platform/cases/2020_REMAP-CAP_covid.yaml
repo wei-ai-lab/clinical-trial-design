@@ -1,0 +1,85 @@
+id: 2020_REMAP-CAP_covid
+family: platform
+source:
+  kind: published-trial
+  citation: "The REMAP-CAP Investigators. Interleukin-6 receptor antagonists in critically ill patients with Covid-19. N Engl J Med. 2021;384(16):1491-1502."
+  doi: "10.1056/NEJMoa2100433"
+  nct_id: "NCT02735707"
+
+design:
+  indication: "Severe community-acquired pneumonia (CAP) / COVID-19 ICU patients"
+  population: "ICU-admitted patients with suspected/confirmed severe pneumonia"
+  arms:
+    - name: "tocilizumab 8 mg/kg"
+      allocation: "adaptive"
+    - name: "sarilumab 400 mg"
+      allocation: "adaptive"
+    - name: "control (no IL-6R antagonist within domain)"
+      allocation: "adaptive"
+  endpoint:
+    type: ordinal
+    description: "Organ-support-free days to day 21 (OSFD): composite of death and ICU duration"
+    measurement_time: "day 21"
+  comparison: "Bayesian posterior probability of benefit"
+  sidedness: 1
+  alpha: null
+  power: null
+  effect:
+    superiority_threshold: 0.99
+    equivalence_threshold: 0.90
+    inferiority_threshold: 0.05
+    domains:
+      - "Antiviral"
+      - "Immune modulation (IL-6R, corticosteroid)"
+      - "Antiplatelet"
+      - "Anticoagulation"
+      - "Statin"
+      - "Convalescent plasma"
+      - "Vitamin C"
+  accrual:
+    duration_months: 60
+  followup:
+    planned_months: 6
+
+expected:
+  sample_size_total: 895
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    Perpetual Bayesian adaptive platform for severe CAP. Pre-pandemic
+    designed; pivoted to COVID within days of pandemic onset (March
+    2020). Multiple intervention "domains" can be randomized together
+    within patient (factorial within patient). Within each domain,
+    interventions allocated adaptively via Bayesian posterior
+    probability of benefit. Interim thresholds: superiority 99%,
+    inferiority 5%. IL-6R antagonist result: OSFD adjusted OR 1.64
+    (95% credible 1.25-2.14), 99.6% posterior Pr(superior) →
+    superior declared. Framework adopted for future pandemic
+    preparedness.
+
+r_packages:
+  - FACTS
+  - rstan
+  - brms
+  - RBesT
+
+tags:
+  - covid-19
+  - pneumonia
+  - icu
+  - bayesian-platform
+  - perpetual
+  - multi-domain
+  - factorial-within-patient
+  - adaptive-randomization
+  - platform
+
+caveats: |
+  Multi-domain factorial-within-patient design means a single patient
+  can be in intervention arms across 3-5 orthogonal drug domains.
+  Shared control within each domain, concurrent control per calendar
+  period. Decision thresholds (99% superiority / 5% inferiority)
+  calibrated via simulation. Operational infrastructure (master
+  protocol, global sites, DSMB) pre-existed pandemic — archetype
+  for "warm" platform ready to respond to novel threats.
