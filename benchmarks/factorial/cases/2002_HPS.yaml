@@ -1,0 +1,131 @@
+id: 2002_HPS
+family: factorial
+source:
+  kind: primary-results
+  citation: "Heart Protection Study Collaborative Group. MRC/BHF Heart Protection Study of cholesterol lowering with simvastatin in 20,536 high-risk individuals: a randomised placebo-controlled trial. Lancet. 2002 Jul 6;360(9326):7-22. (Antioxidant vitamin factor: Lancet. 2002 Jul 6;360(9326):23-33.)"
+
+design:
+  indication: "High-risk secondary / primary CV prevention (prior CHD, cerebrovascular, PAD, or diabetes)"
+  population: "UK adults age 40-80 at high CV risk; total cholesterol ≥ 3.5 mmol/L (135 mg/dL)"
+  arms:
+    - name: "simvastatin 40mg/day + antioxidant (vit E 600mg + C 250mg + β-carotene 20mg)"
+      allocation: 1
+    - name: "simvastatin + placebo-antioxidant"
+      allocation: 1
+    - name: "placebo-simvastatin + antioxidant"
+      allocation: 1
+    - name: "placebo-simvastatin + placebo-antioxidant"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "All-cause mortality (co-primary); major vascular events = nonfatal MI + vascular death + stroke + coronary revascularisation (co-primary)"
+    measurement_time: "mean 5.0 years follow-up"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    design_type: "2×2 factorial, at-the-margins"
+    factor_1: "Simvastatin 40mg vs placebo"
+    factor_2: "Antioxidant cocktail vs placebo"
+    pre_specified_interaction: "Tested for interaction but none expected; both factors assumed independent mechanisms"
+    assumed_event_rates: |
+      Placebo major-vascular-event rate: ~ 25% over 5 years.
+      Simvastatin RRR: ~ 20-25%.
+      Antioxidant expected RRR: ~ 10-20% (based on epidemiological observational data).
+    assumed_mortality: |
+      Placebo all-cause mortality: ~ 16% over 5 years.
+      Simvastatin RRR: ~ 12-15%.
+  accrual:
+    duration_months: 32
+  followup:
+    planned_months: 60
+    actual_months: 60
+
+expected:
+  sample_size_total: 20536
+  events_total: 5120
+  sample_size_per_arm: 5134
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 5
+  notes: |
+    **Canonical large factorial trial** of statin therapy and the
+    teaching case for **factorial with a null and a positive factor**.
+    HPS established:
+    (1) Simvastatin 40mg reduces major vascular events (19.8% vs
+        25.2%, p < 0.0001) — huge CV benefit.
+    (2) Antioxidant vitamins had **no effect** on major vascular
+        events or mortality (null result, confirming earlier
+        concerns from HOPE and other trials).
+
+    **Sample-size calculation**:
+    - Primary: major vascular events, expected 20% RRR by simvastatin.
+    - Placebo 5-year MVE rate ≈ 25%, statin ≈ 20% → ARR ≈ 5%.
+    - Required N per margin comparison ≈ 8,000-10,000 per arm.
+    - Factorial structure: 20,000+ patients give ~10,000 per margin
+      arm for each factor.
+    - Total achieved: 20,536.
+
+    **Factorial design rationale (McAlister terminology)**:
+    - Independent mechanisms (lipid lowering vs antioxidation).
+    - No qualitative interaction expected.
+    - At-the-margins primary analysis pre-specified.
+    - Factorial saves 50% enrollment vs two separate trials.
+
+    **Historical impact**:
+    - HPS was the pivotal trial that extended statins to diabetics
+      and high-risk populations without elevated LDL.
+    - Definitively ended the antioxidant-vitamin-for-CV-prevention
+      hypothesis (joining HOPE 2000 on vitamin E).
+    - Methodological exemplar: simple, large factorial yielding two
+      independent answers.
+    - Oxford CTSU trial (same group as ISIS, HPS, SEARCH).
+
+    **Validates factorial trust-but-verify**:
+    - No interaction between statin and antioxidant.
+    - Pre-specified interaction test had p = non-significant,
+      supporting at-the-margins primary analysis.
+
+r_packages:
+  - gsDesign (binary proportion, each margin)
+  - pwr
+  - survival (for time-to-event secondary analyses)
+  - MASS
+
+tags:
+  - hps
+  - heart-protection-study
+  - factorial
+  - 2x2
+  - at-the-margins
+  - simvastatin
+  - antioxidant
+  - cv-outcomes
+  - statin
+  - cholesterol
+  - oxford-ctsu
+
+caveats: |
+  HPS is a model factorial but also illustrates risks:
+  - One factor (antioxidants) was completely null — the factorial
+    still succeeded because the statin factor was strongly positive
+    and interaction was not present.
+  - If antioxidants had had a modest effect with statin interaction
+    (e.g., reduced statin benefit by modifying LDL oxidation), the
+    at-the-margins analysis could have been biased.
+  - The trial's large sample size and pre-specified interaction
+    test (both NS) gave strong assurance of independence.
+
+  Related classic HPS-family trials:
+  - HPS2-THRIVE (2014): simvastatin × niacin/laropiprant — large
+    factorial; niacin showed harm.
+  - SEARCH (2010): simvastatin 80mg vs 20mg in post-MI patients.
+  - 4S (1994): simvastatin non-factorial but establishing prior.
+
+  Teaching points:
+  - Factorial with null factor still saves the trial when the other
+    factor is positive and no interaction.
+  - Interaction pre-specification and power are critical.
+  - McAlister 2003 recommendations (in corpus) directly shaped
+    how HPS was analyzed and reported.

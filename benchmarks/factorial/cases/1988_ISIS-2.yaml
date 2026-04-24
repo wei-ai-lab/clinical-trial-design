@@ -1,0 +1,123 @@
+id: 1988_ISIS-2
+family: factorial
+source:
+  kind: primary-results
+  citation: "ISIS-2 (Second International Study of Infarct Survival) Collaborative Group. Randomised trial of intravenous streptokinase, oral aspirin, both, or neither among 17,187 cases of suspected acute myocardial infarction: ISIS-2. Lancet. 1988 Aug 13;2(8607):349-60."
+
+design:
+  indication: "Suspected acute myocardial infarction within 24h of symptom onset"
+  population: "Adults with suspected AMI presenting to participating hospitals"
+  arms:
+    - name: "streptokinase 1.5MU IV + aspirin 162.5mg/day × 1 month"
+      allocation: 1
+    - name: "streptokinase + placebo-aspirin"
+      allocation: 1
+    - name: "placebo-streptokinase + aspirin"
+      allocation: 1
+    - name: "placebo-streptokinase + placebo-aspirin"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Vascular mortality within 5 weeks of randomization (primary)"
+    measurement_time: "35 days post-randomization"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    design_type: "2×2 factorial, at-the-margins primary analysis"
+    factor_1: "Streptokinase vs placebo-streptokinase — marginal comparison"
+    factor_2: "Aspirin vs placebo-aspirin — marginal comparison"
+    interaction_pre_specified: "Pre-specified to be tested but not powered for; anticipated no qualitative interaction"
+    assumed_control_mortality: "~12% 5-week vascular mortality under placebo (anticipated from ISIS-1 and GISSI)"
+    assumed_treatment_effects: |
+      Streptokinase: ~20% relative risk reduction.
+      Aspirin: ~15-20% relative risk reduction.
+      Combination: additive on log-risk scale (23-25% RRR).
+  accrual:
+    duration_months: 39
+  followup:
+    planned_months: 2
+    actual_months: 1.2
+
+expected:
+  sample_size_total: 17187
+  events_total: 1918
+  sample_size_per_arm: 4297
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 5
+  notes: |
+    **Classic 2×2 factorial** and the most influential factorial
+    trial in medicine. ISIS-2 established that:
+    (1) streptokinase alone reduces 5-week vascular mortality
+        (9.2% vs 12.0%, p < 0.00001),
+    (2) aspirin alone reduces 5-week vascular mortality
+        (9.4% vs 11.8%, p < 0.00001),
+    (3) combination gives nearly additive benefit
+        (8.0% vs 13.2%, ~42% RRR).
+
+    **Factorial design justification (McAlister 2003 terminology)**:
+    - At-the-margins primary analysis pre-specified because no
+      qualitative interaction was expected between fibrinolytic
+      and antiplatelet mechanisms.
+    - Orthogonal randomization gave each factor ~17,000 patients
+      in the marginal comparison — massive power.
+
+    **Sample-size calculation (roughly reproducible)**:
+    - Control 5-week vascular mortality ≈ 12%.
+    - RRR per factor ≈ 20% → absolute ARR ≈ 2.4%.
+    - Required N per marginal comparison ≈ 8,000 per arm × 2 = 16,000.
+    - Trial achieved 17,187 — aligned with target.
+
+    **Historical impact**:
+    - Definitively established aspirin in acute MI (one of the most
+      important therapeutic findings of the 20th century).
+    - Validated streptokinase as the first widely-used fibrinolytic.
+    - Methodological exemplar for large simple trials (ISIS 2-4, GISSI
+      series, 4S, HPS).
+    - Peter Sleight, Rory Collins, Richard Peto as methodological
+      anchors; Oxford CTSU paradigm.
+
+r_packages:
+  - gsDesign (for the simple 2-arm binary comparison on each margin)
+  - pwr (proportion comparison power)
+  - stats::power.prop.test
+
+tags:
+  - isis-2
+  - factorial
+  - 2x2
+  - at-the-margins
+  - aspirin
+  - streptokinase
+  - cv-outcomes
+  - ami
+  - classic-trial
+  - binary-endpoint
+
+caveats: |
+  ISIS-2 remains the canonical 2×2 factorial because:
+  - Both factors had independent mechanisms (fibrinolysis vs
+    antiplatelet).
+  - Pre-specified no-qualitative-interaction assumption was
+    empirically confirmed.
+  - Sample size large enough that marginal comparisons were well-
+    powered.
+
+  Modern factorial designs often fail when these conditions do not
+  hold (e.g., CHARM-Alternative — CCB + ACE-I; HOT trial — aspirin
+  × antihypertensive), leading to McAlister (2003) recommendations
+  about when factorial is appropriate (in corpus).
+
+  Related classic factorials:
+  - ISIS-3 (1992): 3×2 fibrinolytic × heparin.
+  - ISIS-4 (1995): 3×2×2 captopril × mononitrate × magnesium.
+  - Physicians' Health Study (1989): 2×2 aspirin × β-carotene.
+  - Women's Health Study (2005): 2×2 aspirin × vitamin E.
+  - GISSI-3 (1994): 2×2 lisinopril × transdermal nitrate in AMI.
+
+  Regulatory / labeling impact:
+  - Aspirin became standard of care in acute MI directly from this
+    trial.
+  - Streptokinase approval in many markets explicitly cited ISIS-2.
