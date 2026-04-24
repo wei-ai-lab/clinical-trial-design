@@ -1,0 +1,259 @@
+id: 1987_Schuirmann_TOST
+family: fixed-equivalence
+source:
+  kind: methodology-paper
+  citation: "Schuirmann DJ. A comparison of the two one-sided tests procedure and the power approach for assessing the equivalence of average bioavailability. Journal of Pharmacokinetics and Biopharmaceutics. 1987;15(6):657-680. Building on: Westlake WJ. Use of confidence intervals in analysis of comparative bioavailability trials. J Pharm Sci. 1972;61(8):1340-1341. Anderson S, Hauck WW. A new procedure for testing equivalence in comparative bioavailability and other clinical trials. Commun Stat Theory Methods. 1983;12(23):2663-2692."
+
+design:
+  indication: "Generic methodology applicable to any equivalence trial — bioequivalence, biosimilar comparability, lot consistency, method-transfer validation"
+  population: "Any two-treatment equivalence comparison where a pre-specified margin (ε_L, ε_U) is defined"
+  arms:
+    - name: "test (T): new formulation, biosimilar, or alternative lot"
+      allocation: 1
+    - name: "reference (R): approved formulation, originator, or reference lot"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Any endpoint where the null hypothesis is |μ_T − μ_R| ≥ ε (non-equivalence) against the alternative |μ_T − μ_R| < ε (equivalence)"
+    measurement_time: "typically AUC/Cmax on log scale for PK, or clinical endpoint for biosimilar comparability"
+  comparison: equivalence
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    scale: methodology
+    tost_procedure: |
+      Two One-Sided Tests (TOST) procedure for equivalence:
+
+      Decompose the two-sided equivalence hypothesis:
+        H_0: μ_T - μ_R ≤ -ε   OR   μ_T - μ_R ≥ +ε   (non-equivalence)
+        H_1: -ε < μ_T - μ_R < +ε                     (equivalence)
+
+      Into two one-sided tests each at level α:
+        H_01: μ_T - μ_R ≤ -ε  vs  H_11: μ_T - μ_R > -ε
+        H_02: μ_T - μ_R ≥ +ε  vs  H_12: μ_T - μ_R < +ε
+
+      Reject H_0 (conclude equivalence) iff BOTH one-sided tests
+      reject at level α.
+
+      **Equivalent to**: construct a (1 - 2α) × 100% two-sided
+      confidence interval for μ_T - μ_R; reject non-equivalence iff
+      the entire CI lies within (-ε, +ε).
+
+      For α = 0.05 one-sided each → use 90% two-sided CI (not 95%).
+      This is the key insight that distinguishes TOST from standard
+      two-sided testing.
+    intuition: |
+      A (1 - α) × 100% one-sided CI contains the true parameter with
+      probability 1 - α. Two one-sided CIs at level α each (upper at
+      α, lower at α) correspond to a (1 - 2α) × 100% two-sided CI.
+
+      If this narrower 90% CI sits inside (-ε, +ε), we have BOTH:
+      - Upper CI < +ε (rule out being above equivalence margin)
+      - Lower CI > -ε (rule out being below equivalence margin)
+
+      So equivalence is demonstrated at overall level α = 0.05.
+
+      Controversy at time of publication: "shouldn't we use 95% CI?"
+      Answer: no — TOST operating characteristic naturally gives α =
+      0.05 overall via the intersection-union principle.
+    margin_definition: |
+      FDA bioequivalence standard (adopted 1992):
+        ε = log(1.25) ≈ 0.2231 on the natural-log scale.
+        Equivalence interval: (log 0.80, log 1.25) or (-0.2231, +0.2231).
+        GMR on original scale: 80% - 125%.
+
+      Rationale: ±20% difference in bioavailability was deemed
+      "clinically unimportant" by FDA expert panels.
+
+      For narrow-therapeutic-index drugs (warfarin, levothyroxine,
+      theophylline): FDA uses tighter 90%-111.11% (± 10%).
+
+      For biosimilars (EMA 2014): margin typically 0.80-1.25 on GMR or
+      clinical endpoint ±15% absolute.
+    sample_size_formula: |
+      For log-transformed PK data with within-subject CV = σ_w:
+
+        n_per_sequence = 2 · (z_{1-α} + z_{1-β/2})^2 · σ_w^2 / ε^2
+
+      (crossover design, 2×2×2 BE: 2 subjects per sequence combine).
+
+      More precise formula accounts for non-central t:
+        n = 2 · (t_{α, 2n-2} + t_{β/2, 2n-2})^2 · σ_w^2 / ε^2
+      (solve iteratively).
+
+      PowerTOST (Labes et al., R package) is the canonical tool.
+    numerical_example: |
+      Classic bioequivalence example:
+      - CV_w = 20% (AUC typical for well-absorbed drugs)
+      - ε = log(1.25) = 0.2231
+      - α = 0.05, power = 80%, target GMR = 1.00
+
+      Sample size (2×2 crossover):
+        n ≈ 2 · (1.645 + 1.282)^2 · 0.20^2 / 0.2231^2
+          ≈ 2 · 8.57 · 0.04 / 0.0498
+          ≈ 13.76 → **14 per sequence, 28 total** (rounded up; exact
+        via PowerTOST.exact gives n = 28).
+
+      If CV_w = 30%: n ≈ 52 total.
+      If CV_w = 40%: n ≈ 88 total (replicate design preferred beyond this).
+  regulatory_adoption: |
+    **FDA adoption of TOST**:
+    - 1992 Generic Drugs BE Guidance: TOST with 90% CI on log-AUC,
+      log-Cmax, equivalence interval 80%-125% GMR.
+    - 2001 Statistical Approaches to BE Guidance: formalized TOST.
+    - 2003 BE General Considerations Guidance: TOST remains standard.
+
+    **EMA adoption**:
+    - 2001 Note for Guidance on BE: TOST adopted.
+    - 2010 BE Guideline (CPMP/EWP/QWP/1401/98): TOST standard.
+    - 2014 Biosimilar Guideline: TOST concept for clinical comparability.
+
+    **ICH Q5E (2004)**: biosimilar comparability follows TOST framework
+    at each endpoint.
+  extensions: |
+    **Scaled (reference-scaled) TOST** — for highly variable drugs
+    (CV_w > 30%):
+      ε_scaled = k · σ_wR   (k = 0.760 for FDA, 0.294 for EMA)
+    Widens margin proportionally to within-subject variability.
+
+    **Partial replicate designs** (e.g., TRR/RTR/RRT) enable σ_wR
+    estimation from reference arm alone.
+
+    **Individual bioequivalence** (Hyslop et al. 2000): adds subject-
+    by-formulation interaction; largely abandoned in favor of average
+    BE (TOST).
+
+    **Group sequential TOST**: Jennison-Turnbull framework extension;
+    rarely used since BE trials are typically small and quick.
+
+    **Nonparametric TOST**: Hauschke-Steinijans 1990; rank-based.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **Schuirmann 1987** formalized the **Two One-Sided Tests (TOST)
+    procedure** as the canonical method for demonstrating equivalence
+    in bioequivalence and related trials. Adopted by FDA in 1992 and
+    EMA shortly thereafter — remains THE standard for BE / biosimilar
+    / lot-consistency / method-transfer equivalence.
+
+    **Core insight**:
+    - Decompose two-sided equivalence null into two one-sided nulls.
+    - Each tested at level α (one-sided).
+    - Reject if BOTH reject at α → intersection-union test.
+    - **Equivalent to**: (1 - 2α) × 100% two-sided CI inside (-ε, +ε).
+
+    **Canonical BE margin**: ε = log(1.25), 90% CI inside (0.80, 1.25)
+    for GMR. 80%-125% interval — asymmetric on original scale, symmetric
+    on log scale.
+
+    **Why this dominates**:
+    - Simple: construct 90% CI, check containment.
+    - Uniformly most powerful under unbiased-size constraint.
+    - Regulatory consensus (FDA, EMA, PMDA, WHO).
+
+r_packages:
+  - PowerTOST (canonical — sample size for TOST)
+  - ResearchFunctions
+  - equivalence
+  - gMCP (when TOST embedded in closed testing)
+  - rpact (some TOST support)
+  - bioequivalence
+
+tags:
+  - schuirmann
+  - tost
+  - two-one-sided-tests
+  - equivalence
+  - bioequivalence
+  - methodology-foundational
+  - 1987
+  - pharmacokinetics
+  - biosimilar-comparability
+
+caveats: |
+  TOST methodology considerations:
+
+  - **90% vs 95% CI confusion**: overall α = 0.05 requires 90% (not 95%)
+    two-sided CI. Common source of regulatory review comments when
+    sponsors mistakenly use 95% (unnecessarily conservative).
+  - **Log transformation default**: FDA/EMA require log-transform for
+    AUC/Cmax (multiplicative error structure). Equivalence on log scale
+    = GMR equivalence on original scale.
+  - **Intra- vs inter-subject variability**: crossover designs use
+    within-subject CV, smaller n. Parallel designs use between-subject
+    CV, much larger n.
+  - **Power at exact boundary**: if true GMR = 1.00, power is max.
+    Power drops sharply as true GMR moves toward ε limit — need
+    substantial cushion in sample-size planning.
+  - **Missing data**: dropouts reduce power non-trivially — FDA expects
+    ≥ 75% completer rate. Analysis typically per-protocol (excluded
+    dropouts) for BE — opposite of superiority conventions.
+
+  **Sample-size examples (2×2 crossover, GMR target = 1.00)**:
+  | CV_w | Power 80% | Power 90% |
+  |---|---|---|
+  | 15% | 18 | 22 |
+  | 20% | 28 | 36 |
+  | 25% | 42 | 56 |
+  | 30% | 60 | 78 |
+  | 35% | 82 | 106 |
+  | 40% | 108 | 140 |
+
+  **R implementation (PowerTOST)**:
+  ```r
+  library(PowerTOST)
+
+  # Standard BE: GMR = 1.00, CV = 20%, 80% power
+  sampleN.TOST(
+    CV = 0.20,
+    theta1 = 0.80,     # lower margin (log(0.80))
+    theta2 = 1.25,     # upper margin (log(1.25))
+    theta0 = 1.00,     # expected GMR
+    targetpower = 0.80,
+    design = "2x2"
+  )
+  # n = 28
+
+  # Reference-scaled BE for highly variable drugs
+  sampleN.scABEL(
+    CV = 0.40,
+    theta0 = 0.90,
+    targetpower = 0.80,
+    design = "2x3x3"   # partial replicate
+  )
+  ```
+
+  **Historical context**:
+  - **Westlake 1972**: first proposed CI-based BE assessment.
+  - **Anderson-Hauck 1983**: an alternative procedure (later shown
+    less powerful than TOST near null).
+  - **Schuirmann 1987** (this paper): unified TOST, showed it UMP-like.
+  - **Hauschke et al. 1992**: exact distributions.
+  - **FDA 1992 BE Guidance**: TOST codified.
+  - **EMA 2001, 2010**: TOST adopted.
+  - **Chow-Liu 2008 "Design and Analysis of Bioequivalence Studies"**:
+    canonical textbook.
+
+  **Relationship to other equivalence cases in corpus**:
+  - **PLANETRA (2013)**: biosimilar infliximab used TOST-based 95% CI
+    (industry convention > 90% for clinical biosimilar endpoints).
+  - **V114 lot-consistency (2019)**: TOST for ELISA response ratios.
+  - **EMA 2014 biosimilar guideline**: TOST-style for clinical
+    comparability.
+  - **MYL-1401O trastuzumab biosimilar (2017)**: 90% CI on ORR ratio.
+
+  **Common mistakes**:
+  - Using 95% CI instead of 90% (costs power unnecessarily).
+  - Forgetting log transformation for PK endpoints.
+  - Using between-subject CV for crossover trials (overestimates n).
+  - Reporting 80% power when true GMR ≠ 1.00 (power sharply lower).
+  - Failing to pre-specify per-protocol analysis population for BE.

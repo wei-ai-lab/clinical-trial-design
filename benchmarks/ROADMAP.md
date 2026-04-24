@@ -94,7 +94,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | framework (ROADMAP, GLOSSARY) | — | — | — | ✅ |
 | fixed-superiority | ✅ | 10 | 8 | ✅ |
 | fixed-non-inferiority | ✅ | 10 | 6 | ✅ |
-| fixed-equivalence | ✅ | 6 | 4 | ✅ |
+| fixed-equivalence | ✅ | 8 | 4 | ✅ |
 | group-sequential | ✅ | 10 | 8 | ✅ |
 | group-sequential-futility | ✅ | 7 | 5 | ✅ |
 | group-sequential-nph | ✅ | 8 | 6 | ✅ |
