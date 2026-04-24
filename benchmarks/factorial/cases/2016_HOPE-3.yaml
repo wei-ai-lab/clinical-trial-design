@@ -1,0 +1,81 @@
+id: 2016_HOPE-3
+family: factorial
+source:
+  kind: published-trial
+  citation: "Yusuf S, Bosch J, Dagenais G, et al. Cholesterol lowering in intermediate-risk persons without cardiovascular disease. N Engl J Med. 2016;374(21):2021-2031."
+  doi: "10.1056/NEJMoa1600176"
+  nct_id: "NCT00468923"
+
+design:
+  indication: "Primary cardiovascular prevention in intermediate-risk individuals without overt CVD"
+  population: "Men ≥ 55 / women ≥ 65 with ≥ 1 CV risk factor; or women ≥ 60 with ≥ 2; no known CVD"
+  arms:
+    - name: "rosuvastatin 10 mg + candesartan 16/HCTZ 12.5 mg"
+      allocation: 1
+    - name: "rosuvastatin 10 mg + placebo"
+      allocation: 1
+    - name: "placebo rosuvastatin + candesartan 16/HCTZ 12.5 mg"
+      allocation: 1
+    - name: "placebo rosuvastatin + placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Co-primary composites: (1) MACE (CV death, nonfatal MI, nonfatal stroke); (2) expanded MACE adding resuscitated cardiac arrest, HF, revascularization"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    hr_statin_factor: 0.80
+    hr_bp_factor: 0.80
+    annual_control_event_rate: 0.015
+  accrual:
+    duration_months: 48
+  followup:
+    planned_months: 60
+  interim_analyses:
+    - info_fraction: 0.50
+      rule: "Pre-planned interim"
+      boundary_family: "Lan-DeMets OBF"
+
+expected:
+  sample_size_total: 12705
+  events_total: 615
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 3
+  notes: |
+    Canonical modern 2×2 factorial CVOT — tests lipid-lowering
+    (rosuvastatin) and BP-lowering (candesartan+HCTZ) simultaneously
+    in primary CV prevention. Each factor analyzed across both
+    levels of the other. Statin factor: HR 0.76 (95% CI 0.64-0.91),
+    p = 0.002, co-primary met. BP factor: HR 0.93 (0.79-1.10),
+    p = 0.40, negative. No statin × BP interaction. Combination
+    (both) arm: HR 0.71 (p = 0.005). Demonstrated statin benefit
+    in intermediate-risk primary prevention at modest absolute
+    event rates (~1.5%/yr control).
+
+r_packages:
+  - gsDesign::nSurv
+  - rpact::getSampleSizeSurvival
+  - survival
+
+tags:
+  - hope-3
+  - 2x2-factorial
+  - primary-prevention
+  - cvot
+  - rosuvastatin
+  - candesartan
+  - statin
+  - bp-lowering
+
+caveats: |
+  Two co-primary factors tested independently at α = 0.05 each (no
+  Bonferroni — two distinct hypotheses). Total N = 12,705 for 615
+  expected events over 5+ years. Low absolute event rate (intermediate
+  risk, not high risk) necessitated large N. No interaction assumed
+  — results support that assumption (combination = sum of main
+  effects). Ethnic diversity: enrolled in 21 countries to support
+  generalizability of intermediate-risk results.

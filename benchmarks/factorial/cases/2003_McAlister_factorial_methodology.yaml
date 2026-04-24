@@ -1,0 +1,77 @@
+id: 2003_McAlister_factorial_methodology
+family: factorial
+source:
+  kind: methodology-paper
+  citation: "McAlister FA, Straus SE, Sackett DL, Altman DG. Analysis and reporting of factorial trials: a systematic review. JAMA. 2003;289(19):2545-2553."
+  doi: "10.1001/jama.289.19.2545"
+
+design:
+  indication: "any (methodology)"
+  population: "Factorial design Phase 3 trial"
+  arms:
+    - name: "factor A (yes/no)"
+      allocation: 1
+    - name: "factor B (yes/no)"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Factor main effects; interaction estimation"
+    measurement_time: "per factor primary endpoint"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    interaction_detection_power: "N_interaction ≈ 4·N_main for same effect magnitude"
+    primary_analysis_options:
+      - "at-the-margins (ignore interaction, pool across other factor)"
+      - "inside-the-table (report cell means; typically under-powered)"
+      - "stratified by other factor"
+  accrual:
+    duration_months: 36
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    Systematic review of 44 factorial trials showing common
+    reporting deficiencies: (1) ~one-third did not report interaction
+    test; (2) many reported only main effect analysis when interaction
+    was plausible; (3) inconsistent handling of partial interactions.
+    Key conclusions:
+    - Factorial is N-efficient only if interaction assumed absent.
+    - Pre-specify primary analysis: at-the-margins (main effects
+      pooled) or inside-the-table (cell-specific).
+    - Interactions require ~4× N to detect at same α/β.
+    - Report all four cells with confidence intervals to enable
+      reader-level interaction assessment.
+    Influenced subsequent CONSORT factorial extension.
+
+r_packages:
+  - stats::aov
+  - stats::lm
+  - gsDesign
+  - rpact
+
+tags:
+  - factorial
+  - methodology-canonical
+  - interaction
+  - main-effects
+  - reporting-standards
+  - mcalister
+  - jama
+  - systematic-review
+
+caveats: |
+  The paper's "at-the-margins" vs "inside-the-table" distinction is
+  critical: at-the-margins assumes no interaction and pools for
+  efficiency; inside-the-table is interaction-robust but under-
+  powered unless N doubled. Regulatory practice has largely adopted
+  pre-specified at-the-margins primary with interaction as
+  pre-specified sensitivity, reporting all 4 cells. CONSORT factorial
+  extension (Piaggio 2021) codifies modern reporting.

@@ -1,0 +1,78 @@
+id: 2005_COMMIT
+family: factorial
+source:
+  kind: published-trial
+  citation: "Chen ZM, Jiang LX, Chen YP, et al. Addition of clopidogrel to aspirin in 45,852 patients with acute myocardial infarction: randomised placebo-controlled trial (COMMIT). Lancet. 2005;366(9497):1607-1621."
+  doi: "10.1016/S0140-6736(05)67660-X"
+  nct_id: "ISRCTN99858243"
+
+design:
+  indication: "Acute myocardial infarction (acute presentation, ≤ 24 h of onset)"
+  population: "Adults with suspected acute MI within 24 h; China-based"
+  arms:
+    - name: "metoprolol + clopidogrel 75 mg"
+      allocation: 1
+    - name: "metoprolol + placebo clopidogrel"
+      allocation: 1
+    - name: "placebo metoprolol + clopidogrel 75 mg"
+      allocation: 1
+    - name: "placebo metoprolol + placebo clopidogrel"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Co-primary: (1) composite death, reinfarction, or stroke; (2) death from any cause"
+    measurement_time: "during hospital stay (≤ 28 d)"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    or_metoprolol_factor: 0.90
+    or_clopidogrel_factor: 0.90
+    control_composite_rate: 0.12
+  accrual:
+    duration_months: 30
+  followup:
+    planned_months: 1
+
+expected:
+  sample_size_total: 45852
+  events_total: 5000
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    Mega-factorial trial: 2×2 of metoprolol + clopidogrel vs
+    placebo × placebo in acute MI. N = 45,852 from 1,250 Chinese
+    hospitals — enabled by Chinese national infrastructure. Each
+    factor analyzed independently. Clopidogrel factor: composite OR
+    0.91 (95% CI 0.86-0.97), p = 0.002 — positive. Metoprolol
+    factor: composite OR 0.96 (0.90-1.01), p = 0.10 — not
+    significant (hemodynamic harm offset ischemic benefit in MI
+    patients with low BP). No interaction. Reshaped post-MI
+    antiplatelet therapy globally (clopidogrel standard).
+
+r_packages:
+  - gsDesign::nBinomial
+  - rpact::getSampleSizeRates
+
+tags:
+  - commit
+  - ami
+  - acute-mi
+  - clopidogrel
+  - metoprolol
+  - 2x2-factorial
+  - mega-trial
+  - china-infrastructure
+
+caveats: |
+  Mega-trial scale (45,852 patients) leveraged Chinese centralized
+  hospital system for rapid enrollment. Short follow-up (in-hospital,
+  ~15 d median) makes this a short-term AMI management trial not a
+  long-term CVOT. Metoprolol-factor null result was counterintuitive
+  (β-blockers generally beneficial in MI) and reshaped acute-MI
+  β-blocker dosing (avoid early IV metoprolol in hemodynamically
+  unstable patients). No interaction between the two factors — each
+  analyzed across both levels of the other. Classic factorial
+  efficiency demonstration.
