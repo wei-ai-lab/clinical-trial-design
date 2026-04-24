@@ -1,0 +1,103 @@
+id: 2023_NCI-ComboMATCH
+family: umbrella
+source:
+  kind: published-trial
+  citation: "O'Dwyer PJ, Gray RJ, Flaherty KT, et al. The NCI-MATCH trial: lessons learned and the path forward. Nat Med. 2023;29:1349-1357. (ComboMATCH launched 2023; registry: EAY191). National Cancer Institute. ComboMATCH (EAY191) protocol 2022."
+  doi: "10.1038/s41591-023-02379-4"
+  nct_id: "NCT05564377"
+
+design:
+  indication: "Advanced solid tumors with specific genomic alterations (ComboMATCH extends MATCH to combination arms)"
+  population: "Adults with advanced solid tumors progressing on ≥ 1 prior therapy; genomic screening via central NGS; consent arm assignment based on match rule"
+  arms:
+    - name: "paired combination arm 1 (e.g., MEK + BRAF inhibitor)"
+      allocation: 1
+    - name: "paired combination arm 2 (e.g., PI3K + MEK)"
+      allocation: 1
+    - name: "paired combination arm 3 (e.g., PARP + WEE1)"
+      allocation: 1
+    - name: "comparator monotherapy (per arm)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Progression-free survival (per arm, vs monotherapy comparator); ORR secondary"
+    measurement_time: "time-to-progression"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    per_arm_hr_target: 0.65
+    per_arm_sample_size: 70-160
+    n_planned_arms: 10+
+    genomic_screening_yield: 0.20  # ~20% of screened find eligible alteration
+  accrual:
+    duration_months: 60
+  followup:
+    planned_months: 24
+  interim_analyses:
+    - info_fraction: 0.50
+      rule: "Per-arm futility (conditional power < 0.10 → drop); no efficacy stop"
+      boundary_family: "Non-binding futility"
+
+expected:
+  sample_size_total: 1000
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **ComboMATCH (EAY191)** is the NCI's successor / extension to
+    NCI-MATCH (EAY131, 2015), focused specifically on **combination
+    regimens** guided by preclinical rationale (gene-expression +
+    animal-model evidence of combination synergy). Launched 2023 with
+    10+ planned combination arms, each powered as a standalone Phase
+    2 randomized comparison against the corresponding monotherapy or
+    standard of care.
+
+    **Key design innovations over NCI-MATCH**:
+    - **Combination arms** (not single agents) — addresses the single-
+      agent ceiling seen in MATCH sub-studies where ~16% average ORR.
+    - **Randomized within arm** (not single-arm) — provides direct
+      comparison to monotherapy per combination.
+    - **Preclinical gatekeeping**: each combination arm requires
+      PDX-model synergy evidence before inclusion.
+    - **Adaptive enrollment**: arms can be added/dropped as
+      preclinical pipeline matures.
+    - **Shared infrastructure**: central NGS screening (same pipeline
+      as MATCH), common eligibility, common Day-0 protocol.
+
+    Represents the **state of the art** in umbrella design as of
+    2024. Template for future combination-only umbrellas and for
+    post-MATCH / post-NCI-MPACT master protocols.
+
+r_packages:
+  - gsDesign::nSurv (per-arm PFS sizing)
+  - rpact::getSampleSizeSurvival
+  - survival
+  - basket (cross-arm hierarchical sensitivity)
+  - bhmbasket
+
+tags:
+  - nci-combomatch
+  - umbrella
+  - combination-regimens
+  - randomized-umbrella
+  - biomarker-driven
+  - preclinical-gatekeeping
+  - modern-umbrella
+  - post-match
+
+caveats: |
+  ComboMATCH addresses the primary lesson of NCI-MATCH (2015-2022):
+  single-agent targeted therapies yielded average ORR ~16% across
+  40+ arms — often non-transformative. The combination-centric design
+  of ComboMATCH is the evidence-driven next step. Randomization
+  within each combination arm addresses the confounding challenge of
+  single-arm sub-studies (historical benchmarking unreliable for
+  post-IO-era metastatic disease). Preclinical gatekeeping (PDX
+  synergy) is novel — formal integration of translational evidence
+  into umbrella arm-inclusion criteria. Results not yet publicly
+  reported at time of corpus writing (April 2026); design paper and
+  initial protocol (2022-2023) are reference documents. Future
+  readouts will validate or refine the approach; corpus tracks
+  ongoing activity.

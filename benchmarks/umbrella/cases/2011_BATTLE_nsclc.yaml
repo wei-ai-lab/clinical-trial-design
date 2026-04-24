@@ -1,0 +1,99 @@
+id: 2011_BATTLE_nsclc
+family: umbrella
+source:
+  kind: published-trial
+  citation: "Kim ES, Herbst RS, Wistuba II, et al. The BATTLE trial: personalizing therapy for lung cancer. Cancer Discov. 2011;1(1):44-53."
+  doi: "10.1158/2159-8290.CD-10-0010"
+  nct_id: "NCT00409968"
+
+design:
+  indication: "Advanced non-small-cell lung cancer (NSCLC), ≥ 1 prior therapy"
+  population: "Advanced NSCLC after ≥ 1 prior chemotherapy; tissue biopsy required for biomarker profiling"
+  arms:
+    - name: "erlotinib (EGFR TKI)"
+      allocation: 1
+    - name: "sorafenib (multikinase TKI)"
+      allocation: 1
+    - name: "vandetanib (EGFR/VEGFR TKI)"
+      allocation: 1
+    - name: "erlotinib + bexarotene (RXR agonist)"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "8-week disease control rate (DCR) — stable disease or better per RECIST"
+    measurement_time: "8 weeks post-randomization"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.05
+  power: 0.80
+  effect:
+    target_dcr: 0.50
+    null_dcr: 0.30
+    biomarker_groups: 5
+    biomarkers: "EGFR mutation/copy, KRAS/BRAF mutation, VEGF/VEGFR expression, RXR/Cyclin D1"
+    adaptive_rule: "Bayesian adaptive randomization — probability of assignment updated by posterior DCR per biomarker-treatment cell"
+  accrual:
+    duration_months: 42
+  followup:
+    planned_months: 2
+
+expected:
+  sample_size_total: 255
+  events_total: null
+  tolerance:
+    sample_size_pct: 10
+  notes: |
+    **First published adaptive biomarker-driven umbrella trial in NSCLC**
+    — MD Anderson. 5 biomarker-defined patient subgroups × 4 treatment
+    arms = 20-cell response matrix. Each patient biopsied, profiled,
+    then Bayesian-adaptively randomized with probability proportional
+    to posterior DCR in their biomarker cell (subject to minimum
+    randomization floor). 255 evaluable patients, 244 biopsy-profiled.
+
+    **Primary results**:
+    - Overall 8-week DCR: 46%, exceeded historical ~30% benchmark.
+    - Cell-specific DCRs consistent with biomarker hypotheses:
+      - EGFR mutant → erlotinib 52% DCR
+      - VEGF/VEGFR-high → sorafenib 64% DCR
+      - KRAS/BRAF mutant → sorafenib 61% DCR
+    - Demonstrated **feasibility** of mandatory fresh biopsy
+      + central profiling + adaptive randomization in advanced NSCLC.
+
+    Predecessor to BATTLE-2 (2016, added heavier biomarker panel and
+    chemotherapy-naïve arms) and template for Lung-MAP (2014),
+    NCI-MATCH (2015), SAFIR02-Lung, FUTURE, etc. Established
+    regulatory + operational credibility of the **umbrella** design.
+
+r_packages:
+  - rpact (frequentist DCR per cell)
+  - bhmbasket (Bayesian hierarchical across biomarker cells)
+  - basket
+  - RBesT (MAP prior if historical biomarker-treatment data available)
+
+tags:
+  - battle
+  - nsclc
+  - umbrella
+  - adaptive-randomization
+  - biomarker-driven
+  - md-anderson
+  - egfr
+  - kras
+  - vegf
+  - bayesian-adaptive
+
+caveats: |
+  Small per-cell sample sizes (5-30 subjects per 20 cells) mean
+  cell-specific DCRs are imprecise despite the adaptive design —
+  BATTLE was proof-of-principle, not a confirmatory trial. Post hoc
+  power for individual cell comparisons was low; however, the overall
+  40+% DCR readout exceeded pre-specified threshold and demonstrated
+  platform feasibility. Mandatory fresh biopsy policy (initially only
+  ~45% consented to biopsy at screening → amended to 100% mandatory)
+  set operational precedent for later umbrella trials. Bayesian
+  adaptive randomization probability computed from Beta posterior on
+  cell-specific DCR with initial uniform phase (first 20 patients per
+  cell fixed 1:1:1:1 randomization, then adaptive thereafter).
+  BATTLE's impact was architectural more than pharmacological — none
+  of the 4 tested regimens became standard of care, but the design
+  template reshaped NSCLC drug development.
