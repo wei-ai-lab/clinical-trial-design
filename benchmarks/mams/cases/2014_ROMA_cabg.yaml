@@ -1,0 +1,79 @@
+id: 2014_ROMA_cabg
+family: mams
+source:
+  kind: published-trial
+  citation: "Gaudino M, et al. The ROMA trial: why it is needed. J Thorac Cardiovasc Surg. 2018;156(4):1393-1397."
+  doi: "10.1016/j.jtcvs.2018.05.106"
+  nct_id: "NCT03217006"
+  url: "https://clinicaltrials.gov/ct2/show/NCT03217006"
+
+design:
+  indication: "Multi-vessel CAD requiring CABG"
+  population: "Adults undergoing CABG for multi-vessel disease"
+  arms:
+    - name: "LIMA + multiple arterial grafts (radial/RIMA) — arm 1"
+      allocation: 1
+    - name: "LIMA + multiple arterial grafts — arm 2 variant"
+      allocation: 1
+    - name: "LIMA + saphenous vein grafts (control)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite MACCE: death, MI, stroke, repeat revascularization"
+    measurement_time: "time-to-first-event over 5 years"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    hr_target: 0.80
+    control_5yr_macce: 0.18
+  accrual:
+    duration_months: 84
+  followup:
+    planned_months: 60
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+      action: "lack-of-benefit drop"
+    - number: 2
+      information_fraction: 0.75
+    - number: 3
+      information_fraction: 1.0
+    spending: "MAMS OBF-like boundaries"
+
+expected:
+  sample_size_total: 4300
+  events_total_target: 600
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 5
+  notes: |
+    Surgical Phase 3 MAMS — multiple arterial conduit strategies vs
+    SVG control in CABG. Enrollment completed 2021; primary 5-year
+    MACCE readout expected 2026-2027. Representative example of MAMS
+    outside oncology/infectious disease. Center-pair matching and
+    surgeon-experience stratification control for technique
+    heterogeneity.
+
+r_packages:
+  - MAMS::mams
+  - gsDesign2
+
+tags:
+  - cabg
+  - cardiac-surgery
+  - multi-vessel-cad
+  - mams
+  - long-follow-up
+  - tte-macce
+  - real-trial
+  - device-technique
+
+caveats: |
+  Open-label; outcome adjudication blinded. Surgeon experience is
+  a known confounder — stratification by surgeon/center is standard
+  but cannot fully eliminate. Long follow-up (5 years) means interim
+  timing must balance early signals vs adequate maturity; MAMS
+  boundary computation requires careful event-rate projection.
+  Final results not yet published; design is the corpus reference.

@@ -1,0 +1,87 @@
+id: 2014_FOCUS4_colorectal
+family: mams
+source:
+  kind: published-trial
+  citation: "Kaplan R, Maughan T, Crook A, et al. Evaluating many treatments and biomarkers in oncology: a new design. J Clin Oncol. 2013;31(36):4562-4568."
+  doi: "10.1200/JCO.2013.50.7905"
+  nct_id: "ISRCTN90061143"
+  url: "https://ascopubs.org/doi/10.1200/JCO.2013.50.7905"
+
+design:
+  indication: "Metastatic colorectal cancer after first-line therapy"
+  population: "mCRC with disease control on first-line; biomarker-triaged into cohorts"
+  arms:
+    - name: "FOCUS4-D BRAF cohort: AZD8931 vs placebo"
+      cohort: BRAF_mut
+    - name: "FOCUS4-C PIK3CA/PTEN cohort: trametinib vs placebo"
+      cohort: PIK3CA_PTEN
+    - name: "FOCUS4-A RAS cohort (multiple drugs tested)"
+      cohort: RAS_mut
+    - name: "FOCUS4-B EGFR/HER2 cohort"
+      cohort: EGFR_HER2
+    - name: "FOCUS4-N all-WT cohort: capecitabine vs observation"
+      cohort: all_WT
+  endpoint:
+    type: time-to-event
+    description: "Progression-free survival"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    hr_target_per_cohort: 0.60
+  accrual:
+    duration_months: "rolling platform recruitment since 2014"
+  followup:
+    planned_months: 12
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.33
+      action: "lack-of-benefit drop"
+    - number: 2
+      information_fraction: 0.67
+      action: "lack-of-benefit drop"
+    - number: 3
+      information_fraction: 1.0
+    spending: "MAMS boundaries per-cohort via UK MRC CTU nstage software"
+    futility: "Pre-specified lack-of-benefit boundaries"
+  adaptation:
+    type: "biomarker stratification + MAMS"
+    method: "cohort-specific MAMS with pre-specified molecular triage"
+
+expected:
+  sample_size_per_cohort: 120
+  sample_size_total: 1200
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Biomarker-stratified MAMS platform in mCRC. Patients triaged by
+    centralized molecular testing into one of 5 cohorts, each with
+    its own MAMS sub-trial. Cohort-specific FWER control; no cross-
+    cohort α borrowing. Multi-cohort reports since 2017; several arms
+    dropped at planned lack-of-benefit stages.
+
+r_packages:
+  - MAMS::mams
+  - nstage
+  - simtrial
+
+tags:
+  - colorectal-cancer
+  - mams-platform
+  - biomarker-stratified
+  - molecular-cohorts
+  - uk-mrc
+  - oncology
+  - real-trial
+  - adaptive-enrichment-overlap
+
+caveats: |
+  Molecular triage requires centralized pathology network and rapid
+  assay turnaround. Biomarker prevalence drives differential accrual
+  — all-WT cohort fills fastest, rare-mutation cohorts slowly. Cohort-
+  specific MAMS means ~5 parallel MAMS trials running simultaneously;
+  each has its own DMC review. Overlap with adaptive-enrichment
+  family: the molecular triage is enrichment, but each cohort is
+  MAMS so the family assignment here is MAMS.

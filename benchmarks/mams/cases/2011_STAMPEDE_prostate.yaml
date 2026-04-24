@@ -1,0 +1,99 @@
+id: 2011_STAMPEDE_prostate
+family: mams
+source:
+  kind: published-trial
+  citation: "Sydes MR, Parmar MKB, James ND, et al. Issues in applying multi-arm multi-stage methodology to a clinical trial in prostate cancer: the MRC STAMPEDE trial. Trials. 2009;10:39."
+  doi: "10.1186/1745-6215-10-39"
+  nct_id: "ISRCTN78818544"
+  url: "https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(15)01037-5"
+
+design:
+  indication: "Advanced/metastatic or high-risk localized prostate cancer"
+  population: "Starting long-term androgen deprivation therapy (ADT)"
+  arms:
+    - name: "ADT alone (control)"
+      allocation: "evolves with platform"
+    - name: "ADT + zoledronic acid"
+      allocation: 1
+    - name: "ADT + docetaxel"
+      allocation: 1
+    - name: "ADT + celecoxib"
+      allocation: 1
+    - name: "ADT + zol + cel"
+      allocation: 1
+    - name: "ADT + zol + doc"
+      allocation: 1
+    - name: "ADT + abiraterone"
+      allocation: 1
+    - name: "ADT + enzalutamide"
+      allocation: 1
+    - name: "ADT + RT to primary"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "FFS (intermediate) and OS (final)"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    hr_target_per_arm: 0.75
+    ffs_os_surrogacy: "moderate — FFS used for stage 1-3 stops, OS for final"
+  accrual:
+    duration_months: "ongoing since 2005, platform accrual"
+  followup:
+    planned_months: "event-driven per arm"
+  interim_analyses:
+    - number: 1
+      endpoint: FFS
+      information_fraction: 0.33
+      action: "lack-of-benefit drop"
+    - number: 2
+      endpoint: FFS
+      information_fraction: 0.67
+    - number: 3
+      endpoint: FFS
+      information_fraction: 1.0
+    - number: 4
+      endpoint: OS
+      information_fraction: 1.0
+    spending: "MAMS boundaries via UK MRC nstage software"
+    futility: "Pre-specified lack-of-benefit boundaries at each FFS stage"
+
+expected:
+  sample_size_total: 11000   # approx cumulative across arms
+  events_target_per_arm: "per-arm event target computed from MAMS planning"
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 5
+  notes: |
+    Flagship MAMS platform in oncology. Intermediate FFS endpoint used
+    at stages 1-3 for lack-of-benefit drops; OS reserved for final
+    efficacy. Multiple arms have reported benefit (docetaxel, abiraterone,
+    RT-to-primary). Platform runs since 2005; control arm evolves with
+    SOC. Uses UK MRC nstage software for boundary computation.
+
+r_packages:
+  - MAMS::mams
+  - nstage   # UK MRC CTU, used internally
+  - mvtnorm
+
+tags:
+  - prostate-cancer
+  - mams-flagship
+  - platform-trial
+  - uk-mrc
+  - oncology
+  - intermediate-endpoint-ffs
+  - final-endpoint-os
+  - real-trial
+
+caveats: |
+  Platform evolution over 15+ years: arms added, SOC changed, control
+  arm randomization shifted. Strong FWER is controlled per-comparison
+  (each arm vs its contemporary control subset). FFS surrogacy for OS
+  is moderate — trial SAP explicitly reserves final efficacy claims
+  for OS. Open-label; PSA-based FFS is objective so bias risk is low.
+  Primary reference is Sydes 2009 design paper; subsequent publications
+  per arm (James 2016 for docetaxel/zol, 2017 for abiraterone, etc.).

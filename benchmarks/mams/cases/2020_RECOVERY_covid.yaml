@@ -1,0 +1,92 @@
+id: 2020_RECOVERY_covid
+family: mams
+source:
+  kind: published-trial
+  citation: "RECOVERY Collaborative Group. Dexamethasone in hospitalized patients with Covid-19. N Engl J Med. 2021;384(8):693-704."
+  doi: "10.1056/NEJMoa2021436"
+  nct_id: "ISRCTN50189673"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa2021436"
+
+design:
+  indication: "Hospitalized COVID-19, adults and children"
+  population: "Hospitalized with suspected or confirmed SARS-CoV-2 infection"
+  arms:
+    - name: "usual care (control, shared across comparisons)"
+      allocation: 1
+    - name: "dexamethasone 6 mg daily × 10 days"
+      allocation: 1
+    - name: "hydroxychloroquine"
+      allocation: 1
+    - name: "lopinavir-ritonavir"
+      allocation: 1
+    - name: "azithromycin"
+      allocation: 1
+    - name: "tocilizumab"
+      allocation: 1
+    - name: "convalescent plasma"
+      allocation: 1
+    - name: "aspirin"
+      allocation: 1
+    - name: "colchicine"
+      allocation: 1
+    - name: "baricitinib"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "28-day all-cause mortality"
+    measurement_time: "day 28"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    control_mortality: 0.20
+    rr_target: 0.80   # i.e., target 4 percentage point absolute reduction
+  accrual:
+    duration_months: "ongoing; rolling per-arm"
+  followup:
+    planned_months: 1
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+      action: "DMC review with lack-of-benefit drop option"
+    - number: 2
+      information_fraction: 1.0
+    spending: "MAMS boundaries via bespoke UK MRC CTU code; Bonferroni-like adjustment for FWER"
+    futility: "Pre-specified lack-of-benefit drop per arm"
+
+expected:
+  sample_size_total: 47000   # cumulative enrollment through mid-2022
+  events_per_arm_target: "arm-specific; ~2000 events for primary efficacy arms"
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Largest COVID-19 Phase 3 trial. Radical operational simplicity
+    (minimal eCRF, routine NHS data linkage for mortality) enabled
+    rapid pandemic-era recruitment. MAMS platform approach identified
+    effective (dexamethasone, tocilizumab, baricitinib) and ineffective
+    (hydroxychloroquine, lopinavir-ritonavir, convalescent plasma,
+    aspirin, colchicine) therapies at unprecedented speed.
+
+r_packages:
+  - MAMS::mams
+  - nstage   # UK MRC CTU
+
+tags:
+  - covid-19
+  - pandemic-platform
+  - mams
+  - mortality-primary
+  - open-label
+  - pragmatic-trial
+  - dexamethasone
+  - real-trial
+
+caveats: |
+  Open-label design is acceptable for mortality primary (objective) but
+  secondary symptom-based outcomes carry bias risk. Arm-specific FWER
+  control via Bonferroni-like adjustment is conservative; some argued
+  for relaxed multiplicity given pandemic urgency. The operational
+  model (minimal CRF, routine data) is a key lesson — not the stats.
+  Full RECOVERY protocol covers multiple later additions (Paxlovid,
+  molnupiravir, empagliflozin, etc.) beyond those listed above.

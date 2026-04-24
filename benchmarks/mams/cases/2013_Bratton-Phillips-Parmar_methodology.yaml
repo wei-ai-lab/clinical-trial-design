@@ -1,0 +1,88 @@
+id: 2013_Bratton-Phillips-Parmar_methodology
+family: mams
+source:
+  kind: methodology-paper
+  citation: "Bratton DJ, Phillips PPJ, Parmar MKB. A multi-arm multi-stage clinical trial design for binary outcomes with application to tuberculosis. BMC Medical Research Methodology. 2013;13:139."
+  doi: "10.1186/1471-2288-13-139"
+
+design:
+  indication: "Pulmonary tuberculosis treatment — illustrative MAMS with binary endpoint"
+  population: "Newly diagnosed pulmonary TB"
+  arms:
+    - name: "experimental regimen 1"
+      allocation: 1
+    - name: "experimental regimen 2"
+      allocation: 1
+    - name: "experimental regimen 3"
+      allocation: 1
+    - name: "standard RHZE (control)"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Sputum culture-negative at 8 weeks"
+    measurement_time: "week 8"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    p_control: 0.60
+    p_experimental_target: 0.75
+    risk_difference: 0.15
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 2
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.33
+      action: "lack-of-benefit drop"
+    - number: 2
+      information_fraction: 0.67
+      action: "lack-of-benefit drop"
+    - number: 3
+      information_fraction: 1.0
+    spending: "MAMS boundaries (OBF-like) via MAMS R package"
+  adaptation:
+    type: "MAMS with pre-specified boundaries"
+    method: "Bratton-Phillips-Parmar binary-outcome MAMS"
+    k_experimental_arms: 3
+    j_stages: 3
+
+expected:
+  sample_size_per_arm: 300
+  sample_size_total: 1200
+  critical_values_example:
+    u1: 3.51
+    u2: 2.93
+    u3: 2.26
+  tolerance:
+    sample_size_pct: 3
+  notes: |
+    Canonical binary-endpoint MAMS methodology, extending Royston-Parmar
+    TTE MAMS (STAMPEDE) to binary primaries. Widely cited template for
+    TB Phase 3 trials (REMoxTB, STREAM, STAND). Multivariate-normal
+    boundary computation is accurate for N ≥ 50 per arm per stage with
+    moderate event rates (0.2-0.8). Expected N savings vs parallel Phase
+    3s: 25-40%.
+
+r_packages:
+  - MAMS::mams
+  - mvtnorm
+  - simtrial
+
+tags:
+  - methodology-canonical
+  - mams-binary
+  - tuberculosis
+  - bratton-phillips-parmar
+  - infectious-disease
+  - uk-mrc
+
+caveats: |
+  Binary MAMS requires pre-specified effect-size scale (risk difference,
+  odds ratio, log-RR); each gives slightly different boundaries. Most
+  applications use risk difference for interpretability. For very small
+  or very large p (< 0.1 or > 0.9), the multivariate-normal approximation
+  loses accuracy — simulation validation recommended. TB case is the
+  most common real-world application outside oncology.
