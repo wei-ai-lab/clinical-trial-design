@@ -1,0 +1,166 @@
+id: 2014_Schmidli_robust-MAP
+family: bayesian
+source:
+  kind: methodology-paper
+  citation: "Schmidli H, Gsteiger S, Roychoudhury S, O'Hagan A, Spiegelhalter D, Neuenschwander B. Robust meta-analytic-predictive priors in clinical trials with historical control information. Biometrics. 2014 Dec;70(4):1023-32. Extended to EXNEX (Neuenschwander-Wandel-Roychoudhury-Schmidli 2016) for non-exchangeable cases."
+
+design:
+  indication: "Confirmatory or Phase 2/3 trials with substantial historical control information (rare disease, pediatric extrapolation, platform control)"
+  population: "Trials where a fully randomized concurrent control is ethically or practically difficult, but relevant historical control data exist"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "concurrent control (smaller N, supplemented by MAP prior)"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Continuous, binary, time-to-event; Schmidli's methodology is endpoint-agnostic"
+    measurement_time: "per primary endpoint"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    methodology: "Robust Meta-Analytic-Predictive (MAP) prior construction with a weight on an uninformative mixture component"
+    map_construction: |
+      (1) Historical control trials k = 1, 2, ..., K provide summary
+          statistics on control outcome.
+      (2) Fit a random-effects meta-analysis (normal-normal hierarchical
+          model) on log-odds / hazard / mean: between-trial τ²
+          quantifies heterogeneity.
+      (3) Predictive distribution for the new trial's control
+          parameter: MAP prior p_MAP(θ).
+    robustification: |
+      Mix the MAP prior with a weak uninformative component at
+      weight w:
+        p_robust(θ) = (1 - w) × p_MAP(θ) + w × p_vague(θ)
+      Typical w = 0.10-0.30 to hedge against MAP/current-trial
+      discrepancy (prior-data conflict).
+    exnex_extension: |
+      EXNEX (Neuenschwander-Wandel-Roychoudhury-Schmidli 2016)
+      extends MAP to the multi-stratum basket setting where
+      cohorts may or may not be exchangeable. Each cohort has a
+      probability of being from the exchangeable pool (borrowing)
+      vs being non-exchangeable (standalone).
+    effective_sample_size: "MAP prior's ESS expressed in equivalent 'prior patients' — influences how much concurrent control N can be reduced"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **Schmidli et al. 2014 (Biometrics)** established the **robust
+    MAP prior framework** as a mainstream tool for incorporating
+    historical control information in clinical trials. Extended by
+    EXNEX (2016) for basket-trial borrowing.
+
+    **Core innovation**:
+    - MAP prior (Neuenschwander 2010, in corpus) captures historical
+      evidence in a predictive distribution on the control parameter.
+    - **Robustification** with a weakly informative mixture component
+      protects against prior-data conflict — if current trial data
+      disagree with historical, the robust prior downweights the
+      MAP component.
+
+    **Prior-data conflict handling**:
+    - Mixture weight w on the weak component quantifies how much
+      'escape' from the MAP prior is allowed.
+    - Under prior-data agreement: effective ESS ≈ MAP ESS.
+    - Under prior-data conflict: effective ESS → 0, behavior
+      approaches purely frequentist.
+
+    **Sample-size implications**:
+    - Effective historical 'borrowing' reduces required concurrent
+      control N by ~ 20-50% typically.
+    - Depends on MAP ESS relative to current trial N.
+    - Required simulation-based sizing under multiple true-effect
+      scenarios.
+
+    **EXNEX extension (2016)**:
+    - For basket trials with K cohorts, each cohort can either:
+      (i) borrow strength from pool (exchangeable), or
+      (ii) stand alone (non-exchangeable).
+    - Probability of exchangeability estimated from data.
+    - Reduces BHM shrinkage where biologically unreasonable.
+
+    **Regulatory acceptance**:
+    - **Pediatric extrapolation** (Gamalo-Siebers 2017, in corpus):
+      robust MAP standard for leveraging adult data.
+    - **Rare disease trials**: MAP for historical control when
+      concurrent RCT not feasible.
+    - **FDA 2018 Complex Innovative Designs (CID) pilot**: several
+      accepted submissions used MAP / EXNEX.
+    - **EMA**: similar pragmatic acceptance for rare disease.
+
+    **Real applications**:
+    - **Dalbavancin** for bacterial skin infections (pediatric
+      extrapolation from adult).
+    - **Pertuzumab** pediatric breast cancer (MAP from adult data).
+    - Several platform trials (RECOVERY, REMAP-CAP components)
+      use MAP-style borrowing for ongoing control.
+    - Pediatric anesthesia and HIV trials with MAP on adult data.
+
+r_packages:
+  - RBesT (Novartis — Robust Bayesian Evidence Synthesis Tool,
+    canonical implementation)
+  - bhmbasket (Bayesian hierarchical basket)
+  - rstanarm (Bayesian fitting)
+  - brms (multilevel Bayesian)
+  - psborrow (power prior / commensurate prior variants)
+
+tags:
+  - schmidli
+  - neuenschwander
+  - robust-map
+  - meta-analytic-predictive
+  - exnex
+  - historical-borrowing
+  - rare-disease
+  - pediatric-extrapolation
+  - methodology-canonical
+  - bayesian
+
+caveats: |
+  Robust MAP and EXNEX have become mainstream but require
+  significant methodological judgment:
+
+  - **Between-trial heterogeneity τ²**: the most influential
+    parameter. Over-specifying τ² reduces borrowing; under-
+    specifying inflates ESS. Sensitivity analyses essential.
+  - **Mixture weight w**: calibration via simulation under realistic
+    prior-data conflict scenarios.
+  - **Historical data quality**: MAP assumes historical trials are
+    comparable. Secular drift, changing SoC, different populations
+    all threaten validity.
+  - **Extrapolation vs interpolation**: MAP strongest when current
+    population close to historical; weaker for extrapolation to
+    pediatrics or rare disease.
+
+  Related methodology:
+  - **Power prior** (Ibrahim-Chen 2000): raises historical likelihood
+    to power α ∈ [0,1]. Simpler but less principled than MAP.
+  - **Commensurate prior** (Hobbs-Carlin 2011): smooth transition
+    between borrowing and not.
+  - **Bayesian model averaging**: average across several priors with
+    different amounts of historical weight.
+  - **Dynamic borrowing**: trial-specific borrowing based on
+    observed concordance.
+
+  Operational tools:
+  - **RBesT**: Novartis-maintained canonical implementation.
+  - **psborrow**: commensurate prior variants.
+  - **bhmbasket**: BHM + EXNEX for basket trials.
+  - **BayesLogit, rstan**: custom Bayesian fitting.
+
+  Current research directions:
+  - **Prior-data conflict diagnostic** via posterior predictive
+    checks (PPC) — assess whether to borrow.
+  - **Scaled-information borrowing**: calibrated ESS based on
+    actual versus expected observed variance.
+  - **Platform-specific MAP**: ongoing trials continually update
+    control prior (RECOVERY, REMAP-CAP).

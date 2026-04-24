@@ -1,0 +1,143 @@
+id: 1994_Thall-Simon_bayesian-monitoring
+family: bayesian
+source:
+  kind: methodology-paper
+  citation: "Thall PF, Simon R. Practical Bayesian guidelines for phase IIB clinical trials. Biometrics. 1994 Jun;50(2):337-49. Also: Thall PF, Simon R, Estey EH. Bayesian sequential monitoring designs for single-arm clinical trials with multiple outcomes. Stat Med. 1995 Feb 15;14(4):357-79."
+
+design:
+  indication: "Originally oncology Phase 2B single-arm and small randomized trials; methodology applies broadly"
+  population: "Single-arm or two-arm Phase 2 trials with continuous interim decision-making"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "(optional) historical or concurrent control"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Binary response / event rate (typical Phase 2); extends to time-to-event and continuous"
+    measurement_time: "short-term response (typical 4-12 weeks for oncology)"
+  comparison: superiority (vs historical standard)
+  sidedness: 1
+  alpha: null
+  power: null
+  effect:
+    methodology: "Bayesian continuous / frequent interim monitoring with posterior probability stopping rules"
+    prior: "Conjugate beta prior for binary endpoint; often informative (based on historical response rates)"
+    stopping_rules: |
+      Continuous stopping based on posterior probabilities:
+      - Futility: P(p > p0 | data) < δ_fut (e.g., < 0.05)
+      - Superiority: P(p > p0 | data) > δ_sup (e.g., > 0.95)
+      where p0 is the target response rate (null).
+    type_i_calibration: "Frequentist OC calibrated via simulation — choose thresholds to achieve desired α and power under specified scenarios"
+    key_advantage: "Continuous monitoring without α-penalty scaling (unlike frequentist GS with spending functions)"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **Thall-Simon (1994 Biometrics) and Thall-Simon-Estey (1995
+    Stat Med)** are foundational papers for **Bayesian continuous
+    interim monitoring** in Phase 2 oncology trials. Widely adopted
+    as the standard for MD Anderson single-arm Phase 2 protocols.
+
+    **Core framework**:
+    - Specify a beta prior on response rate p.
+    - Enroll patients one at a time.
+    - After each patient, update posterior p | data.
+    - Check stopping rules:
+      - Futility: P(p > p0 | data) < δ_fut.
+      - Superiority: P(p > p0 | data) > δ_sup.
+    - Enrol until stopping rule triggered or max N reached.
+
+    **Example (binary response)**:
+    - Target p1 = 0.30, null p0 = 0.10.
+    - Prior: Beta(0.5, 4.5) — sceptical.
+    - Stopping: futility if P(p > 0.10 | data) < 0.05;
+                  superiority if P(p > 0.30 | data) > 0.90.
+    - Calibrated via simulation to achieve type I = 0.05, power = 0.80.
+
+    **Typical sample-size behavior**:
+    - N from 20-50 for single-arm Phase 2.
+    - Expected N under H0: often < 0.7 × max N (due to early stop).
+    - Expected N under H1: often close to max N.
+
+    **Extensions** (Thall-Simon-Estey 1995):
+    - Multiple outcomes (response AND toxicity) → bivariate
+      beta-binomial monitoring.
+    - Toxicity-response trade-off (dose-finding / CRM-like setting).
+    - Response-adaptive randomization variant.
+
+    **Relationship to other Bayesian methodology**:
+    - **CRM (continual reassessment, O'Quigley 1990)**: dose-finding.
+    - **Posterior predictive probability (PPP)** of success at final
+      analysis: modern alternative monitoring rule.
+    - **I-SPY2** (in corpus) uses PPP-style monitoring with RAR.
+    - **BATTLE** (in corpus) Bayesian adaptive randomization
+      building on Thall-Simon foundations.
+
+    **Regulatory acceptance**:
+    - Widely accepted in academic oncology Phase 2.
+    - Less common in confirmatory Phase 3.
+    - FDA 2010 Bayesian Devices Guidance (in corpus) formalized
+      acceptance for medical devices.
+    - Phase 2 Bayesian monitoring standard in NCI co-operative
+      groups and academic centers.
+
+r_packages:
+  - bayesDP (Bayesian Phase 2/3 design)
+  - bhmbasket (Bayesian hierarchical for multi-cohort)
+  - ph2bayes (simple Phase 2 Bayesian designs)
+  - MCPMod (Bayesian dose-finding)
+  - TrialSize (frequentist and Bayesian sizes)
+  - RBesT (Bayesian evidence synthesis)
+
+tags:
+  - thall-simon
+  - bayesian-monitoring
+  - phase-2
+  - continuous-monitoring
+  - posterior-probability
+  - oncology
+  - methodology-foundational
+
+caveats: |
+  Thall-Simon Bayesian monitoring is the canonical Phase 2 framework
+  but has key practical considerations:
+
+  - **Prior elicitation**: sceptical, enthusiastic, or reference
+    priors based on historical data. Sensitivity analysis essential.
+  - **Stopping threshold calibration**: simulation under H0 and H1
+    to tune δ_fut and δ_sup to achieve target type I and power.
+  - **Type I vs type II trade-off**: continuous monitoring without
+    α-adjustment comes at cost of operational complexity.
+  - **Reporting**: frequentist OC characteristics usually reported
+    alongside Bayesian stopping rules (hybrid reporting).
+
+  Extensions and modern variants:
+  - **Predictive probability (Lee-Liu 2008)**: P(success at final |
+    current data); more intuitive than posterior.
+  - **Hybrid Bayesian/frequentist**: Bayesian monitoring with
+    frequentist final hypothesis test.
+  - **RBesT / robust MAP** (Schmidli 2014, in corpus): prior
+    construction from historical data.
+  - **Bayesian adaptive randomization** (Thall-Wathen 2007):
+    randomization probability depends on posterior.
+
+  Real applications:
+  - **MD Anderson Phase 2 program**: standard Bayesian monitoring
+    on most single-arm Phase 2 oncology trials.
+  - **BATTLE / BATTLE-2** (in corpus).
+  - **I-SPY2** (in corpus) — PPP-based monitoring.
+  - **Ibrutinib Phase 2** in CLL (Byrd et al.) used this framework.
+
+  Software ecosystem:
+  - **bayesDP**: Bayesian Phase 2/3 simulation.
+  - **ph2bayes**: simple Phase 2 designs.
+  - **RBesT**: evidence synthesis.
+  - Commercial: **East Bayes** (Cytel), **FACTS** (LumenIR).
