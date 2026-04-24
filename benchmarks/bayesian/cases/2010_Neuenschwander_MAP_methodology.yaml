@@ -1,0 +1,69 @@
+id: 2010_Neuenschwander_MAP_methodology
+family: bayesian
+source:
+  kind: methodology-paper
+  citation: "Neuenschwander B, Capkun-Niggli G, Branson M, Spiegelhalter DJ. Summarizing historical information on controls in clinical trials. Clin Trials. 2010;7(1):5-18."
+  doi: "10.1177/1740774509356002"
+
+design:
+  indication: "any (methodology)"
+  population: "Phase 3 with historical control data available"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "concurrent control (augmented by MAP prior)"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Historical-control-borrowing via meta-analytic-predictive (MAP) prior"
+    measurement_time: "any"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    effective_historical_sample_size: 20
+    between_trial_tau_prior: "HalfNormal(0, 1)"
+    robust_mixture_weight: 0.20
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 12
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 10
+  notes: |
+    Foundational paper for Bayesian historical-control borrowing via
+    Meta-Analytic-Predictive (MAP) priors. Hierarchical model:
+      θ_k ~ Normal(μ, τ²)    (historical trial parameters)
+      μ ~ weakly informative
+      τ ~ Half-Normal (between-trial heterogeneity)
+    MAP prior on new trial control: π(θ_new) = ∫ Normal(μ, τ²) p(μ, τ | hist)
+    Robust extension (Schmidli 2014): π_robust = w·MAP + (1-w)·vague
+    to guard against prior-data conflict. Implemented in `RBesT` R
+    package (Novartis open-source). Regulatory use: FDA, EMA for
+    pediatric extrapolation, device trials, rare disease.
+
+r_packages:
+  - RBesT
+  - rstan
+  - brms
+
+tags:
+  - map-prior
+  - historical-control-borrowing
+  - meta-analytic-predictive
+  - robust-prior
+  - bayesian
+  - methodology-canonical
+
+caveats: |
+  Effective sample size of MAP prior depends on τ — high heterogeneity
+  reduces borrowing. Robust mixture with vague component (weight w=0.1-0.3)
+  guards against prior-data conflict. Regulatory acceptance requires
+  pre-specified frequentist operating characteristic simulation under
+  both prior-consistent and prior-inconsistent truth. EMA pediatric
+  extrapolation reflection paper (2018) explicitly endorses MAP.

@@ -1,0 +1,79 @@
+id: 2011_BATTLE_lung-cancer
+family: bayesian
+source:
+  kind: published-trial
+  citation: "Kim ES, Herbst RS, Wistuba II, et al. The BATTLE trial: personalizing therapy for lung cancer. Cancer Discov. 2011;1(1):44-53."
+  doi: "10.1158/2159-8290.CD-10-0010"
+  nct_id: "NCT00409968"
+
+design:
+  indication: "Pre-treated refractory NSCLC"
+  population: "Refractory NSCLC, any line post-chemo, tissue available for biomarker"
+  arms:
+    - name: "erlotinib"
+      allocation: "adaptive"
+    - name: "vandetanib"
+      allocation: "adaptive"
+    - name: "erlotinib + bexarotene"
+      allocation: "adaptive"
+    - name: "sorafenib"
+      allocation: "adaptive"
+  endpoint:
+    type: binary
+    description: "8-week disease control rate (DCR)"
+    measurement_time: "8 weeks"
+  comparison: "multi-arm adaptive Bayesian"
+  sidedness: 1
+  alpha: null
+  power: null
+  effect:
+    target_dcr: 0.50
+    historical_dcr: 0.30
+    adaptive_rule: "Thompson-sampling-like allocation proportional to posterior Pr(arm is best in biomarker group)"
+    biomarker_groups:
+      - "EGFR mutation / amplification"
+      - "KRAS/BRAF mutation"
+      - "VEGF/VEGFR-2"
+      - "RXR-α / cyclin D1"
+      - "all-markers-negative"
+  accrual:
+    duration_months: 40
+  followup:
+    planned_months: 2
+
+expected:
+  sample_size_total: 255
+  events_total: null
+  tolerance:
+    sample_size_pct: 5
+  notes: |
+    Seminal Bayesian adaptive biomarker trial — 4 treatments × 5
+    biomarker groups, with Bayesian adaptive randomization
+    proportional to posterior probability of best arm within group.
+    Run-in of ~20 equal-allocation then adaptive thereafter. First
+    140 randomized equally, next 115 adaptively. Observed overall
+    DCR ~46%, establishing platform-biomarker adaptive paradigm in
+    solid tumors. Framework directly inspired I-SPY2, Lung-MAP.
+
+r_packages:
+  - RBesT
+  - BayesCT
+  - rstan
+  - brms
+
+tags:
+  - nsclc
+  - biomarker-adaptive
+  - bayesian
+  - response-adaptive-randomization
+  - thompson-sampling
+  - platform-biomarker
+  - phase-2-pivotal
+
+caveats: |
+  BATTLE was formally Phase 2 (not pivotal Phase 3) but is the
+  reference Bayesian-adaptive biomarker design that has driven
+  Phase 3 successors (Lung-MAP, I-SPY2, FOCUS4). Non-concurrent
+  controls and within-trial adaptive allocation complicate type I
+  error control — operating characteristics established by
+  simulation rather than closed-form alpha.

@@ -1,0 +1,73 @@
+id: 2017_Gamalo-Siebers_pediatric-extrapolation
+family: bayesian
+source:
+  kind: methodology-paper
+  citation: "Gamalo-Siebers M, Savic J, Basu C, et al. Statistical modeling for Bayesian extrapolation of adult clinical trial information in pediatric drug evaluation. Pharm Stat. 2017;16(4):232-249."
+  doi: "10.1002/pst.1807"
+
+design:
+  indication: "pediatric (methodology)"
+  population: "Pediatric population with adult indication approved"
+  arms:
+    - name: "experimental"
+      allocation: 2
+    - name: "control (augmented by adult-data-derived prior)"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Power prior / commensurate prior borrowing from adult Phase 3"
+    measurement_time: "any"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    alpha_power_prior: 0.5
+    mechanism_similar: true
+    exposure_response_extrapolation: true
+  accrual:
+    duration_months: 36
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 60
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    Industry-wide methodology review for Bayesian pediatric
+    extrapolation. Power prior:
+      π(θ | adult data) ∝ L(θ | adult)^α · π₀(θ)
+    where α ∈ [0, 1] is borrowing strength. Commensurate prior
+    (Hobbs 2011) extension allows data-driven α (heterogeneity
+    between adult and pediatric). Typical pediatric Phase 3 N is
+    30-100 after borrowing, vs 300+ without. Regulatory framework:
+    adult PK, efficacy, and safety assumed to translate when
+    biological similarity, exposure-response curve, and disease
+    progression are comparable.
+
+r_packages:
+  - RBesT
+  - bayesDP
+  - NPP
+  - rstan
+
+tags:
+  - pediatric
+  - extrapolation
+  - power-prior
+  - commensurate-prior
+  - adult-borrowing
+  - regulatory-framework
+  - bayesian
+  - methodology-canonical
+
+caveats: |
+  Decision framework: (1) assess biological similarity, (2) quantify
+  PK similarity, (3) decide whether to borrow efficacy, safety, or
+  both, (4) pre-specify α or adaptive α rule, (5) simulate frequentist
+  OC. EMA 2018 reflection paper aligns with this approach. FDA
+  guidance (2018) on pediatric studies echoes. Tension: less data
+  → larger effective α → more borrowing → vulnerability to adult-
+  pediatric heterogeneity.

@@ -1,0 +1,70 @@
+id: 2010_Berry-bayesian-adaptive_textbook
+family: bayesian
+source:
+  kind: textbook
+  citation: "Berry SM, Carlin BP, Lee JJ, Müller P. Bayesian Adaptive Methods for Clinical Trials. Chapman & Hall/CRC, 2010. ISBN 9781439825488."
+
+design:
+  indication: "any (textbook framework)"
+  population: "Phase 2 / 3 adaptive trial"
+  arms:
+    - name: "experimental"
+      allocation: "adaptive"
+    - name: "control"
+      allocation: "adaptive"
+  endpoint:
+    type: any
+    description: "Posterior-probability-based adaptive design; RAR, early stopping, adaptive sample size"
+    measurement_time: "any"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.025
+  power: 0.90
+  effect:
+    decision_threshold: "Pr(θ > δ | data) > 0.95 for success"
+    futility_threshold: "Pr(θ > δ | data) < 0.05"
+    interim_cadence: "block-based or continuous"
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 12
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    Reference textbook for Bayesian adaptive clinical trial design.
+    Covers: posterior-probability decision rules, response-adaptive
+    randomization (RAR), predictive-probability stopping, hierarchical
+    modeling across subgroups, Phase 1 dose-finding (CRM, EffTox),
+    Phase 2 screening (predictive probability of Phase 3 success),
+    Phase 3 confirmatory with pre-specified posterior rules. Used
+    as design reference in FDA pre-Bayesian-adaptive meetings
+    (CDRH Bayesian guidance 2010 draws heavily on this book).
+
+r_packages:
+  - BayesCT
+  - rstan
+  - brms
+  - RBesT
+  - FACTS (commercial, Berry Consultants)
+
+tags:
+  - bayesian-adaptive
+  - posterior-probability
+  - rar
+  - adaptive-sample-size
+  - crm
+  - predictive-probability
+  - textbook-canonical
+  - methodology-canonical
+
+caveats: |
+  Bayesian adaptive designs require simulation-based operating
+  characteristic verification for regulatory acceptance; closed-form
+  α/β rarely available. Berry et al. textbook includes simulation
+  code in R and SAS. Key insight: Bayesian decision framework unifies
+  Phase 1/2/3, where frequentist framework fragments into different
+  tools. Tradeoff: RAR can create confounding with time trends.

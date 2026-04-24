@@ -1,0 +1,77 @@
+id: 2016_I-SPY2_breast-cancer
+family: bayesian
+source:
+  kind: published-trial
+  citation: "Park JW, Liu MC, Yee D, et al. Adaptive randomization of neratinib in early breast cancer (I-SPY 2 TRIAL). N Engl J Med. 2016;375(1):11-22."
+  doi: "10.1056/NEJMoa1513750"
+  nct_id: "NCT01042379"
+
+design:
+  indication: "High-risk early-stage breast cancer (neoadjuvant)"
+  population: "Locally advanced breast cancer, ≥ 2.5 cm, no metastases"
+  arms:
+    - name: "experimental arm + standard (e.g., neratinib)"
+      allocation: "adaptive"
+    - name: "standard (anthracycline + taxane ± trastuzumab)"
+      allocation: "reference"
+  endpoint:
+    type: binary
+    description: "Pathologic complete response (pCR) at surgery"
+    measurement_time: "at definitive surgery post-neoadjuvant"
+  comparison: "Bayesian posterior predictive probability of Phase 3 success"
+  sidedness: 1
+  alpha: null
+  power: null
+  effect:
+    graduation_threshold: 0.85
+    futility_threshold: 0.10
+    target_pcr_hr2_positive: 0.50
+    target_pcr_her2_negative_hr_positive: 0.20
+    target_pcr_tnbc: 0.40
+    biomarker_signatures:
+      - "HR+ / HER2-"
+      - "HR+ / HER2+"
+      - "HR- / HER2+"
+      - "HR- / HER2- (TNBC)"
+      - "MammaPrint high-1 / high-2"
+  accrual:
+    duration_months: 60
+  followup:
+    planned_months: 0
+
+expected:
+  sample_size_total: 130
+  events_total: null
+  tolerance:
+    sample_size_pct: 10
+  notes: |
+    Adaptive platform Phase 2 screening trial feeding Phase 3. Key
+    Bayesian element: predictive probability that if the experimental
+    arm graduates to a 300-patient Phase 3 trial it would succeed
+    (Pr(success) from posterior). Graduation threshold 85%; futility
+    10% → drop. 10 biomarker signatures with within-signature
+    Bayesian adaptive randomization. Neratinib graduated for HR-/HER2+
+    with 85% pred. prob.; Phase 3 subsequently confirmed.
+
+r_packages:
+  - RBesT
+  - BayesCT
+  - rstan
+
+tags:
+  - breast-cancer
+  - neoadjuvant
+  - biomarker-adaptive
+  - graduation-futility
+  - bayesian
+  - posterior-predictive-probability
+  - platform
+  - phase-2-to-3
+
+caveats: |
+  I-SPY2 is Phase 2 screening feeding Phase 3 — the predictive
+  probability of Phase 3 success is the pivotal Bayesian element.
+  Arm-specific N varies (~50-150). Shared control across arms (with
+  time-trend adjustment). Platform framework successfully graduated
+  multiple drugs (pembro, olaparib, T-DM1, durvalumab) to Phase 3
+  approval.
