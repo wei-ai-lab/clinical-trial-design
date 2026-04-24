@@ -1,0 +1,104 @@
+id: 2006_Snapinn_nonbinding_futility
+family: group-sequential-futility
+source:
+  kind: methodology-paper
+  citation: "Snapinn S, Chen MG, Jiang Q, Koutsoukos T. Assessment of futility in clinical trials. Pharm Stat. 2006;5(4):273-281."
+  doi: "10.1002/pst.216"
+
+design:
+  indication: "any (methodology)"
+  population: "Group-sequential Phase 3 trial with non-binding futility boundary per DSMB discretion"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Any endpoint amenable to conditional power / predictive power analysis"
+    measurement_time: "per-interim and final"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    futility_rule: "Conditional power CP < 0.15-0.30 under design alternative OR predictive power PP < 0.10"
+    binding: false
+    type_I_preserved_under_override: true
+    power_loss_from_non_binding: "~1-3% vs binding for typical designs"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **Pragmatic methodology for non-binding futility in Phase 3 trials.**
+    Articulates the operational reality that DSMBs retain discretion
+    to continue a trial even when a formal futility rule is crossed
+    — particularly when:
+    - Safety signal not present.
+    - Secondary endpoints still trending favorably.
+    - External events (emerging standard-of-care, new evidence) alter
+      the risk-benefit of continuation.
+    - Pre-specified subgroup analysis may rescue the trial.
+
+    **Non-binding framework**:
+    - α-spending calculated as if futility boundary does NOT force
+      stopping — preserves type-I error under any DSMB override.
+    - Power is calculated as IF the DSMB WILL follow the futility
+      rule — provides sample size recommendations to sponsor.
+    - Operating characteristics simulated for both "stop as rule says"
+      and "override as a fraction of time" scenarios.
+
+    **Futility rules commonly used**:
+    (1) **Conditional power** CP < 15-30% under design alternative.
+    (2) **Predictive power** PP < 10% (Bayesian posterior-weighted CP).
+    (3) **β-spending** via Lan-DeMets analog to α-spending.
+    (4) **Hybrid**: "CP < 20% AND observed trend unfavorable" — DSMB-
+        guided.
+
+    **Regulatory acceptance**: FDA 2019 Adaptive Design Guidance
+    explicitly prefers non-binding futility for Phase 3 regulatory
+    submissions due to DSMB discretion concerns.
+
+r_packages:
+  - gsDesign::gsDesign (test.type = 4 for non-binding)
+  - rpact::getDesignGroupSequential (bindingFutility = FALSE)
+  - rpact::getConditionalPower
+  - gsDesign::gsCP
+  - ldbounds
+
+tags:
+  - snapinn
+  - non-binding-futility
+  - group-sequential
+  - methodology-canonical
+  - conditional-power
+  - predictive-power
+  - dsmb-discretion
+
+caveats: |
+  Non-binding futility is the de facto standard in modern Phase 3
+  trials (2010+). Binding futility is rare outside pre-specified
+  adaptive designs. Key FDA positions:
+  - Non-binding futility acceptable for regulatory filing; type-I
+    error preservation is automatic.
+  - DSMB charter should document discretion in interpreting futility
+    recommendations.
+  - Conditional power thresholds commonly 20-25% in CV trials, 10-20%
+    in oncology TTE trials.
+  Modern extensions:
+  - **Promising zone** (Mehta-Pocock 2011, in corpus): if CP in 0.30-
+    0.80, continue + re-estimate; if < 0.30, DSMB futility guidance;
+    if > 0.80, continue with planned N.
+  - **β-spending** futility: Lan-DeMets boundary on the β side,
+    symmetric with α-spending on the efficacy side.
+  Real-trial examples of non-binding futility that were invoked by
+  DSMB: ILLUMINATE (torcetrapib stopped for harm not pure futility),
+  AIM-HIGH (niacin stopped for futility after DSMB deliberation),
+  STRENGTH (omega-3 stopped for futility 2020).

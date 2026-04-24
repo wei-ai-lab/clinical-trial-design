@@ -1,0 +1,97 @@
+id: 1994_Pampallona-Tsiatis_binding_futility
+family: group-sequential-futility
+source:
+  kind: methodology-paper
+  citation: "Pampallona S, Tsiatis AA. Group sequential designs for one-sided and two-sided hypothesis testing with provision for early stopping in favor of the null hypothesis. J Stat Plan Inference. 1994;42:19-35."
+  doi: "10.1016/0378-3758(94)90187-2"
+
+design:
+  indication: "any (methodology)"
+  population: "Group-sequential Phase 3 trial with pre-specified binding futility (inner) boundary"
+  arms:
+    - name: "experimental"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Worked examples for continuous, binary, and survival endpoints"
+    measurement_time: "per-interim and final analysis"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    efficacy_boundary_family: "O'Brien-Fleming, Pocock, or Wang-Tsiatis"
+    futility_boundary_family: "Power-family inner boundary (parameter Δ controls shape)"
+    binding: true
+    information_fractions: "[0.33, 0.67, 1.00] typical 3-look design"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **Canonical methodology paper for binding futility in group-
+    sequential designs.** Introduces the "two-sided" inner-outer
+    boundary framework where the inner (futility) and outer
+    (efficacy) boundaries are both pre-specified and binding — i.e.,
+    crossing either terminates the trial.
+
+    **Key elements**:
+    - Power-family boundaries indexed by Δ ∈ [-0.5, 0.5]; Δ = 0.25
+      approximates Pocock, Δ = -0.5 approximates O'Brien-Fleming.
+    - Inner (futility) boundary mirrors efficacy boundary in sign
+      symmetry; when z-statistic falls below inner at any look,
+      stop for futility.
+    - **Binding** assumption: the calculation of α-spending assumes
+      that if the futility boundary is crossed, the trial stops.
+      If the DSMB overrides, type-I error is preserved below nominal
+      (conservative) but power is compromised.
+    - Separate power and α-spending functions jointly determine the
+      N required for given α, β.
+
+    This paper — together with Jennison-Turnbull (2000 textbook) —
+    established the theoretical framework for modern GS trials with
+    planned futility. Implemented in `rpact::getDesignGroupSequential`
+    (argument `futilityBounds`), `gsDesign::gsDesign` (sfupper /
+    sflower arguments), and `ldbounds`.
+
+r_packages:
+  - gsDesign::gsDesign (sfu / sfl arguments)
+  - rpact::getDesignGroupSequential (futilityBounds argument)
+  - ldbounds
+  - asd
+
+tags:
+  - pampallona-tsiatis
+  - binding-futility
+  - group-sequential
+  - methodology-canonical
+  - power-family-boundary
+  - inner-outer-boundary
+
+caveats: |
+  **Binding futility is rarely used in practice** despite theoretical
+  elegance. Reasons:
+  (1) DSMBs typically retain discretion to override futility
+      recommendations; binding futility constraints that discretion
+      and is considered overly rigid.
+  (2) Non-binding futility (Snapinn 2006, Chen et al. 2018) preserves
+      type-I error even if DSMB overrides, at a small power cost.
+  (3) Most Phase 3 protocols specify **non-binding** futility
+      boundaries that serve as DSMB guidance rather than automatic
+      stopping rules.
+
+  However, Pampallona-Tsiatis remains the theoretical reference for
+  what an optimal (most powerful) binding futility boundary looks
+  like under given α, β. Modern practice: design with Pampallona-
+  Tsiatis binding boundary as efficiency benchmark, then loosen to
+  non-binding for practical DSMB governance. The N difference is
+  typically 2-5% between binding and non-binding designs — small
+  enough that non-binding wins on operational grounds.
