@@ -1,0 +1,81 @@
+id: 1988_Thall-Simon-Ellenberg_drop-the-loser
+family: adaptive-selection
+source:
+  kind: methodology-paper
+  citation: "Thall PF, Simon R, Ellenberg SS. A two-stage design for choosing among several experimental treatments and a control in clinical trials. Biometrics. 1988;44(2):537-547."
+  doi: "10.2307/2531868"
+
+design:
+  indication: "Phase 3 binary endpoint, multi-arm — illustrative"
+  population: "K experimental arms + 1 control"
+  arms:
+    - name: "experimental 1"
+      allocation: 1
+    - name: "experimental 2"
+      allocation: 1
+    - name: "experimental 3"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Responder at fixed time"
+    measurement_time: "end of follow-up"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.85
+  effect:
+    p_control: 0.30
+    p_best_experimental: 0.45
+    risk_difference: 0.15
+  accrual:
+    duration_months: 18
+  followup:
+    planned_months: 6
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+      action: "Select experimental arm with largest observed response"
+    - number: 2
+      information_fraction: 1.0
+    spending: "Bonferroni-adjusted critical value (Thall-Simon-Ellenberg tables)"
+  adaptation:
+    type: "treatment selection"
+    method: "Thall-Simon-Ellenberg drop-the-loser"
+    k_experimental_arms: 3
+    selection_rule: "pick arm with highest observed response at end of stage 1"
+
+expected:
+  sample_size_per_arm_stage1: 50
+  sample_size_stage2: 200
+  sample_size_total: 400
+  critical_value: 2.14    # Thall-Simon-Ellenberg table for K=3
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    Foundational two-stage selection design. Stage 1 randomizes to K
+    experimental arms + control; stage 2 continues only the best-observed
+    arm vs control. Critical value 2.14 (vs naive 1.96) reflects the
+    Bonferroni-style adjustment for the selection process. Widely cited
+    as the point of departure for modern adaptive-selection methodology.
+
+r_packages:
+  - asd::treatsel.sim
+  - rpact::getDesignInverseNormal
+
+tags:
+  - methodology-canonical
+  - drop-the-loser
+  - treatment-selection
+  - thall-simon-ellenberg
+  - foundational
+  - binary-endpoint
+
+caveats: |
+  The Bonferroni-style critical value is conservative relative to
+  Dunnett-adjusted tests that account for correlation induced by the
+  shared control arm. Modern combination-test methods (Bauer-Kieser,
+  Bretz et al.) offer better efficiency with equivalent α control.
+  Thall-Simon-Ellenberg's main strength is conceptual simplicity;
+  reproduce for pedagogy and benchmarking.

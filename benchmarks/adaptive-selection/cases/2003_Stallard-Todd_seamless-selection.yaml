@@ -1,0 +1,81 @@
+id: 2003_Stallard-Todd_seamless-selection
+family: adaptive-selection
+source:
+  kind: methodology-paper
+  citation: "Stallard N, Todd S. Sequential designs for phase III clinical trials incorporating treatment selection. Statistics in Medicine. 2003;22(5):689-703."
+  doi: "10.1002/sim.1362"
+
+design:
+  indication: "Phase 3 oncology TTE — illustrative seamless II/III"
+  population: "Multi-arm vs shared control"
+  arms:
+    - name: "experimental 1"
+      allocation: 1
+    - name: "experimental 2"
+      allocation: 1
+    - name: "experimental 3"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Overall survival"
+    measurement_time: "time-to-event"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.85
+  effect:
+    hr_per_arm: 0.70
+    control_median_months: 12
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 24
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.4
+      action: "Efficacy / futility / selection; drop all but one experimental arm"
+    - number: 2
+      information_fraction: 1.0
+    spending: "Lan-DeMets OBF efficacy; HSD-like futility; inverse-normal combination for selected arm"
+  adaptation:
+    type: "treatment selection + group-sequential"
+    method: "Stallard-Todd seamless phase II/III"
+    k_experimental_arms: 3
+    selection_rule: "pick arm with largest z-statistic vs control at stage 1 interim"
+
+expected:
+  events_total: 420
+  sample_size_total: 800
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 3
+  notes: |
+    Combines group-sequential monitoring with treatment selection in a
+    single seamless Phase II/III design. Stage 1 data contributes to
+    the final test via inverse-normal combination. Efficacy and futility
+    stopping boundaries are pre-specified; selection rule picks the
+    best-observed arm. Template for many modern oncology and rare-disease
+    Phase 3 designs.
+
+r_packages:
+  - asd::treatsel.sim
+  - rpact::getDesignInverseNormal
+  - MAMS
+
+tags:
+  - methodology-canonical
+  - seamless-phase-ii-iii
+  - treatment-selection
+  - group-sequential
+  - stallard-todd
+  - multi-arm
+
+caveats: |
+  Both the boundaries and the selection rule must be pre-specified in
+  SAP. Post-hoc selection or boundary adjustment inflates α. The design
+  shares a control arm efficiently across K experimental arms, which is
+  more patient-friendly than parallel Phase 3s. Real-world examples
+  include some IO combo trials where multiple backbone doses or
+  schedules are tested against standard of care.

@@ -1,0 +1,83 @@
+id: 2006_Bretz-Schmidli_seamless-ph-ii-iii
+family: adaptive-selection
+source:
+  kind: methodology-paper
+  citation: "Bretz F, Schmidli H, König F, Racine A, Maurer W. Confirmatory seamless phase II/III clinical trials with hypotheses selection at interim: general concepts. Biometrical Journal. 2006;48(4):623-634."
+  doi: "10.1002/bimj.200510232"
+
+design:
+  indication: "Phase 3 continuous endpoint dose-finding — illustrative"
+  population: "Multi-dose + placebo"
+  arms:
+    - name: "dose 1 (low)"
+      allocation: 1
+    - name: "dose 2"
+      allocation: 1
+    - name: "dose 3"
+      allocation: 1
+    - name: "dose 4 (high)"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: continuous
+    description: "Change from baseline on primary scale"
+    measurement_time: "week 12"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.85
+  effect:
+    mean_difference_per_dose: [0.2, 0.4, 0.6, 0.7]
+    standard_deviation: 1.0
+  accrual:
+    duration_months: 12
+  followup:
+    planned_months: 3
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.5
+      action: "Select subset of doses (e.g., top 2) to continue into stage 2"
+    - number: 2
+      information_fraction: 1.0
+    spending: "Inverse-normal combination test with closed testing"
+  adaptation:
+    type: "hypothesis/dose selection"
+    method: "Bretz-Schmidli combination test with closed testing principle"
+    k_experimental_arms: 4
+    selection_rule: "pre-specified — e.g., continue top 2 doses by observed effect"
+    combination_weights: "w₁ = w₂ = √(1/2), pre-specified"
+
+expected:
+  sample_size_stage1: 200
+  sample_size_stage2: 200
+  sample_size_total: 400
+  tolerance:
+    sample_size_pct: 3
+  notes: |
+    Canonical framework for seamless Phase II/III with flexible hypothesis
+    selection and strong FWER control via closed testing. Supports any
+    pre-specified selection rule — not just single-best-arm. Regulator-
+    accepted as a confirmatory Phase 3 design; widely used in dose-
+    finding across CNS, oncology, and rheumatology.
+
+r_packages:
+  - rpact::getDesignInverseNormal
+  - rpact::getSampleSizeMeans
+  - gMCP
+
+tags:
+  - methodology-canonical
+  - seamless-phase-ii-iii
+  - hypothesis-selection
+  - closed-testing
+  - combination-test
+  - dose-finding
+  - bretz-schmidli
+
+caveats: |
+  Closed testing for K arms requires 2^K − 1 intersection hypothesis
+  tests — computationally heavy for K > 4. Most real applications use
+  K = 2 or 3 doses/arms. Graphical multiplicity (Bretz-Maurer 2009)
+  can be overlaid to recycle α between hypotheses once one is rejected.
+  Weights and selection rule must be pre-specified before unblinding.

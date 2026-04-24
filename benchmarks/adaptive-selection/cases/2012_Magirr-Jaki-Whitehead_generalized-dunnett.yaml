@@ -1,0 +1,91 @@
+id: 2012_Magirr-Jaki-Whitehead_generalized-dunnett
+family: adaptive-selection
+source:
+  kind: methodology-paper
+  citation: "Magirr D, Jaki T, Whitehead J. A generalized Dunnett test for multi-arm multi-stage clinical studies with treatment selection. Biometrika. 2012;99(2):494-501."
+  doi: "10.1093/biomet/ass002"
+
+design:
+  indication: "Phase 3 oncology TTE — illustrative multi-arm multi-stage selection"
+  population: "Multi-arm vs shared control, 3-stage GS"
+  arms:
+    - name: "experimental 1"
+      allocation: 1
+    - name: "experimental 2"
+      allocation: 1
+    - name: "experimental 3"
+      allocation: 1
+    - name: "control"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Overall survival"
+    measurement_time: "time-to-event"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    hr_per_experimental_arm: 0.70
+    control_median_months: 10
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: 24
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.33
+      action: "Drop arms with z < 0; continue remainder"
+    - number: 2
+      information_fraction: 0.67
+      action: "Drop arms with z < drop boundary d₂; continue survivors"
+    - number: 3
+      information_fraction: 1.0
+    spending: "Generalized Dunnett exact critical values (multivariate normal)"
+  adaptation:
+    type: "treatment selection + MAMS"
+    method: "Magirr-Jaki-Whitehead generalized Dunnett"
+    k_experimental_arms: 3
+    j_stages: 3
+    selection_rule: "drop arms with z < 0 at each stage"
+
+expected:
+  events_total: 600
+  sample_size_total: 900
+  critical_values:
+    u1: 3.5
+    u2: 2.9
+    u3: 2.2
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 3
+  notes: |
+    Generalized Dunnett exact critical values exploit the positive
+    correlation induced by shared control arm, yielding more efficient
+    α control than Bonferroni or naive combination test. The MAMS R
+    package implements this method directly. Bridges adaptive-selection
+    and MAMS families in this corpus — the math is the same, but
+    emphasis here is on dropping arms vs keeping all through full GS.
+
+r_packages:
+  - MAMS::mams
+  - MAMS::mams.sim
+  - rpact::getDesignInverseNormal
+
+tags:
+  - methodology-canonical
+  - generalized-dunnett
+  - multi-arm-multi-stage
+  - treatment-selection
+  - magirr-jaki-whitehead
+  - mams-package
+  - modern-standard
+
+caveats: |
+  Exact critical values assume multivariate normal correlation of
+  z-statistics under H₀. For TTE endpoints with censoring, this is
+  approximate; simulation validation is standard practice. The MAMS
+  package handles boundary computation but requires specification of
+  K, J, and information fractions. Real-world Phase 3 MAMS with
+  selection is most common in STAMPEDE-style platform trials
+  (see mams and platform families for platform-specific patterns).
