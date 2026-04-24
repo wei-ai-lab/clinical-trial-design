@@ -1,0 +1,154 @@
+id: 2016_KEYNOTE-024_pembrolizumab_nsclc
+family: tte-nph
+source:
+  kind: design-paper
+  citation: "Reck M, Rodríguez-Abreu D, Robinson AG, et al. Pembrolizumab versus chemotherapy for PD-L1-positive non-small-cell lung cancer. N Engl J Med. 2016 Nov 10;375(19):1823-1833. Protocol published alongside as supplementary. Long-term: Reck M, Rodríguez-Abreu D, Robinson AG, et al. Updated analysis of KEYNOTE-024: pembrolizumab versus platinum-based chemotherapy for advanced non-small-cell lung cancer with PD-L1 tumor proportion score ≥50%. J Clin Oncol. 2019 Mar 1;37(7):537-546."
+
+design:
+  indication: "Treatment-naïve advanced (IV) or metastatic non-small-cell lung cancer with PD-L1 tumor proportion score (TPS) ≥ 50%, no EGFR / ALK alterations"
+  population: "Adults with newly diagnosed advanced NSCLC, PD-L1 TPS ≥ 50%, ECOG 0-1"
+  arms:
+    - name: "pembrolizumab 200 mg IV Q3W (anti-PD-1)"
+      allocation: 1
+    - name: "investigator-choice platinum-doublet chemotherapy (4-6 cycles, optional pemetrexed maintenance)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Progression-free survival (PFS, RECIST v1.1 by blinded independent central review) primary; overall survival (OS) key secondary"
+    measurement_time: "event-driven; PFS interim + final, OS final"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.89
+  effect:
+    scale: log-hazard-ratio
+    assumed_hr_pfs: 0.55
+    median_pfs_control_months: 6.0
+    design_approach: |
+      Biomarker-enriched (PD-L1 TPS ≥ 50%) frontline Phase 3.
+      - PFS primary; event-driven.
+      - OS key secondary, hierarchically tested.
+      - Pre-specified alpha-splitting across PFS and OS.
+      - Crossover from chemo to pembrolizumab permitted at progression —
+        complicates OS interpretation (secondary analyses censoring at
+        crossover).
+      - Designed under PH but IO crossing-hazards pattern anticipated.
+    interim_analyses: |
+      - One PFS interim at ~50% events.
+      - One OS interim.
+      - Final at pre-specified event count.
+      - O'Brien-Fleming-style boundaries (Lan-DeMets).
+    multiplicity: |
+      Alpha split with hierarchical testing of key secondaries (OS then
+      ORR). Each key secondary tested only if primary PFS significant.
+  accrual:
+    duration_months: 14
+  followup:
+    planned_months: null
+    median_actual_months: 11.2
+
+expected:
+  sample_size_total: 305
+  sample_size_per_arm: [154, 151]
+  events_total_target: 175
+  events_total_actual: 189
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **KEYNOTE-024** established pembrolizumab monotherapy as frontline
+    standard for advanced PD-L1 TPS ≥ 50% NSCLC. Landmark IO trial
+    showing early PFS/OS separation.
+
+    **Design**:
+    - 305 randomized (1:1), biomarker-enriched.
+    - PFS primary, OS key secondary.
+    - Stopped early for OS benefit at first interim.
+
+    **Results (initial)**:
+    - PFS: median 10.3 vs 6.0 months; HR 0.50 (0.37-0.68), P < 0.001.
+    - OS: median not reached vs 14.2 months; HR 0.60 (0.41-0.89), P = 0.005.
+    - ORR: 44.8% vs 27.8%.
+    - Stopped early for OS benefit at first interim.
+
+    **Long-term (KEYNOTE-024 5-yr follow-up, 2021)**:
+    - 5-yr OS: 31.9% (pembro) vs 16.3% (chemo) — chemo inflated by
+      66% crossover to pembrolizumab.
+    - Crossing hazards pattern: early PFS/OS benefit sustained long-term.
+
+    **Regulatory**:
+    - FDA approval Oct 2016 for PD-L1 TPS ≥ 50% frontline NSCLC.
+    - Paradigm-shifting: first Phase 3 to establish IO monotherapy
+      frontline over chemotherapy.
+
+r_packages:
+  - gsDesign
+  - rpact
+  - nph
+  - nphRCT
+  - survRM2
+  - simtrial
+
+tags:
+  - keynote-024
+  - pembrolizumab
+  - nsclc
+  - pd-l1
+  - biomarker-enriched
+  - immunotherapy
+  - nph
+  - crossing-hazards
+  - landmark-trial
+  - frontline
+
+caveats: |
+  KEYNOTE-024 design / analysis points:
+
+  - **PH assumption at design**: classical log-rank and Cox used for
+    primary. PH reasonably held for PFS but not OS (plateau after 2 years).
+  - **NPH for OS**: long-term follow-up showed plateau (immune response)
+    with 30%+ long-term survivors on pembro — classical log-rank
+    underweights these tails.
+  - **Crossover impact**: 66% of chemo arm received pembrolizumab after
+    progression. Complicates OS interpretation. Sensitivity analyses:
+    rank-preserving structural failure time (RPSFT), inverse probability
+    of censoring weights (IPCW).
+  - **Biomarker enrichment**: trial restricted to PD-L1 TPS ≥ 50%
+    (~ 30% of frontline NSCLC population). Generalizability to
+    lower-PD-L1 addressed by KEYNOTE-042.
+
+  **Post-hoc NPH analyses** (literature):
+  - RMST at 12 months: ~ 12.0 vs 9.5 months difference.
+  - Max-combo weighted log-rank: substantial gain over log-rank.
+  - Rationale for modern IO trials considering MaxCombo (Magirr-Burman
+    2019, in corpus) as primary.
+
+  **Analysis model**:
+  ```r
+  library(survRM2)
+  library(nphRCT)
+
+  # RMST at 24 months
+  rmst2(time, status, arm, tau = 24)
+
+  # Max-combo weighted log-rank
+  wlr_combo(
+    formula = Surv(time, status) ~ arm,
+    data = df,
+    rho_gamma = rbind(c(0,0), c(0,1), c(1,0), c(1,1))
+  )
+  ```
+
+  **Design implications for future IO trials**:
+  - Classical PH-based design valid for initial regulatory filing but
+    may underestimate long-term survival benefit.
+  - Pre-specify NPH sensitivity (RMST, MaxCombo).
+  - Consider biomarker-enrichment to focus on responders.
+
+  **Related trials**:
+  - **KEYNOTE-042** (2018): PD-L1 TPS ≥ 1% — showed benefit but
+    mostly driven by TPS ≥ 50% subgroup.
+  - **KEYNOTE-189** (2018): pembrolizumab + chemo regardless of PD-L1 —
+    broader label.
+  - **CheckMate-026** (2017): nivolumab negative in similar setting
+    (different PD-L1 threshold).

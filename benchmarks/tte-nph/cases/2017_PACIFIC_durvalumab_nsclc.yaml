@@ -1,0 +1,158 @@
+id: 2017_PACIFIC_durvalumab_nsclc
+family: tte-nph
+source:
+  kind: design-paper
+  citation: "Antonia SJ, Villegas A, Daniel D, et al. Durvalumab after chemoradiotherapy in stage III non-small-cell lung cancer. N Engl J Med. 2017 Nov 16;377(20):1919-1929. Design: Antonia SJ, Villegas A, Daniel D, et al. Overall survival with durvalumab after chemoradiotherapy in stage III NSCLC. N Engl J Med. 2018 Dec 13;379(24):2342-2350. Long-term: Spigel DR, Faivre-Finn C, Gray JE, et al. Five-year survival outcomes from the PACIFIC trial: durvalumab after chemoradiotherapy in stage III non-small-cell lung cancer. J Clin Oncol. 2022 Apr 20;40(12):1301-1311."
+
+design:
+  indication: "Unresectable stage III non-small-cell lung cancer without progression after definitive platinum-based concurrent chemoradiotherapy (CRT)"
+  population: "Adults with completed definitive CRT, no progression, ECOG 0-1, randomized within 1-42 days of CRT"
+  arms:
+    - name: "durvalumab 10 mg/kg IV Q2W (anti-PD-L1) for up to 12 months"
+      allocation: 2
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Co-primary: (i) progression-free survival (PFS, BICR RECIST v1.1); (ii) overall survival (OS)"
+    measurement_time: "event-driven; PFS + OS"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.85
+  effect:
+    scale: log-hazard-ratio
+    assumed_hr_pfs: 0.67
+    assumed_hr_os: 0.73
+    median_pfs_control_months: 5.6
+    design_approach: |
+      Consolidation / maintenance Phase 3 after definitive chemoradiation
+      in stage III NSCLC.
+      - 2:1 randomization to durvalumab : placebo.
+      - Event-driven with co-primary PFS + OS.
+      - Alpha split: PFS α = 0.01, OS α = 0.04 (family-wise α = 0.05).
+      - NPH pattern anticipated — delayed separation possible (immune
+        response lag) with long-term plateau.
+    alpha_split_strategy: |
+      Pre-specified: PFS tested at α = 0.01, OS at α = 0.04.
+      If PFS significant, full α (0.05) available for OS.
+      If PFS not significant but OS crosses at α = 0.04, OS still
+      significant.
+      Hochberg-like closed test protects FWER.
+    interim_analyses: |
+      - PFS interim at ~70% events.
+      - OS interim at ~60% events.
+      - Final at pre-specified event counts.
+      - Lan-DeMets O'Brien-Fleming spending.
+  accrual:
+    duration_months: 24
+  followup:
+    planned_months: null
+    median_actual_months: 25.2
+
+expected:
+  sample_size_total: 713
+  sample_size_per_arm: [476, 237]
+  events_total_target_pfs: 458
+  events_total_target_os: 491
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **PACIFIC** established durvalumab consolidation after definitive
+    chemoradiation as new standard of care for unresectable stage III
+    NSCLC. First Phase 3 to show consolidation IO benefit.
+
+    **Design**:
+    - 713 randomized (2:1), 235 sites, 26 countries.
+    - Placebo-controlled, double-blind.
+    - Durvalumab 12 months or until progression.
+
+    **Results (initial)**:
+    - PFS: median 16.8 vs 5.6 months; HR 0.52 (0.42-0.65), P < 0.001.
+      α = 0.01 threshold met (strong benefit).
+    - OS: median not reached at primary analysis; HR 0.68 (0.53-0.87),
+      P = 0.0025 at first formal OS analysis.
+
+    **Long-term (5-year, 2022)**:
+    - 5-yr OS: 42.9% (durvalumab) vs 33.4% (placebo).
+    - Plateau evident in both arms — consolidation IO cures a meaningful
+      fraction.
+    - Delayed separation of OS curves visible at ~ 6 months.
+
+    **Regulatory**:
+    - FDA approval Feb 2018 (Imfinzi) for unresectable stage III NSCLC
+      post-CRT.
+    - EMA / PMDA similar expansion.
+    - Changed stage III NSCLC standard of care.
+
+r_packages:
+  - gsDesign
+  - rpact
+  - nph
+  - nphRCT
+  - survRM2
+  - simtrial
+  - hexbin
+
+tags:
+  - pacific
+  - durvalumab
+  - nsclc
+  - stage-3
+  - consolidation
+  - delayed-effect
+  - nph
+  - co-primary
+  - alpha-splitting
+  - 2-to-1-allocation
+  - landmark-trial
+
+caveats: |
+  PACIFIC design / analysis points:
+
+  - **Delayed-effect NPH pattern**: OS curves begin to separate at
+    ~ 6 months (immune response lag in consolidation setting).
+    Classical log-rank valid but underweights later-time benefit.
+  - **Plateau effect**: both arms plateau after ~ 3 years — substantial
+    cure fraction in stage III NSCLC with CRT + durvalumab.
+  - **Alpha splitting**: PFS α = 0.01, OS α = 0.04. Hochberg-like
+    closed test preserves FWER.
+  - **2:1 allocation**: concentrates patients on active arm; ethically
+    appealing and maintains power near 1:1 for HR ~ 0.7.
+  - **PD-L1 subgroup**: post-hoc analyses showed larger benefit at
+    PD-L1 ≥ 1% — label refined in EU (restricted to PD-L1 ≥ 1% in
+    original EMA approval).
+
+  **Delayed-effect sensitivity analyses**:
+  ```r
+  library(nphRCT)
+  library(survRM2)
+
+  # RMST at 36 months
+  rmst2(time, status, arm, tau = 36)
+
+  # Piecewise weighted log-rank (Magirr-Burman modest weighting)
+  wlr_test(
+    formula = Surv(time, status) ~ arm,
+    data = df,
+    method = "mw",
+    t_star = 6   # threshold for modest weighting
+  )
+  ```
+
+  **Methodology implications**:
+  - Consolidation / maintenance IO trials often show delayed-effect NPH.
+  - Modern designs would pre-specify MaxCombo (Magirr-Burman 2019, in
+    corpus) as primary or key sensitivity.
+  - RMST at 24-36 months effective summary for cure-fraction scenarios.
+
+  **Related trials**:
+  - **PACIFIC-2**: durvalumab concurrent with CRT (failed, 2023).
+  - **PACIFIC-R**: real-world data confirming benefit.
+  - **LAURA**: osimertinib consolidation (EGFR+ subset).
+
+  **Design evolution**:
+  - PACIFIC designed under PH (2014) — realized NPH pattern.
+  - Modern stage III NSCLC trials (LAURA, PACIFIC-2) increasingly
+    pre-specify MaxCombo / RMST.
