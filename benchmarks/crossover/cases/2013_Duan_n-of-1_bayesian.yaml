@@ -1,0 +1,149 @@
+id: 2013_Duan_n-of-1_bayesian
+family: crossover
+source:
+  kind: methodology-paper
+  citation: "Duan N, Kravitz RL, Schmid CH. Single-patient (n-of-1) trials: a pragmatic clinical decision methodology for patient-centered comparative effectiveness research. J Clin Epidemiol. 2013 Aug;66(8 Suppl):S21-8. Also: Schork NJ. Personalized medicine: time for one-person trials. Nature. 2015 Apr 30;520(7549):609-11."
+
+design:
+  indication: "Chronic, stable conditions with individualizable treatment response (migraine, chronic pain, OCD, attention disorders, hypertension, rare diseases)"
+  population: "Individual patients for whom group-average data is insufficient; rare-disease patients; preference-sensitive decisions"
+  arms:
+    - name: "treatment A (tested within subject across periods)"
+      allocation: "per randomized crossover sequence"
+    - name: "treatment B (tested within subject across periods)"
+      allocation: "per randomized crossover sequence"
+  endpoint:
+    type: any
+    description: "Patient-specific outcome — PRO, symptom count, functional measure, biomarker"
+    measurement_time: "end of each period"
+  comparison: superiority (within-subject)
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    design_structure: "Multi-period within-patient crossover (typically ≥ 3 AB pairs, sometimes more)"
+    analysis: |
+      Two primary approaches:
+      (1) Individual-level paired t / Wilcoxon signed-rank on
+          within-subject differences.
+      (2) Bayesian hierarchical pooling across N-of-1 patients to
+          share strength while preserving individual inference.
+    bayesian_hierarchical_pooling: |
+      Each patient's individual treatment effect δ_i ~ N(μ, τ²);
+      population mean μ estimates the average, τ² quantifies
+      heterogeneity. Hierarchical pooling gives 'borrowed' but
+      not overwritten individual estimates.
+    power_calculation: |
+      Per-patient power depends on within-subject variance σ_W,
+      effect size δ, and number of AB pairs. With σ_W = effect,
+      3-4 pairs suffice for 80% power on individual-level test.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 25
+  notes: |
+    **Duan-Kravitz-Schmid 2013** and related work establish the
+    modern Bayesian hierarchical framework for **N-of-1 trials** —
+    the most extreme form of crossover design where each patient
+    is their own 'study' with multi-period within-subject
+    comparisons.
+
+    **Design structure**:
+    - Each patient undergoes multiple AB crossover pairs (typically
+      3-6 pairs, sometimes up to 10).
+    - Periods randomized in sequence (AB BA AB or similar).
+    - Washout required between periods.
+    - Outcome assessed at end of each period; individual effect
+      δ_i from within-subject paired analysis.
+
+    **When to use**:
+    - Chronic stable conditions (migraine, chronic pain, attention/
+      learning disorders, hypertension on maintenance therapy).
+    - Rare disease with patient-specific response variability.
+    - Preference-sensitive care decisions (patient-centered
+      comparative effectiveness).
+
+    **Bayesian hierarchical pooling**:
+    - Enables borrowing strength across N-of-1 patients in a
+      registry or multi-patient study.
+    - Individual estimates: posterior mean of δ_i given patient's
+      own data + partial borrowing from population.
+    - Population-level μ estimates average effect; τ² quantifies
+      individual heterogeneity.
+    - Shrinkage can be controlled by sceptical or enthusiastic
+      priors on τ².
+
+    **Per-patient sample-size**:
+    - 3-4 AB pairs typical for individual-level 80% power when
+      effect = within-subject σ_W.
+    - Larger number of pairs for smaller effects.
+    - Pooling N-of-1 patients in hierarchical framework reduces
+      pairs needed per patient.
+
+    **Real-world applications**:
+    - **Migraine**: triptan choice — N-of-1 for individual patient
+      preference.
+    - **Attention disorders**: methylphenidate dose optimization
+      per patient.
+    - **Fibromyalgia / chronic pain**: individualized pharmacotherapy.
+    - **Rare disease registries**: pooled N-of-1 for orphan drug
+      effectiveness.
+    - **CER networks**: PCORI-funded N-of-1 registries.
+
+r_packages:
+  - brms, rstan (Bayesian hierarchical N-of-1)
+  - n1 (CRAN package, Zucker)
+  - paired (paired Bayesian inference)
+  - BayesFactor (paired t Bayesian)
+
+tags:
+  - n-of-1
+  - duan-kravitz-schmid
+  - bayesian-hierarchical
+  - personalized-medicine
+  - single-patient-trial
+  - within-subject
+  - comparative-effectiveness
+  - chronic-disease
+  - rare-disease
+
+caveats: |
+  N-of-1 trials remain conceptually attractive but have practical
+  limitations:
+  - **Chronic stable condition required**: N-of-1 fails if the
+    underlying disease evolves rapidly (most oncology, acute
+    infections).
+  - **Washout**: drugs with long half-lives or pharmacodynamic
+    memory make valid crossover difficult; requires careful period
+    spacing.
+  - **Individual-level power**: small per-patient N limits power;
+    Bayesian hierarchical pooling is the mainstream solution.
+  - **Regulatory acceptance**: N-of-1 generally not accepted for
+    initial approval; useful for post-approval CER and patient-level
+    decision support.
+
+  Related methodology:
+  - **Duan-Kravitz-Schmid 2013**: framework + Bayesian hierarchical
+    pooling (this entry).
+  - **Schork 2015 Nature**: advocacy for personalized N-of-1.
+  - **Zucker et al. 1997**: pooled N-of-1 trials with hierarchical
+    models.
+  - **Mirza-Punja-Vohra 2017**: CONSORT extension for N-of-1
+    reporting.
+  - **Percha-Schork 2015**: N-of-1 for genomics-informed treatment.
+
+  Extensions not covered in 2013 paper:
+  - N-of-1 with continuous real-time outcomes (micro-randomized
+    trials; Liao-Klasnja-Murphy 2016).
+  - Digital health N-of-1 via wearables / apps.
+  - N-of-1 within platform / adaptive structures (rare).
+
+  For `designr`: N-of-1 is a canonical multi-period crossover variant
+  that requires Bayesian hierarchical or simulation-based sizing;
+  falls outside standard 2x2 machinery.

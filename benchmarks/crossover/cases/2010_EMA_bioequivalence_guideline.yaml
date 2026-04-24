@@ -1,0 +1,135 @@
+id: 2010_EMA_bioequivalence_guideline
+family: crossover
+source:
+  kind: regulatory-guidance
+  citation: "European Medicines Agency. Guideline on the Investigation of Bioequivalence. CPMP/EWP/QWP/1401/98 Rev. 1/ Corr. January 20, 2010. (EMA/CHMP/EWP/QWP/1401/98, later amended by EMA bioequivalence statistical addendum.)"
+
+design:
+  indication: "Generic and hybrid medicinal product bioequivalence demonstrations in the EU"
+  population: "Healthy volunteers (standard) or patients (when safety requires)"
+  arms:
+    - name: "test (generic or reformulated product)"
+      allocation: 1
+    - name: "reference (innovator product on EU market)"
+      allocation: 1
+  endpoint:
+    type: pk
+    description: "Cmax, AUC0-t (primary); AUC0-∞ (supportive); tmax and t1/2 descriptive"
+    measurement_time: "Full PK profile per period"
+  comparison: bioequivalence
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    be_acceptance_limits:
+      standard: "80.00% - 125.00% for AUC and Cmax"
+      nti_drugs: "90.00% - 111.11% for both AUC and Cmax"
+      highly_variable_cmax: "If CV_W > 30%, reference-scaled ABE (RSABE) widens Cmax limits up to 69.84% - 143.19%; AUC remains 80-125%"
+    rsabe_formula: |
+      For highly variable Cmax:
+        Upper widened = exp(k · σ_WR), Lower = 1/Upper
+        k = 0.760 (EMA specific; differs from FDA)
+      Scaled limits apply only when CV_WR > 0.30 (demonstrated via
+      4-period full replicate or 3-period partial replicate design).
+    point_estimate_constraint: "Point estimate of ratio (test/reference) must fall within 80-125% even when limits are widened by RSABE"
+    design_types: "2-period 2-sequence (standard); replicate 4-period (RSABE); replicate 3-period (partial RSABE)"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **EMA Bioequivalence Guideline (2010, Rev. 1)** is the canonical
+    EU regulatory reference for BE studies. It is the European
+    counterpart to FDA ABE (2001) and NTI BE (2015) in the corpus.
+
+    **Core framework**:
+    - Standard BE limits: 80.00%-125.00% on geometric mean ratio
+      of Cmax and AUC, two-sided 90% CI.
+    - 2-period 2-sequence (AB/BA) crossover default.
+    - Replicate designs required for highly variable drugs (CV_W >
+      30%) or NTI drugs.
+
+    **Key EU-specific provisions**:
+    1. **NTI drug list** (EMA-specific): tighter 90-111% limits for
+       both AUC and Cmax — differs from FDA reference-scaled approach.
+       EMA NTI drugs include ciclosporin, tacrolimus, sirolimus,
+       everolimus, levothyroxine, phenytoin, carbamazepine, lithium,
+       warfarin, digoxin, theophylline.
+    2. **Highly variable drugs** (CV_W > 30% on Cmax): RSABE with
+       k=0.760 regulatory constant (narrower widening than FDA's
+       k=0.89291).
+    3. **Point estimate constraint**: test/reference GMR must fall
+       within 80-125% even when limits are widened — prevents
+       demonstrating 'BE' with a very large observed difference.
+
+    **Sample-size (standard 2×2)**:
+    - Typical 24-36 subjects when CV_W ≈ 15-25%.
+    - Sized via PowerTOST::sampleN.TOST.
+    - Example: CV_W = 0.20, GMR = 0.95, α = 0.05, power = 0.80 →
+      n ≈ 20-26.
+
+    **Sample-size (RSABE 2x2x4)**:
+    - Typical 24-48 subjects when CV_W > 30%.
+    - Sized via PowerTOST::sampleN.scABEL.
+
+    **Regulatory context**:
+    - Applies to all generic and hybrid applications in EU (DCP,
+      CP, MRP).
+    - Interoperable with EMA Guideline on Bioequivalence for
+      Modified-Release Products (2014).
+    - ICH M13A (draft 2022, finalized 2023) harmonizes FDA, EMA,
+      PMDA BE requirements and converges methodology.
+
+r_packages:
+  - PowerTOST::sampleN.TOST (standard ABE)
+  - PowerTOST::sampleN.scABEL (reference-scaled ABE, EMA)
+  - PowerTOST::sampleN.NTIDFDA (NTI — FDA variant)
+  - replicateBE
+  - Crossover
+
+tags:
+  - ema
+  - regulatory-guidance
+  - bioequivalence
+  - crossover
+  - rsabe
+  - nti
+  - highly-variable
+  - eu
+  - 80-125
+  - two-one-sided-test
+
+caveats: |
+  EMA and FDA bioequivalence frameworks have converged substantially
+  but key differences remain:
+  - **RSABE scaling constant**: EMA k=0.760, FDA k=0.89291 →
+    different BE acceptance bands for same CV_WR.
+  - **NTI drugs**: EMA uses static tighter limits (90-111% both AUC
+    and Cmax); FDA uses reference-scaled NTI-specific approach.
+  - **Highly variable drugs**: EMA applies RSABE only to Cmax (not
+    AUC); FDA applies to both.
+
+  ICH M13A harmonization (2022-2023) is working toward convergence
+  but regulatory divergence persists as of 2024-2026.
+
+  Real-world impact on development:
+  - Generic companies run country-specific BE designs if pursuing
+    FDA and EMA approvals in parallel.
+  - Highly variable drugs (≈ 30% of Cmax values in clinical
+    databases) benefit from RSABE; often require 40-60% fewer
+    subjects with RSABE vs standard ABE.
+  - NTI drugs: FDA approach typically leads to larger studies than
+    EMA.
+
+  Non-standard considerations (EMA):
+  - Fed vs fasting: both required when food effect is substantial.
+  - Multiple-strength products: biowaiver applies under specific
+    conditions (BCS-based).
+  - Endogenous compounds: baseline correction required (EMA
+    Questions & Answers).
