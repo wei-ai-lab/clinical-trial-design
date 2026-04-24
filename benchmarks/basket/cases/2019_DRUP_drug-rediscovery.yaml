@@ -1,0 +1,140 @@
+id: 2019_DRUP_drug-rediscovery
+family: basket
+source:
+  kind: primary-results
+  citation: "van der Velden DL, Hoes LR, van der Wijngaart H, et al. The Drug Rediscovery protocol facilitates the expanded use of existing anticancer drugs. Nature. 2019 Oct;574(7776):127-131. doi:10.1038/s41586-019-1600-x. Follow-up reports: Hoes LR et al. JCO Precis Oncol 2022; and ongoing cohort-specific reports in Cancer Discovery."
+
+design:
+  indication: "Molecularly matched off-label use of marketed targeted anticancer drugs across tumor types"
+  population: "Advanced/metastatic cancer patients (any histology) with a specific actionable molecular alteration matched to a registered targeted drug, who have exhausted standard therapy"
+  arms:
+    - name: "marketed targeted drug matched to patient's specific alteration"
+      allocation: 1
+  endpoint:
+    type: binary
+    description: "Clinical benefit (CB) = objective response OR stable disease ≥ 16 weeks (composite primary)"
+    measurement_time: "16 weeks from treatment initiation"
+  comparison: one-arm vs historical control
+  sidedness: 1
+  alpha: 0.05
+  power: 0.80
+  effect:
+    design_type: "Basket trial per drug-alteration cohort with Simon 2-stage within each cohort"
+    simon_2_stage_parameters: |
+      Typical per-cohort:
+      - p0 (uninteresting): 0.10 (clinical benefit rate)
+      - p1 (target): 0.30 (clinical benefit rate)
+      - α = 0.05, 1-β = 0.80
+      - Simon optimal: n1 = 8 (stop if ≤ 1 response); total n = 24
+        (succeed if ≥ 5 clinical benefit)
+    expansion_rules: |
+      If cohort meets stage-1 threshold → expand to full cohort.
+      If cohort succeeds overall → publish cohort-level report and
+      potentially pursue accelerated regulatory approval.
+    bayesian_borrowing: |
+      DRUP considered but did not implement BHM borrowing across
+      cohorts — chose simple Simon 2-stage to preserve cohort-level
+      decisions for national reimbursement policy.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: 16
+
+expected:
+  sample_size_total: 215
+  events_total: null
+  sample_size_per_cohort: 24
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **DRUP (Drug Rediscovery Protocol)** is the canonical Dutch
+    national basket trial for off-label use of marketed targeted
+    drugs. Unique among basket trials for its **reimbursement-
+    policy orientation**: DRUP generates evidence that informs
+    Dutch national reimbursement decisions (via ZiN), not
+    regulatory approval per se.
+
+    **Structure**:
+    - ~12-20 cohorts at any time, each defined by a specific
+      drug-alteration combination (e.g., BRAF V600E in CRC treated
+      with vemurafenib + cetuximab).
+    - Each cohort uses Simon 2-stage: start with 8 patients; expand
+      to 24 if ≥ 2 responses.
+    - Drugs provided by manufacturers; access funded by Dutch
+      healthcare system conditional on cohort success.
+
+    **Key publication (Nature 2019)**:
+    - 215 patients across 25 cohorts at interim analysis.
+    - 136 evaluable; 34% clinical benefit overall.
+    - Cohort-level wins in MSI-H nivolumab (NSCLC), NTRK fusion
+      tumors (larotrectinib), several others.
+
+    **Sample-size per cohort** (standard DRUP):
+    - p0 = 0.10 (no benefit from off-label use).
+    - p1 = 0.30 (meaningful clinical benefit rate).
+    - Simon optimal 2-stage: stop after 8 if ≤ 1 benefit; full
+      24 if success threshold met.
+    - Power 0.80 at p1 = 0.30.
+
+    **Distinguishing DRUP from other baskets**:
+    - **NCI-MATCH**: target agnostic across arms; US academic.
+    - **VE-BASKET**: single drug (vemurafenib) across multiple
+      BRAF-mutated tumors.
+    - **LOXO-TRK / ROAR**: single drug + single alteration across
+      tumors — tissue-agnostic registration intent.
+    - **DRUP**: multiple drugs × multiple alterations in a basket-of-
+      baskets structure; policy / access-driven rather than
+      regulatory-approval-driven.
+
+    **Impact**:
+    - Model for national reimbursement-linked basket trials:
+      Canadian CAPTUR, Norwegian IMPRESS, German ProfiLer.
+    - Demonstrated that infrastructure-sharing across cohorts
+      enables small-cohort studies of otherwise uneconomical
+      indications.
+    - Informed EMA reflection on basket-trial evidence for
+      conditional marketing authorization.
+
+r_packages:
+  - clinfun::ph2simon (Simon 2-stage per cohort)
+  - ph2mult (Simon 2-stage multi-endpoint)
+  - bhmbasket (Bayesian hierarchical model if borrowing)
+  - basket (Hobbs-Sargent basket analysis)
+
+tags:
+  - drup
+  - drug-rediscovery
+  - basket
+  - netherlands
+  - simon-2-stage
+  - reimbursement-policy
+  - off-label
+  - targeted-therapy
+  - cohort-level
+
+caveats: |
+  DRUP's design is notable for intentionally *not* using BHM
+  borrowing across cohorts — each drug-alteration cohort treated
+  as a separate trial. Rationale:
+  - Reimbursement decisions are cohort-specific (not basket-wide).
+  - Dutch payers want cohort-level evidence per drug-alteration.
+  - Simpler Simon 2-stage is transparent to payers and clinicians.
+
+  Comparison with NCI-MATCH:
+  - NCI-MATCH: 40+ arms, Simon-style per arm, US academic, all
+    phases of response assessment.
+  - DRUP: Dutch / Nordic infrastructure, single national sponsor,
+    drugs donated by industry, access linked to trial participation.
+
+  DRUP limitations:
+  - Per-cohort Simon 2-stage under-powered for modest effect sizes
+    common in drug rediscovery — type II error rate high.
+  - No formal borrowing across cohorts limits efficiency for
+    ultra-rare alterations.
+  - Post-hoc BHM analyses have been done for specific cohorts.
+
+  Related basket-for-reimbursement trials:
+  - **CAPTUR (Canada, 2019)**: similar model, national single-payer.
+  - **IMPRESS-Norway (2021)**: Nordic genomic-matched study.
+  - **ProfiLer (Germany)**: academic consortium basket.
+  - **DRUP-compliant collaborations** in France, Belgium, UK.

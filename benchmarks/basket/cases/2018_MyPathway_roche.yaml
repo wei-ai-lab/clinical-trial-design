@@ -1,0 +1,141 @@
+id: 2018_MyPathway_roche
+family: basket
+source:
+  kind: primary-results
+  citation: "Hainsworth JD, Meric-Bernstam F, Swanton C, et al. Targeted therapy for advanced solid tumors on the basis of molecular profiles: results from MyPathway, an open-label, phase IIa multiple basket study. J Clin Oncol. 2018 Feb 20;36(6):536-542. MyPathway Trial (NCT02091141). Follow-up cohort reports in 2019-2024 for specific pathways (HER2-amplified CRC, BRAF V600E non-melanoma, etc.)."
+
+design:
+  indication: "Advanced / refractory solid tumors with actionable molecular alterations in 5 pre-specified targetable pathways (HER2, BRAF, Hedgehog, EGFR, or ALK/ROS1)"
+  population: "Patients with treatment-refractory solid tumors and molecularly-matched alteration from NGS or FISH testing"
+  arms:
+    - name: "trastuzumab + pertuzumab (HER2-amplified cohorts)"
+      allocation: "cohort-matched"
+    - name: "vemurafenib (BRAF V600-mutated non-melanoma cohorts)"
+      allocation: "cohort-matched"
+    - name: "vismodegib (Hedgehog-activated cohorts)"
+      allocation: "cohort-matched"
+    - name: "erlotinib (EGFR-mutated non-NSCLC cohorts)"
+      allocation: "cohort-matched"
+    - name: "alectinib (ALK/ROS1-rearranged non-NSCLC cohorts)"
+      allocation: "cohort-matched"
+  endpoint:
+    type: binary
+    description: "Objective response rate (ORR) per RECIST 1.1 (primary); secondary: clinical benefit rate, PFS, OS"
+    measurement_time: "Imaging every 8-12 weeks; response confirmed per RECIST"
+  comparison: one-arm vs historical control
+  sidedness: 1
+  alpha: 0.10
+  power: 0.80
+  effect:
+    design_type: "Multi-drug basket with 5 pre-specified drug-pathway combinations"
+    per_cohort_design: "Simon 2-stage or fixed-N Phase IIa within each drug-pathway cohort × tumor histology"
+    initial_sample_size: "n1 = 5 per cohort (futility); total ~15-25 per cohort × tumor"
+    expansion_rules: "Cohort meeting stage-1 threshold expands; separate reports per drug-pathway-tumor"
+    bayesian_extension: "Secondary BHM-based sensitivity analyses for cross-cohort borrowing where biologically justified"
+  accrual:
+    duration_months: 30
+  followup:
+    planned_months: 24
+
+expected:
+  sample_size_total: 251
+  events_total: null
+  sample_size_per_cohort: 20
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **MyPathway (Roche, NCT02091141)** is a pivotal pan-tumor basket
+    trial demonstrating **multiple drugs across multiple molecular
+    pathways** in a single trial infrastructure. One of the most
+    extensively published basket programs, with 5 drug-pathway arms
+    and ~12 tumor histology cohorts per arm.
+
+    **Structure**:
+    - **HER2**: trastuzumab + pertuzumab for HER2-amplified tumors
+      (CRC, biliary, salivary, bladder, endometrial, lung, ovarian,
+      prostate).
+    - **BRAF V600**: vemurafenib for non-melanoma BRAF V600-mutated
+      tumors (CRC, biliary, lung, thyroid).
+    - **Hedgehog**: vismodegib for Hedgehog-activated tumors
+      (pancreatic, ameloblastoma, others).
+    - **EGFR**: erlotinib for EGFR-mutated non-NSCLC.
+    - **ALK/ROS1**: alectinib for ALK/ROS1-rearranged non-NSCLC.
+
+    **Initial 2018 JCO report**:
+    - 251 patients across 35 tumor-pathway cohorts.
+    - ORR varied widely: HER2-amplified CRC (38%), BRAF non-
+      melanoma (43%), Hedgehog-activated (17%), EGFR non-NSCLC
+      (7%), ALK non-NSCLC (10%).
+    - Accelerated approval for HER2-amplified mCRC (tucatinib/
+      trastuzumab combination) derived partly from MyPathway-class
+      evidence.
+
+    **Sample-size calculation per cohort**:
+    - Simon 2-stage with p0 = 0.05-0.10, p1 = 0.20-0.30.
+    - Stage-1 n1 = 5-8, full cohort n = 15-25.
+    - α = 0.05-0.10, 1-β = 0.80.
+    - Different parameterization per histology based on historical
+      ORR baselines.
+
+    **Impact / real-world role**:
+    - Registration-grade evidence for multiple accelerated approvals.
+    - Template for industry-sponsored multi-drug baskets (vs
+      academic NCI-MATCH, national DRUP).
+    - Co-informed EMA and FDA guidance on tissue-agnostic labeling.
+    - Paired with pivotal monotherapy Phase 2 (TAPUR, DRUP-variant).
+
+    **Distinguishing features**:
+    - **Industry-sponsored** (Roche) — different funding / access
+      model from academic NCI-MATCH or national DRUP.
+    - **Multi-drug** — 5 different targeted therapies in one trial.
+    - **Tissue-agnostic by cohort** — each drug-pathway has sub-
+      cohorts by tumor type for granular response estimation.
+
+r_packages:
+  - clinfun::ph2simon (Simon 2-stage per cohort)
+  - bhmbasket (Bayesian hierarchical optional)
+  - basket (Hobbs-Sargent)
+  - crm (continual reassessment for early-phase components)
+
+tags:
+  - mypathway
+  - roche
+  - basket
+  - multi-drug-basket
+  - tissue-agnostic
+  - her2
+  - braf
+  - hedgehog
+  - simon-2-stage
+  - industry-sponsored
+
+caveats: |
+  MyPathway's scale and industry sponsorship illustrate different
+  trade-offs vs NCI-MATCH (academic) and DRUP (national):
+  - **Drug selection** constrained to Roche's portfolio — no
+    comparisons across manufacturers' drugs within the same
+    pathway.
+  - **Pre-specified pathways** only — unlike NCI-MATCH's agnostic
+    open protocol.
+  - **Cohort expansion decisions** are industry-driven, potentially
+    biased by commercial considerations.
+
+  These are not weaknesses per se — they reflect the reality of
+  pharmaceutical development where companies build evidence for
+  their own compounds across multiple indications.
+
+  Key biological findings:
+  - **HER2 in CRC**: strongly responsive to anti-HER2 combination
+    → led to tucatinib + trastuzumab accelerated approval 2023.
+  - **BRAF V600 non-melanoma**: vemurafenib alone insufficient in
+    CRC (needs EGFR blockade) but works in biliary, thyroid.
+  - **Hedgehog non-BCC**: generally disappointing (low ORR).
+  - **EGFR non-NSCLC**: modest activity except in specific histologies.
+
+  Related industry baskets:
+  - **CUPISCO** (Roche, 2020): atezolizumab + chemo for CUP.
+  - **TAPUR** (ASCO-sponsored, 2016-present): multi-manufacturer
+    version of DRUP-like drug rediscovery.
+  - **KEYNOTE-158 and 164** (Merck): pembrolizumab across MSI-H/
+    TMB-H tumors — narrower scope.
+  - **DRUP** (Dutch national): academic counterpart in corpus.
