@@ -1,0 +1,106 @@
+id: 2003_Royston-Parmar-Qian_mams_tte
+family: mams
+source:
+  kind: methodology-paper
+  citation: "Royston P, Parmar MK, Qian W. Novel designs for multi-arm clinical trials with survival outcomes with an application in ovarian cancer. Stat Med. 2003;22(14):2239-2256."
+  doi: "10.1002/sim.1430"
+
+design:
+  indication: "any (methodology); worked example: ovarian cancer Phase 3"
+  population: "Phase 3 time-to-event trial with 3+ experimental arms vs common control"
+  arms:
+    - name: "experimental arm 1"
+      allocation: 1
+    - name: "experimental arm 2"
+      allocation: 1
+    - name: "experimental arm 3"
+      allocation: 1
+    - name: "shared control"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Progression-free survival or overall survival"
+    measurement_time: "event-driven"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    intermediate_stage_guidance: "Drop arms whose intermediate endpoint (e.g., PFS) does not meet futility threshold; carry strongest arm(s) to final endpoint (e.g., OS)"
+    information_stages: "2-3 stages typical; intermediate-stage decisions based on intermediate endpoint"
+    hr_final_target: 0.75
+    hr_intermediate_futility: "observed HR > 1.0 → drop"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 15
+  notes: |
+    **Canonical methodology for multi-arm multi-stage (MAMS) designs
+    with time-to-event endpoints** — the foundation paper for the
+    STAMPEDE prostate cancer trial (2011-, in corpus). Extends
+    group-sequential ideas to multi-arm settings where:
+    (1) All experimental arms share a common control — efficient use
+        of control patients.
+    (2) At each stage, arms may be dropped for lack of efficacy on
+        an intermediate endpoint (e.g., PFS) before committing to
+        longer follow-up for the final endpoint (e.g., OS).
+    (3) The final stage tests only the surviving arm(s) against
+        control on the primary endpoint.
+
+    **Key design parameters**:
+    - Pairwise α per arm: typically 0.025 (not FWER-adjusted — each
+      experimental arm is a separate confirmatory question, not a
+      multiple comparison within a family).
+    - Intermediate-stage futility: drop arm if observed HR on
+      intermediate > 1.0 (or softer threshold depending on design).
+    - Sample-size formula extends the event-based PH sizing to
+      account for dropping arms + shared control.
+
+    **Innovations**:
+    - Shared control dramatically reduces total N vs separate
+      bilateral trials (savings ~25-40% depending on # arms).
+    - Intermediate endpoint + futility dropping preserves efficiency
+      when some arms are inactive.
+    - Pre-specified decision rules preserve type-I error per
+      arm-specific test (no FWER adjustment needed if arms are
+      independent scientific questions).
+
+r_packages:
+  - gsDesign (per-arm TTE sizing)
+  - rpact (MAMS via getSampleSizeSurvival with multi-arm adaptation)
+  - asd (adaptive seamless MAMS)
+  - nphMCP
+  - MAMS (R package by Wason-Jaki)
+
+tags:
+  - royston-parmar-qian
+  - mams
+  - methodology-canonical
+  - time-to-event
+  - stampede-backbone
+  - intermediate-endpoint
+  - shared-control
+  - ovarian-cancer
+
+caveats: |
+  Per-arm type-I error control (each arm = separate confirmatory
+  question) vs. FWER control is a policy decision. STAMPEDE uses
+  per-arm 0.025 rationale; regulatory submissions may require FWER
+  adjustment if arms are conceptually within a single "family"
+  (e.g., multiple doses of same drug). Intermediate-endpoint-guided
+  dropping relies on the intermediate being prognostic for the final
+  endpoint — PFS for OS is well-established in oncology; in CV,
+  surrogacy is more controversial. The shared-control efficiency
+  gain assumes that control-group performance is stable over the
+  calendar time of the trial — long trials (STAMPEDE spans 15+ years)
+  must monitor for control-group drift and may need calendar
+  stratification. Modern extensions: Wason-Jaki (2012) optimal MAMS
+  designs; Magirr-Jaki-Whitehead (2012) generalized Dunnett for
+  adaptive selection within a MAMS framework; Bratton-Phillips-Parmar
+  (2013) operational guidance.

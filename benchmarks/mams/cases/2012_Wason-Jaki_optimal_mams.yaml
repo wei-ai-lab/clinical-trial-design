@@ -1,0 +1,100 @@
+id: 2012_Wason-Jaki_optimal_mams
+family: mams
+source:
+  kind: methodology-paper
+  citation: "Wason JMS, Jaki T. Optimal design of multi-arm multi-stage trials. Stat Med. 2012;31(30):4269-4279."
+  doi: "10.1002/sim.5513"
+
+design:
+  indication: "any (methodology)"
+  population: "Phase 2/3 MAMS with 2-6 experimental arms, 2-4 stages"
+  arms:
+    - name: "experimental arm 1"
+      allocation: 1
+    - name: "experimental arm 2"
+      allocation: 1
+    - name: "experimental arm 3 (etc.)"
+      allocation: 1
+    - name: "shared control"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Continuous or binary or TTE; worked examples for each"
+    measurement_time: "per-stage and final"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  effect:
+    boundary_family: "Pre-computed optimal (Pocock-like, OBF-like, or triangular) for each K × J combination"
+    fwer_control: "Strong FWER control via pre-computed critical values + simulation"
+    optimality_criterion: "Minimize expected sample size under null (ESS_{H0}) or under alternative (ESS_{H1}); minimax"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 10
+  notes: |
+    **Canonical paper on optimal MAMS design parameters.** Extends
+    Royston-Parmar-Qian (2003) by:
+    (1) Providing pre-computed **optimal boundary parameters** for
+        the most common K × J combinations (K = 2-6 arms, J = 2-4
+        stages) under OBF, Pocock, and triangular shapes.
+    (2) Establishing strong FWER control when experimental arms are
+        considered a "family" (relevant for regulatory multi-dose
+        comparisons).
+    (3) Defining optimality criteria:
+        - ESS under null: minimize futility-mediated sample size.
+        - ESS under alternative: minimize sample size when drug works.
+        - Minimax: minimize worst-case sample size.
+
+    **Basis for the R `MAMS` package**: the tabulated boundaries
+    and ESS calculations from this paper are directly implemented.
+
+    **Operating characteristics** reported:
+    - Power per pairwise comparison (true effect vs null).
+    - ESS under H0, H1, least-favorable configuration (LFC).
+    - Family-wise error rate (strong control when required).
+    - Probability of dropping an active arm (loss of efficacy).
+
+    **Applications**:
+    - Dose-finding Phase 2/3 with 2-4 active doses.
+    - Competing regimens in oncology (chemo vs IO vs combo).
+    - Platform trials with shared control.
+
+r_packages:
+  - MAMS (primary implementation — Jaki's package)
+  - gsDesign (boundary computation)
+  - rpact (MAMS extension in newer versions)
+  - asd
+
+tags:
+  - wason-jaki
+  - mams
+  - methodology-canonical
+  - optimal-design
+  - fwer-control
+  - expected-sample-size
+  - shared-control
+  - r-package-mams
+
+caveats: |
+  The "optimal" designs in this paper are optimal under the
+  assumed probability model (e.g., equal true effects across arms
+  for LFC). Real trial effects often differ substantially — one arm
+  is clearly best, others are weak — in which case ESS savings are
+  larger than LFC theory predicts. FWER control is conservative in
+  practice because the joint distribution of pairwise test statistics
+  has positive correlation (all share the control arm). Triangular
+  boundaries (Whitehead 1992) often provide good ESS profiles at
+  modest power cost. Per-arm type-I control (vs FWER) remains the
+  STAMPEDE-style policy preference when each arm is a separate
+  scientific hypothesis. The `MAMS` R package implements most of
+  this paper's methodology: `mams()` function for design, `mams.sim()`
+  for simulation-based operating characteristics, and helper
+  functions for intermediate-endpoint MAMS extensions.
