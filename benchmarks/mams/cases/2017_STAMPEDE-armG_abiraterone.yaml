@@ -1,0 +1,170 @@
+id: 2017_STAMPEDE-armG_abiraterone
+family: mams
+source:
+  kind: primary-results
+  citation: "James ND, de Bono JS, Spears MR, et al. Abiraterone for prostate cancer not previously treated with hormone therapy. N Engl J Med. 2017 Jul 27;377(4):338-351. Platform design: Sydes MR, Spears MR, Mason MD, et al. Adding abiraterone or docetaxel to long-term hormone therapy for prostate cancer: directly randomised data from the STAMPEDE multi-arm, multi-stage platform protocol. Ann Oncol. 2018 May 1;29(5):1235-1248."
+
+design:
+  indication: "Newly diagnosed metastatic or high-risk locally advanced hormone-sensitive prostate cancer (hsPC), planned for long-term androgen deprivation therapy (ADT)"
+  population: "Men with histologically proven prostate adenocarcinoma, newly diagnosed with metastatic disease OR high-risk N+/T3-4 locally advanced disease, fit for chemotherapy if assigned"
+  arms:
+    - name: "standard of care: long-term ADT ± radiotherapy (SOC control in platform)"
+      allocation: 1
+    - name: "SOC + abiraterone acetate 1,000 mg daily + prednisolone 5 mg daily (Arm G)"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Primary: overall survival (OS). Secondary: failure-free survival (FFS). Within MAMS framework, FFS at intermediate stage gates decisions."
+    measurement_time: "event-driven; continuous accrual within STAMPEDE platform"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    scale: log-hazard-ratio
+    assumed_hr_os: 0.75
+    median_os_control_months: 42
+    design_approach: |
+      MAMS sub-arm within STAMPEDE platform. Arm G tested abiraterone +
+      prednisolone addition to SOC ADT in hsPC.
+      - Platform control (SOC ADT ± RT) shared across arms.
+      - OS primary; FFS intermediate endpoint for MAMS stage gates.
+      - Event-driven with lack-of-benefit stages (MAMS framework).
+      - Pairwise comparison within platform; FWER controlled per arm at 5%.
+      - Interim analyses: progression through MAMS stages contingent on
+        FFS hazard ratio crossing pre-specified thresholds.
+    mams_stages: |
+      MAMS within STAMPEDE platform uses FFS (failure-free survival) at
+      multiple looks to gate continuation:
+      - Stage 1: FFS HR must cross Z-threshold at ~ 40% FFS events.
+      - Stage 2: FFS HR threshold at ~ 60% FFS events.
+      - Final: OS primary analysis at pre-specified OS events.
+      - Arms failing at any stage drop; arms passing continue to
+        enrollment for OS primary.
+    randomization: |
+      Response-adaptive allocation: arms still active receive new
+      enrollments; arms that completed enrollment or dropped do not.
+      1:1 against SOC at any given enrollment window.
+    fwer_control: |
+      Each arm-versus-SOC comparison tested at α = 0.05 two-sided.
+      MAMS platform treats each arm as independent study vs shared SOC;
+      no overall FWER adjustment across arms (typical MRC/MAMS platform
+      philosophy — each arm judged on its own merits).
+  accrual:
+    duration_months: 38
+  followup:
+    planned_months: null
+    median_actual_months: 40
+
+expected:
+  sample_size_total: 1917
+  sample_size_per_arm: [957, 960]
+  events_total_target_os: 267
+  events_total_actual: 366
+  tolerance:
+    sample_size_pct: 2
+    events_pct: 5
+  notes: |
+    **STAMPEDE Arm G (abiraterone)** was a landmark sub-arm of the
+    STAMPEDE multi-arm multi-stage platform trial, establishing
+    abiraterone + prednisolone addition to standard ADT as new
+    standard of care in metastatic hormone-sensitive prostate cancer
+    (mHSPC).
+
+    **Design within STAMPEDE platform**:
+    - 1,917 randomized to Arm G vs SOC (within broader platform).
+    - Platform began 2005; Arm G opened 2011.
+    - MAMS framework: FFS at intermediate stages gated continuation.
+    - OS primary for final analysis.
+
+    **Results (primary analysis, 2017)**:
+    - OS: median not reached vs 4.6 yr; HR 0.63 (0.52-0.76), P < 0.001.
+    - FFS: HR 0.29 (0.25-0.34), P < 0.001.
+    - 3-yr OS: 83% (arm G) vs 76% (SOC).
+    - Stopped for superiority at interim (MAMS efficacy boundary).
+
+    **Regulatory / clinical**:
+    - FDA expanded abiraterone label to mHSPC in 2018.
+    - Practice-changing: abiraterone + ADT became new SOC for mHSPC
+      (alongside docetaxel + ADT from CHAARTED / STAMPEDE Arm C).
+    - Complemented by LATITUDE (de Bono 2017) independently confirming
+      benefit.
+
+r_packages:
+  - MAMS
+  - gsDesign
+  - rpact
+  - survival
+  - simtrial
+  - nph
+
+tags:
+  - stampede
+  - abiraterone
+  - prostate-cancer
+  - mhspc
+  - mams-platform
+  - real-world-application
+  - practice-changing
+  - landmark-trial
+  - fail-free-survival
+  - overall-survival
+
+caveats: |
+  STAMPEDE Arm G design / analysis points:
+
+  - **Platform nesting**: Arm G is one of 10+ arms tested in STAMPEDE;
+    shared SOC randomization allows efficient comparisons.
+  - **FFS as MAMS gating endpoint**: progression to next stage contingent
+    on FFS HR crossing pre-specified threshold. Final OS analysis if
+    all stages passed.
+  - **No FWER across arms**: each arm-vs-SOC comparison at α = 0.05.
+    Platform uses "separate studies" philosophy — each arm judged
+    independently. Distinct from confirmatory MAMS where FWER controlled
+    across arms.
+  - **Time-varying control**: SOC evolves as new arms are added and
+    previous arms become new SOC. Abiraterone in Arm G became part of
+    SOC after this result, changing comparator for later arms.
+
+  **MAMS framework in STAMPEDE** (simplified):
+  ```r
+  library(MAMS)
+
+  # Illustrative: 1 experimental arm vs SOC, OS primary
+  # with FFS interim gate
+  design <- mams(
+    K = 1,
+    J = 3,                # 2 FFS gates + 1 OS final
+    alpha = 0.025,        # one-sided
+    power = 0.90,
+    r = c(0.4, 0.6, 1.0),
+    r0 = c(0.4, 0.6, 1.0),
+    p = 0.60,             # assumed HR ~ 0.75 on Z-scale
+    p0 = 0.50,
+    ushape = "obf",
+    lshape = "obf"
+  )
+  ```
+
+  **Key design distinctions from confirmatory MAMS**:
+  | Feature | Confirmatory MAMS | STAMPEDE platform |
+  |---|---|---|
+  | FWER | Controlled across arms | Separate α per arm |
+  | Arms | Pre-fixed K | Rolling — new arms added |
+  | Control | Fixed comparator | Evolving SOC |
+  | Timeline | Fixed duration | Open-ended |
+
+  **Related STAMPEDE arms**:
+  - Arm C (docetaxel 2015): HR 0.78 for OS.
+  - Arm E (zoledronic acid): no benefit.
+  - Arm F (celecoxib): stopped early for futility.
+  - **Arm G (abiraterone)** (this case): HR 0.63.
+  - Arm J (radiotherapy to prostate): benefit in low-volume disease.
+  - Arm K (prostate RT + abi/enza): ongoing.
+
+  **Contemporary evidence**:
+  - **LATITUDE** (2017): independent mHSPC abiraterone trial, HR 0.62.
+  - **TITAN** (2019): apalutamide.
+  - **ENZAMET** (2019): enzalutamide.
+  - **ARASENS** (2022): triplet abi + doc + ADT.
+  - STAMPEDE showed platform-trial efficiency vs individual trials.

@@ -101,7 +101,7 @@ Work proceeds in autonomous iterations (`/loop` dynamic mode):
 | adaptive-ssr | ✅ | 7 | 5 | ✅ |
 | adaptive-enrichment | ✅ | 6 | 4 | ✅ |
 | adaptive-selection | ✅ | 6 | 4 | ✅ |
-| mams | ✅ | 7 | 5 | ✅ |
+| mams | ✅ | 9 | 5 | ✅ |
 | tte-ph | ✅ | 10 | 8 | ✅ |
 | tte-nph | ✅ | 10 | 8 | ✅ |
 | recurrent-events | ✅ | 8 | 4 | ✅ |

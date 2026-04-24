@@ -1,0 +1,163 @@
+id: 2012_Magirr-Jaki-Whitehead_generalized-dunnett
+family: mams
+source:
+  kind: methodology-paper
+  citation: "Magirr D, Jaki T, Whitehead J. A generalized Dunnett test for multi-arm multi-stage clinical studies with treatment selection. Biometrika. 2012 Jun;99(2):494-501. Companion: Magirr D, Stallard N, Jaki T. Flexible sequential designs for multi-arm clinical trials. Stat Med. 2014 Aug 30;33(19):3269-79."
+
+design:
+  indication: "Generic multi-arm multi-stage framework — applies to any therapeutic area where several experimental treatments are compared to a shared control with one or more interim analyses for treatment selection"
+  population: "Any disease setting with ≥ 2 experimental arms + 1 control, continuous, binary, or TTE endpoint"
+  arms:
+    - name: "control"
+      allocation: 1
+    - name: "experimental 1, 2, ..., K"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Methodology framework agnostic to endpoint — applies to continuous, binary, or TTE; illustrated with normal endpoint in Magirr-Jaki-Whitehead 2012"
+    measurement_time: "per stage"
+  comparison: superiority
+  sidedness: 1
+  alpha: 0.025
+  power: 0.90
+  effect:
+    scale: methodology
+    methodology_framework: |
+      Unified Dunnett-style multiple comparisons with group-sequential
+      stopping at interim analyses:
+      - K experimental arms vs control.
+      - L stages (typically L = 2: one interim + final).
+      - At each stage, compute standardized test statistic Z_{k,l} for
+        each arm k vs control.
+      - Boundaries (l_1, ..., l_L) = futility; (u_1, ..., u_L) = efficacy.
+      - Arm dropped if Z_{k,l} ≤ l_l (futility).
+      - Arm declared superior if Z_{k,l} ≥ u_l (efficacy).
+      - Continue to stage l+1 with arms still active.
+    dunnett_inheritance: |
+      Generalized from Dunnett single-stage multiple comparison:
+      - Preserves FWER at α in strong sense across all selection
+        strategies.
+      - Boundaries tabulated via numerical integration of multivariate
+        normal with correlation Σ induced by shared control.
+      - Correlation ρ = n_C / √(n_C · (n_C + n_K)) adjusted for staging.
+    boundary_families: |
+      - O'Brien-Fleming-like: low early α, heavy late α.
+      - Pocock-like: constant boundary.
+      - Asymmetric: efficacy boundaries OF-like, futility non-binding.
+      - Triangular: efficient selection after one look.
+    treatment_selection_rules: |
+      - "Drop-the-loser": at stage 1, drop arms with Z < threshold.
+      - "Keep all promising": continue all arms with Z > futility.
+      - "Keep top m": continue m arms with highest Z, m fixed.
+    sample_size: |
+      Based on two components:
+      (i) Dunnett multiplicity inflation at final analysis.
+      (ii) Group-sequential α-spending across stages.
+      Net: typical inflation 5-20% over single-stage single-arm test.
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 2
+  notes: |
+    **Magirr-Jaki-Whitehead 2012** provided the **unified Dunnett-
+    style MAMS framework** with rigorous FWER control across all
+    selection strategies. Key theoretical contribution that underpins
+    modern MAMS methodology (including STAMPEDE).
+
+    **Core theoretical result**:
+    - Under shared control randomization, test statistics across arms
+      at each stage form a multivariate normal.
+    - Correlation structure Σ_{k,k'} = n_C / √((n_C + n_k)(n_C + n_{k'}))
+      (between arms) and ρ_{l,l'} (within-arm across stages).
+    - Boundaries derived by numerical integration preserving FWER.
+
+    **Implementation**:
+    - R package `MAMS` (Jaki-Magirr 2016) — canonical.
+    - Supports L = 2-5 stages, up to 30 arms.
+    - Normal, binary, TTE endpoints via Z-statistic approximation.
+
+    **Extension (Magirr-Stallard-Jaki 2014)**:
+    - Flexible SSR-integrated MAMS.
+    - Combination tests across stages (Bauer-Köhne, CHW).
+    - Unbinding adaptation from group-sequential structure.
+
+    **Applied in**:
+    - STAMPEDE (in corpus) — prostate cancer MAMS-platform.
+    - FOCUS4 (in corpus) — colorectal biomarker-enriched MAMS.
+    - RECOVERY COVID (in corpus) — hybrid MAMS-platform.
+    - Several industry Phase 2b/3 MAMS (AstraZeneca, Roche).
+
+r_packages:
+  - MAMS (Jaki-Magirr — canonical implementation)
+  - asd (adaptive sequential designs)
+  - rpact
+  - adaptr
+  - gsDesign
+
+tags:
+  - magirr-jaki-whitehead
+  - mams
+  - generalized-dunnett
+  - treatment-selection
+  - multi-arm-multi-stage
+  - methodology-foundational
+  - fwer-control
+
+caveats: |
+  Generalized Dunnett MAMS methodology considerations:
+
+  - **Boundary computation**: numerical integration of multivariate
+    normal; boundary families depend on selection strategy.
+  - **Correlation structure assumption**: requires shared control
+    randomization; breaks if control arm differs or different enrollment
+    rates across arms.
+  - **Treatment selection vs dropping**: "drop-the-loser" and "keep top m"
+    have different OC — pre-specify in protocol.
+  - **Information fractions**: computation assumes equal information
+    growth across arms — may be violated if enrollment imbalanced.
+
+  **Typical MAMS calculation**:
+  ```r
+  library(MAMS)
+
+  # 4 experimental + 1 control, 2 stages
+  design <- mams(
+    K = 4,          # number of experimental arms
+    J = 2,          # number of stages (interim + final)
+    alpha = 0.025,
+    power = 0.90,
+    r = 1:2,        # info fractions at each stage
+    r0 = 1:2,       # control info fractions
+    p = 0.65,       # standardized effect (z-scale)
+    p0 = 0.50,      # null value
+    ushape = "obf", # efficacy: O'Brien-Fleming
+    lshape = "obf"  # futility: O'Brien-Fleming
+  )
+  summary(design)
+  # Sample size per arm, boundaries, OC
+  ```
+
+  **Relationship to other MAMS methodology**:
+  - **Royston-Parmar-Qian 2003** (in corpus): first MAMS TTE framework.
+  - **Bratton-Phillips-Parmar 2013** (in corpus): MAMS for platform trials.
+  - **Wason-Jaki 2012** (in corpus): optimal MAMS.
+  - **Magirr-Jaki-Whitehead 2012** (this case): unified Dunnett framework.
+  - **Stallard-Todd 2003**: seamless Phase 2/3 precursor.
+
+  **Design-class coverage**:
+  - Normal endpoint with shared control: exact treatment.
+  - Binary endpoint: Z-statistic approximation (good for n ≥ 30/arm).
+  - TTE endpoint: log-rank Z-statistic, shared control extension.
+  - Non-inferiority: extendable to NI margin.
+
+  **Software ecosystem**:
+  - **MAMS package**: canonical R implementation.
+  - **rpact**: alternative group-sequential framework with multi-arm extension.
+  - **asd**: Bauer-Köhne combination test MAMS.
+  - Commercial: **East** (Cytel) has MAMS module.
