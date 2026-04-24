@@ -1,0 +1,73 @@
+id: 2014_PARADIGM-HF_hfref
+family: group-sequential
+source:
+  kind: published-trial
+  citation: "McMurray JJ, Packer M, Desai AS, et al. Angiotensin-neprilysin inhibition versus enalapril in heart failure. N Engl J Med. 2014;371(11):993-1004."
+  doi: "10.1056/NEJMoa1409077"
+  nct_id: "NCT01035255"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1409077"
+
+design:
+  indication: "Heart failure with reduced ejection fraction (HFrEF), NYHA II-IV, LVEF ≤ 40%"
+  population: "Adults with HFrEF on guideline-directed medical therapy"
+  arms:
+    - name: "sacubitril/valsartan (LCZ696) 200 mg bid"
+      allocation: 1
+    - name: "enalapril 10 mg bid"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: CV death or HF hospitalization"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.8
+  effect:
+    hr: 0.85
+    control_annual_rate: 0.145
+  accrual:
+    duration_months: 27
+  followup:
+    median_months: 27
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.33
+    - number: 2
+      information_fraction: 0.67
+    - number: 3
+      information_fraction: 1.0
+    spending: "Lan-DeMets approximation of O'Brien-Fleming (Haybittle-Peto for first look)"
+    futility: "Non-binding futility at IF=0.33 and 0.67"
+
+expected:
+  sample_size_total: 8442
+  events_total: 2410
+  boundaries:
+    efficacy_z:
+      - 3.71
+      - 2.77
+      - 2.05
+    futility_z:
+      - -0.76       # non-binding; favoring experimental at IF=0.33 required
+      - 0.60        # IF=0.67
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 3
+  notes: |
+    Classic modern HF GS trial. Active-control design (vs enalapril, the
+    established ACEI). Stopped at IF ~0.78 (second efficacy interim)
+    based on DSMB recommendation. Observed HR 0.80 vs planned 0.85.
+
+r_packages:
+  - gsDesign::gsSurv
+  - rpact::getDesignGroupSequential
+
+tags:
+  - hfref
+  - arni
+  - sacubitril-valsartan
+  - active-control
+  - obf-spending
+  - non-binding-futility
+  - stopped-early-efficacy

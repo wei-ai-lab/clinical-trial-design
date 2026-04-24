@@ -1,0 +1,66 @@
+id: 2019_DAPA-HF_hfref
+family: group-sequential
+source:
+  kind: published-trial
+  citation: "McMurray JJV, Solomon SD, Inzucchi SE, et al. Dapagliflozin in patients with heart failure and reduced ejection fraction. N Engl J Med. 2019;381(21):1995-2008."
+  doi: "10.1056/NEJMoa1911303"
+  nct_id: "NCT03036124"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1911303"
+
+design:
+  indication: "Heart failure with reduced ejection fraction, LVEF ≤ 40%, NYHA II-IV"
+  population: "Adults with HFrEF, with or without T2D, on GDMT"
+  arms:
+    - name: "dapagliflozin 10 mg daily"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: worsening HF event (hospitalization or urgent visit requiring IV therapy) or CV death"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.9
+  effect:
+    hr: 0.80
+    control_annual_rate: 0.11
+  accrual:
+    duration_months: 18
+  followup:
+    median_months: 18
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.60
+    - number: 2
+      information_fraction: 1.0
+    spending: "Lan-DeMets O'Brien-Fleming"
+    futility: "None"
+
+expected:
+  sample_size_total: 4744
+  events_total: 844
+  boundaries:
+    efficacy_z:
+      - 2.39       # IF 0.60
+      - 2.00       # IF 1.0
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 3
+  notes: |
+    Single pre-specified interim for efficacy at IF=0.60, plus final.
+    Efficient 2-look GS design. Trial ran to final analysis; superiority
+    demonstrated at IF=1.0.
+
+r_packages:
+  - gsDesign::gsSurv
+  - rpact::getDesignGroupSequential
+
+tags:
+  - hfref
+  - sglt2
+  - dapagliflozin
+  - obf-spending
+  - two-look-gs
+  - modern-gs-design

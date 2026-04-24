@@ -1,0 +1,70 @@
+id: 2008_JUPITER_rosuvastatin
+family: group-sequential
+source:
+  kind: published-trial
+  citation: "Ridker PM, Danielson E, Fonseca FA, et al. Rosuvastatin to prevent vascular events in men and women with elevated C-reactive protein. N Engl J Med. 2008;359(21):2195-2207."
+  doi: "10.1056/NEJMoa0807646"
+  nct_id: "NCT00239681"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJMoa0807646"
+
+design:
+  indication: "Primary CV prevention: LDL < 130, hsCRP ≥ 2 mg/L, no clinical CVD"
+  population: "Adults ≥ 50/≥ 60 y (men/women) with hsCRP ≥ 2"
+  arms:
+    - name: "rosuvastatin 20 mg daily"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "Composite: MI, stroke, arterial revascularization, unstable angina hospitalization, or CV death"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.9
+  effect:
+    hr: 0.75
+    control_annual_rate: 0.009
+  accrual:
+    duration_months: 24
+  followup:
+    min_months: 48
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.50
+    - number: 2
+      information_fraction: 0.75
+    - number: 3
+      information_fraction: 1.0
+    spending: "Lan-DeMets approximation of O'Brien-Fleming"
+    futility: "None"
+
+expected:
+  sample_size_total: 17802
+  events_total: 520
+  boundaries:
+    efficacy_z:
+      - 2.80     # IF 0.50
+      - 2.34     # IF 0.75
+      - 2.04     # IF 1.0
+  tolerance:
+    sample_size_pct: 3
+    events_pct: 5
+  notes: |
+    Stopped early at second planned interim (IF ~0.44, i.e. earlier than
+    the 0.50 schedule) based on DSMB recommendation after observing strong
+    benefit on the primary endpoint. Observed HR 0.56 at that look —
+    well past the z-boundary.
+
+r_packages:
+  - gsDesign::gsSurv
+  - rpact::getDesignGroupSequential
+
+tags:
+  - primary-prevention
+  - statin
+  - inflammation
+  - hscrp
+  - obf-spending
+  - stopped-early-efficacy

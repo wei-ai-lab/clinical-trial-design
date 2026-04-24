@@ -1,0 +1,74 @@
+id: 1999_RALES_spironolactone
+family: group-sequential
+source:
+  kind: published-trial
+  citation: "Pitt B, Zannad F, Remme WJ, et al. The effect of spironolactone on morbidity and mortality in patients with severe heart failure. N Engl J Med. 1999;341(10):709-717."
+  doi: "10.1056/NEJM199909023411001"
+  url: "https://www.nejm.org/doi/full/10.1056/NEJM199909023411001"
+
+design:
+  indication: "Severe heart failure (NYHA III-IV) with LVEF ≤ 35%"
+  population: "Adults with severe HFrEF on standard therapy (ACEI, diuretic)"
+  arms:
+    - name: "spironolactone 25 mg daily"
+      allocation: 1
+    - name: "placebo"
+      allocation: 1
+  endpoint:
+    type: time-to-event
+    description: "All-cause mortality"
+    measurement_time: "time-to-first-event"
+  comparison: superiority
+  sidedness: 2
+  alpha: 0.05
+  power: 0.9
+  effect:
+    hr: 0.80
+    control_annual_rate: 0.25
+  accrual:
+    duration_months: 24
+  followup:
+    min_months: 12
+  interim_analyses:
+    - number: 1
+      information_fraction: 0.33
+    - number: 2
+      information_fraction: 0.67
+    - number: 3
+      information_fraction: 1.0
+    spending: "Lan-DeMets approximation of O'Brien-Fleming"
+    futility: "None (efficacy-only)"
+
+expected:
+  sample_size_total: 2500
+  events_total: 690       # target all-cause deaths at final analysis
+  boundaries:
+    efficacy_z:            # O'Brien-Fleming z-boundaries approximately:
+      - 3.71               # IF=0.33
+      - 2.62               # IF=0.67
+      - 2.03               # IF=1.0 (slight inflation over 1.96 for GS)
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 5
+  notes: |
+    RALES was stopped at the second interim analysis for efficacy. Pre-specified
+    Lan-DeMets OBF spending; the observed HR at second look (~0.70) crossed the
+    z-boundary. Classic teaching example of GS stopping in HF trials.
+
+r_packages:
+  - gsDesign::gsSurv
+  - rpact::getDesignGroupSequential
+
+tags:
+  - heart-failure
+  - mra
+  - mortality-endpoint
+  - obf-spending
+  - stopped-early-efficacy
+  - classic-gs-trial
+
+caveats: |
+  Pre-1999 trial; formal GS design reconstruction relies on the published
+  stopping-rule summary and inference from the reported stopping. Exact
+  boundaries and spending function as-implemented were specified in the
+  protocol but not fully reproduced in the primary publication.
