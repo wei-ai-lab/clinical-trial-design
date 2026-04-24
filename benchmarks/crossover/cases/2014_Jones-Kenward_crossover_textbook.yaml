@@ -1,0 +1,104 @@
+id: 2014_Jones-Kenward_crossover_textbook
+family: crossover
+source:
+  kind: methodology-textbook
+  citation: "Jones B, Kenward MG. Design and Analysis of Cross-Over Trials. 3rd edition. Chapman & Hall/CRC Biostatistics Series; 2014. ISBN 978-1-4398-6142-4."
+
+design:
+  indication: "any (textbook)"
+  population: "Within-patient crossover designs (AB/BA, Williams squares, replicate, incomplete block)"
+  arms:
+    - name: "sequence AB"
+      allocation: 1
+    - name: "sequence BA"
+      allocation: 1
+  endpoint:
+    type: any
+    description: "Continuous (most common), binary, ordinal, count, survival (less common)"
+    measurement_time: "per-period endpoint"
+  comparison: superiority, equivalence, or bioequivalence
+  sidedness: 2
+  alpha: 0.05
+  power: 0.80
+  effect:
+    period_effect_correction: "Period effect as fixed covariate; carryover test (controversial per Senn)"
+    washout_considerations: "Sufficient washout to eliminate carryover; longer for long half-life"
+    variance_structure: "Within-subject variance (σ_W); between-subject variance cancels in AB/BA"
+    design_types: "AB/BA (2-period), Williams square (Latin square balanced for carryover), replicate (RR) for RSABE, incomplete block for > 4 treatments"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **Canonical modern crossover textbook** — Jones + Kenward are
+    the authoritative duo on crossover methodology. 3rd edition
+    (2014) is the most comprehensive single reference covering:
+
+    **Design types**:
+    - 2-period, 2-treatment (AB/BA).
+    - 3+ periods, 3+ treatments — Williams squares, balanced
+      incomplete blocks.
+    - Replicate designs (TRR, RTR, RRT, TTR etc.) for reference-
+      scaled average bioequivalence of highly variable drugs.
+    - N-of-1 crossover for individual patient inference.
+
+    **Analysis methods**:
+    - Period-adjusted paired t-test (AB/BA).
+    - Mixed-effects models with subject random effect, period fixed,
+      treatment fixed; Williams squares handled via GLM.
+    - Binary crossover: Mainland-Gart / McNemar / conditional logistic.
+    - Multiple-period non-replicate: treatment × period fixed effects,
+      subject random.
+    - Replicate-design RSABE: within-subject variance of reference
+      scales the BE limits.
+
+    **Sample-size formulas**:
+    - AB/BA: n per sequence = (z_{α/2} + z_β)^2 × σ_W^2 / δ^2.
+    - Williams square: similar with variance inflation factor per
+      design matrix.
+    - Replicate RSABE: computed with scaled limits.
+
+    **Special topics**:
+    - Carryover — Senn (2002) position: no formal test, rely on
+      adequate washout; J+K give both positions.
+    - Missing data — more problematic than parallel due to within-
+      subject pairing; MI or MMRM recommended.
+    - Non-inferiority / equivalence — TOST on within-subject difference.
+
+r_packages:
+  - Crossover (Jaki et al. — design construction)
+  - PowerTOST (crossover BE sample sizing)
+  - lme4, nlme (mixed-effects analysis)
+  - emmeans (treatment contrasts)
+  - mmrm
+
+tags:
+  - jones-kenward
+  - crossover
+  - textbook
+  - methodology-canonical
+  - williams-square
+  - ab-ba
+  - replicate-design
+  - rsabe
+
+caveats: |
+  Jones-Kenward remains the most-cited modern crossover reference,
+  alongside Senn (2002, in corpus) — Senn is more polemical on
+  carryover; J+K more encyclopedic on design construction and
+  analysis. For regulatory crossover BE, the FDA 2003 guidance
+  (in corpus) and EMA Bioequivalence Guideline (2010, updated) are
+  the practical references. Jones-Kenward's treatment of replicate
+  designs for highly variable drugs (CV_W > 30%) is the bridge to
+  FDA's reference-scaled ABE (RSABE) framework. For N-of-1 studies,
+  Duan 2022 (Stat Med) extends J+K's N-of-1 chapter with Bayesian
+  hierarchical pooling. Modern extensions not fully covered in J+K:
+  incomplete block extensions for ≥ 10 treatments, adaptive crossover
+  (period re-randomization), and crossover within platform trial
+  structures.

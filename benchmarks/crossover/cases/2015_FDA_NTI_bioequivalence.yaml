@@ -1,0 +1,107 @@
+id: 2015_FDA_NTI_bioequivalence
+family: crossover
+source:
+  kind: regulatory-guidance
+  citation: "FDA. Guidance for Industry: Bioequivalence Studies With Pharmacokinetic Endpoints for Drugs Submitted Under an ANDA. Draft 2013, finalized 2021. Warfarin NTI-specific BE approach: FDA Product-Specific Guidance for Warfarin Sodium (2012, revised 2015)."
+
+design:
+  indication: "Narrow Therapeutic Index (NTI) drug bioequivalence demonstration"
+  population: "Healthy volunteers in crossover BE; patient-based PK studies for some NTI drugs (e.g., tacrolimus)"
+  arms:
+    - name: "test product (generic / proposed NTI drug)"
+      allocation: 1
+    - name: "reference product"
+      allocation: 1
+  endpoint:
+    type: pk
+    description: "Cmax, AUC0-t, AUC0-inf for PK BE; within-subject variance used to scale BE limits for NTI"
+    measurement_time: "full PK profile per period"
+  comparison: bioequivalence
+  sidedness: 2
+  alpha: 0.05
+  power: 0.90
+  effect:
+    standard_be_limits: "80.00-125.00% (90% CI on GMR)"
+    nti_scaled_be_limits: "Scaled tighter than standard — typically 90-111% when within-subject CV of reference ≤ 10%"
+    reference_scaled_algorithm: |
+      If CV_WR ≤ 0.10: use narrower BE limits (90-111%).
+      If CV_WR > 0.10: use standard limits (80-125%) with reference-scaled adjustment.
+      For individual BE (NTI-IBE): require the test-reference ratio of within-subject variances ≤ upper bound (e.g., 2.5).
+    design_required: "Fully replicate 4-period (RTRT / TRTR) or 3-period (TRR / RTR / RRT) crossover"
+  accrual:
+    duration_months: null
+  followup:
+    planned_months: null
+
+expected:
+  sample_size_total: null
+  events_total: null
+  tolerance:
+    sample_size_pct: 20
+  notes: |
+    **Specialized BE framework for Narrow Therapeutic Index drugs**
+    such as warfarin, phenytoin, digoxin, lithium, tacrolimus,
+    levothyroxine, cyclosporine, carbamazepine. NTI drugs require
+    tighter BE limits than standard 80-125% to protect patients from
+    dose-response cliff effects (e.g., warfarin hemorrhage / clot
+    balance).
+
+    **Core innovation — Reference-Scaled NTI BE**:
+    (1) Require **replicate design** (4-period fully replicate or
+        3-period partial replicate) to estimate within-subject CV of
+        reference (CV_WR).
+    (2) If CV_WR ≤ 10%, apply **tightened BE limits** scaled from
+        the within-subject SD of reference:
+        - Upper: exp(1.053605 × σ_WR) — typically 111% when CV_WR
+          = 10%.
+        - Lower: 1 / upper — typically 90% when CV_WR = 10%.
+    (3) Also require **individual BE component**: ratio of test-to-
+        reference within-subject variances ≤ 2.5 (to rule out test
+        product with inflated variability).
+
+    **Sample size implications**:
+    - Tighter limits + replicate design → larger N vs standard ABE.
+    - Typical warfarin NTI BE: 20-30 subjects × 4 periods = 80-120
+      observations per subject.
+    - Higher power (0.90) standard due to regulatory stakes.
+
+    **FDA NTI drug list** (partial): warfarin, digoxin, phenytoin,
+    tacrolimus, cyclosporine, levothyroxine, lithium, theophylline,
+    carbamazepine, valproic acid.
+
+r_packages:
+  - PowerTOST::sampleN.scABEL (reference-scaled ABE)
+  - PowerTOST::sampleN.NTIDFDA (NTI-specific FDA approach)
+  - replicateBE (replicate-design BE analysis)
+  - Crossover (replicate design construction)
+
+tags:
+  - fda-guidance
+  - nti
+  - narrow-therapeutic-index
+  - bioequivalence
+  - crossover
+  - replicate-design
+  - reference-scaled
+  - warfarin
+  - levothyroxine
+  - regulatory
+
+caveats: |
+  NTI BE is one of the most technically demanding regulatory crossover
+  contexts. Replicate design required — cannot use standard 2-period
+  AB/BA. Sample size highly sensitive to CV_WR estimate — pilot PK
+  studies often needed. Individual BE component (variance ratio)
+  adds complexity. FDA and EMA historically diverged on NTI BE:
+  - FDA: reference-scaled approach (2012+).
+  - EMA: tighter static limits (90-111%) for NTI drugs (Bioequivalence
+    Guideline 2010).
+  - Convergence ongoing under ICH M13A (draft 2022).
+  For specific drugs, FDA issues Product-Specific Guidances (PSGs)
+  that define the required BE approach. Warfarin PSG is canonical —
+  requires 4-period replicate BE in healthy volunteers with both
+  fasting and fed arms. Tacrolimus PSG requires patient-based BE
+  (not healthy volunteers) due to high inter-individual variability
+  and clinical relevance. Levothyroxine PSG requires baseline-adjusted
+  PK due to endogenous T4. All of these require specialized statistical
+  planning beyond standard crossover.
