@@ -6,6 +6,80 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.5] — 2026-04-25
+
+Agent-friendliness + trust-boundary release. No new design wrappers, no
+new MCP tools — the focus is making `designr` a project that AI agents
+(and humans) can contribute to confidently, and making its statelessness
+a checked property rather than an assertion.
+
+### Added
+
+- `AGENTS.md` — codebase tour and contributor protocol written for
+  AI-agent contributors. Covers the four-layer architecture (skill →
+  MCP server → R wrappers → CRAN backends), a worked example of adding
+  a new design wrapper end-to-end (R function → benchmark anchor →
+  testthat anchor → MCP tool registration → smoke prompt → CHANGELOG),
+  the in-scope vs. needs-human-review lists, and multi-host notes
+  covering Claude Code, GPT, Gemini, openclaw, and opencode.
+- `CONTRIBUTING.md` — human-facing process. References `AGENTS.md` for
+  technical detail. Priority list: benchmark anchors > new wrappers >
+  bug fixes > tool-description improvements > docs.
+- `SECURITY.md` — documents `designr`'s stateless trust boundary as a
+  design property: CI-gated against disk writes and network calls
+  inside the R package and MCP server. Confidential trial inputs given
+  to the agent never leave the conversation *through the plugin*.
+  Persistence and audit are framed as *host* concerns (small-co. wants
+  none; large-enterprise wants corporate transcript retention as audit
+  log). Forbidden patterns are enumerated.
+- `HOSTING.md` — three deployment profiles. Profile A: small-co. on
+  public Claude Code with managed laptops (no persistence). Profile B:
+  large-enterprise on Claude Code Enterprise + Amazon Bedrock private
+  endpoint (corporate transcript retention as audit log of
+  cross-functional trial-design decisions). Profile C: air-gapped
+  on-prem (forthcoming v0.0.11).
+- `.github/ISSUE_TEMPLATE/add-benchmark-case.yml` — machine-fillable
+  GitHub issue form that mirrors `benchmarks/schema/design.schema.json`.
+  Required fields use regex pattern validation. Auto-labels
+  `good first issue` because adding a benchmark anchor is the
+  highest-impact, lowest-friction contribution.
+- `.github/ISSUE_TEMPLATE/add-design-wrapper.yml` — issue form for
+  proposing a new design family wrapper. Requires roadmap-phase
+  declaration (Phase 1 depth vs. Phase 2 expand) and a paired
+  benchmark anchor case.
+- `.github/ISSUE_TEMPLATE/bug-report.yml` — separates bug reports from
+  security advisories (security routes to private GitHub advisories
+  via `config.yml`). Requires environment details (R version, Node
+  version, plugin version, OS).
+- `.github/ISSUE_TEMPLATE/improve-tool-description.yml` — dedicated
+  path for LLM-tool-selection improvements. The MCP tool descriptions
+  are how the agent picks the right wrapper; small wording fixes
+  there are disproportionately valuable.
+- `.github/ISSUE_TEMPLATE/config.yml` — disables blank issues; routes
+  security reports to private GitHub advisories.
+- `.github/workflows/security-grep.yml` — two-job CI grep gate that
+  fails any PR introducing disk writes or network calls. R-side
+  forbids `writeLines`, `write.csv`, `write.table`, `saveRDS`,
+  `save(`, `cat(..., file=)`, `download.file`, `socketConnection`,
+  `httr::`, `curl::`, `RCurl::`, `url(`. MCP-side forbids
+  `fs.writeFile*`, `fs.appendFile*`, `writeFileSync`,
+  `appendFileSync`, `fetch(`, `http.request`, `https.request`,
+  `net.connect`, `net.createConnection`, `dgram`. Triggers on push
+  and PR to `main` and `dev`. Locally simulated all patterns —
+  current codebase passes both jobs cleanly.
+- README "Contributing" and "Trust boundary and hosting" sections
+  linking the four new docs above.
+
+### Changed
+
+- Versions aligned across the stack to `0.0.5`. `plugin.json`,
+  `marketplace.json` (both `metadata.version` and `plugins[0].version`),
+  `mcp-server/package.json`, the MCP server's reported `version` in
+  `mcp-server/src/index.ts`, and `r-package/designr/DESCRIPTION` all
+  read `0.0.5`. `mcp-server/dist/index.js` rebuilt with esbuild
+  (730.8 KB, all Node deps inlined, the `"0.0.5"` literal verified
+  present in the bundle). `node scripts/smoke.mjs` returns 13 / 13.
+
 ## [0.0.4] — 2026-04-25
 
 ### Fixed
@@ -169,7 +243,8 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - README with quick-start, MVP tool surface, three "Try it" prompts,
   and roadmap.
 
-[Unreleased]: https://github.com/wei-ai-lab/designr/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/wei-ai-lab/designr/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/wei-ai-lab/designr/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/wei-ai-lab/designr/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/wei-ai-lab/designr/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/wei-ai-lab/designr/compare/v0.0.1...v0.0.2

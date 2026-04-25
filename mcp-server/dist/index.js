@@ -21527,7 +21527,7 @@ var tools = [
 async function main() {
   const server = new McpServer({
     name: "designr",
-    version: "0.0.4"
+    version: "0.0.5"
   });
   for (const mod of tools) {
     server.registerTool(

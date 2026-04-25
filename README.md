@@ -4,7 +4,7 @@
 
 `designr` helps biostatisticians and clinical trialists design Phase 3 studies through a conversational interface in Claude Code, backed by validated R statistical packages.
 
-> **v0.0.4 alpha.** Public repo, installable as a Claude Code plugin via a local marketplace. v0.0.4 makes the plugin self-contained at runtime: the compiled MCP server ships pre-bundled (`mcp-server/dist/index.js`, all Node deps inlined) and the R launcher sources `r-package/designr/R/*.R` directly out of the plugin cache, so plugin updates pick up R changes automatically with no `remotes::install_local` re-run. Plugin / MCP server / R package versions are now aligned as a single source of truth. v0.0.3 introduced the marketplace-based install flow (`/plugin install <path>` is no longer supported by Claude Code). v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`). The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
+> **v0.0.5 alpha.** Public repo, installable as a Claude Code plugin via a local marketplace. v0.0.5 is an agent-friendliness + trust-boundary release: no new design wrappers, but four new docs ([AGENTS.md](AGENTS.md) for AI-agent contributors, [CONTRIBUTING.md](CONTRIBUTING.md) for humans, [SECURITY.md](SECURITY.md) documenting the stateless trust boundary, [HOSTING.md](HOSTING.md) covering small-co. / large-enterprise / air-gapped deployment profiles), five GitHub issue forms (benchmark cases, design wrappers, bug reports, tool-description improvements), and a CI grep gate that fails any PR introducing disk writes or network calls inside the R package or MCP server — making statelessness a checked property, not just a claim. v0.0.4 made the plugin self-contained at runtime (pre-bundled MCP server + in-place R launcher, no `npm install` / `remotes::install_local` on update). v0.0.3 introduced the marketplace-based install flow. v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`). The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What it is
 
@@ -100,7 +100,7 @@ R -e 'install.packages(c("gsDesign","gsDesign2","jsonlite"))'
 
 #### Tested dependency versions
 
-`designr` v0.0.4 was developed and tested against the versions below. The `DESCRIPTION` file pins minimum versions matching this set — older versions are not supported. CRAN's latest is usually fine; pin to these floors only if you hit a version-skew issue.
+`designr` v0.0.5 was developed and tested against the versions below. The `DESCRIPTION` file pins minimum versions matching this set — older versions are not supported. CRAN's latest is usually fine; pin to these floors only if you hit a version-skew issue.
 
 | Layer | Dependency | Tested version |
 |---|---|---|
@@ -135,7 +135,7 @@ R -e 'install.packages(c("gsDesign","gsDesign2","jsonlite"))'
 ```bash
 claude plugin marketplace add /full/path/to/designr
 claude plugin install designr@wei-ai-lab
-claude plugin list   # confirm: designr@wei-ai-lab, version 0.0.4, enabled
+claude plugin list   # confirm: designr@wei-ai-lab, version 0.0.5, enabled
 ```
 
 Both methods do the same thing. Pick one. If anything goes wrong, `claude plugin validate /full/path/to/designr` will tell you whether the marketplace + plugin manifests parse cleanly.
@@ -234,6 +234,20 @@ Each row above already has ≥ 7 curated benchmark cases ready as regression anc
 [`RConsortium/pharma-skills`](https://github.com/RConsortium/pharma-skills) is a complementary R Consortium working group skill collection. It goes deeper than `designr` on a single vertical — survival group-sequential designs with co-primary endpoints, multi-population (biomarker + ITT), Maurer–Bretz graphical multiplicity, and a Word-report deliverable backed by a Python template. Where `designr` is broad and MCP-native (one plugin, validated tools across the gsDesign / gsDesign2 surface, no local R session needed), `pharma-skills` is a single deep skill that runs in the user's local R session and requires `lrsim()` simulation pass before declaring a design done. The two solve adjacent problems with different shapes.
 
 `designr`'s `verify_design` tool adopts the same simulation-verification convention (±2 pp power / ±0.5 pp Type I tolerance) so a design produced here can be subjected to the same credibility floor.
+
+## Contributing
+
+`designr` welcomes contributions from both human biostatisticians and AI agents. Two entry points:
+
+- **[AGENTS.md](AGENTS.md)** — codebase tour and conventions written for AI-agent contributors (Claude, GPT, Gemini, openclaw, opencode, …). Covers the four-layer architecture, a concrete walkthrough of adding a new design wrapper, the benchmark anchor schema, and the agent-contributor protocol (one purpose per PR, paired benchmark anchor required for new wrappers, no novel methodology, no telemetry, no `Co-Authored-By` trailer).
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — human-facing process: priority list (benchmark anchors > new wrappers > bug fixes > tool-description improvements > docs), PR checklist, and review expectations.
+
+The highest-impact contribution is a **new benchmark anchor** — see [`.github/ISSUE_TEMPLATE/add-benchmark-case.yml`](.github/ISSUE_TEMPLATE) for the machine-fillable template that mirrors `benchmarks/schema/design.schema.json`.
+
+## Trust boundary and hosting
+
+- **[SECURITY.md](SECURITY.md)** — `designr`'s statelessness as a *design property*: the R package and MCP server are CI-gated against disk writes and network calls (`.github/workflows/security-grep.yml`). Any PR introducing forbidden patterns (`writeLines`, `saveRDS`, `download.file`, `httr::`, `fs.writeFile`, `fetch`, `http.request`, …) fails before merge. Confidential trial inputs you give the agent never leave your conversation through the plugin.
+- **[HOSTING.md](HOSTING.md)** — three deployment profiles: small-co. on public Claude Code (no persistence wanted), large-enterprise on Claude Code Enterprise + Bedrock private endpoint (corporate transcript retention as audit log), and air-gapped (forthcoming). Persistence and audit are *host* concerns; the plugin stays the same.
 
 ## License
 
