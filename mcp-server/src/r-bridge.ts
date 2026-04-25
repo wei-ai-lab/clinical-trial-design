@@ -1,6 +1,24 @@
 import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
 
 const DEFAULT_TIMEOUT_MS = 60_000;
+
+// Path to the bundled R launcher that sources designr/R/*.R in-place,
+// avoiding the need for `remotes::install_local("r-package/designr")`
+// on every plugin update. Both the bundled (mcp-server/dist/index.js)
+// and the dev tsc build (mcp-server/build/r-bridge.js) sit two levels
+// deep under the repo root, so the relative path is the same.
+const HERE = dirname(fileURLToPath(import.meta.url));
+const DEFAULT_LAUNCHER = resolve(
+  HERE,
+  "..",
+  "..",
+  "r-package",
+  "designr",
+  "inst",
+  "launcher.R"
+);
 
 export interface DesignrError {
   class: string;
@@ -22,6 +40,7 @@ export class DesignrToolError extends Error {
 export interface RunROptions {
   timeoutMs?: number;
   rscript?: string;
+  launcher?: string;
 }
 
 /**
@@ -35,15 +54,20 @@ export async function runR(
   opts: RunROptions = {}
 ): Promise<Record<string, unknown>> {
   const rscript = opts.rscript ?? process.env.DESIGNR_RSCRIPT ?? "Rscript";
+  const launcher =
+    opts.launcher ?? process.env.DESIGNR_LAUNCHER ?? DEFAULT_LAUNCHER;
   const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const payload = JSON.stringify({ tool, args });
 
-  return new Promise((resolve, reject) => {
-    const child = spawn(
-      rscript,
-      ["-e", "designr::designr_dispatch(file('stdin','r'))"],
-      { stdio: ["pipe", "pipe", "pipe"] }
-    );
+  return new Promise((resolvePromise, reject) => {
+    // Note: do NOT pass --vanilla. It implies --no-environ, which strips
+    // R_LIBS_USER and prevents the launcher from finding CRAN deps
+    // (gsDesign, gsDesign2, jsonlite) that live in the user's library.
+    // Rscript's defaults (--no-save --no-restore) already give us a
+    // clean session without breaking dep resolution.
+    const child = spawn(rscript, [launcher], {
+      stdio: ["pipe", "pipe", "pipe"],
+    });
 
     let stdout = "";
     let stderr = "";
@@ -71,7 +95,9 @@ export async function runR(
       reject(
         new DesignrToolError({
           class: "rscript_spawn_failed",
-          message: `Failed to spawn Rscript: ${err.message}. Set DESIGNR_RSCRIPT to the full path.`,
+          message:
+            `Failed to spawn Rscript at '${rscript}' (launcher '${launcher}'): ${err.message}. ` +
+            `Set DESIGNR_RSCRIPT to the full Rscript path or DESIGNR_LAUNCHER to override the launcher.`,
         })
       );
     });
@@ -107,7 +133,7 @@ export async function runR(
         return;
       }
       if (parsed.ok && parsed.result !== undefined) {
-        resolve(parsed.result);
+        resolvePromise(parsed.result);
       } else if (parsed.error) {
         reject(new DesignrToolError(parsed.error));
       } else {

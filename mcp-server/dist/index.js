@@ -2991,7 +2991,7 @@ var require_compile = __commonJS({
       const schOrFunc = root.refs[ref];
       if (schOrFunc)
         return schOrFunc;
-      let _sch = resolve.call(this, root, ref);
+      let _sch = resolve2.call(this, root, ref);
       if (_sch === void 0) {
         const schema14 = (_a = root.localRefs) === null || _a === void 0 ? void 0 : _a[ref];
         const { schemaId } = this.opts;
@@ -3018,7 +3018,7 @@ var require_compile = __commonJS({
     function sameSchemaEnv(s1, s2) {
       return s1.schema === s2.schema && s1.root === s2.root && s1.baseId === s2.baseId;
     }
-    function resolve(root, ref) {
+    function resolve2(root, ref) {
       let sch;
       while (typeof (sch = this.refs[ref]) == "string")
         ref = sch;
@@ -3594,7 +3594,7 @@ var require_fast_uri = __commonJS({
       }
       return uri;
     }
-    function resolve(baseURI, relativeURI, options) {
+    function resolve2(baseURI, relativeURI, options) {
       const schemelessOptions = options ? Object.assign({ scheme: "null" }, options) : { scheme: "null" };
       const resolved = resolveComponent(parse3(baseURI, schemelessOptions), parse3(relativeURI, schemelessOptions), schemelessOptions, true);
       schemelessOptions.skipEscape = true;
@@ -3822,7 +3822,7 @@ var require_fast_uri = __commonJS({
     var fastUri = {
       SCHEMES,
       normalize,
-      resolve,
+      resolve: resolve2,
       resolveComponent,
       equal,
       serialize,
@@ -18901,7 +18901,7 @@ var Protocol = class {
           return;
         }
         const pollInterval = task2.pollInterval ?? this._options?.defaultTaskPollInterval ?? 1e3;
-        await new Promise((resolve) => setTimeout(resolve, pollInterval));
+        await new Promise((resolve2) => setTimeout(resolve2, pollInterval));
         options?.signal?.throwIfAborted();
       }
     } catch (error2) {
@@ -18918,7 +18918,7 @@ var Protocol = class {
    */
   request(request, resultSchema, options) {
     const { relatedRequestId, resumptionToken, onresumptiontoken, task, relatedTask } = options ?? {};
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve2, reject) => {
       const earlyReject = (error2) => {
         reject(error2);
       };
@@ -18996,7 +18996,7 @@ var Protocol = class {
           if (!parseResult.success) {
             reject(parseResult.error);
           } else {
-            resolve(parseResult.data);
+            resolve2(parseResult.data);
           }
         } catch (error2) {
           reject(error2);
@@ -19257,12 +19257,12 @@ var Protocol = class {
       }
     } catch {
     }
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve2, reject) => {
       if (signal.aborted) {
         reject(new McpError(ErrorCode.InvalidRequest, "Request cancelled"));
         return;
       }
-      const timeoutId = setTimeout(resolve, interval);
+      const timeoutId = setTimeout(resolve2, interval);
       signal.addEventListener("abort", () => {
         clearTimeout(timeoutId);
         reject(new McpError(ErrorCode.InvalidRequest, "Request cancelled"));
@@ -20362,7 +20362,7 @@ var McpServer = class {
     let task = createTaskResult.task;
     const pollInterval = task.pollInterval ?? 5e3;
     while (task.status !== "completed" && task.status !== "failed" && task.status !== "cancelled") {
-      await new Promise((resolve) => setTimeout(resolve, pollInterval));
+      await new Promise((resolve2) => setTimeout(resolve2, pollInterval));
       const updatedTask = await extra.taskStore.getTask(taskId);
       if (!updatedTask) {
         throw new McpError(ErrorCode.InternalError, `Task ${taskId} not found during polling`);
@@ -21011,12 +21011,12 @@ var StdioServerTransport = class {
     this.onclose?.();
   }
   send(message) {
-    return new Promise((resolve) => {
+    return new Promise((resolve2) => {
       const json = serializeMessage(message);
       if (this._stdout.write(json)) {
-        resolve();
+        resolve2();
       } else {
-        this._stdout.once("drain", resolve);
+        this._stdout.once("drain", resolve2);
       }
     });
   }
@@ -21033,7 +21033,19 @@ __export(fixed_binary_exports, {
 
 // src/r-bridge.ts
 import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
 var DEFAULT_TIMEOUT_MS = 6e4;
+var HERE = dirname(fileURLToPath(import.meta.url));
+var DEFAULT_LAUNCHER = resolve(
+  HERE,
+  "..",
+  "..",
+  "r-package",
+  "designr",
+  "inst",
+  "launcher.R"
+);
 var DesignrToolError = class extends Error {
   cls;
   field;
@@ -21046,14 +21058,13 @@ var DesignrToolError = class extends Error {
 };
 async function runR(tool, args, opts = {}) {
   const rscript = opts.rscript ?? process.env.DESIGNR_RSCRIPT ?? "Rscript";
+  const launcher = opts.launcher ?? process.env.DESIGNR_LAUNCHER ?? DEFAULT_LAUNCHER;
   const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const payload = JSON.stringify({ tool, args });
-  return new Promise((resolve, reject) => {
-    const child = spawn(
-      rscript,
-      ["-e", "designr::designr_dispatch(file('stdin','r'))"],
-      { stdio: ["pipe", "pipe", "pipe"] }
-    );
+  return new Promise((resolvePromise, reject) => {
+    const child = spawn(rscript, [launcher], {
+      stdio: ["pipe", "pipe", "pipe"]
+    });
     let stdout = "";
     let stderr = "";
     let settled = false;
@@ -21079,7 +21090,7 @@ async function runR(tool, args, opts = {}) {
       reject(
         new DesignrToolError({
           class: "rscript_spawn_failed",
-          message: `Failed to spawn Rscript: ${err.message}. Set DESIGNR_RSCRIPT to the full path.`
+          message: `Failed to spawn Rscript at '${rscript}' (launcher '${launcher}'): ${err.message}. Set DESIGNR_RSCRIPT to the full Rscript path or DESIGNR_LAUNCHER to override the launcher.`
         })
       );
     });
@@ -21111,7 +21122,7 @@ async function runR(tool, args, opts = {}) {
         return;
       }
       if (parsed.ok && parsed.result !== void 0) {
-        resolve(parsed.result);
+        resolvePromise(parsed.result);
       } else if (parsed.error) {
         reject(new DesignrToolError(parsed.error));
       } else {

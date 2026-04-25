@@ -25,12 +25,37 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   particularly broken on Claude Code-on-Windows reaching across to a
   WSL plugin path, where `cmd.exe` could not even `cd` into the
   `\\wsl.localhost\…` UNC path to run `npm install`.
+- Plugin updates now propagate R-side changes automatically. Previously
+  the MCP server invoked `Rscript -e 'designr::designr_dispatch(...)'`,
+  which required the `designr` R package to be installed in the user's
+  R library — meaning every plugin update that touched R code also
+  required re-running `remotes::install_local("r-package/designr")`
+  for the changes to take effect. v0.0.4 ships an
+  `r-package/designr/inst/launcher.R` that sources every file under
+  `R/` in-place, and the MCP server invokes that launcher instead of
+  the installed package. CRAN dependencies (`gsDesign`, `gsDesign2`,
+  `jsonlite`) are still installed once into the user's library;
+  `designr` itself never is. Verified with the package physically
+  removed from the user's library: 13/13 smoke pass and a real
+  `tools/call` over stdio through the installed bundled server returns
+  a correct design.
 
 ### Added
 
 - `esbuild` is now a `devDependency` of `mcp-server`. `npm run build`
-  invokes it to produce the bundled `dist/index.js`. `npm run build:tsc`
-  is preserved as an escape hatch for `tsc`-based debugging.
+  invokes it to produce the bundled `dist/index.js`. `npm run build:dev`
+  is preserved as an escape hatch for `tsc`-based debugging (used by
+  `scripts/smoke.mjs`, which imports `runR` directly from
+  `mcp-server/build/r-bridge.js`).
+- `r-package/designr/inst/launcher.R` — bootstrap script that locates
+  its own path via `commandArgs(--file=)`, sources every sibling
+  `R/*.R`, and hands stdin to `designr_dispatch()`.
+- `DESIGNR_LAUNCHER` env var override on the MCP bridge for cases where
+  the launcher needs to live somewhere other than the default
+  `${CLAUDE_PLUGIN_ROOT}/r-package/designr/inst/launcher.R`.
+- README sections: "Updating" and "Uninstalling", each with both the
+  slash-command (Method A) and host-shell (Method B) flows clearly
+  labeled to avoid ambiguity.
 
 ### Changed
 

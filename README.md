@@ -4,7 +4,7 @@
 
 `designr` helps biostatisticians and clinical trialists design Phase 3 studies through a conversational interface in Claude Code, backed by validated R statistical packages.
 
-> **v0.0.4 alpha.** Public repo, installable as a Claude Code plugin via a local marketplace. v0.0.4 ships the compiled MCP server (`mcp-server/dist/`) inside the repo so `/plugin install` yields a working server with no build step on the user's side, and aligns plugin / MCP server / R package versions to a single source of truth. v0.0.3 introduced the marketplace-based install flow (`/plugin install <path>` is no longer supported by Claude Code). v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`). The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
+> **v0.0.4 alpha.** Public repo, installable as a Claude Code plugin via a local marketplace. v0.0.4 makes the plugin self-contained at runtime: the compiled MCP server ships pre-bundled (`mcp-server/dist/index.js`, all Node deps inlined) and the R launcher sources `r-package/designr/R/*.R` directly out of the plugin cache, so plugin updates pick up R changes automatically with no `remotes::install_local` re-run. Plugin / MCP server / R package versions are now aligned as a single source of truth. v0.0.3 introduced the marketplace-based install flow (`/plugin install <path>` is no longer supported by Claude Code). v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`). The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What it is
 
@@ -47,7 +47,7 @@ The benchmark corpus has cases across all of the above (~176 cases / 21 family d
 | Repo scaffolding | ✅ |
 | Benchmark schema | ✅ |
 | Benchmark corpus | ✅ (176 cases across 21 family directories) |
-| R package | ✅ (10 design wrappers + validator + `verify_design` + `design_report`, 137 tests passing) |
+| R package | ✅ (10 design wrappers + validator + `verify_design` + `design_report`, 137 tests passing; sourced in-place by launcher — no `install_local` step) |
 | MCP server | ✅ (13 tools over stdio, TypeScript bundled with esbuild, 13/13 smoke pass) |
 | Skill / subagent | ✅ (skill in `skills/designr`) |
 | Plugin manifest | ✅ (`.claude-plugin/plugin.json` + `marketplace.json`; full install round-trip verified) |
@@ -86,27 +86,30 @@ Each of these is an MCP tool, each wrapping a validated function in `gsDesign` o
 
 ## Quick start
 
-Prerequisites: R ≥ 4.2, Node ≥ 18. (No `npm install` step — the MCP server ships pre-bundled in `mcp-server/dist/index.js`, all Node deps inlined.)
+Prerequisites: R ≥ 4.2, Node ≥ 18. No `npm install` step (the MCP server ships pre-bundled in `mcp-server/dist/index.js`, Node deps inlined) and no `remotes::install_local` step (the MCP server sources `r-package/designr/R/*.R` directly out of the plugin cache).
+
+### 1. Clone and install CRAN dependencies (one-time)
 
 ```bash
 git clone https://github.com/wei-ai-lab/designr
 cd designr
-
-# R side — only step required before installing the plugin
-R -e 'install.packages(c("remotes","gsDesign","gsDesign2","yaml","jsonlite","testthat"))'
-R -e 'remotes::install_local("r-package/designr")'
+R -e 'install.packages(c("gsDesign","gsDesign2","jsonlite"))'
 ```
 
-Then, inside Claude Code (slash commands):
+`gsDesign`, `gsDesign2`, and `jsonlite` are CRAN packages the R launcher imports at runtime. Install them once into your R user library; they don't need to be reinstalled on plugin updates.
+
+### 2. Install the plugin
+
+**Method A — slash commands (recommended, inside Claude Code)**
 
 ```text
 /plugin marketplace add /full/path/to/designr
 /plugin install designr@wei-ai-lab
 ```
 
-`/plugin marketplace add` accepts the repo root because `.claude-plugin/marketplace.json` lives there. After install, restart Claude Code so it loads the bundled MCP server. Confirm the install with `/plugin` (designr should be listed and enabled).
+`/plugin marketplace add` accepts the repo root because `.claude-plugin/marketplace.json` lives there. After install, restart Claude Code so it loads the bundled MCP server. Confirm with `/plugin` (designr should be listed and enabled).
 
-The same flow also works from the host shell (handy if you want to script it):
+**Method B — host shell (equivalent, scriptable)**
 
 ```bash
 claude plugin marketplace add /full/path/to/designr
@@ -114,15 +117,62 @@ claude plugin install designr@wei-ai-lab
 claude plugin list   # confirm: designr@wei-ai-lab, version 0.0.4, enabled
 ```
 
-If anything goes wrong, `claude plugin validate /full/path/to/designr` will tell you whether the marketplace + plugin manifests parse cleanly.
+Both methods do the same thing. Pick one. If anything goes wrong, `claude plugin validate /full/path/to/designr` will tell you whether the marketplace + plugin manifests parse cleanly.
 
-Quick local-dev alternative — skip the marketplace step entirely and launch Claude Code with the plugin loaded directly:
+**Quick local-dev alternative** — skip the marketplace step entirely and launch Claude Code with the plugin loaded directly:
 
 ```bash
 claude --plugin-dir /full/path/to/designr
 ```
 
-If `Rscript` isn't on your `PATH`, set `DESIGNR_RSCRIPT=/full/path/to/Rscript` in your shell. The MCP server reads that env var when spawning R.
+This is for iterating on the plugin itself, not for end-user installs.
+
+### Environment overrides
+
+If `Rscript` isn't on your `PATH`, set `DESIGNR_RSCRIPT=/full/path/to/Rscript` in your shell. To override the R launcher path (rare), set `DESIGNR_LAUNCHER=/full/path/to/launcher.R`. The MCP server reads both env vars when spawning R.
+
+## Updating
+
+When a new version of `designr` is released, the update flow is:
+
+```bash
+cd /full/path/to/designr
+git pull
+```
+
+…then **either** of these (use the same method you used to install):
+
+**Method A — slash command (inside Claude Code)**
+
+```text
+/plugin update designr@wei-ai-lab
+```
+
+**Method B — host shell**
+
+```bash
+claude plugin update designr@wei-ai-lab
+```
+
+Restart Claude Code afterwards so it picks up the refreshed MCP server. CRAN dependencies (`gsDesign`, `gsDesign2`, `jsonlite`) **do not** need to be reinstalled on every update — only re-run `install.packages(...)` if the release notes say a new dependency was added.
+
+## Uninstalling
+
+**Method A — slash commands (inside Claude Code)**
+
+```text
+/plugin uninstall designr@wei-ai-lab
+/plugin marketplace remove wei-ai-lab
+```
+
+**Method B — host shell**
+
+```bash
+claude plugin uninstall designr@wei-ai-lab
+claude plugin marketplace remove wei-ai-lab
+```
+
+Both methods are equivalent. The first command removes the installed plugin; the second removes the local marketplace pointer (skip it if you plan to reinstall later from the same checkout). Neither method touches your R library — to fully clean up, also run `R -e 'remove.packages(c("gsDesign","gsDesign2"))'` if you no longer need those CRAN packages for other work.
 
 ## Try it
 
