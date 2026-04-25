@@ -21035,17 +21035,20 @@ __export(fixed_binary_exports, {
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { existsSync } from "node:fs";
 var DEFAULT_TIMEOUT_MS = 6e4;
 var HERE = dirname(fileURLToPath(import.meta.url));
-var DEFAULT_LAUNCHER = resolve(
+var BUNDLED_LAUNCHER = resolve(HERE, "..", "r", "inst", "launcher.R");
+var REPO_LAUNCHER = resolve(
   HERE,
   "..",
   "..",
   "r-package",
-  "designr",
+  "ClinicalTrialDesign",
   "inst",
   "launcher.R"
 );
+var DEFAULT_LAUNCHER = existsSync(BUNDLED_LAUNCHER) ? BUNDLED_LAUNCHER : REPO_LAUNCHER;
 var DesignrToolError = class extends Error {
   cls;
   field;
@@ -21526,8 +21529,8 @@ var tools = [
 ];
 async function main() {
   const server = new McpServer({
-    name: "designr",
-    version: "0.0.5"
+    name: "clinical-trial-design",
+    version: "0.0.6"
   });
   for (const mod of tools) {
     server.registerTool(

@@ -1,17 +1,28 @@
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { existsSync } from "node:fs";
 
 const DEFAULT_TIMEOUT_MS = 60_000;
 
 // Path to the bundled R launcher that sources ClinicalTrialDesign/R/*.R
 // in-place, avoiding the need for
 // `remotes::install_local("r-package/ClinicalTrialDesign")` on every
-// plugin update. Both the bundled (mcp-server/dist/index.js) and the
-// dev tsc build (mcp-server/build/r-bridge.js) sit two levels deep
-// under the repo root, so the relative path is the same.
+// install. Two layouts are supported automatically:
+//
+//   1. npm-published layout — `npm install clinical-trial-design`
+//      lands the bundle at `<prefix>/lib/node_modules/clinical-trial-design/dist/index.js`
+//      with the staged R sources at `<prefix>/lib/.../clinical-trial-design/r/inst/launcher.R`.
+//      `prepublishOnly` (see package.json) runs `stage-r` to copy them in.
+//
+//   2. in-repo layout — running from a git clone, the bundle is at
+//      `<repo>/mcp-server/dist/index.js` and the R sources live at
+//      `<repo>/r-package/ClinicalTrialDesign/inst/launcher.R`.
+//
+// Resolution order: env var DESIGNR_LAUNCHER -> bundled (1) -> repo (2).
 const HERE = dirname(fileURLToPath(import.meta.url));
-const DEFAULT_LAUNCHER = resolve(
+const BUNDLED_LAUNCHER = resolve(HERE, "..", "r", "inst", "launcher.R");
+const REPO_LAUNCHER = resolve(
   HERE,
   "..",
   "..",
@@ -20,6 +31,9 @@ const DEFAULT_LAUNCHER = resolve(
   "inst",
   "launcher.R"
 );
+const DEFAULT_LAUNCHER = existsSync(BUNDLED_LAUNCHER)
+  ? BUNDLED_LAUNCHER
+  : REPO_LAUNCHER;
 
 export interface DesignrError {
   class: string;
