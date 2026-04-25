@@ -6,6 +6,45 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.4] — 2026-04-25
+
+### Fixed
+
+- Plugin install now ships a working MCP server out of the box. Two
+  problems were stacked: `mcp-server/dist/` was gitignored (so a fresh
+  `git clone` produced a plugin whose `mcpServers.designr.args` pointed
+  at a non-existent `dist/index.js`), and even if `dist/` had shipped,
+  it would have failed at runtime because TypeScript-compiled output
+  still imports `@modelcontextprotocol/sdk` from `node_modules/`, which
+  is not present after a plain clone. v0.0.4 fixes both: the build now
+  uses esbuild to produce a single self-contained
+  `mcp-server/dist/index.js` (~730 KB) with all Node deps inlined, and
+  that file is committed to the repo. End users no longer need
+  `npm install` or `npm run build` — `/plugin install` yields an MCP
+  server that starts immediately with all 13 tools registered. This was
+  particularly broken on Claude Code-on-Windows reaching across to a
+  WSL plugin path, where `cmd.exe` could not even `cd` into the
+  `\\wsl.localhost\…` UNC path to run `npm install`.
+
+### Added
+
+- `esbuild` is now a `devDependency` of `mcp-server`. `npm run build`
+  invokes it to produce the bundled `dist/index.js`. `npm run build:tsc`
+  is preserved as an escape hatch for `tsc`-based debugging.
+
+### Changed
+
+- Versions aligned across the stack. `plugin.json`,
+  `marketplace.json`, `mcp-server/package.json`, the MCP server's
+  reported `version`, and `r-package/designr/DESCRIPTION` all now read
+  `0.0.4`. Going forward, the plugin version is the single source of
+  truth — git tag, plugin manifest, MCP server, and R package move
+  together.
+- Branching model: `main` is now treated as always-shippable. Iteration
+  happens on `dev` (or feature branches); `main` only advances when a
+  release is fully tested end-to-end. Tags are immutable once
+  published — fix-forward to the next patch instead of force-moving.
+
 ## [0.0.3] — 2026-04-25
 
 ### Fixed
@@ -97,7 +136,8 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - README with quick-start, MVP tool surface, three "Try it" prompts,
   and roadmap.
 
-[Unreleased]: https://github.com/wei-ai-lab/designr/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/wei-ai-lab/designr/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/wei-ai-lab/designr/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/wei-ai-lab/designr/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/wei-ai-lab/designr/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/wei-ai-lab/designr/releases/tag/v0.0.1

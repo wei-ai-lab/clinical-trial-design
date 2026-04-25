@@ -2,7 +2,7 @@
 // Programmatic smoke pass: runs each of the 13 MCP tools through the
 // r-bridge directly. Returns exit code 0 if all succeed, 1 otherwise.
 
-import { runR, DesignrToolError } from "../dist/r-bridge.js";
+import { runR, DesignrToolError } from "../build/r-bridge.js";
 
 const cases = [
   ["design_fixed_binary",

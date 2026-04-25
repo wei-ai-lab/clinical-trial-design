@@ -52,6 +52,7 @@ rsconnect/
 # Node / TS (future MCP server)
 node_modules/
 dist/
+!mcp-server/dist/
 *.log
 .env
 .env.local

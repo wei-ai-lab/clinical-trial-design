@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Plugins from wei-ai-lab. Currently hosts designr, an end-to-end Phase 3 clinical trial design assistant.",
-    "version": "0.0.3"
+    "version": "0.0.4"
   },
   "plugins": [
     {
       "name": "designr",
       "source": "./",
       "description": "End-to-end Phase 3 clinical trial design assistant. R-backed computation (gsDesign / gsDesign2), 13 MCP tools, Monte Carlo verification, markdown reporting.",
-      "version": "0.0.3",
+      "version": "0.0.4",
       "author": {
         "name": "Wei Fu",
         "email": "wei.ai.lab@outlook.com"

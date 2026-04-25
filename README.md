@@ -4,7 +4,7 @@
 
 `designr` helps biostatisticians and clinical trialists design Phase 3 studies through a conversational interface in Claude Code, backed by validated R statistical packages.
 
-> **v0.0.3 alpha.** Public repo, installable as a Claude Code plugin via a local marketplace. v0.0.3 fixes the install path (the older `claude plugin install <path>` invocation is no longer supported by Claude Code; this release ships the `.claude-plugin/marketplace.json` and `.claude-plugin/plugin.json` the current spec requires). v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`) on top of the v0.0.1 surface. The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
+> **v0.0.4 alpha.** Public repo, installable as a Claude Code plugin via a local marketplace. v0.0.4 ships the compiled MCP server (`mcp-server/dist/`) inside the repo so `/plugin install` yields a working server with no build step on the user's side, and aligns plugin / MCP server / R package versions to a single source of truth. v0.0.3 introduced the marketplace-based install flow (`/plugin install <path>` is no longer supported by Claude Code). v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`). The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What it is
 
@@ -17,9 +17,9 @@
 | **Skill / subagent** (`skills/`, `agents/`) | The domain-expert prompt. Translates a user's design brief into the right sequence of tool calls and interprets results in clinical-trial terms. |
 | **Benchmark corpus** (`benchmarks/`) | Curated public trial designs (FDA guidances, ICH, published SAPs, clinicaltrials.gov entries) used as an evaluation suite. Each case has human-readable context + machine-readable inputs/expected outputs. |
 
-## What v0.0.2 actually computes
+## What designr actually computes
 
-| Family | Status in v0.0.2 |
+| Family | Status |
 |---|---|
 | Fixed-sample binary | ✅ super / NI / equivalence |
 | Fixed-sample continuous | ✅ super / NI / equivalence |
@@ -38,7 +38,7 @@
 | Platform / basket / umbrella | 📚 corpus only — no wrapper |
 | Crossover, factorial | 📚 corpus only — no wrapper |
 
-The benchmark corpus has cases across all of the above (~176 cases / 21 family directories). v0.0.2's wrappers only compute the rows marked ✅. See [`benchmarks/README.md`](benchmarks/README.md) for the full corpus taxonomy.
+The benchmark corpus has cases across all of the above (~176 cases / 21 family directories). The current wrappers only compute the rows marked ✅. See [`benchmarks/README.md`](benchmarks/README.md) for the full corpus taxonomy.
 
 ## Status
 
@@ -48,9 +48,9 @@ The benchmark corpus has cases across all of the above (~176 cases / 21 family d
 | Benchmark schema | ✅ |
 | Benchmark corpus | ✅ (176 cases across 21 family directories) |
 | R package | ✅ (10 design wrappers + validator + `verify_design` + `design_report`, 137 tests passing) |
-| MCP server | ✅ (13 tools over stdio, TypeScript, 13/13 smoke pass) |
+| MCP server | ✅ (13 tools over stdio, TypeScript bundled with esbuild, 13/13 smoke pass) |
 | Skill / subagent | ✅ (skill in `skills/designr`) |
-| Plugin manifest | ✅ (`plugin.json` present; installation via `claude plugin install <path>` not yet end-to-end verified by maintainer) |
+| Plugin manifest | ✅ (`.claude-plugin/plugin.json` + `marketplace.json`; full install round-trip verified) |
 
 ## MVP tool surface
 
@@ -86,18 +86,15 @@ Each of these is an MCP tool, each wrapping a validated function in `gsDesign` o
 
 ## Quick start
 
-Prerequisites: R ≥ 4.2, Node ≥ 18.
+Prerequisites: R ≥ 4.2, Node ≥ 18. (No `npm install` step — the MCP server ships pre-bundled in `mcp-server/dist/index.js`, all Node deps inlined.)
 
 ```bash
 git clone https://github.com/wei-ai-lab/designr
 cd designr
 
-# R side
+# R side — only step required before installing the plugin
 R -e 'install.packages(c("remotes","gsDesign","gsDesign2","yaml","jsonlite","testthat"))'
 R -e 'remotes::install_local("r-package/designr")'
-
-# MCP server (build the dist/ that the plugin's MCP entry points at)
-cd mcp-server && npm install && npm run build && cd ..
 ```
 
 Then, inside Claude Code (slash commands):
@@ -114,7 +111,7 @@ The same flow also works from the host shell (handy if you want to script it):
 ```bash
 claude plugin marketplace add /full/path/to/designr
 claude plugin install designr@wei-ai-lab
-claude plugin list   # confirm: designr@wei-ai-lab, version 0.0.3, enabled
+claude plugin list   # confirm: designr@wei-ai-lab, version 0.0.4, enabled
 ```
 
 If anything goes wrong, `claude plugin validate /full/path/to/designr` will tell you whether the marketplace + plugin manifests parse cleanly.
@@ -147,7 +144,7 @@ See `mcp-server/SMOKE.md` for the full 13-prompt smoke matrix.
 
 ## Roadmap
 
-Beyond v0.0.2, in priority order based on the corpus's family weights:
+In priority order based on the corpus's family weights:
 
 1. **Adaptive sample-size re-estimation** (corpus: `adaptive-ssr/`) — `rpact::getSampleSizeRates` + custom Promising-Zone rule.
 2. **Group-sequential futility-only and binding-futility variants** — already exposed via `test.type` 3–6 in current GS wrappers; add explicit anchor tests.
@@ -165,7 +162,7 @@ Each row above already has ≥ 7 curated benchmark cases ready as regression anc
 
 [`RConsortium/pharma-skills`](https://github.com/RConsortium/pharma-skills) is a complementary R Consortium working group skill collection. It goes deeper than `designr` on a single vertical — survival group-sequential designs with co-primary endpoints, multi-population (biomarker + ITT), Maurer–Bretz graphical multiplicity, and a Word-report deliverable backed by a Python template. Where `designr` is broad and MCP-native (one plugin, validated tools across the gsDesign / gsDesign2 surface, no local R session needed), `pharma-skills` is a single deep skill that runs in the user's local R session and requires `lrsim()` simulation pass before declaring a design done. The two solve adjacent problems with different shapes.
 
-`designr`'s v0.0.2 `verify_design` tool adopts the same simulation-verification convention (±2 pp power / ±0.5 pp Type I tolerance) so a design produced here can be subjected to the same credibility floor.
+`designr`'s `verify_design` tool adopts the same simulation-verification convention (±2 pp power / ±0.5 pp Type I tolerance) so a design produced here can be subjected to the same credibility floor.
 
 ## License
 
