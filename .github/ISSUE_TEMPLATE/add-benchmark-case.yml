@@ -1,0 +1,113 @@
+name: Add a benchmark case
+description: Propose a new YAML case for the benchmark corpus, anchored to a published trial / FDA / ICH guidance / SAP.
+title: "[benchmark] Add <id>"
+labels: ["benchmark", "good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to add a single benchmark case (one YAML file)
+        under `benchmarks/<family>/cases/<id>.yaml`. The fields below
+        mirror `benchmarks/schema/design.schema.json` so AI agents can
+        fill them programmatically.
+
+        Read [`AGENTS.md`](../AGENTS.md#how-to-add-a-benchmark-anchor)
+        for context first.
+  - type: input
+    id: case_id
+    attributes:
+      label: Case ID
+      description: "Convention: `<year>_<TRIAL-OR-AUTHOR>_<slug>`. Example: `2014_PARADIGM-HF_lcz696`."
+      placeholder: "2014_PARADIGM-HF_lcz696"
+    validations:
+      required: true
+  - type: dropdown
+    id: family
+    attributes:
+      label: Design family
+      options:
+        - fixed-superiority
+        - fixed-non-inferiority
+        - fixed-equivalence
+        - group-sequential
+        - group-sequential-futility
+        - group-sequential-nph
+        - adaptive-ssr
+        - adaptive-enrichment
+        - adaptive-selection
+        - mams
+        - tte-ph
+        - tte-nph
+        - recurrent-events
+        - count-rate
+        - bayesian
+        - platform
+        - basket
+        - umbrella
+        - crossover
+        - factorial
+        - non-standard
+    validations:
+      required: true
+  - type: dropdown
+    id: source_kind
+    attributes:
+      label: Source kind
+      options:
+        - published-trial
+        - published-sap
+        - fda-guidance
+        - ich-guidance
+        - ema-guidance
+        - textbook
+        - methodology-paper
+        - package-vignette
+    validations:
+      required: true
+  - type: textarea
+    id: citation
+    attributes:
+      label: Full citation (with DOI / URL / NCT if applicable)
+      placeholder: "McMurray JJV, et al. Angiotensin-neprilysin inhibition versus enalapril in heart failure. NEJM 2014;371(11):993-1004. DOI: 10.1056/NEJMoa1409077. NCT01035255."
+    validations:
+      required: true
+  - type: textarea
+    id: design_summary
+    attributes:
+      label: Design summary
+      description: "Endpoint, comparison type (superiority/NI/equivalence), alpha, power, effect size assumption."
+      placeholder: "TTE PH, superiority, alpha=0.05 two-sided, power=0.80, target HR=0.85, target events=2410."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected headline output + tolerance
+      description: "From the published source. Expected sample_size_total or events_total + tolerance_pct."
+      placeholder: "events_total: 2410, tolerance.events_pct: 5"
+    validations:
+      required: true
+  - type: input
+    id: r_packages
+    attributes:
+      label: R packages / functions that should reproduce this
+      description: Comma-separated list of `package::function` references.
+      placeholder: "gsDesign::nSurv, rpact::getSampleSizeSurvival"
+    validations:
+      required: true
+  - type: textarea
+    id: caveats
+    attributes:
+      label: Caveats
+      description: "Anything unusual about this case — pre-NCT era, early stop, post-hoc revisions, dose-finding ambiguity, etc."
+  - type: checkboxes
+    id: agreements
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: I have read [AGENTS.md](../AGENTS.md) and the schema at `benchmarks/schema/design.schema.json`.
+          required: true
+        - label: The case ID matches the regex `^[0-9]{4}_[A-Za-z0-9-]+_[a-z0-9-]+$`.
+          required: true
+        - label: The expected values come from the cited source, not a re-computation.
+          required: true

@@ -1,0 +1,85 @@
+name: Add a design wrapper
+description: Propose a new design tool wrapping an established CRAN function.
+title: "[wrapper] design_<family>_<endpoint>"
+labels: ["wrapper", "needs-roadmap-check"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose a new wrapper. Wrappers cross
+        four layers (R function, dispatcher registration, MCP tool,
+        skill prompt). Read
+        [`AGENTS.md`](../AGENTS.md#how-to-add-a-design-wrapper) before
+        filing.
+
+        New wrappers must be on the roadmap — Phase 1 deepens the
+        current 13-tool surface (multiplicity, operational solver),
+        Phase 2 adds new families. Off-roadmap wrappers should be
+        discussed in a roadmap issue first.
+  - type: input
+    id: tool_name
+    attributes:
+      label: Proposed tool name
+      placeholder: "design_fixed_count_rate"
+    validations:
+      required: true
+  - type: dropdown
+    id: roadmap_phase
+    attributes:
+      label: Roadmap phase
+      options:
+        - "Phase 1 (deepen current surface)"
+        - "Phase 2 (new family — post-beta)"
+        - "Off-roadmap (needs discussion)"
+    validations:
+      required: true
+  - type: input
+    id: backend
+    attributes:
+      label: CRAN backend
+      placeholder: "rpact::getSampleSizeRates"
+    validations:
+      required: true
+  - type: textarea
+    id: clinical_use
+    attributes:
+      label: Clinical use cases this enables
+      description: "Concrete examples of trials this wrapper would design — indication, endpoint, mechanism class. The MCP tool description will be derived from this."
+      placeholder: "COPD exacerbation rate trials (Poisson rate ratio); HF hospitalization rate trials; oncology grade-3+ adverse-event count comparisons."
+    validations:
+      required: true
+  - type: textarea
+    id: schema
+    attributes:
+      label: Proposed args schema
+      description: "List of args + types + validation rules. Match the shape of an existing wrapper (e.g. `R/fixed_binary.R`)."
+      placeholder: |
+        rate_control: number > 0
+        rate_treatment: number > 0
+        follow_up_per_subject: number > 0
+        alpha: number in (0, 1) (default 0.05)
+        power: number in (0, 1) (default 0.80)
+        sided: 1 or 2 (default 2)
+        comparison: "superiority" | "non-inferiority"
+        ni_margin: number (required when comparison == "non-inferiority")
+    validations:
+      required: true
+  - type: textarea
+    id: anchor_case
+    attributes:
+      label: Benchmark anchor case
+      description: "ID of the benchmark case this wrapper will be tested against. If the case does not exist yet, file an `add-benchmark-case` issue first."
+      placeholder: "2009_TIOSPIR_tiotropium  (benchmarks/count-rate/cases/...)"
+    validations:
+      required: true
+  - type: checkboxes
+    id: agreements
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: I have read [AGENTS.md](../AGENTS.md#how-to-add-a-design-wrapper).
+          required: true
+        - label: The CRAN backend is in `Imports:` or `Suggests:` of `r-package/designr/DESCRIPTION` (or I will add it and pass dependency-review per `SECURITY.md`).
+          required: true
+        - label: I will provide a benchmark anchor test in the same PR.
+          required: true

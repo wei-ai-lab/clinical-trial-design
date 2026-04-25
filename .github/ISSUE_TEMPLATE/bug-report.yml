@@ -1,0 +1,61 @@
+name: Bug report
+description: Report incorrect output from a wrapper, contract drift between MCP and R, or any non-security defect.
+title: "[bug] <short summary>"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For security vulnerabilities (e.g., the package writes to
+        disk under some condition, or a dependency leaks data over
+        the network), use the private security advisory link in
+        [`SECURITY.md`](../SECURITY.md) instead of this template.
+  - type: input
+    id: tool
+    attributes:
+      label: Tool affected
+      placeholder: "design_fixed_binary"
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: "JSON args you passed (or a complete prompt + tool call) and what came back."
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: "What should have happened, and (if possible) the cited source for that expectation."
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: "Output of `R.version$version.string`, `node --version`, and the `designr` plugin version (see plugin.json)."
+      placeholder: |
+        R 4.5.3
+        Node 22.22.1
+        designr 0.0.5
+        Host: Claude Code 1.x.x on Linux/macOS/Windows-WSL
+    validations:
+      required: true
+  - type: checkboxes
+    id: agreements
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: This is not a security vulnerability (those go through SECURITY.md, not this template).
+          required: true
+        - label: I have run `cd r-package/designr && R -e 'devtools::test()'` and reported any failing test.
+        - label: I have a regression test idea — even rough — for the fix PR.

@@ -1,0 +1,48 @@
+name: Improve a tool's MCP description
+description: Propose a clearer / more decision-aiding MCP tool description for LLM-selection accuracy.
+title: "[mcp-desc] <tool-name>"
+labels: ["mcp-description", "good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tool descriptions are what the host LLM reads to decide
+        whether to invoke a tool. Improvements to this text are one
+        of the highest-leverage changes for LLM-selection accuracy
+        across hosts.
+
+        Bad description (too functional):
+        > "Calculates sample size for two-arm binary trial."
+
+        Good description (decision-aiding):
+        > "Use this tool when the user wants Phase 3 sample size for
+        > a two-arm trial with a binary primary endpoint —
+        > responder rate, fixed-time mortality, etc. Supports
+        > superiority, non-inferiority, and equivalence."
+  - type: input
+    id: tool_name
+    attributes:
+      label: Tool affected
+      placeholder: "design_fixed_binary"
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current description
+      description: "Paste the current text from `mcp-server/src/tools/<tool>.ts`."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed description
+    validations:
+      required: true
+  - type: textarea
+    id: justification
+    attributes:
+      label: Why this is clearer for an LLM
+      description: "What clinical situations does the new wording disambiguate? Cite a host model and a prompt where the current wording leads to wrong tool selection, if you have one."
+    validations:
+      required: true
