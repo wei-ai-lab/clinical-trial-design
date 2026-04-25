@@ -2,9 +2,9 @@
 
 **A Claude Code plugin for end-to-end Phase 3 clinical trial design.**
 
-`designr` helps biostatisticians and clinical trialists design Phase 3 studies — sample size, power, group-sequential boundaries, adaptive rules, non-inferiority margins, platform structures — through a conversational interface in Claude Code, backed by validated R statistical packages.
+`designr` helps biostatisticians and clinical trialists design Phase 3 studies through a conversational interface in Claude Code, backed by validated R statistical packages.
 
-> ⚠️ Pre-release. Private repo. Not yet published or installable.
+> **v0.0.1 alpha.** Public repo, installable. The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface-v001)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap).
 
 ## What it is
 
@@ -17,19 +17,26 @@
 | **Skill / subagent** (`skills/`, `agents/`) | The domain-expert prompt. Translates a user's design brief into the right sequence of tool calls and interprets results in clinical-trial terms. |
 | **Benchmark corpus** (`benchmarks/`) | Curated public trial designs (FDA guidances, ICH, published SAPs, clinicaltrials.gov entries) used as an evaluation suite. Each case has human-readable context + machine-readable inputs/expected outputs. |
 
-## Design families in scope
+## What v0.0.1 actually computes
 
-- Fixed-sample superiority, non-inferiority, equivalence
-- Group-sequential (efficacy + futility; O'Brien-Fleming, Pocock, Hwang-Shih-DeCani, …)
-- Adaptive: sample-size re-estimation, population enrichment, treatment selection
-- Multi-arm multi-stage (MAMS)
-- Time-to-event (proportional & non-proportional hazards, delayed effect, cure models)
-- Recurrent events
-- Count / rate endpoints
-- Bayesian designs
-- Platform, basket, umbrella
+| Family | Status in v0.0.1 |
+|---|---|
+| Fixed-sample binary | ✅ super / NI / equivalence |
+| Fixed-sample continuous | ✅ super / NI / equivalence |
+| Fixed-sample TTE — PH log-rank | ✅ super / NI (no equivalence) |
+| Fixed-sample TTE — NPH MaxCombo, RMST, milestone | ✅ superiority only |
+| Group-sequential binary / continuous | ✅ super / NI (no equivalence); efficacy + futility via `test.type` |
+| Group-sequential TTE — PH | ✅ super / NI |
+| Group-sequential TTE — NPH (MaxCombo / WLR / AHR) | ✅ superiority only |
+| Adaptive — SSR, enrichment, treatment selection | 📚 corpus only — no wrapper |
+| Multi-arm multi-stage (MAMS) | 📚 corpus only — no wrapper |
+| Recurrent events | 📚 corpus only — no wrapper |
+| Count / rate endpoints | 📚 corpus only — no wrapper |
+| Bayesian designs | 📚 corpus only — no wrapper |
+| Platform / basket / umbrella | 📚 corpus only — no wrapper |
+| Crossover, factorial | 📚 corpus only — no wrapper |
 
-See `benchmarks/README.md` for the full taxonomy.
+The benchmark corpus has cases across all of the above (~176 cases / 21 family directories). v0.0.1's wrappers only compute the rows marked ✅. See [`benchmarks/README.md`](benchmarks/README.md) for the full corpus taxonomy.
 
 ## Status
 
@@ -37,15 +44,15 @@ See `benchmarks/README.md` for the full taxonomy.
 |---|---|
 | Repo scaffolding | ✅ |
 | Benchmark schema | ✅ |
-| Benchmark corpus | ✅ (~176 cases across 20 families) |
-| R package | ✅ (10 design wrappers + validator, R CMD check clean) |
-| MCP server | ✅ (11 tools over stdio, TypeScript) |
+| Benchmark corpus | ✅ (176 cases across 21 family directories) |
+| R package | ✅ (10 design wrappers + validator, R CMD check clean, 95 tests passing) |
+| MCP server | ✅ (11 tools over stdio, TypeScript, 11/11 smoke pass) |
 | Skill / subagent | ✅ (skill in `skills/designr`) |
-| Plugin packaging | ✅ (`plugin.json`, installable via `claude plugin install`) |
+| Plugin manifest | ✅ (`plugin.json` present; installation via `claude plugin install <path>` not yet end-to-end verified by maintainer) |
 
 ## MVP tool surface (v0.0.1)
 
-Each of these is an MCP tool, each wrapping a validated function in `gsDesign` or `gsDesign2`. `comparison` ∈ `{"superiority", "non-inferiority", "equivalence"}` is a parameter, not a separate tool — same for group-sequential `k`, spending function, and `test.type`. This keeps the tool surface small and predictable.
+Each of these is an MCP tool, each wrapping a validated function in `gsDesign` or `gsDesign2`. Hypothesis type (`comparison`), group-sequential `k`, spending function, and `test.type` are parameters, not separate tools — that keeps the surface small and predictable. Equivalence / TOST is supported by the binary and continuous fixed-sample wrappers only; survival wrappers do not currently support equivalence margins.
 
 ### Fixed-sample (6)
 
@@ -54,18 +61,18 @@ Each of these is an MCP tool, each wrapping a validated function in `gsDesign` o
 | `design_fixed_binary` | `gsDesign::nBinomial` | Two-arm binary, all 3 hypothesis types. |
 | `design_fixed_continuous` | `gsDesign::nNormal` | Two-arm continuous, all 3 hypothesis types. |
 | `design_fixed_survival_ph` | `gsDesign::nSurv` | TTE PH log-rank, superiority / NI. |
-| `design_fixed_survival_maxcombo` | `gsDesign2::fixed_design_maxcombo` | TTE NPH MaxCombo (delayed effect). |
-| `design_fixed_survival_rmst` | `gsDesign2::fixed_design_rmst` | TTE restricted mean survival time at τ. |
-| `design_fixed_survival_milestone` | `gsDesign2::fixed_design_milestone` | TTE milestone survival probability S(τ). |
+| `design_fixed_survival_maxcombo` | `gsDesign2::fixed_design_maxcombo` | TTE NPH MaxCombo (delayed effect). Superiority only. |
+| `design_fixed_survival_rmst` | `gsDesign2::fixed_design_rmst` | TTE restricted mean survival time at τ. Superiority only. |
+| `design_fixed_survival_milestone` | `gsDesign2::fixed_design_milestone` | TTE milestone survival probability S(τ). Superiority only. |
 
 ### Group-sequential (4)
 
 | Tool | R backend |
 |---|---|
-| `design_gs_binary` | `gsDesign::gsDesign` + `nBinomial` |
-| `design_gs_continuous` | `gsDesign::gsDesign` + `nNormal` |
-| `design_gs_survival_ph` | `gsDesign::gsSurv` |
-| `design_gs_survival_nph_combo` | `gsDesign2::gs_design_combo` / `gs_design_wlr` / `gs_design_ahr` |
+| `design_gs_binary` | `gsDesign::gsDesign` + `nBinomial` (super / NI) |
+| `design_gs_continuous` | `gsDesign::gsDesign` + `nNormal` (super / NI) |
+| `design_gs_survival_ph` | `gsDesign::gsSurv` (super / NI) |
+| `design_gs_survival_nph_combo` | `gsDesign2::gs_design_combo` / `gs_design_wlr` / `gs_design_ahr` (superiority only) |
 
 ### Meta (1)
 
@@ -110,7 +117,23 @@ Three conversational prompts you can paste into Claude Code once the plugin is i
    > *"Design an immunotherapy trial with delayed effect: 4-month delay, post-delay HR 0.60, control median 10 months, accrual 20/month for 18 months, 30-month study duration, α = 0.025, power 90%."*
    Expect `design_fixed_survival_maxcombo` with a MaxCombo design summary.
 
-See `mcp-server/SMOKE.md` for the full 10-tool smoke matrix.
+See `mcp-server/SMOKE.md` for the full 11-prompt smoke matrix.
+
+## Roadmap
+
+Beyond v0.0.1, in priority order based on the corpus's family weights:
+
+1. **Adaptive sample-size re-estimation** (corpus: `adaptive-ssr/`) — `rpact::getSampleSizeRates` + custom Promising-Zone rule.
+2. **Group-sequential futility-only and binding-futility variants** — already exposed via `test.type` 3–6 in current GS wrappers; add explicit anchor tests.
+3. **Adaptive treatment selection / population enrichment** (corpus: `adaptive-selection/`, `adaptive-enrichment/`) — `rpact::getDesignInverseNormal` + sub-population reweighting.
+4. **MAMS** (corpus: `mams/`) — `rpact::getDesignMams` or `MAMS::mams`.
+5. **Recurrent events** (corpus: `recurrent-events/`) — `WR::sample_size_LWYY` or analogues.
+6. **Count / rate endpoints** (corpus: `count-rate/`) — Poisson and negative-binomial sample size.
+7. **Bayesian designs** (corpus: `bayesian/`) — wrappers around predictive-probability and posterior-probability stopping rules.
+8. **Platform / basket / umbrella** (corpus: `platform/`, `basket/`, `umbrella/`) — likely separate tools per master-protocol type.
+9. **Simulation / OC tools** (`simulate_trial`, `compare_designs`).
+
+Each row above already has ≥ 7 curated benchmark cases ready as regression anchors.
 
 ## License
 
