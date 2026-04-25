@@ -98,6 +98,27 @@ R -e 'install.packages(c("gsDesign","gsDesign2","jsonlite"))'
 
 `gsDesign`, `gsDesign2`, and `jsonlite` are CRAN packages the R launcher imports at runtime. Install them once into your R user library; they don't need to be reinstalled on plugin updates.
 
+#### Tested dependency versions
+
+`designr` v0.0.4 was developed and tested against the versions below. The `DESCRIPTION` file pins minimum versions matching this set — older versions are not supported. CRAN's latest is usually fine; pin to these floors only if you hit a version-skew issue.
+
+| Layer | Dependency | Tested version |
+|---|---|---|
+| R runtime | R | 4.5.3 (works on R ≥ 4.2) |
+| R imports | `gsDesign` | 3.9.0 |
+|  | `gsDesign2` | 1.1.8 |
+|  | `jsonlite` | 2.0.0 |
+| R suggests | `simtrial` | 1.0.2 |
+|  | `rpact` | 4.4.0 |
+|  | `yaml` | 2.3.12 |
+|  | `testthat` | 3.3.2 |
+|  | `remotes` | 2.5.0 |
+| Node runtime | Node | 22.22.1 (works on Node ≥ 18) |
+| Node bundled | `@modelcontextprotocol/sdk` | ^1.0.0 (inlined in `dist/index.js`) |
+|  | `zod` | ^3.23.0 (inlined) |
+| Node devDeps | `esbuild` | ^0.20.0 |
+|  | `typescript` | ^5.5.0 |
+
 ### 2. Install the plugin
 
 **Method A — slash commands (recommended, inside Claude Code)**

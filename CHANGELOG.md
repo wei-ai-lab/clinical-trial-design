@@ -56,6 +56,14 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - README sections: "Updating" and "Uninstalling", each with both the
   slash-command (Method A) and host-shell (Method B) flows clearly
   labeled to avoid ambiguity.
+- Pinned dependency floors in `r-package/designr/DESCRIPTION`
+  (`gsDesign >= 3.9.0`, `gsDesign2 >= 1.1.8`, `jsonlite >= 1.8.0`,
+  `rpact >= 4.0.0`, `simtrial >= 1.0.0`, `yaml >= 2.3.0`,
+  `testthat >= 3.0.0`) and a "Tested dependency versions" table in the
+  README enumerating the exact R / Node / CRAN / npm versions used in
+  development. Bundled Node deps (`@modelcontextprotocol/sdk`, `zod`)
+  are inlined in `dist/index.js`; devDeps (`esbuild`, `typescript`)
+  matter only for maintainers.
 
 ### Changed
 
