@@ -109,6 +109,16 @@ Then, inside Claude Code (slash commands):
 
 `/plugin marketplace add` accepts the repo root because `.claude-plugin/marketplace.json` lives there. After install, restart Claude Code so it loads the bundled MCP server. Confirm the install with `/plugin` (designr should be listed and enabled).
 
+The same flow also works from the host shell (handy if you want to script it):
+
+```bash
+claude plugin marketplace add /full/path/to/designr
+claude plugin install designr@wei-ai-lab
+claude plugin list   # confirm: designr@wei-ai-lab, version 0.0.3, enabled
+```
+
+If anything goes wrong, `claude plugin validate /full/path/to/designr` will tell you whether the marketplace + plugin manifests parse cleanly.
+
 Quick local-dev alternative — skip the marketplace step entirely and launch Claude Code with the plugin loaded directly:
 
 ```bash

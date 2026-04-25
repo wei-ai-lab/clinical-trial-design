@@ -18,6 +18,15 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `/plugin marketplace add <path>` + `/plugin install designr@wei-ai-lab`
   instead. A `claude --plugin-dir <path>` quick-dev alternative is also
   documented.
+- Plugin manifest validation: `plugin.json` no longer declares an explicit
+  `skills` path or empty `agents` / `commands` arrays. The first triggered
+  the Claude Code installer's `skills: Invalid input` validation error
+  (the field expects a path to a *parent* directory containing
+  `<name>/SKILL.md`, not the skill directory itself); the latter two were
+  schema-invalid empties. With those fields omitted, Claude Code
+  auto-discovers the skill at the default `skills/designr/SKILL.md`
+  location. Verified with `claude plugin validate` and a full
+  install round-trip.
 
 ### Changed
 

@@ -21,11 +21,6 @@
     "gsdesign",
     "r"
   ],
-  "skills": [
-    "skills/designr"
-  ],
-  "agents": [],
-  "commands": [],
   "mcpServers": {
     "designr": {
       "command": "node",
