@@ -45,16 +45,16 @@ jobs:
           )
           fail=0
           for p in "${patterns[@]}"; do
-            if grep -RInE "$p" r-package/designr/R/ ; then
-              echo "::error::Forbidden pattern in r-package/designr/R/: $p"
+            if grep -RInE "$p" r-package/ClinicalTrialDesign/R/ ; then
+              echo "::error::Forbidden pattern in r-package/ClinicalTrialDesign/R/: $p"
               fail=1
             fi
           done
           # `url(` is too broad to grep for naively — it would match any
           # identifier ending in url(. Restrict to base R url() opener
           # used to fetch URLs: a leading whitespace/start-of-line.
-          if grep -RInE '(^|[^a-zA-Z0-9_\.])url\s*\(' r-package/designr/R/ ; then
-            echo "::error::Forbidden pattern in r-package/designr/R/: url("
+          if grep -RInE '(^|[^a-zA-Z0-9_\.])url\s*\(' r-package/ClinicalTrialDesign/R/ ; then
+            echo "::error::Forbidden pattern in r-package/ClinicalTrialDesign/R/: url("
             fail=1
           fi
           exit $fail

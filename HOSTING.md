@@ -1,12 +1,12 @@
-# Hosting `designr`
+# Hosting `clinical-trial-design`
 
-`designr` is a stateless plugin (see [`SECURITY.md`](./SECURITY.md)),
+`clinical-trial-design` is a stateless plugin (see [`SECURITY.md`](./SECURITY.md)),
 which means **the host you run it inside determines your overall
 data-handling posture**, not the plugin itself.
 
 This document gives recommended host configurations for two common
-user profiles. The same `designr` build serves both — no plugin-side
-configuration changes between them.
+user profiles. The same `clinical-trial-design` build serves both — no
+plugin-side configuration changes between them.
 
 ## Profile A — individual researcher / small company
 
@@ -31,16 +31,17 @@ managed laptop.
   guidance) goes out over the public internet. This is normal and
   desirable for public-information work.
 
-**What `designr` does in this profile:** receives JSON tool calls,
+**What `clinical-trial-design` does in this profile:** receives JSON tool calls,
 spawns Rscript, returns JSON. No local writes, no network calls
 from the plugin itself.
 
 ## Profile B — large enterprise (pharma sponsor, hospital system, CRO)
 
-**Typical use case:** designing a real Phase 3 trial that involves
-sponsor-confidential inputs (internal Phase 2 readouts, pipeline
-assumptions, prior-compound effect estimates, business deadlines)
-and requires a cross-functional decision audit trail.
+**Typical use case:** designing a real confirmatory trial (Phase 2 or
+Phase 3) that involves sponsor-confidential inputs (internal Phase 2
+readouts, pipeline assumptions, prior-compound effect estimates,
+business deadlines) and requires a cross-functional decision audit
+trail.
 
 **Recommended host:** Claude Code Enterprise on AWS Bedrock (or
 equivalent on Azure with Anthropic-on-Azure, or on Google Cloud)
@@ -64,12 +65,12 @@ with the following posture:
   makes no outbound calls; this lock-down protects against
   whatever else the host might attempt.
 
-**What `designr` does in this profile:** identical to Profile A —
+**What `clinical-trial-design` does in this profile:** identical to Profile A —
 receives JSON tool calls, spawns Rscript, returns JSON. The
 plugin's stateless behavior is the property that lets the host
 control the rest cleanly.
 
-**Why persistence is a feature here, not a leak:** Phase 3 trial
+**Why persistence is a feature here, not a leak:** confirmatory trial
 design is a months-long cross-functional process. Statistician,
 clinical lead, regulatory affairs, operations, and leadership each
 review and revise the design over multiple sessions. The persisted
@@ -88,7 +89,7 @@ For sponsors who require fully offline operation:
 - Local LLM (Llama-3.x, Qwen, or DeepSeek deployed on-prem).
 - Claude Code or an alternative MCP-capable host pointed at the local
   LLM.
-- `designr` plugin installed from a local mirror.
+- `clinical-trial-design` plugin installed from a local mirror.
 - All R / Node dependencies pre-cached in an internal repository.
 
 This profile is technically supported today (the plugin is fully
@@ -98,12 +99,12 @@ Contributions welcome — see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ## Multi-host support
 
-`designr` is currently shipped as a Claude Code plugin. The R package
-and MCP server are host-agnostic; the plugin manifest, skill prompt,
-and install / update flow are host-specific. Per-host adapters
-(openclaw, opencode, Cursor) are scheduled for v0.6.0.
+`clinical-trial-design` is currently shipped as a Claude Code plugin.
+The R package and MCP server are host-agnostic; the plugin manifest,
+skill prompt, and install / update flow are host-specific. Per-host
+adapters (openclaw, opencode, Cursor) are scheduled for v0.6.0.
 
 Until then, advanced users can invoke the MCP server directly from
 any MCP-capable host by pointing at
-`r-package/designr/inst/launcher.R` (see the bridge code in
+`r-package/ClinicalTrialDesign/inst/launcher.R` (see the bridge code in
 `mcp-server/src/r-bridge.ts` for the JSON contract).

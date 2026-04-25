@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/wei-ai-lab/designr/benchmarks/schema/design.schema.json",
-  "title": "designr benchmark case",
-  "description": "Machine-readable specification of a single real-world Phase 3 trial design used as a benchmark for the designr agent.",
+  "$id": "https://github.com/wei-ai-lab/clinical-trial-design/benchmarks/schema/design.schema.json",
+  "title": "clinical-trial-design benchmark case",
+  "description": "Machine-readable specification of a single real-world confirmatory trial design used as a benchmark for the clinical-trial-design agent.",
   "type": "object",
   "required": ["id", "family", "source", "design", "expected"],
   "properties": {

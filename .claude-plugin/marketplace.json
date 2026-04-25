@@ -5,27 +5,26 @@
     "email": "wei.ai.lab@outlook.com"
   },
   "metadata": {
-    "description": "Plugins from wei-ai-lab. Currently hosts designr, an end-to-end Phase 3 clinical trial design assistant.",
-    "version": "0.0.5"
+    "description": "Plugins from wei-ai-lab. Currently hosts clinical-trial-design, an end-to-end clinical trial design assistant.",
+    "version": "0.0.6"
   },
   "plugins": [
     {
-      "name": "designr",
+      "name": "clinical-trial-design",
       "source": "./",
-      "description": "End-to-end Phase 3 clinical trial design assistant. R-backed computation (gsDesign / gsDesign2), 13 MCP tools, Monte Carlo verification, markdown reporting.",
-      "version": "0.0.5",
+      "description": "End-to-end clinical trial design assistant. R-backed computation (gsDesign / gsDesign2), 13 MCP tools, Monte Carlo verification, markdown reporting. Covers Phase 2 and Phase 3 confirmatory designs.",
+      "version": "0.0.6",
       "author": {
         "name": "Wei Fu",
         "email": "wei.ai.lab@outlook.com"
       },
-      "homepage": "https://github.com/wei-ai-lab/designr",
-      "repository": "https://github.com/wei-ai-lab/designr",
+      "homepage": "https://github.com/wei-ai-lab/clinical-trial-design",
+      "repository": "https://github.com/wei-ai-lab/clinical-trial-design",
       "license": "Apache-2.0",
       "keywords": [
         "clinical-trials",
         "biostatistics",
         "sample-size",
-        "phase-3",
         "group-sequential",
         "gsdesign",
         "r"

@@ -1,28 +1,27 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin",
-  "name": "designr",
-  "version": "0.0.5",
-  "description": "End-to-end Phase 3 clinical trial design assistant. R-backed computation, MCP tools, skill for design reasoning.",
+  "name": "clinical-trial-design",
+  "version": "0.0.6",
+  "description": "End-to-end clinical trial design assistant. R-backed computation, MCP tools, skill for design reasoning. Covers Phase 2 and Phase 3 confirmatory designs.",
   "author": {
     "name": "Wei Fu",
     "email": "wei.ai.lab@outlook.com",
     "url": "https://github.com/wei-ai-lab"
   },
-  "homepage": "https://github.com/wei-ai-lab/designr",
-  "repository": "https://github.com/wei-ai-lab/designr",
+  "homepage": "https://github.com/wei-ai-lab/clinical-trial-design",
+  "repository": "https://github.com/wei-ai-lab/clinical-trial-design",
   "license": "Apache-2.0",
   "keywords": [
     "clinical-trials",
     "biostatistics",
     "sample-size",
-    "phase-3",
     "group-sequential",
     "adaptive-design",
     "gsdesign",
     "r"
   ],
   "mcpServers": {
-    "designr": {
+    "clinical-trial-design": {
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/mcp-server/dist/index.js"],
       "env": {}

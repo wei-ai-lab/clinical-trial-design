@@ -42,11 +42,11 @@ body:
     id: env
     attributes:
       label: Environment
-      description: "Output of `R.version$version.string`, `node --version`, and the `designr` plugin version (see plugin.json)."
+      description: "Output of `R.version$version.string`, `node --version`, and the `clinical-trial-design` plugin version (see plugin.json)."
       placeholder: |
         R 4.5.3
         Node 22.22.1
-        designr 0.0.5
+        clinical-trial-design 0.0.6
         Host: Claude Code 1.x.x on Linux/macOS/Windows-WSL
     validations:
       required: true
@@ -57,5 +57,5 @@ body:
       options:
         - label: This is not a security vulnerability (those go through SECURITY.md, not this template).
           required: true
-        - label: I have run `cd r-package/designr && R -e 'devtools::test()'` and reported any failing test.
+        - label: I have run `cd r-package/ClinicalTrialDesign && R -e 'devtools::test()'` and reported any failing test.
         - label: I have a regression test idea — even rough — for the fix PR.

@@ -1,6 +1,6 @@
-# Contributing to `designr`
+# Contributing to `clinical-trial-design`
 
-Thanks for considering a contribution. `designr` is built to be
+Thanks for considering a contribution. `clinical-trial-design` is built to be
 contributed to by both human and AI-agent contributors; the technical
 codebase tour lives in [`AGENTS.md`](./AGENTS.md), and this document
 focuses on the human-facing process.
@@ -9,7 +9,7 @@ focuses on the human-facing process.
 
 Highest-value, in priority order:
 
-1. **A new benchmark anchor case** for a design family `designr`
+1. **A new benchmark anchor case** for a design family `clinical-trial-design`
    already covers. The corpus today is 176 cases, but only ~20 of
    them are wired into testthat anchors; expanding that gates more
    regression coverage.
@@ -18,7 +18,7 @@ Highest-value, in priority order:
    current 13-tool surface, Phase 2 adds new families.
 3. **A bug fix with a regression test.** The CRAN backends
    (`gsDesign`, `gsDesign2`) are well-tested upstream; bugs in
-   `designr` are usually input-validation issues, normalization
+   `clinical-trial-design` are usually input-validation issues, normalization
    issues in `utils_format.R`, or contract drift between the R
    package and MCP server.
 4. **Improving a tool's MCP description** for LLM-selection
@@ -46,7 +46,7 @@ discuss before writing code.
 
    ```bash
    # R side
-   cd r-package/designr
+   cd r-package/ClinicalTrialDesign
    R -e 'devtools::test()'
    R -e 'devtools::check(".")'
 

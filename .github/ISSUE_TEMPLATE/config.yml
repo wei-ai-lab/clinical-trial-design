@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security vulnerability
-    url: https://github.com/wei-ai-lab/designr/security/advisories/new
+    url: https://github.com/wei-ai-lab/clinical-trial-design/security/advisories/new
     about: Report a security issue privately. Do NOT file a public issue for security reports — see SECURITY.md.
   - name: Discussion / open-ended question
-    url: https://github.com/wei-ai-lab/designr/discussions
+    url: https://github.com/wei-ai-lab/clinical-trial-design/discussions
     about: For roadmap discussion, design-methodology questions, or anything that does not fit a structured template.

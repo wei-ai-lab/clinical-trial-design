@@ -1,6 +1,6 @@
-# designr MCP server — smoke matrix
+# clinical-trial-design MCP server — smoke matrix
 
-Thirteen prompts covering every MCP tool. Each should invoke the named MCP tool once and return a result without error. Values are expected-order-of-magnitude checks, not strict regression targets (the R-side benchmark regression lives in `r-package/designr/tests/testthat/`).
+Thirteen prompts covering every MCP tool. Each should invoke the named MCP tool once and return a result without error. Values are expected-order-of-magnitude checks, not strict regression targets (the R-side benchmark regression lives in `r-package/ClinicalTrialDesign/tests/testthat/`).
 
 ## How to run
 
@@ -8,7 +8,7 @@ With the plugin installed in Claude Code, paste each prompt into a fresh chat, w
 
 ## 1. `design_fixed_binary` — superiority
 
-> Design a Phase 3 trial for refractory unstable angina. Control 30-day event rate ≈ 15%, hoped-for treatment rate ≈ 9%, two-sided α = 0.05, power 80%, 1:1 allocation.
+> Design a confirmatory trial for refractory unstable angina. Control 30-day event rate ≈ 15%, hoped-for treatment rate ≈ 9%, two-sided α = 0.05, power 80%, 1:1 allocation.
 
 Expected: `design_fixed_binary`, total N ≈ 1,000–1,200.
 
@@ -68,7 +68,7 @@ Expected: `design_gs_survival_nph_combo` with `test = "maxcombo"`, 2 analyses, e
 
 ## 11. `validate_against_benchmark` — meta
 
-> Validate the CAPTURE benchmark case against designr.
+> Validate the CAPTURE benchmark case against ClinicalTrialDesign.
 
 Expected: `validate_against_benchmark(family="fixed-superiority", id="1997_CAPTURE_abciximab")` returning `within_tolerance: false` (vanilla formula lands at ~1,100; CAPTURE's 1,400 includes real-trial inflation) but structurally correct output.
 

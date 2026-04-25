@@ -2,13 +2,13 @@
 
 ## Scope of this document
 
-`designr` is invoked with clinical trial design inputs that may include
-sponsor-confidential information (internal Phase 2 readouts, pipeline
-assumptions, business deadlines). This document explains, layer by
-layer, what the plugin guarantees about that data and what is the
-responsibility of the host environment you run it in.
+`clinical-trial-design` is invoked with trial design inputs that may
+include sponsor-confidential information (internal Phase 2 readouts,
+pipeline assumptions, business deadlines). This document explains,
+layer by layer, what the plugin guarantees about that data and what
+is the responsibility of the host environment you run it in.
 
-The short version: **`designr` is a stateless computation layer.**
+The short version: **`clinical-trial-design` is a stateless computation layer.**
 Persistence, history, audit logging, access control, and data residency
 are properties of your *host* (Claude Code, Claude Code Enterprise,
 openclaw, opencode, Cursor) and your organization's deployment of it,
@@ -17,14 +17,14 @@ not of the plugin.
 For recommended host configurations per user profile, see
 [`HOSTING.md`](./HOSTING.md).
 
-## What `designr` guarantees (CI-enforced)
+## What `clinical-trial-design` guarantees (CI-enforced)
 
 Each MCP tool call follows this lifecycle:
 
 1. JSON arguments arrive on the MCP server's stdin.
 2. The MCP server spawns a fresh `Rscript` subprocess and pipes the
    JSON to its stdin.
-3. The subprocess sources `r-package/designr/R/*.R`, dispatches to the
+3. The subprocess sources `r-package/ClinicalTrialDesign/R/*.R`, dispatches to the
    matching wrapper, computes, writes a single JSON line to stdout,
    and exits.
 4. The MCP server forwards that JSON back to the host.
@@ -54,7 +54,7 @@ These guarantees are CI-enforced. The
 on every push and pull request and fails the build if a grep gate
 finds any of the following in non-test code paths:
 
-- In `r-package/designr/R/*.R`: `write*()`, `save*()`, `cat(..., file=)`,
+- In `r-package/ClinicalTrialDesign/R/*.R`: `write*()`, `save*()`, `cat(..., file=)`,
   `download.file`, `url(`, `socketConnection`, `httr::`, `curl::`,
   `RCurl::`.
 - In `mcp-server/src/**/*.ts`: `fs.writeFile*`, `fs.appendFile*`,
@@ -67,7 +67,7 @@ the design pattern is to **return** the bytes / string to the caller
 and let the host decide whether to save them — not to write inside
 the package. That keeps the CI gate intact.
 
-## What `designr` does *not* do (host responsibility)
+## What `clinical-trial-design` does *not* do (host responsibility)
 
 - **Persistence of conversation history.** Including tool-call inputs
   and outputs.
@@ -77,15 +77,15 @@ the package. That keeps the CI gate intact.
   transcripts are stored.
 - **Data-handling contracts with LLM providers.**
 
-These are determined by the host. `designr` fits *into* the bigger
-trial-design process; it does not try to *cover* the bigger process.
+These are determined by the host. `clinical-trial-design` fits *into* the
+bigger trial-design process; it does not try to *cover* the bigger process.
 Cross-functional review (statistician, clinician, regulatory affairs,
 operations, leadership) happens against the host's persisted
 transcript, not against a plugin-internal log.
 
 ## Two user profiles, same plugin
 
-`designr` is designed so the *same build* serves both ends of the
+`clinical-trial-design` is designed so the *same build* serves both ends of the
 spectrum, with no plugin-side configuration:
 
 ### Individual researcher / small company
@@ -106,7 +106,7 @@ spectrum, with no plugin-side configuration:
 - Persistence is *wanted* — trial design is a months-long
   cross-functional effort and the persisted transcript is the
   decision audit log.
-- `designr`'s structured output (the `reasoning_chain` schema landing
+- `clinical-trial-design`'s structured output (the `reasoning_chain` schema landing
   in v0.0.8) is designed to make that retained transcript a
   high-quality audit record automatically: every assumption tagged
   with its `source_type` (LLM-precedent, FDA-guidance, user-supplied,
@@ -114,7 +114,7 @@ spectrum, with no plugin-side configuration:
 
 ## Reporting a vulnerability
 
-If you find a way that `designr` can leak inputs — either through a
+If you find a way that `clinical-trial-design` can leak inputs — either through a
 wrapper that writes to disk, a dependency that opens a socket, or a
 new code path that bypasses the CI grep gate — please open a private
 security advisory on the GitHub repo, or email
@@ -126,7 +126,7 @@ patch release.
 
 ## Dependency review policy
 
-Any new dependency introduced into `r-package/designr/Imports:` or
+Any new dependency introduced into `r-package/ClinicalTrialDesign/Imports:` or
 `mcp-server/package.json` must include in the PR description:
 
 1. Whether the dependency makes outbound network calls in any code

@@ -2,7 +2,7 @@
 
 If you are an AI agent (Claude, GPT, Gemini, an openclaw subagent, an
 opencode workflow, etc.) reading this because a user has asked you to
-contribute to `designr`, this is your entry point. It explains the
+contribute to `clinical-trial-design`, this is your entry point. It explains the
 codebase the way a senior contributor would walk a new colleague
 through it: what each layer does, where to add a new thing, which
 tests gate a change, and what is in-scope for an agent contribution
@@ -14,10 +14,11 @@ detail. The strategic *why* behind the project's direction is
 described in the public [`README.md`](./README.md) and
 [`CHANGELOG.md`](./CHANGELOG.md).
 
-## What `designr` is
+## What `clinical-trial-design` is
 
-A Phase 3 clinical-trial-design assistant exposed as a Claude Code
-plugin. It wraps the established R packages `gsDesign`, `gsDesign2`,
+An end-to-end clinical-trial-design assistant exposed as a Claude Code
+plugin, covering Phase 2 and Phase 3 confirmatory designs. It wraps
+the established R packages `gsDesign`, `gsDesign2`,
 and (selectively) `rpact` and `simtrial` behind a stable JSON
 schema, exposes those wrappers as MCP tools, and ships a skill
 prompt that orients the host LLM. The project's value comes from
@@ -39,7 +40,7 @@ four properties:
 ## Repo layout
 
 ```
-designr/
+clinical-trial-design/
 ├── .claude-plugin/        # Claude Code plugin manifest + marketplace.json
 ├── .github/
 │   ├── ISSUE_TEMPLATE/    # Per-task templates an agent can fill programmatically
@@ -63,12 +64,12 @@ designr/
 │   ├── dist/index.js      # bundled (esbuild) — committed; ships in plugin
 │   ├── scripts/smoke.mjs  # 13-case smoke matrix
 │   └── package.json
-├── r-package/designr/     # R package
+├── r-package/ClinicalTrialDesign/  # R package
 │   ├── DESCRIPTION, NAMESPACE
 │   ├── R/                 # one file per design wrapper + utils + cli + dispatcher
 │   ├── inst/launcher.R    # sources R/ in-place; invoked by mcp-server/r-bridge
 │   └── tests/testthat/    # one test file per design family
-└── skills/designr/SKILL.md  # skill prompt that orients the host LLM
+└── skills/clinical-trial-design/SKILL.md  # skill prompt that orients the host LLM
 ```
 
 ## The four layers
@@ -79,9 +80,9 @@ changes; cross-layer changes are rare and need extra care.
 
 | Layer | Where it lives | Contract |
 |---|---|---|
-| **Skill prompt** | `skills/designr/SKILL.md` | Tells the host LLM how to recognize trial-design intent and which MCP tool to invoke. |
+| **Skill prompt** | `skills/clinical-trial-design/SKILL.md` | Tells the host LLM how to recognize trial-design intent and which MCP tool to invoke. |
 | **MCP server** | `mcp-server/src/` | TypeScript + zod. One file per tool exposes a schema + `register(server)` that calls `runR(toolName, args)`. |
-| **R package wrappers** | `r-package/designr/R/` | One `.R` file per design family. Each `design_*()` function validates inputs, calls the CRAN backend, and returns a normalized `designr` result list. |
+| **R package wrappers** | `r-package/ClinicalTrialDesign/R/` | One `.R` file per design family. Each `design_*()` function validates inputs, calls the CRAN backend, and returns a normalized `ClinicalTrialDesign` result list. |
 | **CRAN backends** | `gsDesign`, `gsDesign2`, etc. | Established R packages we wrap. We do not modify them; we adapt their inputs and normalize their outputs. |
 
 Stateless contract between layers: tool call args go MCP → R via JSON
@@ -94,7 +95,7 @@ The most common agent contribution. Concrete walkthrough — adding a
 hypothetical `design_fixed_count_rate` (Poisson rate-ratio fixed
 design) as an example.
 
-**1. R wrapper.** Create `r-package/designr/R/fixed_count_rate.R`.
+**1. R wrapper.** Create `r-package/ClinicalTrialDesign/R/fixed_count_rate.R`.
 Follow the shape of `R/fixed_binary.R`:
 
 - Roxygen header explaining params (matches the MCP schema).
@@ -102,7 +103,7 @@ Follow the shape of `R/fixed_binary.R`:
   (`check_prob`, `check_alpha`, `check_power`, etc.). Add new
   validators there if needed.
 - Call the CRAN backend (`gsDesign`, `rpact`, etc.).
-- Return a result list shaped by `R/utils_format.R::designr_result()`:
+- Return a result list shaped by `R/utils_format.R::.designr_result()`:
   `list(sample_size_total, sample_size_per_arm, events_total,
   boundaries, timing, inputs, method, package_version, raw)`.
   Fields not relevant to the family stay `NULL`.
@@ -134,7 +135,7 @@ The **tool description string is critical for LLM-selection
 accuracy** — write it as decision-aiding text the host LLM will read
 to decide whether to invoke this tool. Bad description: "Calculates
 sample size for Poisson rate ratio." Good description: "Use this
-tool when the user wants Phase 3 sample size for a two-arm trial
+tool when the user wants confirmatory sample size for a two-arm trial
 with a count or rate primary endpoint analyzed by Poisson rate
 ratio. Examples: exacerbation rate in COPD, hospitalization rate in
 heart failure. Supports superiority and non-inferiority hypotheses."
@@ -150,7 +151,7 @@ source — end users install the plugin without `npm install`.
 `mcp-server/SMOKE.md`. Run `node mcp-server/scripts/smoke.mjs` to
 confirm 14 / 14 pass.
 
-**9. Skill prompt.** Update `skills/designr/SKILL.md` if the new
+**9. Skill prompt.** Update `skills/clinical-trial-design/SKILL.md` if the new
 tool covers a class of clinical situations the existing tools do
 not.
 
@@ -213,11 +214,11 @@ A change is mergeable when all of these pass on CI:
 
 | Gate | What it runs |
 |---|---|
-| **R tests** | `cd r-package/designr && R -e 'devtools::test()'` — testthat anchors against ~20 curated benchmark cases. |
+| **R tests** | `cd r-package/ClinicalTrialDesign && R -e 'devtools::test()'` — testthat anchors against ~20 curated benchmark cases. |
 | **R CMD check** | `R -e 'devtools::check(".")'` — package metadata, NAMESPACE, examples runnable. Status OK with 0 errors / 0 warnings. |
 | **MCP build** | `cd mcp-server && npm run build` — esbuild bundles to `dist/index.js`. Zero TypeScript errors. |
 | **Smoke matrix** | `node mcp-server/scripts/smoke.mjs` — all current tools (13 pre-v0.0.6) return a valid result through the JSON contract. |
-| **security-grep** | `.github/workflows/security-grep.yml` — fails on disk-write or outbound-network patterns in `r-package/designr/R/` or `mcp-server/src/`. See [`SECURITY.md`](./SECURITY.md). |
+| **security-grep** | `.github/workflows/security-grep.yml` — fails on disk-write or outbound-network patterns in `r-package/ClinicalTrialDesign/R/` or `mcp-server/src/`. See [`SECURITY.md`](./SECURITY.md). |
 
 Run them locally before opening a PR. If a CI gate fails, fix the
 underlying issue rather than disabling the gate.
@@ -302,23 +303,23 @@ across multiple host platforms. A few host-specific notes:
 - **Gemini agents:** the `benchmarks/*/cases/*.yaml` corpus is your
   highest-leverage starting point; YAML scanning + adding anchor
   cases is well-suited to Gemini's long-context strengths.
-- **openclaw / opencode subagents:** the `r-package/designr/inst/launcher.R`
+- **openclaw / opencode subagents:** the `r-package/ClinicalTrialDesign/inst/launcher.R`
   + `mcp-server/src/r-bridge.ts` pair is host-agnostic and works
   outside Claude Code today; if you find host-specific friction,
   open an issue tagged `multi-host`.
 
 If you are reviewing another agent's PR, the bar is "would I want
-this in production at a Phase 3 sponsor on the day someone has to
-defend it in a regulatory meeting?" If you cannot answer yes,
+this in production at a confirmatory-trial sponsor on the day someone
+has to defend it in a regulatory meeting?" If you cannot answer yes,
 request changes.
 
 ## Where to look first if you are stuck
 
 | Symptom | First place to look |
 |---|---|
-| "What does the JSON contract look like?" | `r-package/designr/R/cli.R` + `mcp-server/src/r-bridge.ts` |
-| "What shape should my wrapper return?" | `r-package/designr/R/utils_format.R` + an existing wrapper as template |
-| "How does input validation work?" | `r-package/designr/R/utils_validate.R` |
+| "What does the JSON contract look like?" | `r-package/ClinicalTrialDesign/R/cli.R` + `mcp-server/src/r-bridge.ts` |
+| "What shape should my wrapper return?" | `r-package/ClinicalTrialDesign/R/utils_format.R` + an existing wrapper as template |
+| "How does input validation work?" | `r-package/ClinicalTrialDesign/R/utils_validate.R` |
 | "How is a tool registered with MCP?" | `mcp-server/src/index.ts` + any `mcp-server/src/tools/*.ts` |
 | "What does a benchmark case look like?" | `benchmarks/fixed-superiority/cases/1997_CAPTURE_abciximab.yaml` |
 | "Where do I run the smoke matrix?" | `mcp-server/scripts/smoke.mjs` |

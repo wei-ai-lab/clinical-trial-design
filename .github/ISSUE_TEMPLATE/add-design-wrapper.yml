@@ -79,7 +79,7 @@ body:
       options:
         - label: I have read [AGENTS.md](../AGENTS.md#how-to-add-a-design-wrapper).
           required: true
-        - label: The CRAN backend is in `Imports:` or `Suggests:` of `r-package/designr/DESCRIPTION` (or I will add it and pass dependency-review per `SECURITY.md`).
+        - label: The CRAN backend is in `Imports:` or `Suggests:` of `r-package/ClinicalTrialDesign/DESCRIPTION` (or I will add it and pass dependency-review per `SECURITY.md`).
           required: true
         - label: I will provide a benchmark anchor test in the same PR.
           required: true
