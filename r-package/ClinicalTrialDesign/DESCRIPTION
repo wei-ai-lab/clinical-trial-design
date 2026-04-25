@@ -1,16 +1,17 @@
-Package: designr
+Package: ClinicalTrialDesign
 Type: Package
-Title: Unified Interface for Phase 3 Clinical Trial Design
-Version: 0.0.5
+Title: Unified Interface for Clinical Trial Design
+Version: 0.0.6
 Authors@R: person(given = "Wei", family = "Fu", email = "wei.ai.lab@outlook.com", role = c("aut", "cre"))
 Author: Wei Fu [aut, cre]
 Maintainer: Wei Fu <wei.ai.lab@outlook.com>
 Description: A consistent, well-documented R interface over established clinical
     trial design packages (gsDesign, gsDesign2, rpact, simtrial, and others),
     designed to be called from an MCP server so that LLM-based assistants can
-    reliably produce correct Phase 3 designs. Supports fixed-sample, group-
-    sequential, adaptive, multi-arm multi-stage, time-to-event, Bayesian, and
-    master-protocol (platform/basket/umbrella) designs.
+    reliably produce correct designs. Supports fixed-sample, group-sequential,
+    adaptive, multi-arm multi-stage, time-to-event, Bayesian, and master-
+    protocol (platform/basket/umbrella) designs. Endpoints and methods cover
+    both Phase 2 and Phase 3 confirmatory trials.
 License: Apache License (>= 2)
 Encoding: UTF-8
 Depends:
@@ -26,5 +27,5 @@ Suggests:
     yaml (>= 2.3.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.3.3
-URL: https://github.com/wei-ai-lab/designr
-BugReports: https://github.com/wei-ai-lab/designr/issues
+URL: https://github.com/wei-ai-lab/clinical-trial-design
+BugReports: https://github.com/wei-ai-lab/clinical-trial-design/issues

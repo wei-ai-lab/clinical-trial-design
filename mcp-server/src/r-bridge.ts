@@ -4,18 +4,19 @@ import { dirname, resolve } from "node:path";
 
 const DEFAULT_TIMEOUT_MS = 60_000;
 
-// Path to the bundled R launcher that sources designr/R/*.R in-place,
-// avoiding the need for `remotes::install_local("r-package/designr")`
-// on every plugin update. Both the bundled (mcp-server/dist/index.js)
-// and the dev tsc build (mcp-server/build/r-bridge.js) sit two levels
-// deep under the repo root, so the relative path is the same.
+// Path to the bundled R launcher that sources ClinicalTrialDesign/R/*.R
+// in-place, avoiding the need for
+// `remotes::install_local("r-package/ClinicalTrialDesign")` on every
+// plugin update. Both the bundled (mcp-server/dist/index.js) and the
+// dev tsc build (mcp-server/build/r-bridge.js) sit two levels deep
+// under the repo root, so the relative path is the same.
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_LAUNCHER = resolve(
   HERE,
   "..",
   "..",
   "r-package",
-  "designr",
+  "ClinicalTrialDesign",
   "inst",
   "launcher.R"
 );

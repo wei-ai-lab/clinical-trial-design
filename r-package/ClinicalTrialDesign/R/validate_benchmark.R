@@ -86,7 +86,7 @@ validate_against_benchmark <- function(family, id, tool = NULL) {
   env <- Sys.getenv("DESIGNR_BENCHMARK_ROOT", unset = NA_character_)
   if (!is.na(env) && dir.exists(env)) return(normalizePath(env))
   pkg_root <- tryCatch(
-    system.file(package = "designr"), error = function(e) "")
+    system.file(package = "ClinicalTrialDesign"), error = function(e) "")
   candidates <- c(
     file.path(pkg_root, "..", "..", "..", "benchmarks"),
     "/home/weiai/designr/benchmarks"

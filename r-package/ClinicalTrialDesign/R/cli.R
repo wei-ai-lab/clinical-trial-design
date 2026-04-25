@@ -9,7 +9,7 @@
 #'
 #' Intended to be invoked one-shot per R subprocess:
 #' \preformatted{
-#'   Rscript -e 'designr::designr_dispatch(file("stdin","r"))'
+#'   Rscript -e 'ClinicalTrialDesign::designr_dispatch(file("stdin","r"))'
 #' }
 #'
 #' @param con Text connection to read JSON from. Defaults to stdin.

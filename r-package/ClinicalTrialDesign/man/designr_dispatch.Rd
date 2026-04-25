@@ -20,6 +20,6 @@ exported design function, and writes a result JSON to stdout:
 \details{
 Intended to be invoked one-shot per R subprocess:
 \preformatted{
-  Rscript -e 'designr::designr_dispatch(file("stdin","r"))'
+  Rscript -e 'ClinicalTrialDesign::designr_dispatch(file("stdin","r"))'
 }
 }

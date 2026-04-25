@@ -1,4 +1,4 @@
-#' Markdown summary of a designr result
+#' Markdown summary of a ClinicalTrialDesign result
 #'
 #' Produces a clinician-readable report from the JSON-shaped result returned
 #' by any `design_*` tool. Useful for review meetings and as a saveable
@@ -9,15 +9,15 @@
 #' deferred (a heavy Python-template path is the long-term option, modeled
 #' on `RConsortium/pharma-skills`'s reporter).
 #'
-#' @param result A `designr` result list (the `$result` payload returned by
-#'   the MCP bridge).
+#' @param result A `ClinicalTrialDesign` result list (the `$result` payload
+#'   returned by the MCP bridge).
 #' @param format Output format. Currently only `"markdown"`.
 #'
 #' @return A length-1 character vector holding the formatted report.
 #' @export
 design_report <- function(result, format = c("markdown", "text")) {
   if (!is.list(result) || is.null(result$method) || is.null(result$inputs)) {
-    designr_stop("result", "must be a designr result list with $method and $inputs")
+    designr_stop("result", "must be a ClinicalTrialDesign result list with $method and $inputs")
   }
   format <- match.arg(format)
   fam <- .report_family(result$method)
@@ -45,8 +45,8 @@ design_report <- function(result, format = c("markdown", "text")) {
              "## Method & version", "",
              sprintf("- **Method:** `%s`", result$method),
              sprintf("- **Backend version:** `%s`", result$package_version %||% "n/a"),
-             sprintf("- **designr version:** `%s`",
-                     tryCatch(as.character(utils::packageVersion("designr")),
+             sprintf("- **ClinicalTrialDesign version:** `%s`",
+                     tryCatch(as.character(utils::packageVersion("ClinicalTrialDesign")),
                               error = function(e) "loaded")))
   paste(lines, collapse = "\n")
 }
@@ -78,7 +78,7 @@ design_report <- function(result, format = c("markdown", "text")) {
     gs_continuous             = "Group-sequential continuous endpoint",
     gs_survival_ph            = "Group-sequential time-to-event (PH log-rank)",
     gs_survival_nph_combo     = "Group-sequential time-to-event (NPH)",
-    "designr design")
+    "ClinicalTrialDesign result")
   sprintf("%s \u2014 %s", pretty_fam, comp)
 }
 
