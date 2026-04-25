@@ -1,10 +1,86 @@
 # Changelog
 
-All notable changes to `designr` are recorded here. The format follows
+All notable changes to `clinical-trial-design` (formerly `designr`) are
+recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.0.6] — 2026-04-25
+
+Rebrand release. No new design wrappers, no behavior changes, no new MCP
+tools — the entire 13-tool surface and the 137 R tests / 13 smoke
+prompts are unchanged. What changes is the name on every box: project,
+plugin, npm package, R package, and skill.
+
+### Changed
+
+- **Project rebranded** `designr` → `clinical-trial-design`. The CRAN
+  namespace `designr` is occupied by Maximilian Rabe's "Balanced
+  Factorial Designs" package, and the original framing as a *Phase 3*
+  tool understated the actual coverage (Phase 2 confirmatory and Phase
+  3 alike). The new name is unambiguous, descriptive, and CRAN-clear.
+- **Plugin name** `designr` → `clinical-trial-design`. Slash commands
+  are now `/plugin install clinical-trial-design@wei-ai-lab` (was
+  `designr@wei-ai-lab`). The plugin manifest's MCP server entry is
+  similarly renamed; tool calls are now namespaced
+  `mcp__clinical-trial-design__<tool>` (was `mcp__designr__<tool>`).
+- **R package** renamed `designr` → `ClinicalTrialDesign` (camelCase to
+  fit CRAN's `[a-zA-Z][a-zA-Z0-9.]*` rule — no hyphens or underscores
+  permitted). Source moved from `r-package/designr/` to
+  `r-package/ClinicalTrialDesign/`. The launcher
+  (`r-package/ClinicalTrialDesign/inst/launcher.R`), the dispatcher
+  symbol (`ClinicalTrialDesign::designr_dispatch`), and the package
+  Description URL all updated. CRAN submission deferred to v1.0.
+- **npm package** renamed to `clinical-trial-design` (unscoped).
+  `mcpName` set to `io.github.wei-ai-lab/clinical-trial-design` for
+  MCP-registry verification. Bin entrypoint renamed
+  `clinical-trial-design-mcp` (was `designr-mcp`). Seven discoverability
+  redirect aliases (`designr`, `phase3-trial`, `trial-design`,
+  `sample-size-calculator`, `gsdesign-mcp`, `mcp-clinical-trial`,
+  `study-design`) are scheduled for publish at M7 — each will be a
+  one-file deprecation stub pointing at the canonical package.
+- **Skill** moved from `skills/designr/SKILL.md` to
+  `skills/clinical-trial-design/SKILL.md`. The skill description now
+  reads "Clinical trial design assistant covering Phase 2 and Phase 3
+  confirmatory trials" and explicitly invites both phases, dropping the
+  Phase 3-only framing.
+- **GitHub repository** to be renamed `wei-ai-lab/designr` →
+  `wei-ai-lab/clinical-trial-design` at M6 (user-gated). All in-repo
+  links and clone URLs already point at the new path; GitHub will set
+  up redirects from the old URL automatically.
+- **CI grep gate** path updated from `r-package/designr/R/` to
+  `r-package/ClinicalTrialDesign/R/`. `.github/workflows/security-grep.yml`
+  was the build-critical path — without this fix, the CI gate would
+  scan the wrong directory after the rename.
+- **Wire-format identifiers preserved on purpose.** `designr_dispatch`
+  (R function), `designr_input_error:` (error prefix on R `stop()`
+  messages), and `DESIGNR_RSCRIPT` / `DESIGNR_LAUNCHER` env vars are
+  the contract between the R launcher and the TS bridge. These are
+  internal API and were intentionally not renamed — bumping them would
+  be a behavior change disguised as a rename. They will be revisited
+  when CRAN submission requires it.
+- **Phase-3-only prose sweep** across `AGENTS.md`, `SECURITY.md`,
+  `HOSTING.md`, `CONTRIBUTING.md`, `mcp-server/README.md`, the skill,
+  and the architecture doc: "Phase 3 trial" → "confirmatory trial",
+  "Phase 3 sponsor" → "confirmatory-trial sponsor", etc. Benchmark
+  case files (`.md` / `.yaml` under `benchmarks/`) keep "Phase 3"
+  mentions where they factually describe a Phase 3 trial.
+- README rewritten to reflect the new identity end-to-end (project
+  name, install commands, repo URL, the standalone-MCP-server install
+  path via `npx clinical-trial-design`).
+
+### Verified
+
+- `R -e 'devtools::test("r-package/ClinicalTrialDesign")'`:
+  `[ FAIL 0 | WARN 0 | SKIP 0 | PASS 137 ]`.
+- `R -e 'devtools::check("r-package/ClinicalTrialDesign", quiet=TRUE)'`:
+  `0 errors / 0 warnings / 0 notes`.
+- `cd mcp-server && npm run build && node scripts/smoke.mjs`:
+  `13 pass / 0 fail / 13 total` against the renamed launcher path
+  (both with `npm run stage-r` staged and against the in-repo source
+  tree — the dual fallback in `r-bridge.ts` works in both layouts).
 
 ## [0.0.5] — 2026-04-25
 
@@ -243,9 +319,10 @@ a checked property rather than an assertion.
 - README with quick-start, MVP tool surface, three "Try it" prompts,
   and roadmap.
 
-[Unreleased]: https://github.com/wei-ai-lab/designr/compare/v0.0.5...HEAD
-[0.0.5]: https://github.com/wei-ai-lab/designr/compare/v0.0.4...v0.0.5
-[0.0.4]: https://github.com/wei-ai-lab/designr/compare/v0.0.3...v0.0.4
-[0.0.3]: https://github.com/wei-ai-lab/designr/compare/v0.0.2...v0.0.3
-[0.0.2]: https://github.com/wei-ai-lab/designr/compare/v0.0.1...v0.0.2
-[0.0.1]: https://github.com/wei-ai-lab/designr/releases/tag/v0.0.1
+[Unreleased]: https://github.com/wei-ai-lab/clinical-trial-design/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/wei-ai-lab/clinical-trial-design/compare/v0.0.5...v0.0.6
+[0.0.5]: https://github.com/wei-ai-lab/clinical-trial-design/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/wei-ai-lab/clinical-trial-design/compare/v0.0.3...v0.0.4
+[0.0.3]: https://github.com/wei-ai-lab/clinical-trial-design/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/wei-ai-lab/clinical-trial-design/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/wei-ai-lab/clinical-trial-design/releases/tag/v0.0.1

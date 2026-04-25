@@ -2,13 +2,13 @@
 % Please edit documentation in R/design_report.R
 \name{design_report}
 \alias{design_report}
-\title{Markdown summary of a designr result}
+\title{Markdown summary of a ClinicalTrialDesign result}
 \usage{
 design_report(result, format = c("markdown", "text"))
 }
 \arguments{
-\item{result}{A `designr` result list (the `$result` payload returned by
-the MCP bridge).}
+\item{result}{A `ClinicalTrialDesign` result list (the `$result` payload
+returned by the MCP bridge).}
 
 \item{format}{Output format. Currently only `"markdown"`.}
 }

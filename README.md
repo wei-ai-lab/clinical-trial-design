@@ -1,23 +1,23 @@
-# designr
+# clinical-trial-design
 
-**A Claude Code plugin for end-to-end Phase 3 clinical trial design.**
+**A Claude Code plugin and MCP server for end-to-end clinical trial design.**
 
-`designr` helps biostatisticians and clinical trialists design Phase 3 studies through a conversational interface in Claude Code, backed by validated R statistical packages.
+`clinical-trial-design` helps biostatisticians and clinical trialists design Phase 2 and Phase 3 confirmatory studies through a conversational interface, backed by validated R statistical packages (`gsDesign`, `gsDesign2`).
 
-> **v0.0.5 alpha.** Public repo, installable as a Claude Code plugin via a local marketplace. v0.0.5 is an agent-friendliness + trust-boundary release: no new design wrappers, but four new docs ([AGENTS.md](AGENTS.md) for AI-agent contributors, [CONTRIBUTING.md](CONTRIBUTING.md) for humans, [SECURITY.md](SECURITY.md) documenting the stateless trust boundary, [HOSTING.md](HOSTING.md) covering small-co. / large-enterprise / air-gapped deployment profiles), five GitHub issue forms (benchmark cases, design wrappers, bug reports, tool-description improvements), and a CI grep gate that fails any PR introducing disk writes or network calls inside the R package or MCP server — making statelessness a checked property, not just a claim. v0.0.4 made the plugin self-contained at runtime (pre-bundled MCP server + in-place R launcher, no `npm install` / `remotes::install_local` on update). v0.0.3 introduced the marketplace-based install flow. v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`). The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
+> **v0.0.6 alpha.** Rebrand release: project, plugin, MCP server, npm package, and R package all renamed from `designr` → `clinical-trial-design` (the R package camelCases to `ClinicalTrialDesign` to satisfy CRAN's naming rule). The 13-tool surface, 137 R tests, and 13/13 smoke matrix are unchanged from v0.0.5. Slash commands are now `/plugin install clinical-trial-design@wei-ai-lab` (was `designr@wei-ai-lab`); MCP tool calls now namespaced `mcp__clinical-trial-design__<tool>`. v0.0.5 was an agent-friendliness + trust-boundary release ([AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), [HOSTING.md](HOSTING.md), CI grep gate). v0.0.4 made the plugin self-contained at runtime; v0.0.3 introduced the marketplace-based install flow; v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`). The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What it is
 
-`designr` has four layers:
+`clinical-trial-design` has four layers:
 
 | Layer | Role |
 |---|---|
-| **R package** (`r-package/designr`) | Pure R statistical computation engine. Wraps and extends established packages (`gsDesign`, `gsDesign2`, `rpact`, `simtrial`, …) behind a consistent API. |
+| **R package** (`r-package/ClinicalTrialDesign`) | Pure R statistical computation engine. Wraps and extends established packages (`gsDesign`, `gsDesign2`, `rpact`, `simtrial`, …) behind a consistent API. |
 | **MCP server** (`mcp-server/`) | Exposes R functions as tools over the Model Context Protocol so Claude Code — or any MCP client — can call them. |
-| **Skill / subagent** (`skills/`, `agents/`) | The domain-expert prompt. Translates a user's design brief into the right sequence of tool calls and interprets results in clinical-trial terms. |
+| **Skill / subagent** (`skills/clinical-trial-design/`) | The domain-expert prompt. Translates a user's design brief into the right sequence of tool calls and interprets results in clinical-trial terms. |
 | **Benchmark corpus** (`benchmarks/`) | Curated public trial designs (FDA guidances, ICH, published SAPs, clinicaltrials.gov entries) used as an evaluation suite. Each case has human-readable context + machine-readable inputs/expected outputs. |
 
-## What designr actually computes
+## What clinical-trial-design actually computes
 
 | Family | Status |
 |---|---|
@@ -47,10 +47,11 @@ The benchmark corpus has cases across all of the above (~176 cases / 21 family d
 | Repo scaffolding | ✅ |
 | Benchmark schema | ✅ |
 | Benchmark corpus | ✅ (176 cases across 21 family directories) |
-| R package | ✅ (10 design wrappers + validator + `verify_design` + `design_report`, 137 tests passing; sourced in-place by launcher — no `install_local` step) |
+| R package | ✅ `ClinicalTrialDesign` (10 design wrappers + validator + `verify_design` + `design_report`, 137 tests passing; sourced in-place by launcher — no `install_local` step) |
 | MCP server | ✅ (13 tools over stdio, TypeScript bundled with esbuild, 13/13 smoke pass) |
-| Skill / subagent | ✅ (skill in `skills/designr`) |
+| Skill / subagent | ✅ (skill in `skills/clinical-trial-design`) |
 | Plugin manifest | ✅ (`.claude-plugin/plugin.json` + `marketplace.json`; full install round-trip verified) |
+| npm package | ✅ `clinical-trial-design` (publishable; `npx clinical-trial-design` runs the MCP server standalone) |
 
 ## MVP tool surface
 
@@ -81,18 +82,18 @@ Each of these is an MCP tool, each wrapping a validated function in `gsDesign` o
 | Tool | Purpose |
 |---|---|
 | `validate_against_benchmark` | Replay a benchmark case through its matching design tool and diff against expected values within tolerance. |
-| `verify_design` | Monte Carlo cross-check of a `designr` result. Closed-form simulation under H0 and H1; tolerance gate ±2 pp power / ±0.5 pp Type I, modeled on `pharma-skills`'s `lrsim()` convention. Supports fixed and GS designs on binary, continuous, and PH survival endpoints. |
-| `design_report` | Render a clinician-readable markdown summary of any `designr` result (Design overview, Key inputs, Headline output, Analysis plan for GS, Method & version). Suitable to paste into a SAP-style document or render to HTML / PDF / Word downstream. |
+| `verify_design` | Monte Carlo cross-check of a `clinical-trial-design` result. Closed-form simulation under H0 and H1; tolerance gate ±2 pp power / ±0.5 pp Type I, modeled on `pharma-skills`'s `lrsim()` convention. Supports fixed and GS designs on binary, continuous, and PH survival endpoints. |
+| `design_report` | Render a clinician-readable markdown summary of any `clinical-trial-design` result (Design overview, Key inputs, Headline output, Analysis plan for GS, Method & version). Suitable to paste into a SAP-style document or render to HTML / PDF / Word downstream. |
 
 ## Quick start
 
-Prerequisites: R ≥ 4.2, Node ≥ 18. No `npm install` step (the MCP server ships pre-bundled in `mcp-server/dist/index.js`, Node deps inlined) and no `remotes::install_local` step (the MCP server sources `r-package/designr/R/*.R` directly out of the plugin cache).
+Prerequisites: R ≥ 4.2, Node ≥ 18. No `npm install` step (the MCP server ships pre-bundled in `mcp-server/dist/index.js`, Node deps inlined) and no `remotes::install_local` step (the MCP server sources `r-package/ClinicalTrialDesign/R/*.R` directly out of the plugin cache).
 
 ### 1. Clone and install CRAN dependencies (one-time)
 
 ```bash
-git clone https://github.com/wei-ai-lab/designr
-cd designr
+git clone https://github.com/wei-ai-lab/clinical-trial-design
+cd clinical-trial-design
 R -e 'install.packages(c("gsDesign","gsDesign2","jsonlite"))'
 ```
 
@@ -100,7 +101,7 @@ R -e 'install.packages(c("gsDesign","gsDesign2","jsonlite"))'
 
 #### Tested dependency versions
 
-`designr` v0.0.5 was developed and tested against the versions below. The `DESCRIPTION` file pins minimum versions matching this set — older versions are not supported. CRAN's latest is usually fine; pin to these floors only if you hit a version-skew issue.
+`clinical-trial-design` v0.0.6 was developed and tested against the versions below. The R package's `DESCRIPTION` file pins minimum versions matching this set — older versions are not supported. CRAN's latest is usually fine; pin to these floors only if you hit a version-skew issue.
 
 | Layer | Dependency | Tested version |
 |---|---|---|
@@ -124,40 +125,65 @@ R -e 'install.packages(c("gsDesign","gsDesign2","jsonlite"))'
 **Method A — slash commands (recommended, inside Claude Code)**
 
 ```text
-/plugin marketplace add /full/path/to/designr
-/plugin install designr@wei-ai-lab
+/plugin marketplace add /full/path/to/clinical-trial-design
+/plugin install clinical-trial-design@wei-ai-lab
 ```
 
-`/plugin marketplace add` accepts the repo root because `.claude-plugin/marketplace.json` lives there. After install, restart Claude Code so it loads the bundled MCP server. Confirm with `/plugin` (designr should be listed and enabled).
+`/plugin marketplace add` accepts the repo root because `.claude-plugin/marketplace.json` lives there. After install, restart Claude Code so it loads the bundled MCP server. Confirm with `/plugin` (clinical-trial-design should be listed and enabled).
 
 **Method B — host shell (equivalent, scriptable)**
 
 ```bash
-claude plugin marketplace add /full/path/to/designr
-claude plugin install designr@wei-ai-lab
-claude plugin list   # confirm: designr@wei-ai-lab, version 0.0.5, enabled
+claude plugin marketplace add /full/path/to/clinical-trial-design
+claude plugin install clinical-trial-design@wei-ai-lab
+claude plugin list   # confirm: clinical-trial-design@wei-ai-lab, version 0.0.6, enabled
 ```
 
-Both methods do the same thing. Pick one. If anything goes wrong, `claude plugin validate /full/path/to/designr` will tell you whether the marketplace + plugin manifests parse cleanly.
+Both methods do the same thing. Pick one. If anything goes wrong, `claude plugin validate /full/path/to/clinical-trial-design` will tell you whether the marketplace + plugin manifests parse cleanly.
 
 **Quick local-dev alternative** — skip the marketplace step entirely and launch Claude Code with the plugin loaded directly:
 
 ```bash
-claude --plugin-dir /full/path/to/designr
+claude --plugin-dir /full/path/to/clinical-trial-design
 ```
 
 This is for iterating on the plugin itself, not for end-user installs.
 
 ### Environment overrides
 
-If `Rscript` isn't on your `PATH`, set `DESIGNR_RSCRIPT=/full/path/to/Rscript` in your shell. To override the R launcher path (rare), set `DESIGNR_LAUNCHER=/full/path/to/launcher.R`. The MCP server reads both env vars when spawning R.
+If `Rscript` isn't on your `PATH`, set `DESIGNR_RSCRIPT=/full/path/to/Rscript` in your shell. To override the R launcher path (rare), set `DESIGNR_LAUNCHER=/full/path/to/launcher.R`. The MCP server reads both env vars when spawning R. (The `DESIGNR_*` prefix is preserved as the wire-format contract — see [CHANGELOG](CHANGELOG.md) for v0.0.6 notes.)
+
+## Standalone MCP server (without Claude Code)
+
+The MCP server is also published to npm as `clinical-trial-design`. Any MCP-aware client (Claude Desktop, Cursor, Continue, custom MCP host) can launch it via `npx`:
+
+```bash
+npx clinical-trial-design
+```
+
+This downloads the bundle on first run, then spawns the server on stdio. The bundle ships the staged R sources at `<install>/r/inst/launcher.R` — same `Rscript` requirement (R ≥ 4.2 + `gsDesign`, `gsDesign2`, `jsonlite` in your R user library), but no Claude Code plugin install needed.
+
+Example Claude Desktop config:
+
+```json
+{
+  "mcpServers": {
+    "clinical-trial-design": {
+      "command": "npx",
+      "args": ["-y", "clinical-trial-design"]
+    }
+  }
+}
+```
+
+The plugin install path (above) is preferred for Claude Code users — it bundles the skill alongside the tools, so the agent knows *how* to design a trial, not just *what* tools exist.
 
 ## Updating
 
-When a new version of `designr` is released, the update flow is:
+When a new version is released, the update flow is:
 
 ```bash
-cd /full/path/to/designr
+cd /full/path/to/clinical-trial-design
 git pull
 ```
 
@@ -166,13 +192,13 @@ git pull
 **Method A — slash command (inside Claude Code)**
 
 ```text
-/plugin update designr@wei-ai-lab
+/plugin update clinical-trial-design@wei-ai-lab
 ```
 
 **Method B — host shell**
 
 ```bash
-claude plugin update designr@wei-ai-lab
+claude plugin update clinical-trial-design@wei-ai-lab
 ```
 
 Restart Claude Code afterwards so it picks up the refreshed MCP server. CRAN dependencies (`gsDesign`, `gsDesign2`, `jsonlite`) **do not** need to be reinstalled on every update — only re-run `install.packages(...)` if the release notes say a new dependency was added.
@@ -182,14 +208,14 @@ Restart Claude Code afterwards so it picks up the refreshed MCP server. CRAN dep
 **Method A — slash commands (inside Claude Code)**
 
 ```text
-/plugin uninstall designr@wei-ai-lab
+/plugin uninstall clinical-trial-design@wei-ai-lab
 /plugin marketplace remove wei-ai-lab
 ```
 
 **Method B — host shell**
 
 ```bash
-claude plugin uninstall designr@wei-ai-lab
+claude plugin uninstall clinical-trial-design@wei-ai-lab
 claude plugin marketplace remove wei-ai-lab
 ```
 
@@ -200,7 +226,7 @@ Both methods are equivalent. The first command removes the installed plugin; the
 Three conversational prompts you can paste into Claude Code once the plugin is installed. Each one should invoke a specific MCP tool and return a design:
 
 1. **Fixed binary superiority (CAPTURE-style)**
-   > *"Design a Phase 3 trial for refractory unstable angina. Control 30-day event rate ≈ 15%, hoped-for treatment rate ≈ 9%, two-sided α = 0.05, power 80%, 1:1 allocation."*
+   > *"Design a trial for refractory unstable angina. Control 30-day event rate ≈ 15%, hoped-for treatment rate ≈ 9%, two-sided α = 0.05, power 80%, 1:1 allocation."*
    Expect `design_fixed_binary` with N ≈ 1,100.
 
 2. **TTE PH group-sequential (PARADIGM-HF-style)**
@@ -231,13 +257,13 @@ Each row above already has ≥ 7 curated benchmark cases ready as regression anc
 
 ## Related work
 
-[`RConsortium/pharma-skills`](https://github.com/RConsortium/pharma-skills) is a complementary R Consortium working group skill collection. It goes deeper than `designr` on a single vertical — survival group-sequential designs with co-primary endpoints, multi-population (biomarker + ITT), Maurer–Bretz graphical multiplicity, and a Word-report deliverable backed by a Python template. Where `designr` is broad and MCP-native (one plugin, validated tools across the gsDesign / gsDesign2 surface, no local R session needed), `pharma-skills` is a single deep skill that runs in the user's local R session and requires `lrsim()` simulation pass before declaring a design done. The two solve adjacent problems with different shapes.
+[`RConsortium/pharma-skills`](https://github.com/RConsortium/pharma-skills) is a complementary R Consortium working group skill collection. It goes deeper than `clinical-trial-design` on a single vertical — survival group-sequential designs with co-primary endpoints, multi-population (biomarker + ITT), Maurer–Bretz graphical multiplicity, and a Word-report deliverable backed by a Python template. Where `clinical-trial-design` is broad and MCP-native (one plugin, validated tools across the gsDesign / gsDesign2 surface, no local R session needed), `pharma-skills` is a single deep skill that runs in the user's local R session and requires `lrsim()` simulation pass before declaring a design done. The two solve adjacent problems with different shapes.
 
-`designr`'s `verify_design` tool adopts the same simulation-verification convention (±2 pp power / ±0.5 pp Type I tolerance) so a design produced here can be subjected to the same credibility floor.
+`clinical-trial-design`'s `verify_design` tool adopts the same simulation-verification convention (±2 pp power / ±0.5 pp Type I tolerance) so a design produced here can be subjected to the same credibility floor.
 
 ## Contributing
 
-`designr` welcomes contributions from both human biostatisticians and AI agents. Two entry points:
+`clinical-trial-design` welcomes contributions from both human biostatisticians and AI agents. Two entry points:
 
 - **[AGENTS.md](AGENTS.md)** — codebase tour and conventions written for AI-agent contributors (Claude, GPT, Gemini, openclaw, opencode, …). Covers the four-layer architecture, a concrete walkthrough of adding a new design wrapper, the benchmark anchor schema, and the agent-contributor protocol (one purpose per PR, paired benchmark anchor required for new wrappers, no novel methodology, no telemetry, no `Co-Authored-By` trailer).
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** — human-facing process: priority list (benchmark anchors > new wrappers > bug fixes > tool-description improvements > docs), PR checklist, and review expectations.
@@ -246,7 +272,7 @@ The highest-impact contribution is a **new benchmark anchor** — see [`.github/
 
 ## Trust boundary and hosting
 
-- **[SECURITY.md](SECURITY.md)** — `designr`'s statelessness as a *design property*: the R package and MCP server are CI-gated against disk writes and network calls (`.github/workflows/security-grep.yml`). Any PR introducing forbidden patterns (`writeLines`, `saveRDS`, `download.file`, `httr::`, `fs.writeFile`, `fetch`, `http.request`, …) fails before merge. Confidential trial inputs you give the agent never leave your conversation through the plugin.
+- **[SECURITY.md](SECURITY.md)** — `clinical-trial-design`'s statelessness as a *design property*: the R package and MCP server are CI-gated against disk writes and network calls (`.github/workflows/security-grep.yml`). Any PR introducing forbidden patterns (`writeLines`, `saveRDS`, `download.file`, `httr::`, `fs.writeFile`, `fetch`, `http.request`, …) fails before merge. Confidential trial inputs you give the agent never leave your conversation through the plugin.
 - **[HOSTING.md](HOSTING.md)** — three deployment profiles: small-co. on public Claude Code (no persistence wanted), large-enterprise on Claude Code Enterprise + Bedrock private endpoint (corporate transcript retention as audit log), and air-gapped (forthcoming). Persistence and audit are *host* concerns; the plugin stays the same.
 
 ## License
