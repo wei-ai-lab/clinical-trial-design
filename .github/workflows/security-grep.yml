@@ -1,0 +1,90 @@
+name: security-grep
+
+# Statelessness gate: fail the build if any non-test code path in the R
+# package or the MCP server introduces disk-write or outbound-network
+# patterns. Backs the guarantees documented in SECURITY.md.
+#
+# This is a deliberately blunt grep gate. It is not a sandbox and does
+# not prove anything about transitive dependencies. Its job is to make
+# the *plugin's own* code path obviously, reviewably stateless, so that
+# any deviation requires an explicit code-review conversation rather
+# than slipping through.
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  r-package-grep:
+    name: R package — no writes / no network
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: grep gate
+        shell: bash
+        run: |
+          set -uo pipefail
+          # Patterns we forbid in non-test R code paths.
+          # cat() without file= is allowed (writes to stdout, the MCP
+          # transport channel). The pattern below requires file= to
+          # match, so plain cat() does not trigger.
+          patterns=(
+            'writeLines\s*\('
+            'write\.csv\s*\('
+            'write\.table\s*\('
+            'saveRDS\s*\('
+            'save\s*\('
+            'cat\s*\([^)]*file\s*='
+            'download\.file\s*\('
+            'socketConnection\s*\('
+            'httr::'
+            'curl::'
+            'RCurl::'
+          )
+          fail=0
+          for p in "${patterns[@]}"; do
+            if grep -RInE "$p" r-package/designr/R/ ; then
+              echo "::error::Forbidden pattern in r-package/designr/R/: $p"
+              fail=1
+            fi
+          done
+          # `url(` is too broad to grep for naively — it would match any
+          # identifier ending in url(. Restrict to base R url() opener
+          # used to fetch URLs: a leading whitespace/start-of-line.
+          if grep -RInE '(^|[^a-zA-Z0-9_\.])url\s*\(' r-package/designr/R/ ; then
+            echo "::error::Forbidden pattern in r-package/designr/R/: url("
+            fail=1
+          fi
+          exit $fail
+
+  mcp-server-grep:
+    name: MCP server — no writes / no network
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: grep gate
+        shell: bash
+        run: |
+          set -uo pipefail
+          patterns=(
+            'fs\.writeFile'
+            'fs\.appendFile'
+            'writeFileSync'
+            'appendFileSync'
+            'fetch\s*\('
+            'http\.request'
+            'https\.request'
+            'net\.connect'
+            'net\.createConnection'
+            'dgram'
+          )
+          fail=0
+          for p in "${patterns[@]}"; do
+            if grep -RInE "$p" mcp-server/src/ ; then
+              echo "::error::Forbidden pattern in mcp-server/src/: $p"
+              fail=1
+            fi
+          done
+          exit $fail
