@@ -1,0 +1,17 @@
+{
+  "name": "study-design",
+  "version": "0.0.6",
+  "description": "Discoverability alias — install clinical-trial-design instead. MCP server for confirmatory clinical study design (sample size, power, group-sequential).",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/wei-ai-lab/clinical-trial-design#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wei-ai-lab/clinical-trial-design.git",
+    "directory": "mcp-server/aliases/study-design"
+  },
+  "author": {
+    "name": "Wei Fu",
+    "email": "wei.ai.lab@outlook.com"
+  },
+  "keywords": ["alias", "study-design", "clinical-trials", "mcp"]
+}

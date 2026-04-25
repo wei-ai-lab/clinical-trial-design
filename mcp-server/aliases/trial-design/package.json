@@ -1,0 +1,17 @@
+{
+  "name": "trial-design",
+  "version": "0.0.6",
+  "description": "Discoverability alias — install clinical-trial-design instead. MCP server for clinical trial design backed by gsDesign / gsDesign2.",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/wei-ai-lab/clinical-trial-design#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wei-ai-lab/clinical-trial-design.git",
+    "directory": "mcp-server/aliases/trial-design"
+  },
+  "author": {
+    "name": "Wei Fu",
+    "email": "wei.ai.lab@outlook.com"
+  },
+  "keywords": ["alias", "clinical-trials", "trial-design", "mcp"]
+}

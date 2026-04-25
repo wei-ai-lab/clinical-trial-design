@@ -1,0 +1,17 @@
+{
+  "name": "sample-size-calculator",
+  "version": "0.0.6",
+  "description": "Discoverability alias — install clinical-trial-design instead. Computes sample size for clinical trials (binary, continuous, time-to-event) with frequentist + group-sequential designs over MCP.",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/wei-ai-lab/clinical-trial-design#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wei-ai-lab/clinical-trial-design.git",
+    "directory": "mcp-server/aliases/sample-size-calculator"
+  },
+  "author": {
+    "name": "Wei Fu",
+    "email": "wei.ai.lab@outlook.com"
+  },
+  "keywords": ["alias", "sample-size", "power-analysis", "clinical-trials", "mcp"]
+}
