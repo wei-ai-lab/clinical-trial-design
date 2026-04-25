@@ -1,6 +1,6 @@
 # designr MCP server — smoke matrix
 
-Ten prompts covering every MVP tool. Each should invoke the named MCP tool once and return a result without error. Values are expected-order-of-magnitude checks, not strict regression targets (the R-side benchmark regression lives in `r-package/designr/tests/testthat/`).
+Thirteen prompts covering every MCP tool. Each should invoke the named MCP tool once and return a result without error. Values are expected-order-of-magnitude checks, not strict regression targets (the R-side benchmark regression lives in `r-package/designr/tests/testthat/`).
 
 ## How to run
 
@@ -72,6 +72,18 @@ Expected: `design_gs_survival_nph_combo` with `test = "maxcombo"`, 2 analyses, e
 
 Expected: `validate_against_benchmark(family="fixed-superiority", id="1997_CAPTURE_abciximab")` returning `within_tolerance: false` (vanilla formula lands at ~1,100; CAPTURE's 1,400 includes real-trial inflation) but structurally correct output.
 
+## 12. `verify_design` — Monte Carlo cross-check
+
+> Take the CAPTURE-style fixed binary design (control 15%, treatment 9%, two-sided α = 0.05, power 80%) and verify it by Monte Carlo simulation with 3000 replicates.
+
+Expected: `verify_design` with `family = "fixed_binary"`, `empirical_power` ≈ 0.80 (within ±2 pp), `empirical_type_I` ≈ 0.05 (within ±0.5 pp), `passes = true`.
+
+## 13. `design_report` — markdown summary
+
+> Produce a markdown design report for that same fixed binary design.
+
+Expected: `design_report` returning a markdown string containing the section headers `# Fixed-sample binary endpoint`, `## Design overview`, `## Key inputs`, `## Headline output`, and `## Method & version`.
+
 ## Pass criteria
 
-Smoke pass = all 11 calls return a valid design object without error. Matching exact numbers is **not** required at the smoke-test level; the R-side testthat suite handles that.
+Smoke pass = all 13 calls return a valid result without error. Matching exact numbers is **not** required at the smoke-test level; the R-side testthat suite handles that.

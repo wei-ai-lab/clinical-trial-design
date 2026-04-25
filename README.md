@@ -4,7 +4,7 @@
 
 `designr` helps biostatisticians and clinical trialists design Phase 3 studies through a conversational interface in Claude Code, backed by validated R statistical packages.
 
-> **v0.0.1 alpha.** Public repo, installable. The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface-v001)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap).
+> **v0.0.2 alpha.** Public repo, installable. v0.0.2 adds Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`) on top of the v0.0.1 surface. The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What it is
 
@@ -17,9 +17,9 @@
 | **Skill / subagent** (`skills/`, `agents/`) | The domain-expert prompt. Translates a user's design brief into the right sequence of tool calls and interprets results in clinical-trial terms. |
 | **Benchmark corpus** (`benchmarks/`) | Curated public trial designs (FDA guidances, ICH, published SAPs, clinicaltrials.gov entries) used as an evaluation suite. Each case has human-readable context + machine-readable inputs/expected outputs. |
 
-## What v0.0.1 actually computes
+## What v0.0.2 actually computes
 
-| Family | Status in v0.0.1 |
+| Family | Status in v0.0.2 |
 |---|---|
 | Fixed-sample binary | ✅ super / NI / equivalence |
 | Fixed-sample continuous | ✅ super / NI / equivalence |
@@ -28,6 +28,8 @@
 | Group-sequential binary / continuous | ✅ super / NI (no equivalence); efficacy + futility via `test.type` |
 | Group-sequential TTE — PH | ✅ super / NI |
 | Group-sequential TTE — NPH (MaxCombo / WLR / AHR) | ✅ superiority only |
+| Monte Carlo verification (`verify_design`) | ✅ fixed binary / continuous / PH-survival; GS binary / continuous / PH-survival |
+| Markdown reporting (`design_report`) | ✅ all families |
 | Adaptive — SSR, enrichment, treatment selection | 📚 corpus only — no wrapper |
 | Multi-arm multi-stage (MAMS) | 📚 corpus only — no wrapper |
 | Recurrent events | 📚 corpus only — no wrapper |
@@ -36,7 +38,7 @@
 | Platform / basket / umbrella | 📚 corpus only — no wrapper |
 | Crossover, factorial | 📚 corpus only — no wrapper |
 
-The benchmark corpus has cases across all of the above (~176 cases / 21 family directories). v0.0.1's wrappers only compute the rows marked ✅. See [`benchmarks/README.md`](benchmarks/README.md) for the full corpus taxonomy.
+The benchmark corpus has cases across all of the above (~176 cases / 21 family directories). v0.0.2's wrappers only compute the rows marked ✅. See [`benchmarks/README.md`](benchmarks/README.md) for the full corpus taxonomy.
 
 ## Status
 
@@ -45,12 +47,12 @@ The benchmark corpus has cases across all of the above (~176 cases / 21 family d
 | Repo scaffolding | ✅ |
 | Benchmark schema | ✅ |
 | Benchmark corpus | ✅ (176 cases across 21 family directories) |
-| R package | ✅ (10 design wrappers + validator, R CMD check clean, 95 tests passing) |
-| MCP server | ✅ (11 tools over stdio, TypeScript, 11/11 smoke pass) |
+| R package | ✅ (10 design wrappers + validator + `verify_design` + `design_report`, 137 tests passing) |
+| MCP server | ✅ (13 tools over stdio, TypeScript, 13/13 smoke pass) |
 | Skill / subagent | ✅ (skill in `skills/designr`) |
 | Plugin manifest | ✅ (`plugin.json` present; installation via `claude plugin install <path>` not yet end-to-end verified by maintainer) |
 
-## MVP tool surface (v0.0.1)
+## MVP tool surface
 
 Each of these is an MCP tool, each wrapping a validated function in `gsDesign` or `gsDesign2`. Hypothesis type (`comparison`), group-sequential `k`, spending function, and `test.type` are parameters, not separate tools — that keeps the surface small and predictable. Equivalence / TOST is supported by the binary and continuous fixed-sample wrappers only; survival wrappers do not currently support equivalence margins.
 
@@ -74,11 +76,13 @@ Each of these is an MCP tool, each wrapping a validated function in `gsDesign` o
 | `design_gs_survival_ph` | `gsDesign::gsSurv` (super / NI) |
 | `design_gs_survival_nph_combo` | `gsDesign2::gs_design_combo` / `gs_design_wlr` / `gs_design_ahr` (superiority only) |
 
-### Meta (1)
+### Meta (3)
 
 | Tool | Purpose |
 |---|---|
 | `validate_against_benchmark` | Replay a benchmark case through its matching design tool and diff against expected values within tolerance. |
+| `verify_design` | Monte Carlo cross-check of a `designr` result. Closed-form simulation under H0 and H1; tolerance gate ±2 pp power / ±0.5 pp Type I, modeled on `pharma-skills`'s `lrsim()` convention. Supports fixed and GS designs on binary, continuous, and PH survival endpoints. |
+| `design_report` | Render a clinician-readable markdown summary of any `designr` result (Design overview, Key inputs, Headline output, Analysis plan for GS, Method & version). Suitable to paste into a SAP-style document or render to HTML / PDF / Word downstream. |
 
 ## Quick start
 
@@ -117,11 +121,11 @@ Three conversational prompts you can paste into Claude Code once the plugin is i
    > *"Design an immunotherapy trial with delayed effect: 4-month delay, post-delay HR 0.60, control median 10 months, accrual 20/month for 18 months, 30-month study duration, α = 0.025, power 90%."*
    Expect `design_fixed_survival_maxcombo` with a MaxCombo design summary.
 
-See `mcp-server/SMOKE.md` for the full 11-prompt smoke matrix.
+See `mcp-server/SMOKE.md` for the full 13-prompt smoke matrix.
 
 ## Roadmap
 
-Beyond v0.0.1, in priority order based on the corpus's family weights:
+Beyond v0.0.2, in priority order based on the corpus's family weights:
 
 1. **Adaptive sample-size re-estimation** (corpus: `adaptive-ssr/`) — `rpact::getSampleSizeRates` + custom Promising-Zone rule.
 2. **Group-sequential futility-only and binding-futility variants** — already exposed via `test.type` 3–6 in current GS wrappers; add explicit anchor tests.
@@ -134,6 +138,12 @@ Beyond v0.0.1, in priority order based on the corpus's family weights:
 9. **Simulation / OC tools** (`simulate_trial`, `compare_designs`).
 
 Each row above already has ≥ 7 curated benchmark cases ready as regression anchors.
+
+## Related work
+
+[`RConsortium/pharma-skills`](https://github.com/RConsortium/pharma-skills) is a complementary R Consortium working group skill collection. It goes deeper than `designr` on a single vertical — survival group-sequential designs with co-primary endpoints, multi-population (biomarker + ITT), Maurer–Bretz graphical multiplicity, and a Word-report deliverable backed by a Python template. Where `designr` is broad and MCP-native (one plugin, validated tools across the gsDesign / gsDesign2 surface, no local R session needed), `pharma-skills` is a single deep skill that runs in the user's local R session and requires `lrsim()` simulation pass before declaring a design done. The two solve adjacent problems with different shapes.
+
+`designr`'s v0.0.2 `verify_design` tool adopts the same simulation-verification convention (±2 pp power / ±0.5 pp Type I tolerance) so a design produced here can be subjected to the same credibility floor.
 
 ## License
 

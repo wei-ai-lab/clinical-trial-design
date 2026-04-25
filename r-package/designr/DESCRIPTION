@@ -1,10 +1,10 @@
 Package: designr
 Type: Package
 Title: Unified Interface for Phase 3 Clinical Trial Design
-Version: 0.0.0.9000
-Authors@R: person(given = "Wei", family = "Fu", email = "jason.wfu@gmail.com", role = c("aut", "cre"))
+Version: 0.0.0.9001
+Authors@R: person(given = "Wei", family = "Fu", email = "wei.ai.lab@outlook.com", role = c("aut", "cre"))
 Author: Wei Fu [aut, cre]
-Maintainer: Wei Fu <jason.wfu@gmail.com>
+Maintainer: Wei Fu <wei.ai.lab@outlook.com>
 Description: A consistent, well-documented R interface over established clinical
     trial design packages (gsDesign, gsDesign2, rpact, simtrial, and others),
     designed to be called from an MCP server so that LLM-based assistants can

@@ -48,10 +48,28 @@ designr_dispatch <- function(con = file("stdin", "r")) {
 }
 
 .emit_ok <- function(result) {
-  out <- list(ok = TRUE, result = result)
+  out <- list(ok = TRUE, result = .json_friendly(result))
   cat(jsonlite::toJSON(out, auto_unbox = TRUE, null = "null",
                        na = "null", force = TRUE, digits = 10))
   cat("\n")
+}
+
+# jsonlite::toJSON drops the names of multi-element atomic vectors when
+# auto_unbox=TRUE, emitting a bare array like [460,460] instead of the
+# expected {"control":460,"treatment":460}. That breaks any downstream
+# caller — including verify_design / design_report when chained through
+# the MCP bridge — that indexes `sample_size_per_arm[["control"]]`. To
+# preserve the keys we coerce any named atomic vector inside the result
+# tree to a named list right before serialization. The R-side return
+# shape (named integer vector) stays unchanged for direct R callers.
+.json_friendly <- function(x) {
+  if (is.list(x)) {
+    return(lapply(x, .json_friendly))
+  }
+  if (is.atomic(x) && length(x) > 1L && !is.null(names(x))) {
+    return(as.list(x))
+  }
+  x
 }
 
 .emit_error <- function(class, message, field = NULL) {
@@ -85,5 +103,7 @@ designr_dispatch <- function(con = file("stdin", "r")) {
   design_gs_continuous            = function(...) design_gs_continuous(...),
   design_gs_survival_ph           = function(...) design_gs_survival_ph(...),
   design_gs_survival_nph_combo    = function(...) design_gs_survival_nph_combo(...),
-  validate_against_benchmark      = function(...) validate_against_benchmark(...)
+  validate_against_benchmark      = function(...) validate_against_benchmark(...),
+  verify_design                   = function(...) verify_design(...),
+  design_report                   = function(...) design_report(...)
 )

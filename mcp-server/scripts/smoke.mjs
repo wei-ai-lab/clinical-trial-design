@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Programmatic smoke pass: runs each of the 11 MCP tools through the
+// Programmatic smoke pass: runs each of the 13 MCP tools through the
 // r-bridge directly. Returns exit code 0 if all succeed, 1 otherwise.
 
 import { runR, DesignrToolError } from "../dist/r-bridge.js";
@@ -81,5 +81,44 @@ for (const [label, args, check, toolOverride] of cases) {
   }
 }
 
-console.log(`\n${passed} pass / ${failed} fail / ${cases.length} total`);
+// Chained cases: verify_design and design_report take the result of another
+// design_* tool as input, so they run after the main loop using a fresh
+// fixed-binary design as the seed.
+const seedDesign = await runR("design_fixed_binary",
+  { p_control: 0.15, p_treatment: 0.09, alpha: 0.05, power: 0.8, sided: 2 });
+
+const chained = [
+  ["verify_design",
+   { result: seedDesign, n_sim: 1500, seed: 1 },
+   (r) => r.family === "fixed_binary" && r.passes === true],
+  ["design_report",
+   { result: seedDesign, format: "markdown" },
+   (r) => typeof r === "string" &&
+          r.includes("# Fixed-sample binary endpoint") &&
+          r.includes("## Headline output")],
+];
+
+for (const [tool, args, check] of chained) {
+  process.stdout.write(`[${tool}] ${tool} (chained) ... `);
+  try {
+    const res = await runR(tool, args);
+    if (check(res)) {
+      console.log("OK");
+      passed++;
+    } else {
+      console.log("FAIL (result did not match expected shape)");
+      console.log("   result:", JSON.stringify(res).slice(0, 200));
+      failed++;
+    }
+  } catch (e) {
+    const msg = e instanceof DesignrToolError
+      ? `[${e.cls}] ${e.message}`
+      : e.message;
+    console.log("ERROR:", msg);
+    failed++;
+  }
+}
+
+const total = cases.length + chained.length;
+console.log(`\n${passed} pass / ${failed} fail / ${total} total`);
 process.exit(failed === 0 ? 0 : 1);

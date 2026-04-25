@@ -20,7 +20,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Wei Fu \email{jason.wfu@gmail.com}
+\strong{Maintainer}: Wei Fu \email{wei.ai.lab@outlook.com}
 
 }
 \keyword{internal}

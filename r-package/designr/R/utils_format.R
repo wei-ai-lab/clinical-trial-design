@@ -34,9 +34,11 @@ NULL
   # vector first, then summing. Independent ceils can drift by 1.
   per_arm <- ceiling(sample_size_per_arm)
   total   <- as.integer(sum(per_arm))
+  per_arm_int <- as.integer(per_arm)
+  names(per_arm_int) <- names(per_arm)
   list(
     sample_size_total   = total,
-    sample_size_per_arm = as.integer(per_arm),
+    sample_size_per_arm = per_arm_int,
     events_total        = if (is.null(events_total)) NULL else as.integer(ceiling(events_total)),
     boundaries          = boundaries,
     timing              = timing,

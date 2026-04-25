@@ -13,6 +13,8 @@ import * as gsContinuous from "./tools/gs-continuous.js";
 import * as gsSurvivalPh from "./tools/gs-survival-ph.js";
 import * as gsSurvivalNphCombo from "./tools/gs-survival-nph-combo.js";
 import * as validateBenchmark from "./tools/validate-benchmark.js";
+import * as verifyDesign from "./tools/verify-design.js";
+import * as designReport from "./tools/design-report.js";
 import { DesignrToolError } from "./r-bridge.js";
 
 const tools = [
@@ -27,6 +29,8 @@ const tools = [
   gsSurvivalPh,
   gsSurvivalNphCombo,
   validateBenchmark,
+  verifyDesign,
+  designReport,
 ];
 
 type ToolMod = {
@@ -40,7 +44,7 @@ type ToolMod = {
 async function main() {
   const server = new McpServer({
     name: "designr",
-    version: "0.0.1",
+    version: "0.0.2",
   });
 
   for (const mod of tools as unknown as ToolMod[]) {
