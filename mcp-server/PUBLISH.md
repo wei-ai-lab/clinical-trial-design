@@ -23,16 +23,16 @@ npx clinical-trial-design     # spawns the MCP server on stdio
 
 Web: https://www.npmjs.com/package/clinical-trial-design
 
-## 2. Discoverability aliases — 4 redirect packages
+## 2. Discoverability aliases — 3 redirect packages
 
-Four redirect aliases get published so users searching for related terms (`designr`, `trial-design`, `sample-size-calculator`, `study-design`) find the canonical name. Each is a 1-file deprecation stub: `package.json` + `README.md`, no code, no bundle. After publish, each is `npm deprecate`-d so `npm install <alias>` shows a notice pointing at the canonical name.
+Three redirect aliases get published so users searching for related terms (`trial-design`, `sample-size-calculator`, `study-design`) find the canonical name. Each is a 1-file deprecation stub: `package.json` + `README.md`, no code, no bundle. After publish, each is `npm deprecate`-d so `npm install <alias>` shows a notice pointing at the canonical name.
 
 ```bash
 cd mcp-server/aliases
 bash publish-aliases.sh
 ```
 
-The script publishes all four (`designr`, `trial-design`, `sample-size-calculator`, `study-design`) and then deprecates them. It fails fast on the first conflict — if a name is already taken on npm, edit the `ALIASES=(...)` list in the script, drop the conflict, and rerun.
+The script publishes all three (`trial-design`, `sample-size-calculator`, `study-design`) and then deprecates them. It fails fast on the first conflict — if a name is already taken on npm, edit the `ALIASES=(...)` list in the script, drop the conflict, and rerun.
 
 ## 3. MCP registry submission
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Publish + deprecate the 4 redirect aliases for clinical-trial-design.
+# Publish + deprecate the 3 redirect aliases for clinical-trial-design.
 # Run after publishing the canonical package from mcp-server/.
 #
 # Usage:
@@ -12,7 +12,6 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 ALIASES=(
-  designr
   trial-design
   sample-size-calculator
   study-design
@@ -25,7 +24,7 @@ if ! npm whoami >/dev/null 2>&1; then
 fi
 
 NPM_USER=$(npm whoami)
-echo "Publishing 4 redirect aliases as ${NPM_USER}..."
+echo "Publishing 3 redirect aliases as ${NPM_USER}..."
 echo
 
 for a in "${ALIASES[@]}"; do
@@ -49,7 +48,7 @@ for a in "${ALIASES[@]}"; do
 done
 
 echo
-echo "Done. All 4 aliases published and deprecated."
+echo "Done. All 3 aliases published and deprecated."
 echo "Spot-check with:"
-echo "  npm view designr"
 echo "  npm view trial-design"
+echo "  npm view sample-size-calculator"

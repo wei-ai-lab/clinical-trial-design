@@ -36,10 +36,13 @@ plugin, npm package, R package, and skill.
 - **npm package** renamed to `clinical-trial-design` (unscoped).
   `mcpName` set to `io.github.wei-ai-lab/clinical-trial-design` for
   MCP-registry verification. Bin entrypoint renamed
-  `clinical-trial-design-mcp` (was `designr-mcp`). Four discoverability
-  redirect aliases (`designr`, `trial-design`, `sample-size-calculator`,
+  `clinical-trial-design-mcp` (was `designr-mcp`). Three discoverability
+  redirect aliases (`trial-design`, `sample-size-calculator`,
   `study-design`) are scheduled for publish at M7 — each is a one-file
-  deprecation stub pointing at the canonical package.
+  deprecation stub pointing at the canonical package. The `designr`
+  alias was *not* claimed: the original project name was short-lived,
+  the GitHub repo redirect already handles old URL hits, and leaving
+  the npm name unclaimed keeps it free for any future unrelated use.
 - **Skill** moved from `skills/designr/SKILL.md` to
   `skills/clinical-trial-design/SKILL.md`. The skill description now
   reads "Clinical trial design assistant covering Phase 2 and Phase 3
