@@ -80,6 +80,10 @@ designr_dispatch <- function(con = file("stdin", "r")) {
   design_fixed_survival_ph        = function(...) design_fixed_survival_ph(...),
   design_fixed_survival_maxcombo  = function(...) design_fixed_survival_maxcombo(...),
   design_fixed_survival_rmst      = function(...) design_fixed_survival_rmst(...),
-  design_fixed_survival_milestone = function(...) design_fixed_survival_milestone(...)
-  # M2 adds: design_gs_*, validate_against_benchmark
+  design_fixed_survival_milestone = function(...) design_fixed_survival_milestone(...),
+  design_gs_binary                = function(...) design_gs_binary(...),
+  design_gs_continuous            = function(...) design_gs_continuous(...),
+  design_gs_survival_ph           = function(...) design_gs_survival_ph(...),
+  design_gs_survival_nph_combo    = function(...) design_gs_survival_nph_combo(...),
+  validate_against_benchmark      = function(...) validate_against_benchmark(...)
 )
