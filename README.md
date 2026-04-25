@@ -4,7 +4,7 @@
 
 `designr` helps biostatisticians and clinical trialists design Phase 3 studies through a conversational interface in Claude Code, backed by validated R statistical packages.
 
-> **v0.0.2 alpha.** Public repo, installable. v0.0.2 adds Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`) on top of the v0.0.1 surface. The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
+> **v0.0.3 alpha.** Public repo, installable as a Claude Code plugin via a local marketplace. v0.0.3 fixes the install path (the older `claude plugin install <path>` invocation is no longer supported by Claude Code; this release ships the `.claude-plugin/marketplace.json` and `.claude-plugin/plugin.json` the current spec requires). v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`) on top of the v0.0.1 surface. The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What it is
 
@@ -96,11 +96,23 @@ cd designr
 R -e 'install.packages(c("remotes","gsDesign","gsDesign2","yaml","jsonlite","testthat"))'
 R -e 'remotes::install_local("r-package/designr")'
 
-# MCP server
+# MCP server (build the dist/ that the plugin's MCP entry points at)
 cd mcp-server && npm install && npm run build && cd ..
+```
 
-# Install the plugin into Claude Code
-claude plugin install "$(pwd)"
+Then, inside Claude Code (slash commands):
+
+```text
+/plugin marketplace add /full/path/to/designr
+/plugin install designr@wei-ai-lab
+```
+
+`/plugin marketplace add` accepts the repo root because `.claude-plugin/marketplace.json` lives there. After install, restart Claude Code so it loads the bundled MCP server. Confirm the install with `/plugin` (designr should be listed and enabled).
+
+Quick local-dev alternative — skip the marketplace step entirely and launch Claude Code with the plugin loaded directly:
+
+```bash
+claude --plugin-dir /full/path/to/designr
 ```
 
 If `Rscript` isn't on your `PATH`, set `DESIGNR_RSCRIPT=/full/path/to/Rscript` in your shell. The MCP server reads that env var when spawning R.

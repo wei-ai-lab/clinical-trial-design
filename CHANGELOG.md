@@ -6,6 +6,31 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.3] — 2026-04-25
+
+### Fixed
+
+- Plugin install path: `claude plugin install <path>` is no longer supported
+  by Claude Code, which requires plugins to be installed through a
+  marketplace. v0.0.3 ships the `.claude-plugin/marketplace.json` and
+  `.claude-plugin/plugin.json` files the current Claude Code plugin spec
+  requires, and the README quickstart now uses
+  `/plugin marketplace add <path>` + `/plugin install designr@wei-ai-lab`
+  instead. A `claude --plugin-dir <path>` quick-dev alternative is also
+  documented.
+
+### Changed
+
+- `mcpServers.designr.args` in `plugin.json` now uses the spec-recommended
+  `${CLAUDE_PLUGIN_ROOT}` placeholder so the bundled MCP server resolves
+  correctly regardless of the plugin's installed location.
+- Author email in `plugin.json` updated to `wei.ai.lab@outlook.com`.
+
+### Removed
+
+- Legacy root-level `plugin.json`. The current Claude Code plugin spec
+  expects `.claude-plugin/plugin.json`; the old location was unused.
+
 ## [0.0.2] — 2026-04-24
 
 ### Added
@@ -63,6 +88,7 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - README with quick-start, MVP tool surface, three "Try it" prompts,
   and roadmap.
 
-[Unreleased]: https://github.com/wei-ai-lab/designr/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/wei-ai-lab/designr/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/wei-ai-lab/designr/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/wei-ai-lab/designr/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/wei-ai-lab/designr/releases/tag/v0.0.1

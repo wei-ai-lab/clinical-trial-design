@@ -44,7 +44,7 @@ type ToolMod = {
 async function main() {
   const server = new McpServer({
     name: "designr",
-    version: "0.0.2",
+    version: "0.0.3",
   });
 
   for (const mod of tools as unknown as ToolMod[]) {

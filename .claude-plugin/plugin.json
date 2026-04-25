@@ -1,11 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin",
   "name": "designr",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "End-to-end Phase 3 clinical trial design assistant. R-backed computation, MCP tools, skill for design reasoning.",
   "author": {
     "name": "Wei Fu",
-    "email": "jason.wfu@gmail.com",
+    "email": "wei.ai.lab@outlook.com",
     "url": "https://github.com/wei-ai-lab"
   },
   "homepage": "https://github.com/wei-ai-lab/designr",
@@ -29,7 +29,7 @@
   "mcpServers": {
     "designr": {
       "command": "node",
-      "args": ["mcp-server/dist/index.js"],
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp-server/dist/index.js"],
       "env": {}
     }
   }

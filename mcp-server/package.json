@@ -1,6 +1,6 @@
 {
   "name": "@designr/mcp-server",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "MCP server exposing the designr R package as Phase 3 design tools.",
   "private": true,
   "type": "module",
