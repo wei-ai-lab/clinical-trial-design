@@ -19,6 +19,10 @@
 #' @param equiv_margin Required when `comparison == "equivalence"`.
 #' @param k,timing,sfu,sfl,sfupar,sflpar,test.type Group-sequential parameters
 #'   (used only when `design_class == "group-sequential"`).
+#' @param operational Optional named list of operational kernel inputs (any 0–4 of
+#'   `accrual_rate`, `accrual_duration`, `follow_up_duration`,
+#'   `total_trial_duration`). When supplied, [solve_operational] fills in the
+#'   missing values and attaches them to the result as `$operational`.
 #'
 #' @return A unified result list (see [utils_format]).
 #' @export
@@ -38,9 +42,10 @@ design_binary <- function(p_control,
                           sfl              = "LDOF",
                           sfupar           = NULL,
                           sflpar           = NULL,
-                          test.type        = 1) {
+                          test.type        = 1,
+                          operational      = NULL) {
   design_class <- check_design_class(design_class)
-  if (design_class == "fixed") {
+  res <- if (design_class == "fixed") {
     .design_binary_fixed(p_control, p_treatment, alpha, power, sided,
                          allocation_ratio, comparison, ni_margin, equiv_margin)
   } else {
@@ -48,6 +53,14 @@ design_binary <- function(p_control,
                       sfupar, sflpar, test.type, alpha, power, sided,
                       allocation_ratio, comparison, ni_margin)
   }
+  if (!is.null(operational)) {
+    res$operational <- do.call(solve_operational,
+      c(list(target_n = res$sample_size_total,
+             endpoint_type = "binary",
+             allocation_ratio = allocation_ratio),
+        operational))
+  }
+  res
 }
 
 .design_binary_fixed <- function(p_control, p_treatment,

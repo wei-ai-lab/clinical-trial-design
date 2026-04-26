@@ -39,6 +39,12 @@
 #'   element = total study duration.
 #' @param binding (NPH GS) whether the futility boundary is binding.
 #' @param alpha,power,sided,allocation_ratio,comparison Standard design params.
+#' @param operational Optional named list of operational kernel inputs (any 0–4 of
+#'   `accrual_rate`, `accrual_duration`, `follow_up_duration`,
+#'   `total_trial_duration`). When supplied, [solve_operational] fills in the
+#'   missing values and attaches them to the result as `$operational`. For
+#'   survival, `target_events` from the design ties the system; supplying
+#'   only `accrual_rate` lets the solver pin `follow_up_duration` via uniroot.
 #'
 #' @return A unified result list (see [utils_format]).
 #' @export
@@ -71,13 +77,14 @@ design_survival <- function(model              = "ph",
                             power              = 0.90,
                             sided              = 1,
                             allocation_ratio   = 1,
-                            comparison         = "superiority") {
+                            comparison         = "superiority",
+                            operational        = NULL) {
   model <- check_survival_model(model)
   design_class <- check_design_class(design_class)
   combo_label <- sprintf("(model='%s', design_class='%s')", model, design_class)
 
   # Branch table.
-  if (model == "ph" && design_class == "fixed") {
+  res <- if (model == "ph" && design_class == "fixed") {
     .design_survival_ph_fixed(control_median, hazard_ratio, hr_null, ni_hr,
                               accrual_duration, followup_duration, accrual_rate,
                               dropout_rate, alpha, power, sided,
@@ -126,6 +133,20 @@ design_survival <- function(model              = "ph",
     designr_stop("model",
                  sprintf("combination %s is not yet supported", combo_label))
   }
+
+  if (!is.null(operational)) {
+    hr_for_solver <- if (!is.null(hazard_ratio)) hazard_ratio else post_delay_hr
+    res$operational <- do.call(solve_operational,
+      c(list(target_n               = res$sample_size_total,
+             target_events          = res$events_total,
+             endpoint_type          = "survival",
+             control_median         = control_median,
+             hazard_ratio           = hr_for_solver,
+             allocation_ratio       = allocation_ratio,
+             dropout_rate_per_month = dropout_rate),
+        operational))
+  }
+  res
 }
 
 # ---- PH fixed -------------------------------------------------------

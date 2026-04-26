@@ -34,7 +34,8 @@ design_survival(
   power = 0.9,
   sided = 1,
   allocation_ratio = 1,
-  comparison = "superiority"
+  comparison = "superiority",
+  operational = NULL
 )
 }
 \arguments{
@@ -73,6 +74,13 @@ element = total study duration.}
 \item{binding}{(NPH GS) whether the futility boundary is binding.}
 
 \item{alpha, power, sided, allocation_ratio, comparison}{Standard design params.}
+
+\item{operational}{Optional named list of operational kernel inputs (any 0–4 of
+`accrual_rate`, `accrual_duration`, `follow_up_duration`,
+`total_trial_duration`). When supplied, [solve_operational] fills in the
+missing values and attaches them to the result as `$operational`. For
+survival, `target_events` from the design ties the system; supplying
+only `accrual_rate` lets the solver pin `follow_up_duration` via uniroot.}
 }
 \value{
 A unified result list (see [utils_format]).

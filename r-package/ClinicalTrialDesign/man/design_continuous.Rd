@@ -21,7 +21,8 @@ design_continuous(
   sfl = "LDOF",
   sfupar = NULL,
   sflpar = NULL,
-  test.type = 1
+  test.type = 1,
+  operational = NULL
 )
 }
 \arguments{
@@ -40,6 +41,11 @@ Equivalence is only supported with `design_class = "fixed"`.}
 for the corresponding `comparison`).}
 
 \item{k, timing, sfu, sfl, sfupar, sflpar, test.type}{Group-sequential parameters.}
+
+\item{operational}{Optional named list of operational kernel inputs (any 0–4 of
+`accrual_rate`, `accrual_duration`, `follow_up_duration`,
+`total_trial_duration`). When supplied, [solve_operational] fills in the
+missing values and attaches them to the result as `$operational`.}
 }
 \value{
 A unified result list (see [utils_format]).
