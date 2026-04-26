@@ -2,32 +2,18 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
-import * as fixedBinary from "./tools/fixed-binary.js";
-import * as fixedContinuous from "./tools/fixed-continuous.js";
-import * as fixedSurvivalPh from "./tools/fixed-survival-ph.js";
-import * as fixedSurvivalMaxcombo from "./tools/fixed-survival-maxcombo.js";
-import * as fixedSurvivalRmst from "./tools/fixed-survival-rmst.js";
-import * as fixedSurvivalMilestone from "./tools/fixed-survival-milestone.js";
-import * as gsBinary from "./tools/gs-binary.js";
-import * as gsContinuous from "./tools/gs-continuous.js";
-import * as gsSurvivalPh from "./tools/gs-survival-ph.js";
-import * as gsSurvivalNphCombo from "./tools/gs-survival-nph-combo.js";
+import * as designBinary from "./tools/design-binary.js";
+import * as designContinuous from "./tools/design-continuous.js";
+import * as designSurvival from "./tools/design-survival.js";
 import * as validateBenchmark from "./tools/validate-benchmark.js";
 import * as verifyDesign from "./tools/verify-design.js";
 import * as designReport from "./tools/design-report.js";
 import { DesignrToolError } from "./r-bridge.js";
 
 const tools = [
-  fixedBinary,
-  fixedContinuous,
-  fixedSurvivalPh,
-  fixedSurvivalMaxcombo,
-  fixedSurvivalRmst,
-  fixedSurvivalMilestone,
-  gsBinary,
-  gsContinuous,
-  gsSurvivalPh,
-  gsSurvivalNphCombo,
+  designBinary,
+  designContinuous,
+  designSurvival,
   validateBenchmark,
   verifyDesign,
   designReport,
@@ -44,7 +30,7 @@ type ToolMod = {
 async function main() {
   const server = new McpServer({
     name: "clinical-trial-design",
-    version: "0.0.6",
+    version: "0.0.7",
   });
 
   for (const mod of tools as unknown as ToolMod[]) {

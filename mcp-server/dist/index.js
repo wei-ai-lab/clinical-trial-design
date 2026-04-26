@@ -1064,52 +1064,52 @@ var require_util = __commonJS({
       return hash;
     }
     exports.toHash = toHash;
-    function alwaysValidSchema(it, schema14) {
-      if (typeof schema14 == "boolean")
-        return schema14;
-      if (Object.keys(schema14).length === 0)
+    function alwaysValidSchema(it, schema7) {
+      if (typeof schema7 == "boolean")
+        return schema7;
+      if (Object.keys(schema7).length === 0)
         return true;
-      checkUnknownRules(it, schema14);
-      return !schemaHasRules(schema14, it.self.RULES.all);
+      checkUnknownRules(it, schema7);
+      return !schemaHasRules(schema7, it.self.RULES.all);
     }
     exports.alwaysValidSchema = alwaysValidSchema;
-    function checkUnknownRules(it, schema14 = it.schema) {
+    function checkUnknownRules(it, schema7 = it.schema) {
       const { opts, self } = it;
       if (!opts.strictSchema)
         return;
-      if (typeof schema14 === "boolean")
+      if (typeof schema7 === "boolean")
         return;
       const rules = self.RULES.keywords;
-      for (const key in schema14) {
+      for (const key in schema7) {
         if (!rules[key])
           checkStrictMode(it, `unknown keyword: "${key}"`);
       }
     }
     exports.checkUnknownRules = checkUnknownRules;
-    function schemaHasRules(schema14, rules) {
-      if (typeof schema14 == "boolean")
-        return !schema14;
-      for (const key in schema14)
+    function schemaHasRules(schema7, rules) {
+      if (typeof schema7 == "boolean")
+        return !schema7;
+      for (const key in schema7)
         if (rules[key])
           return true;
       return false;
     }
     exports.schemaHasRules = schemaHasRules;
-    function schemaHasRulesButRef(schema14, RULES) {
-      if (typeof schema14 == "boolean")
-        return !schema14;
-      for (const key in schema14)
+    function schemaHasRulesButRef(schema7, RULES) {
+      if (typeof schema7 == "boolean")
+        return !schema7;
+      for (const key in schema7)
         if (key !== "$ref" && RULES.all[key])
           return true;
       return false;
     }
     exports.schemaHasRulesButRef = schemaHasRulesButRef;
-    function schemaRefOrVal({ topSchemaRef, schemaPath }, schema14, keyword, $data) {
+    function schemaRefOrVal({ topSchemaRef, schemaPath }, schema7, keyword, $data) {
       if (!$data) {
-        if (typeof schema14 == "number" || typeof schema14 == "boolean")
-          return schema14;
-        if (typeof schema14 == "string")
-          return (0, codegen_1._)`${schema14}`;
+        if (typeof schema7 == "number" || typeof schema7 == "boolean")
+          return schema7;
+        if (typeof schema7 == "string")
+          return (0, codegen_1._)`${schema7}`;
       }
       return (0, codegen_1._)`${topSchemaRef}${schemaPath}${(0, codegen_1.getProperty)(keyword)}`;
     }
@@ -1390,10 +1390,10 @@ var require_boolSchema = __commonJS({
       message: "boolean schema is false"
     };
     function topBoolOrEmptySchema(it) {
-      const { gen, schema: schema14, validateName } = it;
-      if (schema14 === false) {
+      const { gen, schema: schema7, validateName } = it;
+      if (schema7 === false) {
         falseSchemaError(it, false);
-      } else if (typeof schema14 == "object" && schema14.$async === true) {
+      } else if (typeof schema7 == "object" && schema7.$async === true) {
         gen.return(names_1.default.data);
       } else {
         gen.assign((0, codegen_1._)`${validateName}.errors`, null);
@@ -1402,8 +1402,8 @@ var require_boolSchema = __commonJS({
     }
     exports.topBoolOrEmptySchema = topBoolOrEmptySchema;
     function boolOrEmptySchema(it, valid) {
-      const { gen, schema: schema14 } = it;
-      if (schema14 === false) {
+      const { gen, schema: schema7 } = it;
+      if (schema7 === false) {
         gen.var(valid, false);
         falseSchemaError(it);
       } else {
@@ -1465,18 +1465,18 @@ var require_applicability = __commonJS({
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.shouldUseRule = exports.shouldUseGroup = exports.schemaHasRulesForType = void 0;
-    function schemaHasRulesForType({ schema: schema14, self }, type) {
+    function schemaHasRulesForType({ schema: schema7, self }, type) {
       const group = self.RULES.types[type];
-      return group && group !== true && shouldUseGroup(schema14, group);
+      return group && group !== true && shouldUseGroup(schema7, group);
     }
     exports.schemaHasRulesForType = schemaHasRulesForType;
-    function shouldUseGroup(schema14, group) {
-      return group.rules.some((rule) => shouldUseRule(schema14, rule));
+    function shouldUseGroup(schema7, group) {
+      return group.rules.some((rule) => shouldUseRule(schema7, rule));
     }
     exports.shouldUseGroup = shouldUseGroup;
-    function shouldUseRule(schema14, rule) {
+    function shouldUseRule(schema7, rule) {
       var _a;
-      return schema14[rule.keyword] !== void 0 || ((_a = rule.definition.implements) === null || _a === void 0 ? void 0 : _a.some((kwd) => schema14[kwd] !== void 0));
+      return schema7[rule.keyword] !== void 0 || ((_a = rule.definition.implements) === null || _a === void 0 ? void 0 : _a.some((kwd) => schema7[kwd] !== void 0));
     }
     exports.shouldUseRule = shouldUseRule;
   }
@@ -1498,17 +1498,17 @@ var require_dataType = __commonJS({
       DataType2[DataType2["Correct"] = 0] = "Correct";
       DataType2[DataType2["Wrong"] = 1] = "Wrong";
     })(DataType || (exports.DataType = DataType = {}));
-    function getSchemaTypes(schema14) {
-      const types = getJSONTypes(schema14.type);
+    function getSchemaTypes(schema7) {
+      const types = getJSONTypes(schema7.type);
       const hasNull = types.includes("null");
       if (hasNull) {
-        if (schema14.nullable === false)
+        if (schema7.nullable === false)
           throw new Error("type: null contradicts nullable: false");
       } else {
-        if (!types.length && schema14.nullable !== void 0) {
+        if (!types.length && schema7.nullable !== void 0) {
           throw new Error('"nullable" cannot be used without "type"');
         }
-        if (schema14.nullable === true)
+        if (schema7.nullable === true)
           types.push("null");
       }
       return types;
@@ -1640,8 +1640,8 @@ var require_dataType = __commonJS({
     }
     exports.checkDataTypes = checkDataTypes;
     var typeError = {
-      message: ({ schema: schema14 }) => `must be ${schema14}`,
-      params: ({ schema: schema14, schemaValue }) => typeof schema14 == "string" ? (0, codegen_1._)`{type: ${schema14}}` : (0, codegen_1._)`{type: ${schemaValue}}`
+      message: ({ schema: schema7 }) => `must be ${schema7}`,
+      params: ({ schema: schema7, schemaValue }) => typeof schema7 == "string" ? (0, codegen_1._)`{type: ${schema7}}` : (0, codegen_1._)`{type: ${schemaValue}}`
     };
     function reportTypeError(it) {
       const cxt = getTypeErrorContext(it);
@@ -1649,16 +1649,16 @@ var require_dataType = __commonJS({
     }
     exports.reportTypeError = reportTypeError;
     function getTypeErrorContext(it) {
-      const { gen, data, schema: schema14 } = it;
-      const schemaCode = (0, util_1.schemaRefOrVal)(it, schema14, "type");
+      const { gen, data, schema: schema7 } = it;
+      const schemaCode = (0, util_1.schemaRefOrVal)(it, schema7, "type");
       return {
         gen,
         keyword: "type",
         data,
-        schema: schema14.type,
+        schema: schema7.type,
         schemaCode,
         schemaValue: schemaCode,
-        parentSchema: schema14,
+        parentSchema: schema7,
         params: {},
         it
       };
@@ -1811,15 +1811,15 @@ var require_code2 = __commonJS({
     }
     exports.validateArray = validateArray;
     function validateUnion(cxt) {
-      const { gen, schema: schema14, keyword, it } = cxt;
-      if (!Array.isArray(schema14))
+      const { gen, schema: schema7, keyword, it } = cxt;
+      if (!Array.isArray(schema7))
         throw new Error("ajv implementation error");
-      const alwaysValid = schema14.some((sch) => (0, util_1.alwaysValidSchema)(it, sch));
+      const alwaysValid = schema7.some((sch) => (0, util_1.alwaysValidSchema)(it, sch));
       if (alwaysValid && !it.opts.unevaluated)
         return;
       const valid = gen.let("valid", false);
       const schValid = gen.name("_valid");
-      gen.block(() => schema14.forEach((_sch, i) => {
+      gen.block(() => schema7.forEach((_sch, i) => {
         const schCxt = cxt.subschema({
           keyword,
           schemaProp: i,
@@ -1847,8 +1847,8 @@ var require_keyword = __commonJS({
     var code_1 = require_code2();
     var errors_1 = require_errors();
     function macroKeywordCode(cxt, def) {
-      const { gen, keyword, schema: schema14, parentSchema, it } = cxt;
-      const macroSchema = def.macro.call(it.self, schema14, parentSchema, it);
+      const { gen, keyword, schema: schema7, parentSchema, it } = cxt;
+      const macroSchema = def.macro.call(it.self, schema7, parentSchema, it);
       const schemaRef = useKeyword(gen, keyword, macroSchema);
       if (it.opts.validateSchema !== false)
         it.self.validateSchema(macroSchema, true);
@@ -1865,9 +1865,9 @@ var require_keyword = __commonJS({
     exports.macroKeywordCode = macroKeywordCode;
     function funcKeywordCode(cxt, def) {
       var _a;
-      const { gen, keyword, schema: schema14, parentSchema, $data, it } = cxt;
+      const { gen, keyword, schema: schema7, parentSchema, $data, it } = cxt;
       checkAsyncKeyword(it, def);
-      const validate = !$data && def.compile ? def.compile.call(it.self, schema14, parentSchema, it) : def.validate;
+      const validate = !$data && def.compile ? def.compile.call(it.self, schema7, parentSchema, it) : def.validate;
       const validateRef = useKeyword(gen, keyword, validate);
       const valid = gen.let("valid");
       cxt.block$data(valid, validateKeyword);
@@ -1927,20 +1927,20 @@ var require_keyword = __commonJS({
         throw new Error(`keyword "${keyword}" failed to compile`);
       return gen.scopeValue("keyword", typeof result == "function" ? { ref: result } : { ref: result, code: (0, codegen_1.stringify)(result) });
     }
-    function validSchemaType(schema14, schemaType, allowUndefined = false) {
-      return !schemaType.length || schemaType.some((st) => st === "array" ? Array.isArray(schema14) : st === "object" ? schema14 && typeof schema14 == "object" && !Array.isArray(schema14) : typeof schema14 == st || allowUndefined && typeof schema14 == "undefined");
+    function validSchemaType(schema7, schemaType, allowUndefined = false) {
+      return !schemaType.length || schemaType.some((st) => st === "array" ? Array.isArray(schema7) : st === "object" ? schema7 && typeof schema7 == "object" && !Array.isArray(schema7) : typeof schema7 == st || allowUndefined && typeof schema7 == "undefined");
     }
     exports.validSchemaType = validSchemaType;
-    function validateKeywordUsage({ schema: schema14, opts, self, errSchemaPath }, def, keyword) {
+    function validateKeywordUsage({ schema: schema7, opts, self, errSchemaPath }, def, keyword) {
       if (Array.isArray(def.keyword) ? !def.keyword.includes(keyword) : def.keyword !== keyword) {
         throw new Error("ajv implementation error");
       }
       const deps = def.dependencies;
-      if (deps === null || deps === void 0 ? void 0 : deps.some((kwd) => !Object.prototype.hasOwnProperty.call(schema14, kwd))) {
+      if (deps === null || deps === void 0 ? void 0 : deps.some((kwd) => !Object.prototype.hasOwnProperty.call(schema7, kwd))) {
         throw new Error(`parent schema must have dependencies of ${keyword}: ${deps.join(",")}`);
       }
       if (def.validateSchema) {
-        const valid = def.validateSchema(schema14[keyword]);
+        const valid = def.validateSchema(schema7[keyword]);
         if (!valid) {
           const msg = `keyword "${keyword}" value is invalid at path "${errSchemaPath}": ` + self.errorsText(def.validateSchema.errors);
           if (opts.validateSchema === "log")
@@ -1962,8 +1962,8 @@ var require_subschema = __commonJS({
     exports.extendSubschemaMode = exports.extendSubschemaData = exports.getSubschema = void 0;
     var codegen_1 = require_codegen();
     var util_1 = require_util();
-    function getSubschema(it, { keyword, schemaProp, schema: schema14, schemaPath, errSchemaPath, topSchemaRef }) {
-      if (keyword !== void 0 && schema14 !== void 0) {
+    function getSubschema(it, { keyword, schemaProp, schema: schema7, schemaPath, errSchemaPath, topSchemaRef }) {
+      if (keyword !== void 0 && schema7 !== void 0) {
         throw new Error('both "keyword" and "schema" passed, only one allowed');
       }
       if (keyword !== void 0) {
@@ -1978,12 +1978,12 @@ var require_subschema = __commonJS({
           errSchemaPath: `${it.errSchemaPath}/${keyword}/${(0, util_1.escapeFragment)(schemaProp)}`
         };
       }
-      if (schema14 !== void 0) {
+      if (schema7 !== void 0) {
         if (schemaPath === void 0 || errSchemaPath === void 0 || topSchemaRef === void 0) {
           throw new Error('"schemaPath", "errSchemaPath" and "topSchemaRef" are required with "schema"');
         }
         return {
-          schema: schema14,
+          schema: schema7,
           schemaPath,
           topSchemaRef,
           errSchemaPath
@@ -2086,7 +2086,7 @@ var require_fast_deep_equal = __commonJS({
 var require_json_schema_traverse = __commonJS({
   "node_modules/json-schema-traverse/index.js"(exports, module) {
     "use strict";
-    var traverse = module.exports = function(schema14, opts, cb) {
+    var traverse = module.exports = function(schema7, opts, cb) {
       if (typeof opts == "function") {
         cb = opts;
         opts = {};
@@ -2096,7 +2096,7 @@ var require_json_schema_traverse = __commonJS({
       };
       var post = cb.post || function() {
       };
-      _traverse(opts, pre, post, schema14, "", schema14);
+      _traverse(opts, pre, post, schema7, "", schema7);
     };
     traverse.keywords = {
       additionalItems: true,
@@ -2142,26 +2142,26 @@ var require_json_schema_traverse = __commonJS({
       maxProperties: true,
       minProperties: true
     };
-    function _traverse(opts, pre, post, schema14, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex) {
-      if (schema14 && typeof schema14 == "object" && !Array.isArray(schema14)) {
-        pre(schema14, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex);
-        for (var key in schema14) {
-          var sch = schema14[key];
+    function _traverse(opts, pre, post, schema7, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex) {
+      if (schema7 && typeof schema7 == "object" && !Array.isArray(schema7)) {
+        pre(schema7, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex);
+        for (var key in schema7) {
+          var sch = schema7[key];
           if (Array.isArray(sch)) {
             if (key in traverse.arrayKeywords) {
               for (var i = 0; i < sch.length; i++)
-                _traverse(opts, pre, post, sch[i], jsonPtr + "/" + key + "/" + i, rootSchema, jsonPtr, key, schema14, i);
+                _traverse(opts, pre, post, sch[i], jsonPtr + "/" + key + "/" + i, rootSchema, jsonPtr, key, schema7, i);
             }
           } else if (key in traverse.propsKeywords) {
             if (sch && typeof sch == "object") {
               for (var prop in sch)
-                _traverse(opts, pre, post, sch[prop], jsonPtr + "/" + key + "/" + escapeJsonPtr(prop), rootSchema, jsonPtr, key, schema14, prop);
+                _traverse(opts, pre, post, sch[prop], jsonPtr + "/" + key + "/" + escapeJsonPtr(prop), rootSchema, jsonPtr, key, schema7, prop);
             }
           } else if (key in traverse.keywords || opts.allKeys && !(key in traverse.skipKeywords)) {
-            _traverse(opts, pre, post, sch, jsonPtr + "/" + key, rootSchema, jsonPtr, key, schema14);
+            _traverse(opts, pre, post, sch, jsonPtr + "/" + key, rootSchema, jsonPtr, key, schema7);
           }
         }
-        post(schema14, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex);
+        post(schema7, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex);
       }
     }
     function escapeJsonPtr(str) {
@@ -2197,14 +2197,14 @@ var require_resolve = __commonJS({
       "enum",
       "const"
     ]);
-    function inlineRef(schema14, limit = true) {
-      if (typeof schema14 == "boolean")
+    function inlineRef(schema7, limit = true) {
+      if (typeof schema7 == "boolean")
         return true;
       if (limit === true)
-        return !hasRef(schema14);
+        return !hasRef(schema7);
       if (!limit)
         return false;
-      return countKeys(schema14) <= limit;
+      return countKeys(schema7) <= limit;
     }
     exports.inlineRef = inlineRef;
     var REF_KEYWORDS = /* @__PURE__ */ new Set([
@@ -2214,11 +2214,11 @@ var require_resolve = __commonJS({
       "$dynamicRef",
       "$dynamicAnchor"
     ]);
-    function hasRef(schema14) {
-      for (const key in schema14) {
+    function hasRef(schema7) {
+      for (const key in schema7) {
         if (REF_KEYWORDS.has(key))
           return true;
-        const sch = schema14[key];
+        const sch = schema7[key];
         if (Array.isArray(sch) && sch.some(hasRef))
           return true;
         if (typeof sch == "object" && hasRef(sch))
@@ -2226,16 +2226,16 @@ var require_resolve = __commonJS({
       }
       return false;
     }
-    function countKeys(schema14) {
+    function countKeys(schema7) {
       let count = 0;
-      for (const key in schema14) {
+      for (const key in schema7) {
         if (key === "$ref")
           return Infinity;
         count++;
         if (SIMPLE_INLINED.has(key))
           continue;
-        if (typeof schema14[key] == "object") {
-          (0, util_1.eachItem)(schema14[key], (sch) => count += countKeys(sch));
+        if (typeof schema7[key] == "object") {
+          (0, util_1.eachItem)(schema7[key], (sch) => count += countKeys(sch));
         }
         if (count === Infinity)
           return Infinity;
@@ -2265,16 +2265,16 @@ var require_resolve = __commonJS({
     }
     exports.resolveUrl = resolveUrl;
     var ANCHOR = /^[a-z_][-a-z0-9._]*$/i;
-    function getSchemaRefs(schema14, baseId) {
-      if (typeof schema14 == "boolean")
+    function getSchemaRefs(schema7, baseId) {
+      if (typeof schema7 == "boolean")
         return {};
       const { schemaId, uriResolver } = this.opts;
-      const schId = normalizeId(schema14[schemaId] || baseId);
+      const schId = normalizeId(schema7[schemaId] || baseId);
       const baseIds = { "": schId };
       const pathPrefix = getFullPath(uriResolver, schId, false);
       const localRefs = {};
       const schemaRefs = /* @__PURE__ */ new Set();
-      traverse(schema14, { allKeys: true }, (sch, jsonPtr, _, parentJsonPtr) => {
+      traverse(schema7, { allKeys: true }, (sch, jsonPtr, _, parentJsonPtr) => {
         if (parentJsonPtr === void 0)
           return;
         const fullPath = pathPrefix + jsonPtr;
@@ -2355,15 +2355,15 @@ var require_validate = __commonJS({
       validateFunction(it, () => (0, boolSchema_1.topBoolOrEmptySchema)(it));
     }
     exports.validateFunctionCode = validateFunctionCode;
-    function validateFunction({ gen, validateName, schema: schema14, schemaEnv, opts }, body) {
+    function validateFunction({ gen, validateName, schema: schema7, schemaEnv, opts }, body) {
       if (opts.code.es5) {
         gen.func(validateName, (0, codegen_1._)`${names_1.default.data}, ${names_1.default.valCxt}`, schemaEnv.$async, () => {
-          gen.code((0, codegen_1._)`"use strict"; ${funcSourceUrl(schema14, opts)}`);
+          gen.code((0, codegen_1._)`"use strict"; ${funcSourceUrl(schema7, opts)}`);
           destructureValCxtES5(gen, opts);
           gen.code(body);
         });
       } else {
-        gen.func(validateName, (0, codegen_1._)`${names_1.default.data}, ${destructureValCxt(opts)}`, schemaEnv.$async, () => gen.code(funcSourceUrl(schema14, opts)).code(body));
+        gen.func(validateName, (0, codegen_1._)`${names_1.default.data}, ${destructureValCxt(opts)}`, schemaEnv.$async, () => gen.code(funcSourceUrl(schema7, opts)).code(body));
       }
     }
     function destructureValCxt(opts) {
@@ -2387,9 +2387,9 @@ var require_validate = __commonJS({
       });
     }
     function topSchemaObjCode(it) {
-      const { schema: schema14, opts, gen } = it;
+      const { schema: schema7, opts, gen } = it;
       validateFunction(it, () => {
-        if (opts.$comment && schema14.$comment)
+        if (opts.$comment && schema7.$comment)
           commentKeyword(it);
         checkNoDefault(it);
         gen.let(names_1.default.vErrors, null);
@@ -2407,8 +2407,8 @@ var require_validate = __commonJS({
       gen.if((0, codegen_1._)`${it.evaluated}.dynamicProps`, () => gen.assign((0, codegen_1._)`${it.evaluated}.props`, (0, codegen_1._)`undefined`));
       gen.if((0, codegen_1._)`${it.evaluated}.dynamicItems`, () => gen.assign((0, codegen_1._)`${it.evaluated}.items`, (0, codegen_1._)`undefined`));
     }
-    function funcSourceUrl(schema14, opts) {
-      const schId = typeof schema14 == "object" && schema14[opts.schemaId];
+    function funcSourceUrl(schema7, opts) {
+      const schId = typeof schema7 == "object" && schema7[opts.schemaId];
       return schId && (opts.code.source || opts.code.process) ? (0, codegen_1._)`/*# sourceURL=${schId} */` : codegen_1.nil;
     }
     function subschemaCode(it, valid) {
@@ -2421,10 +2421,10 @@ var require_validate = __commonJS({
       }
       (0, boolSchema_1.boolOrEmptySchema)(it, valid);
     }
-    function schemaCxtHasRules({ schema: schema14, self }) {
-      if (typeof schema14 == "boolean")
-        return !schema14;
-      for (const key in schema14)
+    function schemaCxtHasRules({ schema: schema7, self }) {
+      if (typeof schema7 == "boolean")
+        return !schema7;
+      for (const key in schema7)
         if (self.RULES.all[key])
           return true;
       return false;
@@ -2433,8 +2433,8 @@ var require_validate = __commonJS({
       return typeof it.schema != "boolean";
     }
     function subSchemaObjCode(it, valid) {
-      const { schema: schema14, gen, opts } = it;
-      if (opts.$comment && schema14.$comment)
+      const { schema: schema7, gen, opts } = it;
+      if (opts.$comment && schema7.$comment)
         commentKeyword(it);
       updateContext(it);
       checkAsyncSchema(it);
@@ -2454,14 +2454,14 @@ var require_validate = __commonJS({
       schemaKeywords(it, types, !checkedTypes, errsCount);
     }
     function checkRefsAndKeywords(it) {
-      const { schema: schema14, errSchemaPath, opts, self } = it;
-      if (schema14.$ref && opts.ignoreKeywordsWithRef && (0, util_1.schemaHasRulesButRef)(schema14, self.RULES)) {
+      const { schema: schema7, errSchemaPath, opts, self } = it;
+      if (schema7.$ref && opts.ignoreKeywordsWithRef && (0, util_1.schemaHasRulesButRef)(schema7, self.RULES)) {
         self.logger.warn(`$ref: keywords ignored in schema at path "${errSchemaPath}"`);
       }
     }
     function checkNoDefault(it) {
-      const { schema: schema14, opts } = it;
-      if (schema14.default !== void 0 && opts.useDefaults && opts.strictSchema) {
+      const { schema: schema7, opts } = it;
+      if (schema7.default !== void 0 && opts.useDefaults && opts.strictSchema) {
         (0, util_1.checkStrictMode)(it, "default is ignored in the schema root");
       }
     }
@@ -2474,8 +2474,8 @@ var require_validate = __commonJS({
       if (it.schema.$async && !it.schemaEnv.$async)
         throw new Error("async schema in sync schema");
     }
-    function commentKeyword({ gen, schemaEnv, schema: schema14, errSchemaPath, opts }) {
-      const msg = schema14.$comment;
+    function commentKeyword({ gen, schemaEnv, schema: schema7, errSchemaPath, opts }) {
+      const msg = schema7.$comment;
       if (opts.$comment === true) {
         gen.code((0, codegen_1._)`${names_1.default.self}.logger.log(${msg})`);
       } else if (typeof opts.$comment == "function") {
@@ -2502,9 +2502,9 @@ var require_validate = __commonJS({
         gen.assign((0, codegen_1._)`${evaluated}.items`, items);
     }
     function schemaKeywords(it, types, typeErrors, errsCount) {
-      const { gen, schema: schema14, data, allErrors, opts, self } = it;
+      const { gen, schema: schema7, data, allErrors, opts, self } = it;
       const { RULES } = self;
-      if (schema14.$ref && (opts.ignoreKeywordsWithRef || !(0, util_1.schemaHasRulesButRef)(schema14, RULES))) {
+      if (schema7.$ref && (opts.ignoreKeywordsWithRef || !(0, util_1.schemaHasRulesButRef)(schema7, RULES))) {
         gen.block(() => keywordCode(it, "$ref", RULES.all.$ref.definition));
         return;
       }
@@ -2516,7 +2516,7 @@ var require_validate = __commonJS({
         groupKeywords(RULES.post);
       });
       function groupKeywords(group) {
-        if (!(0, applicability_1.shouldUseGroup)(schema14, group))
+        if (!(0, applicability_1.shouldUseGroup)(schema7, group))
           return;
         if (group.type) {
           gen.if((0, dataType_2.checkDataType)(group.type, data, opts.strictNumbers));
@@ -2534,12 +2534,12 @@ var require_validate = __commonJS({
       }
     }
     function iterateKeywords(it, group) {
-      const { gen, schema: schema14, opts: { useDefaults } } = it;
+      const { gen, schema: schema7, opts: { useDefaults } } = it;
       if (useDefaults)
         (0, defaults_1.assignDefaults)(it, group.type);
       gen.block(() => {
         for (const rule of group.rules) {
-          if ((0, applicability_1.shouldUseRule)(schema14, rule)) {
+          if ((0, applicability_1.shouldUseRule)(schema7, rule)) {
             keywordCode(it, rule.keyword, rule.definition, group.type);
           }
         }
@@ -2884,17 +2884,17 @@ var require_compile = __commonJS({
         var _a;
         this.refs = {};
         this.dynamicAnchors = {};
-        let schema14;
+        let schema7;
         if (typeof env.schema == "object")
-          schema14 = env.schema;
+          schema7 = env.schema;
         this.schema = env.schema;
         this.schemaId = env.schemaId;
         this.root = env.root || this;
-        this.baseId = (_a = env.baseId) !== null && _a !== void 0 ? _a : (0, resolve_1.normalizeId)(schema14 === null || schema14 === void 0 ? void 0 : schema14[env.schemaId || "$id"]);
+        this.baseId = (_a = env.baseId) !== null && _a !== void 0 ? _a : (0, resolve_1.normalizeId)(schema7 === null || schema7 === void 0 ? void 0 : schema7[env.schemaId || "$id"]);
         this.schemaPath = env.schemaPath;
         this.localRefs = env.localRefs;
         this.meta = env.meta;
-        this.$async = schema14 === null || schema14 === void 0 ? void 0 : schema14.$async;
+        this.$async = schema7 === null || schema7 === void 0 ? void 0 : schema7.$async;
         this.refs = {};
       }
     };
@@ -2993,10 +2993,10 @@ var require_compile = __commonJS({
         return schOrFunc;
       let _sch = resolve2.call(this, root, ref);
       if (_sch === void 0) {
-        const schema14 = (_a = root.localRefs) === null || _a === void 0 ? void 0 : _a[ref];
+        const schema7 = (_a = root.localRefs) === null || _a === void 0 ? void 0 : _a[ref];
         const { schemaId } = this.opts;
-        if (schema14)
-          _sch = new SchemaEnv({ schema: schema14, schemaId, root, baseId });
+        if (schema7)
+          _sch = new SchemaEnv({ schema: schema7, schemaId, root, baseId });
       }
       if (_sch === void 0)
         return;
@@ -3044,12 +3044,12 @@ var require_compile = __commonJS({
       if (!schOrRef.validate)
         compileSchema.call(this, schOrRef);
       if (id === (0, resolve_1.normalizeId)(ref)) {
-        const { schema: schema14 } = schOrRef;
+        const { schema: schema7 } = schOrRef;
         const { schemaId } = this.opts;
-        const schId = schema14[schemaId];
+        const schId = schema7[schemaId];
         if (schId)
           baseId = (0, resolve_1.resolveUrl)(this.opts.uriResolver, baseId, schId);
-        return new SchemaEnv({ schema: schema14, schemaId, root, baseId });
+        return new SchemaEnv({ schema: schema7, schemaId, root, baseId });
       }
       return getJsonPointer.call(this, p, schOrRef);
     }
@@ -3061,29 +3061,29 @@ var require_compile = __commonJS({
       "dependencies",
       "definitions"
     ]);
-    function getJsonPointer(parsedRef, { baseId, schema: schema14, root }) {
+    function getJsonPointer(parsedRef, { baseId, schema: schema7, root }) {
       var _a;
       if (((_a = parsedRef.fragment) === null || _a === void 0 ? void 0 : _a[0]) !== "/")
         return;
       for (const part of parsedRef.fragment.slice(1).split("/")) {
-        if (typeof schema14 === "boolean")
+        if (typeof schema7 === "boolean")
           return;
-        const partSchema = schema14[(0, util_1.unescapeFragment)(part)];
+        const partSchema = schema7[(0, util_1.unescapeFragment)(part)];
         if (partSchema === void 0)
           return;
-        schema14 = partSchema;
-        const schId = typeof schema14 === "object" && schema14[this.opts.schemaId];
+        schema7 = partSchema;
+        const schId = typeof schema7 === "object" && schema7[this.opts.schemaId];
         if (!PREVENT_SCOPE_CHANGE.has(part) && schId) {
           baseId = (0, resolve_1.resolveUrl)(this.opts.uriResolver, baseId, schId);
         }
       }
       let env;
-      if (typeof schema14 != "boolean" && schema14.$ref && !(0, util_1.schemaHasRulesButRef)(schema14, this.RULES)) {
-        const $ref = (0, resolve_1.resolveUrl)(this.opts.uriResolver, baseId, schema14.$ref);
+      if (typeof schema7 != "boolean" && schema7.$ref && !(0, util_1.schemaHasRulesButRef)(schema7, this.RULES)) {
+        const $ref = (0, resolve_1.resolveUrl)(this.opts.uriResolver, baseId, schema7.$ref);
         env = resolveSchema.call(this, root, $ref);
       }
       const { schemaId } = this.opts;
-      env = env || new SchemaEnv({ schema: schema14, schemaId, root, baseId });
+      env = env || new SchemaEnv({ schema: schema7, schemaId, root, baseId });
       if (env.schema !== env.root.schema)
         return env;
       return void 0;
@@ -4014,16 +4014,16 @@ var require_core = __commonJS({
           this.errors = v.errors;
         return valid;
       }
-      compile(schema14, _meta) {
-        const sch = this._addSchema(schema14, _meta);
+      compile(schema7, _meta) {
+        const sch = this._addSchema(schema7, _meta);
         return sch.validate || this._compileSchemaEnv(sch);
       }
-      compileAsync(schema14, meta) {
+      compileAsync(schema7, meta) {
         if (typeof this.opts.loadSchema != "function") {
           throw new Error("options.loadSchema should be a function");
         }
         const { loadSchema } = this.opts;
-        return runCompileAsync.call(this, schema14, meta);
+        return runCompileAsync.call(this, schema7, meta);
         async function runCompileAsync(_schema, _meta) {
           await loadMetaSchema.call(this, _schema.$schema);
           const sch = this._addSchema(_schema, _meta);
@@ -4069,37 +4069,37 @@ var require_core = __commonJS({
         }
       }
       // Adds schema to the instance
-      addSchema(schema14, key, _meta, _validateSchema = this.opts.validateSchema) {
-        if (Array.isArray(schema14)) {
-          for (const sch of schema14)
+      addSchema(schema7, key, _meta, _validateSchema = this.opts.validateSchema) {
+        if (Array.isArray(schema7)) {
+          for (const sch of schema7)
             this.addSchema(sch, void 0, _meta, _validateSchema);
           return this;
         }
         let id;
-        if (typeof schema14 === "object") {
+        if (typeof schema7 === "object") {
           const { schemaId } = this.opts;
-          id = schema14[schemaId];
+          id = schema7[schemaId];
           if (id !== void 0 && typeof id != "string") {
             throw new Error(`schema ${schemaId} must be string`);
           }
         }
         key = (0, resolve_1.normalizeId)(key || id);
         this._checkUnique(key);
-        this.schemas[key] = this._addSchema(schema14, _meta, key, _validateSchema, true);
+        this.schemas[key] = this._addSchema(schema7, _meta, key, _validateSchema, true);
         return this;
       }
       // Add schema that will be used to validate other schemas
       // options in META_IGNORE_OPTIONS are alway set to false
-      addMetaSchema(schema14, key, _validateSchema = this.opts.validateSchema) {
-        this.addSchema(schema14, key, true, _validateSchema);
+      addMetaSchema(schema7, key, _validateSchema = this.opts.validateSchema) {
+        this.addSchema(schema7, key, true, _validateSchema);
         return this;
       }
       //  Validate schema against its meta-schema
-      validateSchema(schema14, throwOrLogError) {
-        if (typeof schema14 == "boolean")
+      validateSchema(schema7, throwOrLogError) {
+        if (typeof schema7 == "boolean")
           return true;
         let $schema;
-        $schema = schema14.$schema;
+        $schema = schema7.$schema;
         if ($schema !== void 0 && typeof $schema != "string") {
           throw new Error("$schema must be a string");
         }
@@ -4109,7 +4109,7 @@ var require_core = __commonJS({
           this.errors = null;
           return true;
         }
-        const valid = this.validate($schema, schema14);
+        const valid = this.validate($schema, schema7);
         if (!valid && throwOrLogError) {
           const message = "schema is invalid: " + this.errorsText();
           if (this.opts.validateSchema === "log")
@@ -4252,9 +4252,9 @@ var require_core = __commonJS({
             if (typeof rule != "object")
               continue;
             const { $data } = rule.definition;
-            const schema14 = keywords[key];
-            if ($data && schema14)
-              keywords[key] = schemaOrData(schema14);
+            const schema7 = keywords[key];
+            if ($data && schema7)
+              keywords[key] = schemaOrData(schema7);
           }
         }
         return metaSchema;
@@ -4272,23 +4272,23 @@ var require_core = __commonJS({
           }
         }
       }
-      _addSchema(schema14, meta, baseId, validateSchema = this.opts.validateSchema, addSchema = this.opts.addUsedSchema) {
+      _addSchema(schema7, meta, baseId, validateSchema = this.opts.validateSchema, addSchema = this.opts.addUsedSchema) {
         let id;
         const { schemaId } = this.opts;
-        if (typeof schema14 == "object") {
-          id = schema14[schemaId];
+        if (typeof schema7 == "object") {
+          id = schema7[schemaId];
         } else {
           if (this.opts.jtd)
             throw new Error("schema must be object");
-          else if (typeof schema14 != "boolean")
+          else if (typeof schema7 != "boolean")
             throw new Error("schema must be object or boolean");
         }
-        let sch = this._cache.get(schema14);
+        let sch = this._cache.get(schema7);
         if (sch !== void 0)
           return sch;
         baseId = (0, resolve_1.normalizeId)(id || baseId);
-        const localRefs = resolve_1.getSchemaRefs.call(this, schema14, baseId);
-        sch = new compile_1.SchemaEnv({ schema: schema14, schemaId, meta, baseId, localRefs });
+        const localRefs = resolve_1.getSchemaRefs.call(this, schema7, baseId);
+        sch = new compile_1.SchemaEnv({ schema: schema7, schemaId, meta, baseId, localRefs });
         this._cache.set(sch.schema, sch);
         if (addSchema && !baseId.startsWith("#")) {
           if (baseId)
@@ -4296,7 +4296,7 @@ var require_core = __commonJS({
           this.refs[baseId] = sch;
         }
         if (validateSchema)
-          this.validateSchema(schema14, true);
+          this.validateSchema(schema7, true);
         return sch;
       }
       _checkUnique(id) {
@@ -4450,8 +4450,8 @@ var require_core = __commonJS({
     var $dataRef = {
       $ref: "https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#"
     };
-    function schemaOrData(schema14) {
-      return { anyOf: [schema14, $dataRef] };
+    function schemaOrData(schema7) {
+      return { anyOf: [schema7, $dataRef] };
     }
   }
 });
@@ -4751,7 +4751,7 @@ var require_pattern = __commonJS({
       $data: true,
       error: error2,
       code(cxt) {
-        const { gen, data, $data, schema: schema14, schemaCode, it } = cxt;
+        const { gen, data, $data, schema: schema7, schemaCode, it } = cxt;
         const u = it.opts.unicodeRegExp ? "u" : "";
         if ($data) {
           const { regExp } = it.opts.code;
@@ -4760,7 +4760,7 @@ var require_pattern = __commonJS({
           gen.try(() => gen.assign(valid, (0, codegen_1._)`${regExpCode}(${schemaCode}, ${u}).test(${data})`), () => gen.assign(valid, false));
           cxt.fail$data((0, codegen_1._)`!${valid}`);
         } else {
-          const regExp = (0, code_1.usePattern)(cxt, schema14);
+          const regExp = (0, code_1.usePattern)(cxt, schema7);
           cxt.fail$data((0, codegen_1._)`!${regExp}.test(${data})`);
         }
       }
@@ -4817,11 +4817,11 @@ var require_required = __commonJS({
       $data: true,
       error: error2,
       code(cxt) {
-        const { gen, schema: schema14, schemaCode, data, $data, it } = cxt;
+        const { gen, schema: schema7, schemaCode, data, $data, it } = cxt;
         const { opts } = it;
-        if (!$data && schema14.length === 0)
+        if (!$data && schema7.length === 0)
           return;
-        const useLoop = schema14.length >= opts.loopRequired;
+        const useLoop = schema7.length >= opts.loopRequired;
         if (it.allErrors)
           allErrorsMode();
         else
@@ -4829,7 +4829,7 @@ var require_required = __commonJS({
         if (opts.strictRequired) {
           const props = cxt.parentSchema.properties;
           const { definedProperties } = cxt.it;
-          for (const requiredKey of schema14) {
+          for (const requiredKey of schema7) {
             if ((props === null || props === void 0 ? void 0 : props[requiredKey]) === void 0 && !definedProperties.has(requiredKey)) {
               const schemaPath = it.schemaEnv.baseId + it.errSchemaPath;
               const msg = `required property "${requiredKey}" is not defined at "${schemaPath}" (strictRequired)`;
@@ -4841,7 +4841,7 @@ var require_required = __commonJS({
           if (useLoop || $data) {
             cxt.block$data(codegen_1.nil, loopAllRequired);
           } else {
-            for (const prop of schema14) {
+            for (const prop of schema7) {
               (0, code_1.checkReportMissingProp)(cxt, prop);
             }
           }
@@ -4853,7 +4853,7 @@ var require_required = __commonJS({
             cxt.block$data(valid, () => loopUntilMissing(missing, valid));
             cxt.ok(valid);
           } else {
-            gen.if((0, code_1.checkMissingProp)(cxt, schema14, missing));
+            gen.if((0, code_1.checkMissingProp)(cxt, schema7, missing));
             (0, code_1.reportMissingProp)(cxt, missing);
             gen.else();
           }
@@ -4940,8 +4940,8 @@ var require_uniqueItems = __commonJS({
       $data: true,
       error: error2,
       code(cxt) {
-        const { gen, data, $data, schema: schema14, parentSchema, schemaCode, it } = cxt;
-        if (!$data && !schema14)
+        const { gen, data, $data, schema: schema7, parentSchema, schemaCode, it } = cxt;
+        if (!$data && !schema7)
           return;
         const valid = gen.let("valid");
         const itemTypes = parentSchema.items ? (0, dataType_1.getSchemaTypes)(parentSchema.items) : [];
@@ -5004,11 +5004,11 @@ var require_const = __commonJS({
       $data: true,
       error: error2,
       code(cxt) {
-        const { gen, data, $data, schemaCode, schema: schema14 } = cxt;
-        if ($data || schema14 && typeof schema14 == "object") {
+        const { gen, data, $data, schemaCode, schema: schema7 } = cxt;
+        if ($data || schema7 && typeof schema7 == "object") {
           cxt.fail$data((0, codegen_1._)`!${(0, util_1.useFunc)(gen, equal_1.default)}(${data}, ${schemaCode})`);
         } else {
-          cxt.fail((0, codegen_1._)`${schema14} !== ${data}`);
+          cxt.fail((0, codegen_1._)`${schema7} !== ${data}`);
         }
       }
     };
@@ -5034,10 +5034,10 @@ var require_enum = __commonJS({
       $data: true,
       error: error2,
       code(cxt) {
-        const { gen, data, $data, schema: schema14, schemaCode, it } = cxt;
-        if (!$data && schema14.length === 0)
+        const { gen, data, $data, schema: schema7, schemaCode, it } = cxt;
+        if (!$data && schema7.length === 0)
           throw new Error("enum must have non-empty array");
-        const useLoop = schema14.length >= it.opts.loopEnum;
+        const useLoop = schema7.length >= it.opts.loopEnum;
         let eql;
         const getEql = () => eql !== null && eql !== void 0 ? eql : eql = (0, util_1.useFunc)(gen, equal_1.default);
         let valid;
@@ -5045,10 +5045,10 @@ var require_enum = __commonJS({
           valid = gen.let("valid");
           cxt.block$data(valid, loopEnum);
         } else {
-          if (!Array.isArray(schema14))
+          if (!Array.isArray(schema7))
             throw new Error("ajv implementation error");
           const vSchema = gen.const("vSchema", schemaCode);
-          valid = (0, codegen_1.or)(...schema14.map((_x, i) => equalCode(vSchema, i)));
+          valid = (0, codegen_1.or)(...schema7.map((_x, i) => equalCode(vSchema, i)));
         }
         cxt.pass(valid);
         function loopEnum() {
@@ -5056,7 +5056,7 @@ var require_enum = __commonJS({
           gen.forOf("v", schemaCode, (v) => gen.if((0, codegen_1._)`${getEql()}(${data}, ${v})`, () => gen.assign(valid, true).break()));
         }
         function equalCode(vSchema, i) {
-          const sch = schema14[i];
+          const sch = schema7[i];
           return typeof sch === "object" && sch !== null ? (0, codegen_1._)`${getEql()}(${data}, ${vSchema}[${i}])` : (0, codegen_1._)`${data} === ${sch}`;
         }
       }
@@ -5132,13 +5132,13 @@ var require_additionalItems = __commonJS({
       }
     };
     function validateAdditionalItems(cxt, items) {
-      const { gen, schema: schema14, data, keyword, it } = cxt;
+      const { gen, schema: schema7, data, keyword, it } = cxt;
       it.items = true;
       const len = gen.const("len", (0, codegen_1._)`${data}.length`);
-      if (schema14 === false) {
+      if (schema7 === false) {
         cxt.setParams({ len: items.length });
         cxt.pass((0, codegen_1._)`${len} <= ${items.length}`);
-      } else if (typeof schema14 == "object" && !(0, util_1.alwaysValidSchema)(it, schema14)) {
+      } else if (typeof schema7 == "object" && !(0, util_1.alwaysValidSchema)(it, schema7)) {
         const valid = gen.var("valid", (0, codegen_1._)`${len} <= ${items.length}`);
         gen.if((0, codegen_1.not)(valid), () => validateItems(valid));
         cxt.ok(valid);
@@ -5171,11 +5171,11 @@ var require_items = __commonJS({
       schemaType: ["object", "array", "boolean"],
       before: "uniqueItems",
       code(cxt) {
-        const { schema: schema14, it } = cxt;
-        if (Array.isArray(schema14))
-          return validateTuple(cxt, "additionalItems", schema14);
+        const { schema: schema7, it } = cxt;
+        if (Array.isArray(schema7))
+          return validateTuple(cxt, "additionalItems", schema7);
         it.items = true;
-        if ((0, util_1.alwaysValidSchema)(it, schema14))
+        if ((0, util_1.alwaysValidSchema)(it, schema7))
           return;
         cxt.ok((0, code_1.validateArray)(cxt));
       }
@@ -5250,10 +5250,10 @@ var require_items2020 = __commonJS({
       before: "uniqueItems",
       error: error2,
       code(cxt) {
-        const { schema: schema14, parentSchema, it } = cxt;
+        const { schema: schema7, parentSchema, it } = cxt;
         const { prefixItems } = parentSchema;
         it.items = true;
-        if ((0, util_1.alwaysValidSchema)(it, schema14))
+        if ((0, util_1.alwaysValidSchema)(it, schema7))
           return;
         if (prefixItems)
           (0, additionalItems_1.validateAdditionalItems)(cxt, prefixItems);
@@ -5284,7 +5284,7 @@ var require_contains = __commonJS({
       trackErrors: true,
       error: error2,
       code(cxt) {
-        const { gen, schema: schema14, parentSchema, data, it } = cxt;
+        const { gen, schema: schema7, parentSchema, data, it } = cxt;
         let min;
         let max;
         const { minContains, maxContains } = parentSchema;
@@ -5305,7 +5305,7 @@ var require_contains = __commonJS({
           cxt.fail();
           return;
         }
-        if ((0, util_1.alwaysValidSchema)(it, schema14)) {
+        if ((0, util_1.alwaysValidSchema)(it, schema7)) {
           let cond = (0, codegen_1._)`${len} >= ${min}`;
           if (max !== void 0)
             cond = (0, codegen_1._)`${cond} && ${len} <= ${max}`;
@@ -5390,14 +5390,14 @@ var require_dependencies = __commonJS({
         validateSchemaDeps(cxt, schDeps);
       }
     };
-    function splitDependencies({ schema: schema14 }) {
+    function splitDependencies({ schema: schema7 }) {
       const propertyDeps = {};
       const schemaDeps = {};
-      for (const key in schema14) {
+      for (const key in schema7) {
         if (key === "__proto__")
           continue;
-        const deps = Array.isArray(schema14[key]) ? propertyDeps : schemaDeps;
-        deps[key] = schema14[key];
+        const deps = Array.isArray(schema7[key]) ? propertyDeps : schemaDeps;
+        deps[key] = schema7[key];
       }
       return [propertyDeps, schemaDeps];
     }
@@ -5470,8 +5470,8 @@ var require_propertyNames = __commonJS({
       schemaType: ["object", "boolean"],
       error: error2,
       code(cxt) {
-        const { gen, schema: schema14, data, it } = cxt;
-        if ((0, util_1.alwaysValidSchema)(it, schema14))
+        const { gen, schema: schema7, data, it } = cxt;
+        if ((0, util_1.alwaysValidSchema)(it, schema7))
           return;
         const valid = gen.name("valid");
         gen.forIn("key", data, (key) => {
@@ -5517,12 +5517,12 @@ var require_additionalProperties = __commonJS({
       trackErrors: true,
       error: error2,
       code(cxt) {
-        const { gen, schema: schema14, parentSchema, data, errsCount, it } = cxt;
+        const { gen, schema: schema7, parentSchema, data, errsCount, it } = cxt;
         if (!errsCount)
           throw new Error("ajv implementation error");
         const { allErrors, opts } = it;
         it.props = true;
-        if (opts.removeAdditional !== "all" && (0, util_1.alwaysValidSchema)(it, schema14))
+        if (opts.removeAdditional !== "all" && (0, util_1.alwaysValidSchema)(it, schema7))
           return;
         const props = (0, code_1.allSchemaProperties)(parentSchema.properties);
         const patProps = (0, code_1.allSchemaProperties)(parentSchema.patternProperties);
@@ -5555,18 +5555,18 @@ var require_additionalProperties = __commonJS({
           gen.code((0, codegen_1._)`delete ${data}[${key}]`);
         }
         function additionalPropertyCode(key) {
-          if (opts.removeAdditional === "all" || opts.removeAdditional && schema14 === false) {
+          if (opts.removeAdditional === "all" || opts.removeAdditional && schema7 === false) {
             deleteAdditional(key);
             return;
           }
-          if (schema14 === false) {
+          if (schema7 === false) {
             cxt.setParams({ additionalProperty: key });
             cxt.error();
             if (!allErrors)
               gen.break();
             return;
           }
-          if (typeof schema14 == "object" && !(0, util_1.alwaysValidSchema)(it, schema14)) {
+          if (typeof schema7 == "object" && !(0, util_1.alwaysValidSchema)(it, schema7)) {
             const valid = gen.name("valid");
             if (opts.removeAdditional === "failing") {
               applyAdditionalSchema(key, valid, false);
@@ -5616,18 +5616,18 @@ var require_properties = __commonJS({
       type: "object",
       schemaType: "object",
       code(cxt) {
-        const { gen, schema: schema14, parentSchema, data, it } = cxt;
+        const { gen, schema: schema7, parentSchema, data, it } = cxt;
         if (it.opts.removeAdditional === "all" && parentSchema.additionalProperties === void 0) {
           additionalProperties_1.default.code(new validate_1.KeywordCxt(it, additionalProperties_1.default, "additionalProperties"));
         }
-        const allProps = (0, code_1.allSchemaProperties)(schema14);
+        const allProps = (0, code_1.allSchemaProperties)(schema7);
         for (const prop of allProps) {
           it.definedProperties.add(prop);
         }
         if (it.opts.unevaluated && allProps.length && it.props !== true) {
           it.props = util_1.mergeEvaluated.props(gen, (0, util_1.toHash)(allProps), it.props);
         }
-        const properties = allProps.filter((p) => !(0, util_1.alwaysValidSchema)(it, schema14[p]));
+        const properties = allProps.filter((p) => !(0, util_1.alwaysValidSchema)(it, schema7[p]));
         if (properties.length === 0)
           return;
         const valid = gen.name("valid");
@@ -5645,7 +5645,7 @@ var require_properties = __commonJS({
           cxt.ok(valid);
         }
         function hasDefault(prop) {
-          return it.opts.useDefaults && !it.compositeRule && schema14[prop].default !== void 0;
+          return it.opts.useDefaults && !it.compositeRule && schema7[prop].default !== void 0;
         }
         function applyPropertySchema(prop) {
           cxt.subschema({
@@ -5674,10 +5674,10 @@ var require_patternProperties = __commonJS({
       type: "object",
       schemaType: "object",
       code(cxt) {
-        const { gen, schema: schema14, data, parentSchema, it } = cxt;
+        const { gen, schema: schema7, data, parentSchema, it } = cxt;
         const { opts } = it;
-        const patterns = (0, code_1.allSchemaProperties)(schema14);
-        const alwaysValidPatterns = patterns.filter((p) => (0, util_1.alwaysValidSchema)(it, schema14[p]));
+        const patterns = (0, code_1.allSchemaProperties)(schema7);
+        const alwaysValidPatterns = patterns.filter((p) => (0, util_1.alwaysValidSchema)(it, schema7[p]));
         if (patterns.length === 0 || alwaysValidPatterns.length === patterns.length && (!it.opts.unevaluated || it.props === true)) {
           return;
         }
@@ -5745,8 +5745,8 @@ var require_not = __commonJS({
       schemaType: ["object", "boolean"],
       trackErrors: true,
       code(cxt) {
-        const { gen, schema: schema14, it } = cxt;
-        if ((0, util_1.alwaysValidSchema)(it, schema14)) {
+        const { gen, schema: schema7, it } = cxt;
+        if ((0, util_1.alwaysValidSchema)(it, schema7)) {
           cxt.fail();
           return;
         }
@@ -5799,12 +5799,12 @@ var require_oneOf = __commonJS({
       trackErrors: true,
       error: error2,
       code(cxt) {
-        const { gen, schema: schema14, parentSchema, it } = cxt;
-        if (!Array.isArray(schema14))
+        const { gen, schema: schema7, parentSchema, it } = cxt;
+        if (!Array.isArray(schema7))
           throw new Error("ajv implementation error");
         if (it.opts.discriminator && parentSchema.discriminator)
           return;
-        const schArr = schema14;
+        const schArr = schema7;
         const valid = gen.let("valid", false);
         const passing = gen.let("passing", null);
         const schValid = gen.name("_valid");
@@ -5850,11 +5850,11 @@ var require_allOf = __commonJS({
       keyword: "allOf",
       schemaType: "array",
       code(cxt) {
-        const { gen, schema: schema14, it } = cxt;
-        if (!Array.isArray(schema14))
+        const { gen, schema: schema7, it } = cxt;
+        if (!Array.isArray(schema7))
           throw new Error("ajv implementation error");
         const valid = gen.name("valid");
-        schema14.forEach((sch, i) => {
+        schema7.forEach((sch, i) => {
           if ((0, util_1.alwaysValidSchema)(it, sch))
             return;
           const schCxt = cxt.subschema({ keyword: "allOf", schemaProp: i }, valid);
@@ -5929,8 +5929,8 @@ var require_if = __commonJS({
       }
     };
     function hasSchema(it, keyword) {
-      const schema14 = it.schema[keyword];
-      return schema14 !== void 0 && !(0, util_1.alwaysValidSchema)(it, schema14);
+      const schema7 = it.schema[keyword];
+      return schema7 !== void 0 && !(0, util_1.alwaysValidSchema)(it, schema7);
     }
     exports.default = def;
   }
@@ -6019,7 +6019,7 @@ var require_format = __commonJS({
       $data: true,
       error: error2,
       code(cxt, ruleType) {
-        const { gen, data, $data, schema: schema14, schemaCode, it } = cxt;
+        const { gen, data, $data, schema: schema7, schemaCode, it } = cxt;
         const { opts, errSchemaPath, schemaEnv, self } = it;
         if (!opts.validateFormats)
           return;
@@ -6049,7 +6049,7 @@ var require_format = __commonJS({
           }
         }
         function validateFormat() {
-          const formatDef = self.formats[schema14];
+          const formatDef = self.formats[schema7];
           if (!formatDef) {
             unknownFormat();
             return;
@@ -6066,12 +6066,12 @@ var require_format = __commonJS({
             }
             throw new Error(unknownMsg());
             function unknownMsg() {
-              return `unknown format "${schema14}" ignored in schema at path "${errSchemaPath}"`;
+              return `unknown format "${schema7}" ignored in schema at path "${errSchemaPath}"`;
             }
           }
           function getFormat(fmtDef) {
-            const code = fmtDef instanceof RegExp ? (0, codegen_1.regexpCode)(fmtDef) : opts.code.formats ? (0, codegen_1._)`${opts.code.formats}${(0, codegen_1.getProperty)(schema14)}` : void 0;
-            const fmt = gen.scopeValue("formats", { key: schema14, ref: fmtDef, code });
+            const code = fmtDef instanceof RegExp ? (0, codegen_1.regexpCode)(fmtDef) : opts.code.formats ? (0, codegen_1._)`${opts.code.formats}${(0, codegen_1.getProperty)(schema7)}` : void 0;
+            const fmt = gen.scopeValue("formats", { key: schema7, ref: fmtDef, code });
             if (typeof fmtDef == "object" && !(fmtDef instanceof RegExp)) {
               return [fmtDef.type || "string", fmtDef.validate, (0, codegen_1._)`${fmt}.validate`];
             }
@@ -6182,15 +6182,15 @@ var require_discriminator = __commonJS({
       schemaType: "object",
       error: error2,
       code(cxt) {
-        const { gen, data, schema: schema14, parentSchema, it } = cxt;
+        const { gen, data, schema: schema7, parentSchema, it } = cxt;
         const { oneOf } = parentSchema;
         if (!it.opts.discriminator) {
           throw new Error("discriminator: requires discriminator option");
         }
-        const tagName = schema14.propertyName;
+        const tagName = schema7.propertyName;
         if (typeof tagName != "string")
           throw new Error("discriminator: requires propertyName");
-        if (schema14.mapping)
+        if (schema7.mapping)
           throw new Error("discriminator: mapping is not supported");
         if (!oneOf)
           throw new Error("discriminator: requires oneOf keyword");
@@ -7446,12 +7446,12 @@ var handleResult = (ctx, result) => {
 function processCreateParams(params) {
   if (!params)
     return {};
-  const { errorMap: errorMap2, invalid_type_error, required_error, description: description14 } = params;
+  const { errorMap: errorMap2, invalid_type_error, required_error, description: description7 } = params;
   if (errorMap2 && (invalid_type_error || required_error)) {
     throw new Error(`Can't use "invalid_type_error" or "required_error" in conjunction with custom error map.`);
   }
   if (errorMap2)
-    return { errorMap: errorMap2, description: description14 };
+    return { errorMap: errorMap2, description: description7 };
   const customMap = (iss, ctx) => {
     const { message } = params;
     if (iss.code === "invalid_enum_value") {
@@ -7464,7 +7464,7 @@ function processCreateParams(params) {
       return { message: ctx.defaultError };
     return { message: message ?? invalid_type_error ?? ctx.defaultError };
   };
-  return { errorMap: customMap, description: description14 };
+  return { errorMap: customMap, description: description7 };
 }
 var ZodType = class {
   get description() {
@@ -7729,11 +7729,11 @@ var ZodType = class {
       typeName: ZodFirstPartyTypeKind.ZodCatch
     });
   }
-  describe(description14) {
+  describe(description7) {
     const This = this.constructor;
     return new This({
       ...this._def,
-      description: description14
+      description: description7
     });
   }
   pipe(target) {
@@ -9143,9 +9143,9 @@ var ZodArray = class _ZodArray extends ZodType {
     return this.min(1, message);
   }
 };
-ZodArray.create = (schema14, params) => {
+ZodArray.create = (schema7, params) => {
   return new ZodArray({
-    type: schema14,
+    type: schema7,
     minLength: null,
     maxLength: null,
     exactLength: null,
@@ -9153,30 +9153,30 @@ ZodArray.create = (schema14, params) => {
     ...processCreateParams(params)
   });
 };
-function deepPartialify(schema14) {
-  if (schema14 instanceof ZodObject) {
+function deepPartialify(schema7) {
+  if (schema7 instanceof ZodObject) {
     const newShape = {};
-    for (const key in schema14.shape) {
-      const fieldSchema = schema14.shape[key];
+    for (const key in schema7.shape) {
+      const fieldSchema = schema7.shape[key];
       newShape[key] = ZodOptional.create(deepPartialify(fieldSchema));
     }
     return new ZodObject({
-      ...schema14._def,
+      ...schema7._def,
       shape: () => newShape
     });
-  } else if (schema14 instanceof ZodArray) {
+  } else if (schema7 instanceof ZodArray) {
     return new ZodArray({
-      ...schema14._def,
-      type: deepPartialify(schema14.element)
+      ...schema7._def,
+      type: deepPartialify(schema7.element)
     });
-  } else if (schema14 instanceof ZodOptional) {
-    return ZodOptional.create(deepPartialify(schema14.unwrap()));
-  } else if (schema14 instanceof ZodNullable) {
-    return ZodNullable.create(deepPartialify(schema14.unwrap()));
-  } else if (schema14 instanceof ZodTuple) {
-    return ZodTuple.create(schema14.items.map((item) => deepPartialify(item)));
+  } else if (schema7 instanceof ZodOptional) {
+    return ZodOptional.create(deepPartialify(schema7.unwrap()));
+  } else if (schema7 instanceof ZodNullable) {
+    return ZodNullable.create(deepPartialify(schema7.unwrap()));
+  } else if (schema7 instanceof ZodTuple) {
+    return ZodTuple.create(schema7.items.map((item) => deepPartialify(item)));
   } else {
-    return schema14;
+    return schema7;
   }
 }
 var ZodObject = class _ZodObject extends ZodType {
@@ -9392,8 +9392,8 @@ var ZodObject = class _ZodObject extends ZodType {
   //   }) as any;
   //   return merged;
   // }
-  setKey(key, schema14) {
-    return this.augment({ [key]: schema14 });
+  setKey(key, schema7) {
+    return this.augment({ [key]: schema7 });
   }
   // merge<Incoming extends AnyZodObject>(
   //   merging: Incoming
@@ -9839,10 +9839,10 @@ var ZodTuple = class _ZodTuple extends ZodType {
       status.dirty();
     }
     const items = [...ctx.data].map((item, itemIndex) => {
-      const schema14 = this._def.items[itemIndex] || this._def.rest;
-      if (!schema14)
+      const schema7 = this._def.items[itemIndex] || this._def.rest;
+      if (!schema7)
         return null;
-      return schema14._parse(new ParseInputLazyPath(ctx, item, ctx.path, itemIndex));
+      return schema7._parse(new ParseInputLazyPath(ctx, item, ctx.path, itemIndex));
     }).filter((x) => !!x);
     if (ctx.common.async) {
       return Promise.all(items).then((results) => {
@@ -10356,9 +10356,9 @@ var ZodPromise = class extends ZodType {
     }));
   }
 };
-ZodPromise.create = (schema14, params) => {
+ZodPromise.create = (schema7, params) => {
   return new ZodPromise({
-    type: schema14,
+    type: schema7,
     typeName: ZodFirstPartyTypeKind.ZodPromise,
     ...processCreateParams(params)
   });
@@ -10486,17 +10486,17 @@ var ZodEffects = class extends ZodType {
     util.assertNever(effect);
   }
 };
-ZodEffects.create = (schema14, effect, params) => {
+ZodEffects.create = (schema7, effect, params) => {
   return new ZodEffects({
-    schema: schema14,
+    schema: schema7,
     typeName: ZodFirstPartyTypeKind.ZodEffects,
     effect,
     ...processCreateParams(params)
   });
 };
-ZodEffects.createWithPreprocess = (preprocess2, schema14, params) => {
+ZodEffects.createWithPreprocess = (preprocess2, schema7, params) => {
   return new ZodEffects({
-    schema: schema14,
+    schema: schema7,
     effect: { type: "preprocess", transform: preprocess2 },
     typeName: ZodFirstPartyTypeKind.ZodEffects,
     ...processCreateParams(params)
@@ -11242,9 +11242,9 @@ var BIGINT_FORMAT_RANGES = {
   int64: [/* @__PURE__ */ BigInt("-9223372036854775808"), /* @__PURE__ */ BigInt("9223372036854775807")],
   uint64: [/* @__PURE__ */ BigInt(0), /* @__PURE__ */ BigInt("18446744073709551615")]
 };
-function pick(schema14, mask) {
+function pick(schema7, mask) {
   const newShape = {};
-  const currDef = schema14._zod.def;
+  const currDef = schema7._zod.def;
   for (const key in mask) {
     if (!(key in currDef.shape)) {
       throw new Error(`Unrecognized key: "${key}"`);
@@ -11253,15 +11253,15 @@ function pick(schema14, mask) {
       continue;
     newShape[key] = currDef.shape[key];
   }
-  return clone(schema14, {
-    ...schema14._zod.def,
+  return clone(schema7, {
+    ...schema7._zod.def,
     shape: newShape,
     checks: []
   });
 }
-function omit(schema14, mask) {
-  const newShape = { ...schema14._zod.def.shape };
-  const currDef = schema14._zod.def;
+function omit(schema7, mask) {
+  const newShape = { ...schema7._zod.def.shape };
+  const currDef = schema7._zod.def;
   for (const key in mask) {
     if (!(key in currDef.shape)) {
       throw new Error(`Unrecognized key: "${key}"`);
@@ -11270,27 +11270,27 @@ function omit(schema14, mask) {
       continue;
     delete newShape[key];
   }
-  return clone(schema14, {
-    ...schema14._zod.def,
+  return clone(schema7, {
+    ...schema7._zod.def,
     shape: newShape,
     checks: []
   });
 }
-function extend(schema14, shape) {
+function extend(schema7, shape) {
   if (!isPlainObject(shape)) {
     throw new Error("Invalid input to extend: expected a plain object");
   }
   const def = {
-    ...schema14._zod.def,
+    ...schema7._zod.def,
     get shape() {
-      const _shape = { ...schema14._zod.def.shape, ...shape };
+      const _shape = { ...schema7._zod.def.shape, ...shape };
       assignProp(this, "shape", _shape);
       return _shape;
     },
     checks: []
     // delete existing checks
   };
-  return clone(schema14, def);
+  return clone(schema7, def);
 }
 function merge(a, b) {
   return clone(a, {
@@ -11305,8 +11305,8 @@ function merge(a, b) {
     // delete existing checks
   });
 }
-function partial(Class2, schema14, mask) {
-  const oldShape = schema14._zod.def.shape;
+function partial(Class2, schema7, mask) {
+  const oldShape = schema7._zod.def.shape;
   const shape = { ...oldShape };
   if (mask) {
     for (const key in mask) {
@@ -11328,14 +11328,14 @@ function partial(Class2, schema14, mask) {
       }) : oldShape[key];
     }
   }
-  return clone(schema14, {
-    ...schema14._zod.def,
+  return clone(schema7, {
+    ...schema7._zod.def,
     shape,
     checks: []
   });
 }
-function required(Class2, schema14, mask) {
-  const oldShape = schema14._zod.def.shape;
+function required(Class2, schema7, mask) {
+  const oldShape = schema7._zod.def.shape;
   const shape = { ...oldShape };
   if (mask) {
     for (const key in mask) {
@@ -11357,8 +11357,8 @@ function required(Class2, schema14, mask) {
       });
     }
   }
-  return clone(schema14, {
-    ...schema14._zod.def,
+  return clone(schema7, {
+    ...schema7._zod.def,
     shape,
     // optional: [],
     checks: []
@@ -11509,9 +11509,9 @@ function formatError(error2, _mapper) {
 }
 
 // node_modules/zod/v4/core/parse.js
-var _parse = (_Err) => (schema14, value, _ctx, _params) => {
+var _parse = (_Err) => (schema7, value, _ctx, _params) => {
   const ctx = _ctx ? Object.assign(_ctx, { async: false }) : { async: false };
-  const result = schema14._zod.run({ value, issues: [] }, ctx);
+  const result = schema7._zod.run({ value, issues: [] }, ctx);
   if (result instanceof Promise) {
     throw new $ZodAsyncError();
   }
@@ -11523,9 +11523,9 @@ var _parse = (_Err) => (schema14, value, _ctx, _params) => {
   return result.value;
 };
 var parse = /* @__PURE__ */ _parse($ZodRealError);
-var _parseAsync = (_Err) => async (schema14, value, _ctx, params) => {
+var _parseAsync = (_Err) => async (schema7, value, _ctx, params) => {
   const ctx = _ctx ? Object.assign(_ctx, { async: true }) : { async: true };
-  let result = schema14._zod.run({ value, issues: [] }, ctx);
+  let result = schema7._zod.run({ value, issues: [] }, ctx);
   if (result instanceof Promise)
     result = await result;
   if (result.issues.length) {
@@ -11536,9 +11536,9 @@ var _parseAsync = (_Err) => async (schema14, value, _ctx, params) => {
   return result.value;
 };
 var parseAsync = /* @__PURE__ */ _parseAsync($ZodRealError);
-var _safeParse = (_Err) => (schema14, value, _ctx) => {
+var _safeParse = (_Err) => (schema7, value, _ctx) => {
   const ctx = _ctx ? { ..._ctx, async: false } : { async: false };
-  const result = schema14._zod.run({ value, issues: [] }, ctx);
+  const result = schema7._zod.run({ value, issues: [] }, ctx);
   if (result instanceof Promise) {
     throw new $ZodAsyncError();
   }
@@ -11548,9 +11548,9 @@ var _safeParse = (_Err) => (schema14, value, _ctx) => {
   } : { success: true, data: result.value };
 };
 var safeParse = /* @__PURE__ */ _safeParse($ZodRealError);
-var _safeParseAsync = (_Err) => async (schema14, value, _ctx) => {
+var _safeParseAsync = (_Err) => async (schema7, value, _ctx) => {
   const ctx = _ctx ? Object.assign(_ctx, { async: true }) : { async: true };
-  let result = schema14._zod.run({ value, issues: [] }, ctx);
+  let result = schema7._zod.run({ value, issues: [] }, ctx);
   if (result instanceof Promise)
     result = await result;
   return result.issues.length ? {
@@ -13410,14 +13410,14 @@ var $ZodRegistry = class {
     this._map = /* @__PURE__ */ new Map();
     this._idmap = /* @__PURE__ */ new Map();
   }
-  add(schema14, ..._meta) {
+  add(schema7, ..._meta) {
     const meta = _meta[0];
-    this._map.set(schema14, meta);
+    this._map.set(schema7, meta);
     if (meta && typeof meta === "object" && "id" in meta) {
       if (this._idmap.has(meta.id)) {
         throw new Error(`ID ${meta.id} already exists in the registry`);
       }
-      this._idmap.set(meta.id, schema14);
+      this._idmap.set(meta.id, schema7);
     }
     return this;
   }
@@ -13426,25 +13426,25 @@ var $ZodRegistry = class {
     this._idmap = /* @__PURE__ */ new Map();
     return this;
   }
-  remove(schema14) {
-    const meta = this._map.get(schema14);
+  remove(schema7) {
+    const meta = this._map.get(schema7);
     if (meta && typeof meta === "object" && "id" in meta) {
       this._idmap.delete(meta.id);
     }
-    this._map.delete(schema14);
+    this._map.delete(schema7);
     return this;
   }
-  get(schema14) {
-    const p = schema14._zod.parent;
+  get(schema7) {
+    const p = schema7._zod.parent;
     if (p) {
       const pm = { ...this.get(p) ?? {} };
       delete pm.id;
-      return { ...pm, ...this._map.get(schema14) };
+      return { ...pm, ...this._map.get(schema7) };
     }
-    return this._map.get(schema14);
+    return this._map.get(schema7);
   }
-  has(schema14) {
-    return this._map.has(schema14);
+  has(schema7) {
+    return this._map.has(schema7);
   }
 };
 function registry() {
@@ -13873,22 +13873,22 @@ function _array(Class2, element, params) {
 function _custom(Class2, fn, _params) {
   const norm = normalizeParams(_params);
   norm.abort ?? (norm.abort = true);
-  const schema14 = new Class2({
+  const schema7 = new Class2({
     type: "custom",
     check: "custom",
     fn,
     ...norm
   });
-  return schema14;
+  return schema7;
 }
 function _refine(Class2, fn, _params) {
-  const schema14 = new Class2({
+  const schema7 = new Class2({
     type: "custom",
     check: "custom",
     fn,
     ...normalizeParams(_params)
   });
-  return schema14;
+  return schema7;
 }
 
 // node_modules/zod/v4/core/to-json-schema.js
@@ -13903,9 +13903,9 @@ var JSONSchemaGenerator = class {
     this.io = params?.io ?? "output";
     this.seen = /* @__PURE__ */ new Map();
   }
-  process(schema14, _params = { path: [], schemaPath: [] }) {
+  process(schema7, _params = { path: [], schemaPath: [] }) {
     var _a;
-    const def = schema14._zod.def;
+    const def = schema7._zod.def;
     const formatMap = {
       guid: "uuid",
       url: "uri",
@@ -13914,27 +13914,27 @@ var JSONSchemaGenerator = class {
       regex: ""
       // do not set
     };
-    const seen = this.seen.get(schema14);
+    const seen = this.seen.get(schema7);
     if (seen) {
       seen.count++;
-      const isCycle = _params.schemaPath.includes(schema14);
+      const isCycle = _params.schemaPath.includes(schema7);
       if (isCycle) {
         seen.cycle = _params.path;
       }
       return seen.schema;
     }
     const result = { schema: {}, count: 1, cycle: void 0, path: _params.path };
-    this.seen.set(schema14, result);
-    const overrideSchema = schema14._zod.toJSONSchema?.();
+    this.seen.set(schema7, result);
+    const overrideSchema = schema7._zod.toJSONSchema?.();
     if (overrideSchema) {
       result.schema = overrideSchema;
     } else {
       const params = {
         ..._params,
-        schemaPath: [..._params.schemaPath, schema14],
+        schemaPath: [..._params.schemaPath, schema7],
         path: _params.path
       };
-      const parent = schema14._zod.parent;
+      const parent = schema7._zod.parent;
       if (parent) {
         result.ref = parent;
         this.process(parent, params);
@@ -13945,7 +13945,7 @@ var JSONSchemaGenerator = class {
           case "string": {
             const json = _json;
             json.type = "string";
-            const { minimum, maximum, format, patterns, contentEncoding } = schema14._zod.bag;
+            const { minimum, maximum, format, patterns, contentEncoding } = schema7._zod.bag;
             if (typeof minimum === "number")
               json.minLength = minimum;
             if (typeof maximum === "number")
@@ -13974,7 +13974,7 @@ var JSONSchemaGenerator = class {
           }
           case "number": {
             const json = _json;
-            const { minimum, maximum, format, multipleOf, exclusiveMaximum, exclusiveMinimum } = schema14._zod.bag;
+            const { minimum, maximum, format, multipleOf, exclusiveMaximum, exclusiveMinimum } = schema7._zod.bag;
             if (typeof format === "string" && format.includes("int"))
               json.type = "integer";
             else
@@ -14056,7 +14056,7 @@ var JSONSchemaGenerator = class {
           }
           case "array": {
             const json = _json;
-            const { minimum, maximum } = schema14._zod.bag;
+            const { minimum, maximum } = schema7._zod.bag;
             if (typeof minimum === "number")
               json.minItems = minimum;
             if (typeof maximum === "number")
@@ -14153,7 +14153,7 @@ var JSONSchemaGenerator = class {
                 path: [...params.path, "items"]
               });
             }
-            const { minimum, maximum } = schema14._zod.bag;
+            const { minimum, maximum } = schema7._zod.bag;
             if (typeof minimum === "number")
               json.minItems = minimum;
             if (typeof maximum === "number")
@@ -14236,7 +14236,7 @@ var JSONSchemaGenerator = class {
               format: "binary",
               contentEncoding: "binary"
             };
-            const { minimum, maximum, mime } = schema14._zod.bag;
+            const { minimum, maximum, mime } = schema7._zod.bag;
             if (minimum !== void 0)
               file.minLength = minimum;
             if (maximum !== void 0)
@@ -14310,7 +14310,7 @@ var JSONSchemaGenerator = class {
           }
           case "template_literal": {
             const json = _json;
-            const pattern = schema14._zod.pattern;
+            const pattern = schema7._zod.pattern;
             if (!pattern)
               throw new Error("Pattern not found in template literal");
             json.type = "string";
@@ -14340,7 +14340,7 @@ var JSONSchemaGenerator = class {
             break;
           }
           case "lazy": {
-            const innerType = schema14._zod.innerType;
+            const innerType = schema7._zod.innerType;
             this.process(innerType, params);
             result.ref = innerType;
             break;
@@ -14357,20 +14357,20 @@ var JSONSchemaGenerator = class {
         }
       }
     }
-    const meta = this.metadataRegistry.get(schema14);
+    const meta = this.metadataRegistry.get(schema7);
     if (meta)
       Object.assign(result.schema, meta);
-    if (this.io === "input" && isTransforming(schema14)) {
+    if (this.io === "input" && isTransforming(schema7)) {
       delete result.schema.examples;
       delete result.schema.default;
     }
     if (this.io === "input" && result.schema._prefault)
       (_a = result.schema).default ?? (_a.default = result.schema._prefault);
     delete result.schema._prefault;
-    const _result = this.seen.get(schema14);
+    const _result = this.seen.get(schema7);
     return _result.schema;
   }
-  emit(schema14, _params) {
+  emit(schema7, _params) {
     const params = {
       cycles: _params?.cycles ?? "ref",
       reused: _params?.reused ?? "inline",
@@ -14378,7 +14378,7 @@ var JSONSchemaGenerator = class {
       // uri: _params?.uri ?? ((id) => `${id}`),
       external: _params?.external ?? void 0
     };
-    const root = this.seen.get(schema14);
+    const root = this.seen.get(schema7);
     if (!root)
       throw new Error("Unprocessed schema. This is a bug in Zod.");
     const makeURI = (entry) => {
@@ -14410,11 +14410,11 @@ var JSONSchemaGenerator = class {
       seen.def = { ...seen.schema };
       if (defId)
         seen.defId = defId;
-      const schema15 = seen.schema;
-      for (const key in schema15) {
-        delete schema15[key];
+      const schema8 = seen.schema;
+      for (const key in schema8) {
+        delete schema8[key];
       }
-      schema15.$ref = ref;
+      schema8.$ref = ref;
     };
     if (params.cycles === "throw") {
       for (const entry of this.seen.entries()) {
@@ -14428,13 +14428,13 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
     }
     for (const entry of this.seen.entries()) {
       const seen = entry[1];
-      if (schema14 === entry[0]) {
+      if (schema7 === entry[0]) {
         extractToDef(entry);
         continue;
       }
       if (params.external) {
         const ext = params.external.registry.get(entry[0])?.id;
-        if (schema14 !== entry[0] && ext) {
+        if (schema7 !== entry[0] && ext) {
           extractToDef(entry);
           continue;
         }
@@ -14457,8 +14457,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
     }
     const flattenRef = (zodSchema, params2) => {
       const seen = this.seen.get(zodSchema);
-      const schema15 = seen.def ?? seen.schema;
-      const _cached = { ...schema15 };
+      const schema8 = seen.def ?? seen.schema;
+      const _cached = { ...schema8 };
       if (seen.ref === null) {
         return;
       }
@@ -14468,17 +14468,17 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
         flattenRef(ref, params2);
         const refSchema = this.seen.get(ref).schema;
         if (refSchema.$ref && params2.target === "draft-7") {
-          schema15.allOf = schema15.allOf ?? [];
-          schema15.allOf.push(refSchema);
+          schema8.allOf = schema8.allOf ?? [];
+          schema8.allOf.push(refSchema);
         } else {
-          Object.assign(schema15, refSchema);
-          Object.assign(schema15, _cached);
+          Object.assign(schema8, refSchema);
+          Object.assign(schema8, _cached);
         }
       }
       if (!seen.isParent)
         this.override({
           zodSchema,
-          jsonSchema: schema15,
+          jsonSchema: schema8,
           path: seen.path ?? []
         });
     };
@@ -14494,7 +14494,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
       console.warn(`Invalid target: ${this.target}`);
     }
     if (params.external?.uri) {
-      const id = params.external.registry.get(schema14)?.id;
+      const id = params.external.registry.get(schema7)?.id;
       if (!id)
         throw new Error("Schema is missing an `id` property");
       result.$id = params.external.uri(id);
@@ -14529,8 +14529,8 @@ function toJSONSchema(input, _params) {
     const gen2 = new JSONSchemaGenerator(_params);
     const defs = {};
     for (const entry of input._idmap.entries()) {
-      const [_, schema14] = entry;
-      gen2.process(schema14);
+      const [_, schema7] = entry;
+      gen2.process(schema7);
     }
     const schemas = {};
     const external = {
@@ -14539,8 +14539,8 @@ function toJSONSchema(input, _params) {
       defs
     };
     for (const entry of input._idmap.entries()) {
-      const [key, schema14] = entry;
-      schemas[key] = gen2.emit(schema14, {
+      const [key, schema7] = entry;
+      schemas[key] = gen2.emit(schema7, {
         ..._params,
         external
       });
@@ -14562,8 +14562,8 @@ function isTransforming(_schema, _ctx) {
   if (ctx.seen.has(_schema))
     return false;
   ctx.seen.add(_schema);
-  const schema14 = _schema;
-  const def = schema14._zod.def;
+  const schema7 = _schema;
+  const def = schema7._zod.def;
   switch (def.type) {
     case "string":
     case "number":
@@ -14704,8 +14704,8 @@ function object(shape, params) {
 
 // node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
 function isZ4Schema(s) {
-  const schema14 = s;
-  return !!schema14._zod;
+  const schema7 = s;
+  return !!schema7._zod;
 }
 function objectFromShape(shape) {
   const values = Object.values(shape);
@@ -14719,33 +14719,33 @@ function objectFromShape(shape) {
     return objectType(shape);
   throw new Error("Mixed Zod versions detected in object shape.");
 }
-function safeParse2(schema14, data) {
-  if (isZ4Schema(schema14)) {
-    const result2 = safeParse(schema14, data);
+function safeParse2(schema7, data) {
+  if (isZ4Schema(schema7)) {
+    const result2 = safeParse(schema7, data);
     return result2;
   }
-  const v3Schema = schema14;
+  const v3Schema = schema7;
   const result = v3Schema.safeParse(data);
   return result;
 }
-async function safeParseAsync2(schema14, data) {
-  if (isZ4Schema(schema14)) {
-    const result2 = await safeParseAsync(schema14, data);
+async function safeParseAsync2(schema7, data) {
+  if (isZ4Schema(schema7)) {
+    const result2 = await safeParseAsync(schema7, data);
     return result2;
   }
-  const v3Schema = schema14;
+  const v3Schema = schema7;
   const result = await v3Schema.safeParseAsync(data);
   return result;
 }
-function getObjectShape(schema14) {
-  if (!schema14)
+function getObjectShape(schema7) {
+  if (!schema7)
     return void 0;
   let rawShape;
-  if (isZ4Schema(schema14)) {
-    const v4Schema = schema14;
+  if (isZ4Schema(schema7)) {
+    const v4Schema = schema7;
     rawShape = v4Schema._zod?.def?.shape;
   } else {
-    const v3Schema = schema14;
+    const v3Schema = schema7;
     rawShape = v3Schema.shape;
   }
   if (!rawShape)
@@ -14759,29 +14759,29 @@ function getObjectShape(schema14) {
   }
   return rawShape;
 }
-function normalizeObjectSchema(schema14) {
-  if (!schema14)
+function normalizeObjectSchema(schema7) {
+  if (!schema7)
     return void 0;
-  if (typeof schema14 === "object") {
-    const asV3 = schema14;
-    const asV4 = schema14;
+  if (typeof schema7 === "object") {
+    const asV3 = schema7;
+    const asV4 = schema7;
     if (!asV3._def && !asV4._zod) {
-      const values = Object.values(schema14);
+      const values = Object.values(schema7);
       if (values.length > 0 && values.every((v) => typeof v === "object" && v !== null && (v._def !== void 0 || v._zod !== void 0 || typeof v.parse === "function"))) {
-        return objectFromShape(schema14);
+        return objectFromShape(schema7);
       }
     }
   }
-  if (isZ4Schema(schema14)) {
-    const v4Schema = schema14;
+  if (isZ4Schema(schema7)) {
+    const v4Schema = schema7;
     const def = v4Schema._zod?.def;
     if (def && (def.type === "object" || def.shape !== void 0)) {
-      return schema14;
+      return schema7;
     }
   } else {
-    const v3Schema = schema14;
+    const v3Schema = schema7;
     if (v3Schema.shape !== void 0) {
-      return schema14;
+      return schema7;
     }
   }
   return void 0;
@@ -14805,23 +14805,23 @@ function getParseErrorMessage(error2) {
   }
   return String(error2);
 }
-function getSchemaDescription(schema14) {
-  return schema14.description;
+function getSchemaDescription(schema7) {
+  return schema7.description;
 }
-function isSchemaOptional(schema14) {
-  if (isZ4Schema(schema14)) {
-    const v4Schema = schema14;
+function isSchemaOptional(schema7) {
+  if (isZ4Schema(schema7)) {
+    const v4Schema = schema7;
     return v4Schema._zod?.def?.type === "optional";
   }
-  const v3Schema = schema14;
-  if (typeof schema14.isOptional === "function") {
-    return schema14.isOptional();
+  const v3Schema = schema7;
+  if (typeof schema7.isOptional === "function") {
+    return schema7.isOptional();
   }
   return v3Schema._def?.typeName === "ZodOptional";
 }
-function getLiteralValue(schema14) {
-  if (isZ4Schema(schema14)) {
-    const v4Schema = schema14;
+function getLiteralValue(schema7) {
+  if (isZ4Schema(schema7)) {
+    const v4Schema = schema7;
     const def2 = v4Schema._zod?.def;
     if (def2) {
       if (def2.value !== void 0)
@@ -14831,7 +14831,7 @@ function getLiteralValue(schema14) {
       }
     }
   }
-  const v3Schema = schema14;
+  const v3Schema = schema7;
   const def = v3Schema._def;
   if (def) {
     if (def.value !== void 0)
@@ -14840,7 +14840,7 @@ function getLiteralValue(schema14) {
       return def.values[0];
     }
   }
-  const directValue = schema14.value;
+  const directValue = schema7.value;
   if (directValue !== void 0)
     return directValue;
   return void 0;
@@ -14971,9 +14971,9 @@ var ZodType2 = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
   inst.catch = (params) => _catch(inst, params);
   inst.pipe = (target) => pipe(inst, target);
   inst.readonly = () => readonly(inst);
-  inst.describe = (description14) => {
+  inst.describe = (description7) => {
     const cl = inst.clone();
-    globalRegistry.add(cl, { description: description14 });
+    globalRegistry.add(cl, { description: description7 });
     return cl;
   };
   Object.defineProperty(inst, "description", {
@@ -15534,8 +15534,8 @@ function superRefine(fn) {
   });
   return ch;
 }
-function preprocess(fn, schema14) {
-  return pipe(transform(fn), schema14);
+function preprocess(fn, schema7) {
+  return pipe(transform(fn), schema7);
 }
 
 // node_modules/zod/v4/classic/external.js
@@ -17358,16 +17358,16 @@ function parseIntersectionDef(def, refs) {
   ].filter((x) => !!x);
   let unevaluatedProperties = refs.target === "jsonSchema2019-09" ? { unevaluatedProperties: false } : void 0;
   const mergedAllOf = [];
-  allOf.forEach((schema14) => {
-    if (isJsonSchema7AllOfType(schema14)) {
-      mergedAllOf.push(...schema14.allOf);
-      if (schema14.unevaluatedProperties === void 0) {
+  allOf.forEach((schema7) => {
+    if (isJsonSchema7AllOfType(schema7)) {
+      mergedAllOf.push(...schema7.allOf);
+      if (schema7.unevaluatedProperties === void 0) {
         unevaluatedProperties = void 0;
       }
     } else {
-      let nestedSchema = schema14;
-      if ("additionalProperties" in schema14 && schema14.additionalProperties === false) {
-        const { additionalProperties, ...rest } = schema14;
+      let nestedSchema = schema7;
+      if ("additionalProperties" in schema7 && schema7.additionalProperties === false) {
+        const { additionalProperties, ...rest } = schema7;
         nestedSchema = rest;
       } else {
         unevaluatedProperties = void 0;
@@ -17594,60 +17594,60 @@ function escapeNonAlphaNumeric(source) {
   }
   return result;
 }
-function addFormat(schema14, value, message, refs) {
-  if (schema14.format || schema14.anyOf?.some((x) => x.format)) {
-    if (!schema14.anyOf) {
-      schema14.anyOf = [];
+function addFormat(schema7, value, message, refs) {
+  if (schema7.format || schema7.anyOf?.some((x) => x.format)) {
+    if (!schema7.anyOf) {
+      schema7.anyOf = [];
     }
-    if (schema14.format) {
-      schema14.anyOf.push({
-        format: schema14.format,
-        ...schema14.errorMessage && refs.errorMessages && {
-          errorMessage: { format: schema14.errorMessage.format }
+    if (schema7.format) {
+      schema7.anyOf.push({
+        format: schema7.format,
+        ...schema7.errorMessage && refs.errorMessages && {
+          errorMessage: { format: schema7.errorMessage.format }
         }
       });
-      delete schema14.format;
-      if (schema14.errorMessage) {
-        delete schema14.errorMessage.format;
-        if (Object.keys(schema14.errorMessage).length === 0) {
-          delete schema14.errorMessage;
+      delete schema7.format;
+      if (schema7.errorMessage) {
+        delete schema7.errorMessage.format;
+        if (Object.keys(schema7.errorMessage).length === 0) {
+          delete schema7.errorMessage;
         }
       }
     }
-    schema14.anyOf.push({
+    schema7.anyOf.push({
       format: value,
       ...message && refs.errorMessages && { errorMessage: { format: message } }
     });
   } else {
-    setResponseValueAndErrors(schema14, "format", value, message, refs);
+    setResponseValueAndErrors(schema7, "format", value, message, refs);
   }
 }
-function addPattern(schema14, regex, message, refs) {
-  if (schema14.pattern || schema14.allOf?.some((x) => x.pattern)) {
-    if (!schema14.allOf) {
-      schema14.allOf = [];
+function addPattern(schema7, regex, message, refs) {
+  if (schema7.pattern || schema7.allOf?.some((x) => x.pattern)) {
+    if (!schema7.allOf) {
+      schema7.allOf = [];
     }
-    if (schema14.pattern) {
-      schema14.allOf.push({
-        pattern: schema14.pattern,
-        ...schema14.errorMessage && refs.errorMessages && {
-          errorMessage: { pattern: schema14.errorMessage.pattern }
+    if (schema7.pattern) {
+      schema7.allOf.push({
+        pattern: schema7.pattern,
+        ...schema7.errorMessage && refs.errorMessages && {
+          errorMessage: { pattern: schema7.errorMessage.pattern }
         }
       });
-      delete schema14.pattern;
-      if (schema14.errorMessage) {
-        delete schema14.errorMessage.pattern;
-        if (Object.keys(schema14.errorMessage).length === 0) {
-          delete schema14.errorMessage;
+      delete schema7.pattern;
+      if (schema7.errorMessage) {
+        delete schema7.errorMessage.pattern;
+        if (Object.keys(schema7.errorMessage).length === 0) {
+          delete schema7.errorMessage;
         }
       }
     }
-    schema14.allOf.push({
+    schema7.allOf.push({
       pattern: stringifyRegExpWithFlags(regex, refs),
       ...message && refs.errorMessages && { errorMessage: { pattern: message } }
     });
   } else {
-    setResponseValueAndErrors(schema14, "pattern", stringifyRegExpWithFlags(regex, refs), message, refs);
+    setResponseValueAndErrors(schema7, "pattern", stringifyRegExpWithFlags(regex, refs), message, refs);
   }
 }
 function stringifyRegExpWithFlags(regex, refs) {
@@ -17745,7 +17745,7 @@ function parseRecordDef(def, refs) {
       additionalProperties: refs.rejectedAdditionalProperties
     };
   }
-  const schema14 = {
+  const schema7 = {
     type: "object",
     additionalProperties: parseDef(def.valueType._def, {
       ...refs,
@@ -17753,17 +17753,17 @@ function parseRecordDef(def, refs) {
     }) ?? refs.allowedAdditionalProperties
   };
   if (refs.target === "openApi3") {
-    return schema14;
+    return schema7;
   }
   if (def.keyType?._def.typeName === ZodFirstPartyTypeKind.ZodString && def.keyType._def.checks?.length) {
     const { type, ...keyType } = parseStringDef(def.keyType._def, refs);
     return {
-      ...schema14,
+      ...schema7,
       propertyNames: keyType
     };
   } else if (def.keyType?._def.typeName === ZodFirstPartyTypeKind.ZodEnum) {
     return {
-      ...schema14,
+      ...schema7,
       propertyNames: {
         enum: def.keyType._def.values
       }
@@ -17771,11 +17771,11 @@ function parseRecordDef(def, refs) {
   } else if (def.keyType?._def.typeName === ZodFirstPartyTypeKind.ZodBranded && def.keyType._def.type._def.typeName === ZodFirstPartyTypeKind.ZodString && def.keyType._def.type._def.checks?.length) {
     const { type, ...keyType } = parseBrandedDef(def.keyType._def, refs);
     return {
-      ...schema14,
+      ...schema7,
       propertyNames: keyType
     };
   }
-  return schema14;
+  return schema7;
 }
 
 // node_modules/zod-to-json-schema/dist/esm/parsers/map.js
@@ -18048,9 +18048,9 @@ function decideAdditionalProperties(def, refs) {
       return refs.removeAdditionalStrategy === "strict" ? refs.allowedAdditionalProperties : refs.rejectedAdditionalProperties;
   }
 }
-function safeIsOptional(schema14) {
+function safeIsOptional(schema7) {
   try {
-    return schema14.isOptional();
+    return schema7.isOptional();
   } catch {
     return true;
   }
@@ -18106,18 +18106,18 @@ function parseSetDef(def, refs) {
     ...refs,
     currentPath: [...refs.currentPath, "items"]
   });
-  const schema14 = {
+  const schema7 = {
     type: "array",
     uniqueItems: true,
     items
   };
   if (def.minSize) {
-    setResponseValueAndErrors(schema14, "minItems", def.minSize.value, def.minSize.message, refs);
+    setResponseValueAndErrors(schema7, "minItems", def.minSize.value, def.minSize.message, refs);
   }
   if (def.maxSize) {
-    setResponseValueAndErrors(schema14, "maxItems", def.maxSize.value, def.maxSize.message, refs);
+    setResponseValueAndErrors(schema7, "maxItems", def.maxSize.value, def.maxSize.message, refs);
   }
-  return schema14;
+  return schema7;
 }
 
 // node_modules/zod-to-json-schema/dist/esm/parsers/tuple.js
@@ -18298,17 +18298,17 @@ var addMeta = (def, refs, jsonSchema) => {
 };
 
 // node_modules/zod-to-json-schema/dist/esm/zodToJsonSchema.js
-var zodToJsonSchema = (schema14, options) => {
+var zodToJsonSchema = (schema7, options) => {
   const refs = getRefs(options);
-  let definitions = typeof options === "object" && options.definitions ? Object.entries(options.definitions).reduce((acc, [name2, schema15]) => ({
+  let definitions = typeof options === "object" && options.definitions ? Object.entries(options.definitions).reduce((acc, [name2, schema8]) => ({
     ...acc,
-    [name2]: parseDef(schema15._def, {
+    [name2]: parseDef(schema8._def, {
       ...refs,
       currentPath: [...refs.basePath, refs.definitionPath, name2]
     }, true) ?? parseAnyDef(refs)
   }), {}) : void 0;
   const name = typeof options === "string" ? options : options?.nameStrategy === "title" ? void 0 : options?.name;
-  const main2 = parseDef(schema14._def, name === void 0 ? refs : {
+  const main2 = parseDef(schema7._def, name === void 0 ? refs : {
     ...refs,
     currentPath: [...refs.basePath, refs.definitionPath, name]
   }, false) ?? parseAnyDef(refs);
@@ -18369,20 +18369,20 @@ function mapMiniTarget(t) {
     return "draft-2020-12";
   return "draft-7";
 }
-function toJsonSchemaCompat(schema14, opts) {
-  if (isZ4Schema(schema14)) {
-    return toJSONSchema(schema14, {
+function toJsonSchemaCompat(schema7, opts) {
+  if (isZ4Schema(schema7)) {
+    return toJSONSchema(schema7, {
       target: mapMiniTarget(opts?.target),
       io: opts?.pipeStrategy ?? "input"
     });
   }
-  return zodToJsonSchema(schema14, {
+  return zodToJsonSchema(schema7, {
     strictUnions: opts?.strictUnions ?? true,
     pipeStrategy: opts?.pipeStrategy ?? "input"
   });
 }
-function getMethodLiteral(schema14) {
-  const shape = getObjectShape(schema14);
+function getMethodLiteral(schema7) {
+  const shape = getObjectShape(schema7);
   const methodSchema = shape?.method;
   if (!methodSchema) {
     throw new Error("Schema is missing a method literal");
@@ -18393,8 +18393,8 @@ function getMethodLiteral(schema14) {
   }
   return value;
 }
-function parseWithCompat(schema14, data) {
-  const result = safeParse2(schema14, data);
+function parseWithCompat(schema7, data) {
+  const result = safeParse2(schema7, data);
   if (!result.success) {
     throw result.error;
   }
@@ -18624,25 +18624,25 @@ var Protocol = class {
     const error2 = McpError.fromError(ErrorCode.ConnectionClosed, "Connection closed");
     this._transport = void 0;
     this.onclose?.();
-    for (const handler14 of responseHandlers.values()) {
-      handler14(error2);
+    for (const handler7 of responseHandlers.values()) {
+      handler7(error2);
     }
   }
   _onerror(error2) {
     this.onerror?.(error2);
   }
   _onnotification(notification) {
-    const handler14 = this._notificationHandlers.get(notification.method) ?? this.fallbackNotificationHandler;
-    if (handler14 === void 0) {
+    const handler7 = this._notificationHandlers.get(notification.method) ?? this.fallbackNotificationHandler;
+    if (handler7 === void 0) {
       return;
     }
-    Promise.resolve().then(() => handler14(notification)).catch((error2) => this._onerror(new Error(`Uncaught error in notification handler: ${error2}`)));
+    Promise.resolve().then(() => handler7(notification)).catch((error2) => this._onerror(new Error(`Uncaught error in notification handler: ${error2}`)));
   }
   _onrequest(request, extra) {
-    const handler14 = this._requestHandlers.get(request.method) ?? this.fallbackRequestHandler;
+    const handler7 = this._requestHandlers.get(request.method) ?? this.fallbackRequestHandler;
     const capturedTransport = this._transport;
     const relatedTaskId = request.params?._meta?.[RELATED_TASK_META_KEY]?.taskId;
-    if (handler14 === void 0) {
+    if (handler7 === void 0) {
       const errorResponse = {
         jsonrpc: "2.0",
         id: request.id,
@@ -18706,7 +18706,7 @@ var Protocol = class {
       if (taskCreationParams) {
         this.assertTaskHandlerCapability(request.method);
       }
-    }).then(() => handler14(request, fullExtra)).then(async (result) => {
+    }).then(() => handler7(request, fullExtra)).then(async (result) => {
       if (abortController.signal.aborted) {
         return;
       }
@@ -18755,8 +18755,8 @@ var Protocol = class {
   _onprogress(notification) {
     const { progressToken, ...params } = notification.params;
     const messageId = Number(progressToken);
-    const handler14 = this._progressHandlers.get(messageId);
-    if (!handler14) {
+    const handler7 = this._progressHandlers.get(messageId);
+    if (!handler7) {
       this._onerror(new Error(`Received a progress notification for an unknown token: ${JSON.stringify(notification)}`));
       return;
     }
@@ -18773,7 +18773,7 @@ var Protocol = class {
         return;
       }
     }
-    handler14(params);
+    handler7(params);
   }
   _onresponse(response) {
     const messageId = Number(response.id);
@@ -18788,8 +18788,8 @@ var Protocol = class {
       }
       return;
     }
-    const handler14 = this._responseHandlers.get(messageId);
-    if (handler14 === void 0) {
+    const handler7 = this._responseHandlers.get(messageId);
+    if (handler7 === void 0) {
       this._onerror(new Error(`Received a response for an unknown message ID: ${JSON.stringify(response)}`));
       return;
     }
@@ -18810,10 +18810,10 @@ var Protocol = class {
       this._progressHandlers.delete(messageId);
     }
     if (isJSONRPCResultResponse(response)) {
-      handler14(response);
+      handler7(response);
     } else {
       const error2 = McpError.fromError(response.error.code, response.error.message, response.error.data);
-      handler14(error2);
+      handler7(error2);
     }
   }
   get transport() {
@@ -19011,9 +19011,9 @@ var Protocol = class {
       const relatedTaskId = relatedTask?.taskId;
       if (relatedTaskId) {
         const responseResolver = (response) => {
-          const handler14 = this._responseHandlers.get(messageId);
-          if (handler14) {
-            handler14(response);
+          const handler7 = this._responseHandlers.get(messageId);
+          if (handler7) {
+            handler7(response);
           } else {
             this._onerror(new Error(`Response handler missing for side-channeled request ${messageId}`));
           }
@@ -19150,12 +19150,12 @@ var Protocol = class {
    *
    * Note that this will replace any previous request handler for the same method.
    */
-  setRequestHandler(requestSchema, handler14) {
+  setRequestHandler(requestSchema, handler7) {
     const method = getMethodLiteral(requestSchema);
     this.assertRequestHandlerCapability(method);
     this._requestHandlers.set(method, (request, extra) => {
       const parsed = parseWithCompat(requestSchema, request);
-      return Promise.resolve(handler14(parsed, extra));
+      return Promise.resolve(handler7(parsed, extra));
     });
   }
   /**
@@ -19177,11 +19177,11 @@ var Protocol = class {
    *
    * Note that this will replace any previous notification handler for the same method.
    */
-  setNotificationHandler(notificationSchema, handler14) {
+  setNotificationHandler(notificationSchema, handler7) {
     const method = getMethodLiteral(notificationSchema);
     this._notificationHandlers.set(method, (notification) => {
       const parsed = parseWithCompat(notificationSchema, notification);
-      return Promise.resolve(handler14(parsed));
+      return Promise.resolve(handler7(parsed));
     });
   }
   /**
@@ -19402,8 +19402,8 @@ var AjvJsonSchemaValidator = class {
    * @param schema - Standard JSON Schema object
    * @returns A validator function that validates input data
    */
-  getValidator(schema14) {
-    const ajvValidator = "$id" in schema14 && typeof schema14.$id === "string" ? this._ajv.getSchema(schema14.$id) ?? this._ajv.compile(schema14) : this._ajv.compile(schema14);
+  getValidator(schema7) {
+    const ajvValidator = "$id" in schema7 && typeof schema7.$id === "string" ? this._ajv.getSchema(schema7.$id) ?? this._ajv.compile(schema7) : this._ajv.compile(schema7);
     return (input) => {
       const valid = ajvValidator(input);
       if (valid) {
@@ -19731,7 +19731,7 @@ var Server = class extends Protocol {
   /**
    * Override request handler registration to enforce server-side validation for tools/call.
    */
-  setRequestHandler(requestSchema, handler14) {
+  setRequestHandler(requestSchema, handler7) {
     const shape = getObjectShape(requestSchema);
     const methodSchema = shape?.method;
     if (!methodSchema) {
@@ -19759,7 +19759,7 @@ var Server = class extends Protocol {
           throw new McpError(ErrorCode.InvalidParams, `Invalid tools/call request: ${errorMessage}`);
         }
         const { params } = validatedRequest.data;
-        const result = await Promise.resolve(handler14(request, extra));
+        const result = await Promise.resolve(handler7(request, extra));
         if (params.task) {
           const taskValidationResult = safeParse2(CreateTaskResultSchema, result);
           if (!taskValidationResult.success) {
@@ -19777,7 +19777,7 @@ var Server = class extends Protocol {
       };
       return super.setRequestHandler(requestSchema, wrappedHandler);
     }
-    return super.setRequestHandler(requestSchema, handler14);
+    return super.setRequestHandler(requestSchema, handler7);
   }
   assertCapabilityForMethod(method) {
     switch (method) {
@@ -20053,11 +20053,11 @@ var Server = class extends Protocol {
 
 // node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
 var COMPLETABLE_SYMBOL = Symbol.for("mcp.completable");
-function isCompletable(schema14) {
-  return !!schema14 && typeof schema14 === "object" && COMPLETABLE_SYMBOL in schema14;
+function isCompletable(schema7) {
+  return !!schema7 && typeof schema7 === "object" && COMPLETABLE_SYMBOL in schema7;
 }
-function getCompleter(schema14) {
-  const meta = schema14[COMPLETABLE_SYMBOL];
+function getCompleter(schema7) {
+  const meta = schema7[COMPLETABLE_SYMBOL];
   return meta?.complete;
 }
 var McpZodTypeKind;
@@ -20128,13 +20128,13 @@ var ExperimentalMcpServerTasks = class {
   constructor(_mcpServer) {
     this._mcpServer = _mcpServer;
   }
-  registerToolTask(name, config2, handler14) {
+  registerToolTask(name, config2, handler7) {
     const execution = { taskSupport: "required", ...config2.execution };
     if (execution.taskSupport === "forbidden") {
       throw new Error(`Cannot register task-based tool '${name}' with taskSupport 'forbidden'. Use registerTool() instead.`);
     }
     const mcpServerInternal = this._mcpServer;
-    return mcpServerInternal._createRegisteredTool(name, config2.title, config2.description, config2.inputSchema, config2.outputSchema, config2.annotations, execution, config2._meta, handler14);
+    return mcpServerInternal._createRegisteredTool(name, config2.title, config2.description, config2.inputSchema, config2.outputSchema, config2.annotations, execution, config2._meta, handler7);
   }
 };
 
@@ -20279,7 +20279,7 @@ var McpServer = class {
   /**
    * Validates tool input arguments against the tool's input schema.
    */
-  async validateToolInput(tool, args, toolName14) {
+  async validateToolInput(tool, args, toolName7) {
     if (!tool.inputSchema) {
       return void 0;
     }
@@ -20289,14 +20289,14 @@ var McpServer = class {
     if (!parseResult.success) {
       const error2 = "error" in parseResult ? parseResult.error : "Unknown error";
       const errorMessage = getParseErrorMessage(error2);
-      throw new McpError(ErrorCode.InvalidParams, `Input validation error: Invalid arguments for tool ${toolName14}: ${errorMessage}`);
+      throw new McpError(ErrorCode.InvalidParams, `Input validation error: Invalid arguments for tool ${toolName7}: ${errorMessage}`);
     }
     return parseResult.data;
   }
   /**
    * Validates tool output against the tool's output schema.
    */
-  async validateToolOutput(tool, result, toolName14) {
+  async validateToolOutput(tool, result, toolName7) {
     if (!tool.outputSchema) {
       return;
     }
@@ -20307,40 +20307,40 @@ var McpServer = class {
       return;
     }
     if (!result.structuredContent) {
-      throw new McpError(ErrorCode.InvalidParams, `Output validation error: Tool ${toolName14} has an output schema but no structured content was provided`);
+      throw new McpError(ErrorCode.InvalidParams, `Output validation error: Tool ${toolName7} has an output schema but no structured content was provided`);
     }
     const outputObj = normalizeObjectSchema(tool.outputSchema);
     const parseResult = await safeParseAsync2(outputObj, result.structuredContent);
     if (!parseResult.success) {
       const error2 = "error" in parseResult ? parseResult.error : "Unknown error";
       const errorMessage = getParseErrorMessage(error2);
-      throw new McpError(ErrorCode.InvalidParams, `Output validation error: Invalid structured content for tool ${toolName14}: ${errorMessage}`);
+      throw new McpError(ErrorCode.InvalidParams, `Output validation error: Invalid structured content for tool ${toolName7}: ${errorMessage}`);
     }
   }
   /**
    * Executes a tool handler (either regular or task-based).
    */
   async executeToolHandler(tool, args, extra) {
-    const handler14 = tool.handler;
-    const isTaskHandler = "createTask" in handler14;
+    const handler7 = tool.handler;
+    const isTaskHandler = "createTask" in handler7;
     if (isTaskHandler) {
       if (!extra.taskStore) {
         throw new Error("No task store provided.");
       }
       const taskExtra = { ...extra, taskStore: extra.taskStore };
       if (tool.inputSchema) {
-        const typedHandler = handler14;
+        const typedHandler = handler7;
         return await Promise.resolve(typedHandler.createTask(args, taskExtra));
       } else {
-        const typedHandler = handler14;
+        const typedHandler = handler7;
         return await Promise.resolve(typedHandler.createTask(taskExtra));
       }
     }
     if (tool.inputSchema) {
-      const typedHandler = handler14;
+      const typedHandler = handler7;
       return await Promise.resolve(typedHandler(args, extra));
     } else {
-      const typedHandler = handler14;
+      const typedHandler = handler7;
       return await Promise.resolve(typedHandler(extra));
     }
   }
@@ -20352,11 +20352,11 @@ var McpServer = class {
       throw new Error("No task store provided for task-capable tool.");
     }
     const args = await this.validateToolInput(tool, request.params.arguments, request.params.name);
-    const handler14 = tool.handler;
+    const handler7 = tool.handler;
     const taskExtra = { ...extra, taskStore: extra.taskStore };
-    const createTaskResult = args ? await Promise.resolve(handler14.createTask(args, taskExtra)) : (
+    const createTaskResult = args ? await Promise.resolve(handler7.createTask(args, taskExtra)) : (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await Promise.resolve(handler14.createTask(taskExtra))
+      await Promise.resolve(handler7.createTask(taskExtra))
     );
     const taskId = createTaskResult.task.taskId;
     let task = createTaskResult.task;
@@ -20651,10 +20651,10 @@ var McpServer = class {
     }
     return registeredResourceTemplate;
   }
-  _createRegisteredPrompt(name, title, description14, argsSchema, callback) {
+  _createRegisteredPrompt(name, title, description7, argsSchema, callback) {
     const registeredPrompt = {
       title,
-      description: description14,
+      description: description7,
       argsSchema: argsSchema === void 0 ? void 0 : objectFromShape(argsSchema),
       callback,
       enabled: true,
@@ -20692,17 +20692,17 @@ var McpServer = class {
     }
     return registeredPrompt;
   }
-  _createRegisteredTool(name, title, description14, inputSchema, outputSchema, annotations, execution, _meta, handler14) {
+  _createRegisteredTool(name, title, description7, inputSchema, outputSchema, annotations, execution, _meta, handler7) {
     validateAndWarnToolName(name);
     const registeredTool = {
       title,
-      description: description14,
+      description: description7,
       inputSchema: getZodSchemaObject(inputSchema),
       outputSchema: getZodSchemaObject(outputSchema),
       annotations,
       execution,
       _meta,
-      handler: handler14,
+      handler: handler7,
       enabled: true,
       disable: () => registeredTool.update({ enabled: false }),
       enable: () => registeredTool.update({ enabled: true }),
@@ -20747,12 +20747,12 @@ var McpServer = class {
     if (this._registeredTools[name]) {
       throw new Error(`Tool ${name} is already registered`);
     }
-    let description14;
+    let description7;
     let inputSchema;
     let outputSchema;
     let annotations;
     if (typeof rest[0] === "string") {
-      description14 = rest.shift();
+      description7 = rest.shift();
     }
     if (rest.length > 1) {
       const firstArg = rest[0];
@@ -20769,7 +20769,7 @@ var McpServer = class {
       }
     }
     const callback = rest[0];
-    return this._createRegisteredTool(name, void 0, description14, inputSchema, outputSchema, annotations, { taskSupport: "forbidden" }, void 0, callback);
+    return this._createRegisteredTool(name, void 0, description7, inputSchema, outputSchema, annotations, { taskSupport: "forbidden" }, void 0, callback);
   }
   /**
    * Registers a tool with a config object and callback.
@@ -20778,23 +20778,23 @@ var McpServer = class {
     if (this._registeredTools[name]) {
       throw new Error(`Tool ${name} is already registered`);
     }
-    const { title, description: description14, inputSchema, outputSchema, annotations, _meta } = config2;
-    return this._createRegisteredTool(name, title, description14, inputSchema, outputSchema, annotations, { taskSupport: "forbidden" }, _meta, cb);
+    const { title, description: description7, inputSchema, outputSchema, annotations, _meta } = config2;
+    return this._createRegisteredTool(name, title, description7, inputSchema, outputSchema, annotations, { taskSupport: "forbidden" }, _meta, cb);
   }
   prompt(name, ...rest) {
     if (this._registeredPrompts[name]) {
       throw new Error(`Prompt ${name} is already registered`);
     }
-    let description14;
+    let description7;
     if (typeof rest[0] === "string") {
-      description14 = rest.shift();
+      description7 = rest.shift();
     }
     let argsSchema;
     if (rest.length > 1) {
       argsSchema = rest.shift();
     }
     const cb = rest[0];
-    const registeredPrompt = this._createRegisteredPrompt(name, void 0, description14, argsSchema, cb);
+    const registeredPrompt = this._createRegisteredPrompt(name, void 0, description7, argsSchema, cb);
     this.setPromptRequestHandlers();
     this.sendPromptListChanged();
     return registeredPrompt;
@@ -20806,8 +20806,8 @@ var McpServer = class {
     if (this._registeredPrompts[name]) {
       throw new Error(`Prompt ${name} is already registered`);
     }
-    const { title, description: description14, argsSchema } = config2;
-    const registeredPrompt = this._createRegisteredPrompt(name, title, description14, argsSchema, cb);
+    const { title, description: description7, argsSchema } = config2;
+    const registeredPrompt = this._createRegisteredPrompt(name, title, description7, argsSchema, cb);
     this.setPromptRequestHandlers();
     this.sendPromptListChanged();
     return registeredPrompt;
@@ -20876,34 +20876,34 @@ function isZodRawShapeCompat(obj) {
   }
   return Object.values(obj).some(isZodTypeLike);
 }
-function getZodSchemaObject(schema14) {
-  if (!schema14) {
+function getZodSchemaObject(schema7) {
+  if (!schema7) {
     return void 0;
   }
-  if (isZodRawShapeCompat(schema14)) {
-    return objectFromShape(schema14);
+  if (isZodRawShapeCompat(schema7)) {
+    return objectFromShape(schema7);
   }
-  if (!isZodSchemaInstance(schema14)) {
+  if (!isZodSchemaInstance(schema7)) {
     throw new Error("inputSchema must be a Zod schema or raw shape, received an unrecognized object");
   }
-  return schema14;
+  return schema7;
 }
-function promptArgumentsFromSchema(schema14) {
-  const shape = getObjectShape(schema14);
+function promptArgumentsFromSchema(schema7) {
+  const shape = getObjectShape(schema7);
   if (!shape)
     return [];
   return Object.entries(shape).map(([name, field]) => {
-    const description14 = getSchemaDescription(field);
+    const description7 = getSchemaDescription(field);
     const isOptional = isSchemaOptional(field);
     return {
       name,
-      description: description14,
+      description: description7,
       required: !isOptional
     };
   });
 }
-function getMethodValue(schema14) {
-  const shape = getObjectShape(schema14);
+function getMethodValue(schema7) {
+  const shape = getObjectShape(schema7);
   const methodSchema = shape?.method;
   if (!methodSchema) {
     throw new Error("Schema is missing a method literal");
@@ -21022,9 +21022,9 @@ var StdioServerTransport = class {
   }
 };
 
-// src/tools/fixed-binary.ts
-var fixed_binary_exports = {};
-__export(fixed_binary_exports, {
+// src/tools/design-binary.ts
+var design_binary_exports = {};
+__export(design_binary_exports, {
   description: () => description,
   handler: () => handler,
   schema: () => schema,
@@ -21146,189 +21146,55 @@ async function runR(tool, args, opts = {}) {
 var ComparisonEnum = external_exports.enum(["superiority", "non-inferiority", "equivalence"]).describe(
   "Hypothesis type. 'superiority' (default) tests for a difference; 'non-inferiority' requires ni_margin; 'equivalence' requires equiv_margin."
 );
+var DesignClassEnum = external_exports.enum(["fixed", "group-sequential"]).describe(
+  "Design class. 'fixed' = single final analysis; 'group-sequential' = interim looks with alpha-spending. Group-sequential params (k, timing, sfu/sfl, test_type) are ignored when design_class = 'fixed'."
+);
+var SurvivalModelEnum = external_exports.enum(["ph", "maxcombo", "rmst", "milestone", "wlr", "ahr"]).describe(
+  "Survival statistical model. 'ph' = log-rank under proportional hazards (gsDesign::nSurv / gsSurv). 'maxcombo' / 'rmst' / 'milestone' are NPH fixed-sample (gsDesign2::fixed_design_*). 'wlr' / 'ahr' are NPH group-sequential (gsDesign2::gs_design_wlr / gs_design_ahr)."
+);
 var SpendingFnEnum = external_exports.enum(["OF", "Pocock", "HSD", "Power", "LDOF", "LDPocock", "none"]).describe(
   "Alpha-spending function. OF = O'Brien-Fleming, Pocock = Pocock, HSD = Hwang-Shih-DeCani (needs sfupar), Power = power family (needs sfupar), LDOF / LDPocock = Lan-DeMets approximations (the standard), 'none' disables."
 );
 var AlphaSchema = external_exports.number().positive().max(0.5).default(0.025).describe("Type I error rate. For a standard two-sided 0.05 test use 0.025 with sided = 2.");
-var PowerSchema = external_exports.number().positive().max(0.999).default(0.9).describe("1 \u2212 \u03B2. Targeted power of the test (default 0.9).");
+var PowerSchema = external_exports.number().positive().max(0.999).default(0.9).describe("1 - beta. Targeted power of the test (default 0.9).");
 var SidedSchema = external_exports.union([external_exports.literal(1), external_exports.literal(2)]).default(1).describe(
   "1 = one-sided test (default), 2 = two-sided. Many modern designs use sided = 1 with alpha = 0.025 to match the two-sided 0.05 convention."
 );
 var AllocationRatioSchema = external_exports.number().positive().default(1).describe("Treatment / control allocation ratio. 1 = balanced 1:1.");
 var KSchema = external_exports.number().int().min(2).max(10).default(2).describe("Number of planned analyses including the final one. Integer in [2, 10].");
 var TimingSchema = external_exports.array(external_exports.number().positive().max(1)).optional().describe(
-  "Information fractions at each analysis, length k, strictly increasing in (0,1], last = 1. Defaults to equal spacing 1/k, 2/k, \u2026, 1."
+  "Information fractions at each analysis, length k, strictly increasing in (0,1], last = 1. Defaults to equal spacing 1/k, 2/k, ..., 1."
 );
 var TestTypeSchema = external_exports.number().int().min(1).max(6).default(1).describe(
   "gsDesign test.type. 1 = efficacy-only, 2 = symmetric efficacy+futility, 3 = non-binding futility, 4 = binding futility, 5/6 = same with lower beta-spending."
 );
+var OperationalBlockSchema = external_exports.object({
+  accrual_rate: external_exports.number().positive().optional(),
+  accrual_duration: external_exports.number().positive().optional(),
+  follow_up_duration: external_exports.number().nonnegative().optional(),
+  total_trial_duration: external_exports.number().positive().optional()
+}).optional().describe(
+  "Optional operational kernel inputs. Supply any 0-4 of {accrual_rate, accrual_duration, follow_up_duration, total_trial_duration}; the solver fills in the missing values from rate*duration = N and A + F = T (plus target_events for survival). Result is attached as result.operational with audit fields (given, derived)."
+);
 
-// src/tools/fixed-binary.ts
+// src/tools/design-binary.ts
 var ProbSchema = external_exports.number().gt(0).lt(1);
-var toolName = "design_fixed_binary";
+var toolName = "design_binary";
 var schema = {
   p_control: ProbSchema.describe("Event rate in the control arm (0,1)."),
   p_treatment: ProbSchema.describe("Event rate in the treatment arm (0,1)."),
+  design_class: DesignClassEnum.default("fixed"),
+  comparison: ComparisonEnum.default("superiority"),
   alpha: AlphaSchema,
   power: PowerSchema,
   sided: SidedSchema,
   allocation_ratio: AllocationRatioSchema,
-  comparison: ComparisonEnum.default("superiority"),
   ni_margin: external_exports.number().positive().optional().describe(
     "Non-inferiority margin on the risk-difference scale. Required when comparison='non-inferiority'."
   ),
   equiv_margin: external_exports.number().positive().optional().describe(
-    "Two-sided equivalence margin (TOST). Required when comparison='equivalence'."
-  )
-};
-var description = "Fixed-sample two-arm binary-endpoint design (gsDesign::nBinomial). Supports superiority, non-inferiority, and equivalence (TOST). Returns total sample size, per-arm sample size, and method metadata.";
-var handler = async (args) => runR(toolName, args);
-
-// src/tools/fixed-continuous.ts
-var fixed_continuous_exports = {};
-__export(fixed_continuous_exports, {
-  description: () => description2,
-  handler: () => handler2,
-  schema: () => schema2,
-  toolName: () => toolName2
-});
-var toolName2 = "design_fixed_continuous";
-var schema2 = {
-  mean_diff: external_exports.number().describe("Assumed mean difference (treatment \u2212 control)."),
-  sd: external_exports.number().positive().describe("Common within-arm SD."),
-  alpha: AlphaSchema,
-  power: PowerSchema,
-  sided: SidedSchema,
-  allocation_ratio: AllocationRatioSchema,
-  comparison: ComparisonEnum.default("superiority"),
-  ni_margin: external_exports.number().positive().optional().describe("Non-inferiority margin on the mean-difference scale."),
-  equiv_margin: external_exports.number().positive().optional().describe("Two-sided equivalence margin (TOST).")
-};
-var description2 = "Fixed-sample two-arm continuous-endpoint design (gsDesign::nNormal). Supports superiority, non-inferiority, and equivalence (TOST).";
-var handler2 = async (args) => runR(toolName2, args);
-
-// src/tools/fixed-survival-ph.ts
-var fixed_survival_ph_exports = {};
-__export(fixed_survival_ph_exports, {
-  description: () => description3,
-  handler: () => handler3,
-  schema: () => schema3,
-  toolName: () => toolName3
-});
-var toolName3 = "design_fixed_survival_ph";
-var schema3 = {
-  control_median: external_exports.number().positive().describe("Control-arm median survival (months)."),
-  hazard_ratio: external_exports.number().positive().describe(
-    "Target treatment/control HR. < 1 favors treatment. For NI with hr_null > 1, the assumed true HR is often 1."
+    "Two-sided equivalence margin (TOST). Required when comparison='equivalence'. Fixed-sample only."
   ),
-  accrual_rate: external_exports.number().positive().describe("Enrollment rate (subjects/month)."),
-  accrual_duration: external_exports.number().positive().describe("Accrual period (months)."),
-  followup_duration: external_exports.number().positive().describe("Minimum follow-up after last enrollment (months)."),
-  dropout_rate: external_exports.number().nonnegative().default(1e-3).describe("Per-month dropout hazard."),
-  alpha: AlphaSchema,
-  power: PowerSchema,
-  sided: external_exports.literal(1).default(1).describe("One-sided only for TTE (use 1)."),
-  allocation_ratio: AllocationRatioSchema,
-  comparison: ComparisonEnum.default("superiority"),
-  hr_null: external_exports.number().positive().optional().describe("Null-hypothesis HR for non-inferiority (typically > 1, e.g. 1.3)."),
-  ni_hr: external_exports.number().positive().optional().describe("Alias for hr_null.")
-};
-var description3 = "Fixed-sample TTE design under proportional hazards (gsDesign::nSurv). Returns total events, total sample size, accrual/follow-up durations.";
-var handler3 = async (args) => runR(toolName3, args);
-
-// src/tools/fixed-survival-maxcombo.ts
-var fixed_survival_maxcombo_exports = {};
-__export(fixed_survival_maxcombo_exports, {
-  description: () => description4,
-  handler: () => handler4,
-  schema: () => schema4,
-  toolName: () => toolName4
-});
-var toolName4 = "design_fixed_survival_maxcombo";
-var schema4 = {
-  control_median: external_exports.number().positive().describe("Control-arm median survival (months)."),
-  delay_months: external_exports.number().nonnegative().describe("Duration of the no-effect period before treatment benefit starts. 0 = immediate PH."),
-  post_delay_hr: external_exports.number().positive().describe("Hazard ratio after delay_months."),
-  accrual_rate: external_exports.number().positive().describe("Enrollment rate (subjects/month)."),
-  accrual_duration: external_exports.number().positive().describe("Accrual period (months)."),
-  study_duration: external_exports.number().positive().describe("Total study duration from first enrollment to final analysis (months). Must exceed accrual_duration."),
-  dropout_rate: external_exports.number().nonnegative().default(1e-3).describe("Per-month dropout hazard."),
-  alpha: AlphaSchema,
-  power: PowerSchema,
-  sided: external_exports.literal(1).default(1).describe("MaxCombo is one-sided only."),
-  allocation_ratio: AllocationRatioSchema,
-  rho: external_exports.array(external_exports.number()).default([0, 0, 1]).describe("Fleming-Harrington rho for each weight combination."),
-  gamma: external_exports.array(external_exports.number()).default([0, 1, 0]).describe("Fleming-Harrington gamma for each weight combination."),
-  tau: external_exports.array(external_exports.number()).default([-1, -1, -1]).describe("Tau for each weight (-1 = unbounded).")
-};
-var description4 = "Fixed-sample TTE design using MaxCombo under NPH (gsDesign2::fixed_design_maxcombo). Handles delayed / crossing-hazard effects via FH-weighted log-rank combos.";
-var handler4 = async (args) => runR(toolName4, args);
-
-// src/tools/fixed-survival-rmst.ts
-var fixed_survival_rmst_exports = {};
-__export(fixed_survival_rmst_exports, {
-  description: () => description5,
-  handler: () => handler5,
-  schema: () => schema5,
-  toolName: () => toolName5
-});
-var toolName5 = "design_fixed_survival_rmst";
-var schema5 = {
-  control_median: external_exports.number().positive().describe("Control-arm median survival (months)."),
-  delay_months: external_exports.number().nonnegative().describe("Delay before treatment effect starts (NPH)."),
-  post_delay_hr: external_exports.number().positive().describe("Hazard ratio after delay_months."),
-  accrual_rate: external_exports.number().positive().describe("Enrollment rate (subjects/month)."),
-  accrual_duration: external_exports.number().positive().describe("Accrual period (months)."),
-  study_duration: external_exports.number().positive().describe("Total study duration (months); must exceed accrual_duration."),
-  tau: external_exports.number().positive().optional().describe("RMST landmark time (months). Defaults to study_duration."),
-  dropout_rate: external_exports.number().nonnegative().default(1e-3),
-  alpha: AlphaSchema,
-  power: PowerSchema,
-  sided: external_exports.literal(1).default(1),
-  allocation_ratio: AllocationRatioSchema
-};
-var description5 = "Fixed-sample TTE design based on restricted mean survival time at landmark tau (gsDesign2::fixed_design_rmst).";
-var handler5 = async (args) => runR(toolName5, args);
-
-// src/tools/fixed-survival-milestone.ts
-var fixed_survival_milestone_exports = {};
-__export(fixed_survival_milestone_exports, {
-  description: () => description6,
-  handler: () => handler6,
-  schema: () => schema6,
-  toolName: () => toolName6
-});
-var toolName6 = "design_fixed_survival_milestone";
-var schema6 = {
-  control_median: external_exports.number().positive().describe("Control-arm median survival (months)."),
-  delay_months: external_exports.number().nonnegative().describe("Delay before treatment effect starts (NPH)."),
-  post_delay_hr: external_exports.number().positive().describe("Hazard ratio after delay_months."),
-  accrual_rate: external_exports.number().positive().describe("Enrollment rate (subjects/month)."),
-  accrual_duration: external_exports.number().positive().describe("Accrual period (months)."),
-  study_duration: external_exports.number().positive().describe("Total study duration (months); must exceed accrual_duration."),
-  tau: external_exports.number().positive().optional().describe("Milestone time for S(tau) comparison (months). Defaults to study_duration."),
-  dropout_rate: external_exports.number().nonnegative().default(1e-3),
-  alpha: AlphaSchema,
-  power: PowerSchema,
-  sided: external_exports.literal(1).default(1),
-  allocation_ratio: AllocationRatioSchema
-};
-var description6 = "Fixed-sample TTE design based on milestone survival probability S(tau) (gsDesign2::fixed_design_milestone).";
-var handler6 = async (args) => runR(toolName6, args);
-
-// src/tools/gs-binary.ts
-var gs_binary_exports = {};
-__export(gs_binary_exports, {
-  description: () => description7,
-  handler: () => handler7,
-  schema: () => schema7,
-  toolName: () => toolName7
-});
-var ProbSchema2 = external_exports.number().gt(0).lt(1);
-var toolName7 = "design_gs_binary";
-var schema7 = {
-  p_control: ProbSchema2,
-  p_treatment: ProbSchema2,
   k: KSchema,
   timing: TimingSchema,
   sfu: SpendingFnEnum.default("LDOF"),
@@ -21336,31 +21202,34 @@ var schema7 = {
   sfupar: external_exports.number().optional().describe("Numeric parameter for HSD / Power upper sf."),
   sflpar: external_exports.number().optional().describe("Numeric parameter for HSD / Power lower sf."),
   test_type: TestTypeSchema,
+  operational: OperationalBlockSchema
+};
+var description = "Two-arm binary-endpoint trial design (gsDesign::nBinomial / gsDesign). Supports superiority, non-inferiority, and equivalence (TOST). Set design_class='group-sequential' for interim analyses with alpha-spending (equivalence is fixed-sample only). Optionally fills the operational kernel (accrual + follow-up timing) when an `operational` block is supplied.";
+var handler = async (args) => {
+  const { test_type, ...rest } = args;
+  return runR(toolName, { ...rest, "test.type": test_type });
+};
+
+// src/tools/design-continuous.ts
+var design_continuous_exports = {};
+__export(design_continuous_exports, {
+  description: () => description2,
+  handler: () => handler2,
+  schema: () => schema2,
+  toolName: () => toolName2
+});
+var toolName2 = "design_continuous";
+var schema2 = {
+  mean_diff: external_exports.number().describe("Assumed mean difference (treatment - control)."),
+  sd: external_exports.number().positive().describe("Common within-arm SD."),
+  design_class: DesignClassEnum.default("fixed"),
+  comparison: ComparisonEnum.default("superiority"),
   alpha: AlphaSchema,
   power: PowerSchema,
   sided: SidedSchema,
   allocation_ratio: AllocationRatioSchema,
-  comparison: ComparisonEnum.default("superiority"),
-  ni_margin: external_exports.number().positive().optional()
-};
-var description7 = "Group-sequential two-arm binary-endpoint design (gsDesign::gsDesign + nBinomial). Returns max N, per-analysis N, and Z/p boundaries from the chosen alpha-spending function.";
-var handler7 = async (args) => {
-  const { test_type, ...rest } = args;
-  return runR(toolName7, { ...rest, "test.type": test_type });
-};
-
-// src/tools/gs-continuous.ts
-var gs_continuous_exports = {};
-__export(gs_continuous_exports, {
-  description: () => description8,
-  handler: () => handler8,
-  schema: () => schema8,
-  toolName: () => toolName8
-});
-var toolName8 = "design_gs_continuous";
-var schema8 = {
-  mean_diff: external_exports.number(),
-  sd: external_exports.number().positive(),
+  ni_margin: external_exports.number().positive().optional().describe("Non-inferiority margin on the mean-difference scale."),
+  equiv_margin: external_exports.number().positive().optional().describe("Two-sided equivalence margin (TOST). Fixed-sample only."),
   k: KSchema,
   timing: TimingSchema,
   sfu: SpendingFnEnum.default("LDOF"),
@@ -21368,99 +21237,76 @@ var schema8 = {
   sfupar: external_exports.number().optional(),
   sflpar: external_exports.number().optional(),
   test_type: TestTypeSchema,
-  alpha: AlphaSchema,
-  power: PowerSchema,
-  sided: SidedSchema,
-  allocation_ratio: AllocationRatioSchema,
-  comparison: ComparisonEnum.default("superiority"),
-  ni_margin: external_exports.number().positive().optional()
+  operational: OperationalBlockSchema
 };
-var description8 = "Group-sequential two-arm continuous-endpoint design (gsDesign::gsDesign + nNormal).";
-var handler8 = async (args) => {
+var description2 = "Two-arm continuous-endpoint trial design (gsDesign::nNormal / gsDesign). Supports superiority, non-inferiority, and equivalence (TOST). Set design_class='group-sequential' for interim analyses with alpha-spending (equivalence is fixed-sample only).";
+var handler2 = async (args) => {
   const { test_type, ...rest } = args;
-  return runR(toolName8, { ...rest, "test.type": test_type });
+  return runR(toolName2, { ...rest, "test.type": test_type });
 };
 
-// src/tools/gs-survival-ph.ts
-var gs_survival_ph_exports = {};
-__export(gs_survival_ph_exports, {
-  description: () => description9,
-  handler: () => handler9,
-  schema: () => schema9,
-  toolName: () => toolName9
+// src/tools/design-survival.ts
+var design_survival_exports = {};
+__export(design_survival_exports, {
+  description: () => description3,
+  handler: () => handler3,
+  schema: () => schema3,
+  toolName: () => toolName3
 });
-var toolName9 = "design_gs_survival_ph";
-var schema9 = {
-  control_median: external_exports.number().positive(),
-  hazard_ratio: external_exports.number().positive(),
-  accrual_rate: external_exports.number().positive(),
-  accrual_duration: external_exports.number().positive(),
-  followup_duration: external_exports.number().positive(),
-  dropout_rate: external_exports.number().nonnegative().default(1e-3),
-  k: KSchema,
-  timing: TimingSchema,
-  sfu: SpendingFnEnum.default("LDOF"),
-  sfl: SpendingFnEnum.default("LDOF"),
-  sfupar: external_exports.number().optional(),
-  sflpar: external_exports.number().optional(),
-  test_type: TestTypeSchema,
-  alpha: AlphaSchema,
-  power: PowerSchema,
-  sided: external_exports.literal(1).default(1),
-  allocation_ratio: AllocationRatioSchema,
-  comparison: ComparisonEnum.default("superiority"),
-  hr_null: external_exports.number().positive().optional().describe("Null HR for NI (e.g. 1.3)."),
-  ni_hr: external_exports.number().positive().optional().describe("Alias for hr_null.")
-};
-var description9 = "Group-sequential TTE design under proportional hazards (gsDesign::gsSurv). Returns max events, per-analysis events and Z-boundaries, accrual/follow-up timing.";
-var handler9 = async (args) => {
-  const { test_type, ...rest } = args;
-  return runR(toolName9, { ...rest, "test.type": test_type });
-};
-
-// src/tools/gs-survival-nph-combo.ts
-var gs_survival_nph_combo_exports = {};
-__export(gs_survival_nph_combo_exports, {
-  description: () => description10,
-  handler: () => handler10,
-  schema: () => schema10,
-  toolName: () => toolName10
-});
-var toolName10 = "design_gs_survival_nph_combo";
-var schema10 = {
-  control_median: external_exports.number().positive(),
-  delay_months: external_exports.number().nonnegative(),
-  post_delay_hr: external_exports.number().positive(),
-  accrual_rate: external_exports.number().positive(),
-  accrual_duration: external_exports.number().positive(),
-  analysis_times: external_exports.array(external_exports.number().positive()).min(2).describe("Calendar times (months) of the k planned analyses; strictly increasing."),
-  dropout_rate: external_exports.number().nonnegative().default(1e-3),
-  test: external_exports.enum(["maxcombo", "wlr", "ahr"]).default("maxcombo").describe(
-    "Statistic: maxcombo = FH MaxCombo (default), wlr = weighted log-rank, ahr = average hazard ratio."
+var toolName3 = "design_survival";
+var schema3 = {
+  model: SurvivalModelEnum.default("ph"),
+  design_class: DesignClassEnum.default("fixed"),
+  control_median: external_exports.number().positive().describe("Control-arm median survival (months)."),
+  hazard_ratio: external_exports.number().positive().optional().describe(
+    "Target HR (PH only). < 1 favors treatment. For NI with hr_null > 1, the assumed true HR is often 1."
   ),
-  rho: external_exports.array(external_exports.number()).default([0, 0, 1]),
-  gamma: external_exports.array(external_exports.number()).default([0, 1, 0]),
-  tau: external_exports.array(external_exports.number()).default([-1, -1, -1]),
+  hr_null: external_exports.number().positive().optional().describe("Null-hypothesis HR for non-inferiority (typically > 1, e.g. 1.3)."),
+  ni_hr: external_exports.number().positive().optional().describe("Alias for hr_null."),
+  delay_months: external_exports.number().nonnegative().default(0).describe("Duration of HR=1 period preceding the effect (NPH models)."),
+  post_delay_hr: external_exports.number().positive().optional().describe("HR after delay_months (NPH models)."),
+  accrual_rate: external_exports.number().positive().optional().describe("Enrollment rate (subjects/month)."),
+  accrual_duration: external_exports.number().positive().default(12).describe("Accrual period (months)."),
+  followup_duration: external_exports.number().nonnegative().default(12).describe("Minimum follow-up after last enrollment (months)."),
+  dropout_rate: external_exports.number().nonnegative().default(0).describe("Per-month dropout hazard."),
+  tau: external_exports.number().positive().optional().describe(
+    "Landmark time for RMST / milestone (months). Defaults to total study duration."
+  ),
+  rho: external_exports.array(external_exports.number()).optional().describe("Fleming-Harrington rho weights (MaxCombo / WLR)."),
+  gamma: external_exports.array(external_exports.number()).optional().describe("Fleming-Harrington gamma weights (MaxCombo / WLR)."),
+  tau_fh: external_exports.union([external_exports.number(), external_exports.array(external_exports.number())]).optional().describe("Fleming-Harrington tau (MaxCombo / WLR)."),
+  k: KSchema,
+  timing: TimingSchema,
+  sfu: SpendingFnEnum.default("LDOF"),
+  sfl: SpendingFnEnum.default("LDOF"),
+  sfupar: external_exports.number().optional(),
+  sflpar: external_exports.number().optional(),
+  test_type: TestTypeSchema,
+  analysis_times: external_exports.array(external_exports.number().positive()).optional().describe("Calendar times of k planned analyses (NPH GS); last = study duration."),
+  binding: external_exports.boolean().default(false).describe("Whether the futility boundary is binding (NPH GS)."),
   alpha: AlphaSchema,
   power: PowerSchema,
-  sided: external_exports.literal(1).default(1),
+  sided: external_exports.literal(1).default(1).describe("TTE designs are one-sided."),
   allocation_ratio: AllocationRatioSchema,
-  sfu: SpendingFnEnum.default("LDOF"),
-  binding: external_exports.boolean().default(false).describe("Whether the futility boundary is binding.")
+  comparison: ComparisonEnum.default("superiority"),
+  operational: OperationalBlockSchema
 };
-var description10 = "Group-sequential TTE design under NPH using MaxCombo / weighted log-rank / AHR (gsDesign2::gs_design_combo / gs_design_wlr / gs_design_ahr).";
-var handler10 = async (args) => runR(toolName10, args);
+var description3 = "Two-arm time-to-event trial design. Pick `model` for the test statistic (ph, maxcombo, rmst, milestone, wlr, ahr) and `design_class` (fixed, group-sequential). PH backends are gsDesign::nSurv / gsSurv; NPH backends are gsDesign2::fixed_design_* / gs_design_*. Returns total events, total N, per-arm N, accrual / follow-up timing, and (for GS) interim boundaries. Optionally solves the operational kernel via the `operational` block.";
+var handler3 = async (args) => {
+  const { test_type, ...rest } = args;
+  return runR(toolName3, { ...rest, "test.type": test_type });
+};
 
 // src/tools/validate-benchmark.ts
 var validate_benchmark_exports = {};
 __export(validate_benchmark_exports, {
-  description: () => description11,
-  handler: () => handler11,
-  schema: () => schema11,
-  toolName: () => toolName11
+  description: () => description4,
+  handler: () => handler4,
+  schema: () => schema4,
+  toolName: () => toolName4
 });
-var toolName11 = "validate_against_benchmark";
-var schema11 = {
+var toolName4 = "validate_against_benchmark";
+var schema4 = {
   family: external_exports.string().describe(
     "Benchmark family directory name under benchmarks/ (e.g. 'fixed-superiority', 'group-sequential', 'tte-nph')."
   ),
@@ -21469,19 +21315,19 @@ var schema11 = {
   ),
   tool: external_exports.string().optional().describe("Override the design tool to dispatch. If omitted, inferred from case metadata.")
 };
-var description11 = "Load a benchmark corpus case, re-run the matching design wrapper with its inputs, and diff computed sample_size_total / events_total against expected within the case's tolerance.";
-var handler11 = async (args) => runR(toolName11, args);
+var description4 = "Load a benchmark corpus case, re-run the matching design wrapper with its inputs, and diff computed sample_size_total / events_total against expected within the case's tolerance.";
+var handler4 = async (args) => runR(toolName4, args);
 
 // src/tools/verify-design.ts
 var verify_design_exports = {};
 __export(verify_design_exports, {
-  description: () => description12,
-  handler: () => handler12,
-  schema: () => schema12,
-  toolName: () => toolName12
+  description: () => description5,
+  handler: () => handler5,
+  schema: () => schema5,
+  toolName: () => toolName5
 });
-var toolName12 = "verify_design";
-var schema12 = {
+var toolName5 = "verify_design";
+var schema5 = {
   result: external_exports.record(external_exports.unknown()).describe(
     "A designr result object as returned by any design_* tool (the JSON payload, including $method, $inputs, and (for GS) $boundaries / $timing)."
   ),
@@ -21490,39 +21336,32 @@ var schema12 = {
   tolerance_power_pp: external_exports.number().positive().optional().describe("Allowed deviation from target power, in percentage points. Default 2."),
   tolerance_type_I_pp: external_exports.number().positive().optional().describe("Allowed deviation from target alpha, in percentage points. Default 0.5.")
 };
-var description12 = "Monte Carlo simulation cross-check for a designr result. Closed-form simulation (rbinom / rnorm / rexp) drives empirical power and Type I error estimates against the design's target alpha and power. Supports fixed and group-sequential families on binary, continuous, and PH survival endpoints. NPH families (MaxCombo, RMST, milestone) and equivalence designs are not yet supported and return a clean error.";
-var handler12 = async (args) => runR(toolName12, args);
+var description5 = "Monte Carlo simulation cross-check for a designr result. Closed-form simulation (rbinom / rnorm / rexp) drives empirical power and Type I error estimates against the design's target alpha and power. Supports fixed and group-sequential families on binary, continuous, and PH survival endpoints. NPH families (MaxCombo, RMST, milestone) and equivalence designs are not yet supported and return a clean error.";
+var handler5 = async (args) => runR(toolName5, args);
 
 // src/tools/design-report.ts
 var design_report_exports = {};
 __export(design_report_exports, {
-  description: () => description13,
-  handler: () => handler13,
-  schema: () => schema13,
-  toolName: () => toolName13
+  description: () => description6,
+  handler: () => handler6,
+  schema: () => schema6,
+  toolName: () => toolName6
 });
-var toolName13 = "design_report";
-var schema13 = {
+var toolName6 = "design_report";
+var schema6 = {
   result: external_exports.record(external_exports.unknown()).describe(
     "A designr result object as returned by any design_* tool (the JSON payload, including $method, $inputs, and (for GS) $boundaries / $timing)."
   ),
   format: external_exports.enum(["markdown", "text"]).optional().describe("Output format. Currently only 'markdown' is implemented; 'text' is reserved.")
 };
-var description13 = "Render a clinician-readable summary of any designr result. Produces a markdown document with sections: Design overview, Key inputs, Headline output, Analysis plan (when GS boundaries / timing are present), and Method & version. Suitable to paste into a SAP-style document or render to HTML / PDF / Word downstream.";
-var handler13 = async (args) => runR(toolName13, args);
+var description6 = "Render a clinician-readable summary of any designr result. Produces a markdown document with sections: Design overview, Key inputs, Headline output, Analysis plan (when GS boundaries / timing are present), and Method & version. Suitable to paste into a SAP-style document or render to HTML / PDF / Word downstream.";
+var handler6 = async (args) => runR(toolName6, args);
 
 // src/index.ts
 var tools = [
-  fixed_binary_exports,
-  fixed_continuous_exports,
-  fixed_survival_ph_exports,
-  fixed_survival_maxcombo_exports,
-  fixed_survival_rmst_exports,
-  fixed_survival_milestone_exports,
-  gs_binary_exports,
-  gs_continuous_exports,
-  gs_survival_ph_exports,
-  gs_survival_nph_combo_exports,
+  design_binary_exports,
+  design_continuous_exports,
+  design_survival_exports,
   validate_benchmark_exports,
   verify_design_exports,
   design_report_exports
@@ -21530,7 +21369,7 @@ var tools = [
 async function main() {
   const server = new McpServer({
     name: "clinical-trial-design",
-    version: "0.0.6"
+    version: "0.0.7"
   });
   for (const mod of tools) {
     server.registerTool(
