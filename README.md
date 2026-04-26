@@ -4,7 +4,7 @@
 
 `clinical-trial-design` helps biostatisticians and clinical trialists design Phase 2 and Phase 3 confirmatory studies through a conversational interface, backed by validated R statistical packages (`gsDesign`, `gsDesign2`).
 
-> **v0.0.6 alpha.** Rebrand release: project, plugin, MCP server, npm package, and R package all renamed from `designr` → `clinical-trial-design` (the R package camelCases to `ClinicalTrialDesign` to satisfy CRAN's naming rule). The 13-tool surface, 137 R tests, and 13/13 smoke matrix are unchanged from v0.0.5. Slash commands are now `/plugin install clinical-trial-design@wei-ai-lab` (was `designr@wei-ai-lab`); MCP tool calls now namespaced `mcp__clinical-trial-design__<tool>`. v0.0.5 was an agent-friendliness + trust-boundary release ([AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), [HOSTING.md](HOSTING.md), CI grep gate). v0.0.4 made the plugin self-contained at runtime; v0.0.3 introduced the marketplace-based install flow; v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`). The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
+> **v0.0.7 alpha.** Pre-1.0 schema break. The ten endpoint-shaped design tools collapse into three endpoint-typed tools (`design_binary`, `design_continuous`, `design_survival`) with `design_class ∈ {"fixed", "group-sequential"}` and (for survival) `model ∈ {"ph", "maxcombo", "rmst", "milestone", "wlr", "ahr"}` as parameters — total tool count drops 13 → 6. Same release lifts the operational kernel into the public surface: any design tool can take an `operational` block that solves `accrual_rate × accrual_duration = N` and `total_trial_duration = accrual_duration + follow_up_duration` (plus a `uniroot`-based event-probability tie for survival). Survival accrual API standardized on `accrual_duration` + `followup_duration` for every model. 184/184 R tests pass; 14/14 smoke. Slash commands and the wire-format identifiers (`designr_dispatch`, `DESIGNR_RSCRIPT`/`DESIGNR_LAUNCHER`) are preserved. v0.0.6 was the rebrand from `designr` → `clinical-trial-design`; v0.0.5 was an agent-friendliness + trust-boundary release; v0.0.4 made the plugin self-contained at runtime; v0.0.3 introduced the marketplace-based install flow; v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`). The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What it is
 
@@ -47,37 +47,33 @@ The benchmark corpus has cases across all of the above (~176 cases / 21 family d
 | Repo scaffolding | ✅ |
 | Benchmark schema | ✅ |
 | Benchmark corpus | ✅ (176 cases across 21 family directories) |
-| R package | ✅ `ClinicalTrialDesign` (10 design wrappers + validator + `verify_design` + `design_report`, 137 tests passing; sourced in-place by launcher — no `install_local` step) |
-| MCP server | ✅ (13 tools over stdio, TypeScript bundled with esbuild, 13/13 smoke pass) |
+| R package | ✅ `ClinicalTrialDesign` (3 design functions + `solve_operational` + validator + `verify_design` + `design_report`, 184 tests passing; sourced in-place by launcher — no `install_local` step) |
+| MCP server | ✅ (6 tools over stdio, TypeScript bundled with esbuild, 14/14 smoke pass) |
 | Skill / subagent | ✅ (skill in `skills/clinical-trial-design`) |
 | Plugin manifest | ✅ (`.claude-plugin/plugin.json` + `marketplace.json`; full install round-trip verified) |
 | npm package | ✅ `clinical-trial-design` (publishable; `npx clinical-trial-design` runs the MCP server standalone) |
 
 ## MVP tool surface
 
-Each of these is an MCP tool, each wrapping a validated function in `gsDesign` or `gsDesign2`. Hypothesis type (`comparison`), group-sequential `k`, spending function, and `test.type` are parameters, not separate tools — that keeps the surface small and predictable. Equivalence / TOST is supported by the binary and continuous fixed-sample wrappers only; survival wrappers do not currently support equivalence margins.
+Six MCP tools — three endpoint-typed design tools and three meta tools. The endpoint axis (binary / continuous / survival) is the *tool*; everything else — hypothesis type, fixed vs group-sequential, survival statistical model, accrual / follow-up timing — is a *parameter*. That keeps the surface small and predictable, and makes the JSON shape consistent across families.
 
-### Fixed-sample (6)
+### Design tools (3)
 
-| Tool | R backend | Covers |
-|---|---|---|
-| `design_fixed_binary` | `gsDesign::nBinomial` | Two-arm binary, all 3 hypothesis types. |
-| `design_fixed_continuous` | `gsDesign::nNormal` | Two-arm continuous, all 3 hypothesis types. |
-| `design_fixed_survival_ph` | `gsDesign::nSurv` | TTE PH log-rank, superiority / NI. |
-| `design_fixed_survival_maxcombo` | `gsDesign2::fixed_design_maxcombo` | TTE NPH MaxCombo (delayed effect). Superiority only. |
-| `design_fixed_survival_rmst` | `gsDesign2::fixed_design_rmst` | TTE restricted mean survival time at τ. Superiority only. |
-| `design_fixed_survival_milestone` | `gsDesign2::fixed_design_milestone` | TTE milestone survival probability S(τ). Superiority only. |
+| Tool | Endpoint | Selectors | R backends |
+|---|---|---|---|
+| `design_binary` | event / no-event | `design_class ∈ {"fixed", "group-sequential"}` | `gsDesign::nBinomial`, `gsDesign::gsDesign(endpoint="binomial")` |
+| `design_continuous` | mean difference | `design_class ∈ {"fixed", "group-sequential"}` | `gsDesign::nNormal`, `gsDesign::gsDesign(endpoint="normal")` |
+| `design_survival` | time-to-event | `design_class` × `model ∈ {"ph", "maxcombo", "rmst", "milestone", "wlr", "ahr"}` | `gsDesign::nSurv`/`gsSurv` (PH); `gsDesign2::fixed_design_*` and `gs_design_combo`/`gs_design_wlr`/`gs_design_ahr` (NPH) |
 
-### Group-sequential (4)
+All three accept `comparison ∈ {"superiority", "non-inferiority", "equivalence"}` (equivalence on binary / continuous fixed-sample only — survival wrappers don't support equivalence margins), `alpha`, `power`, `sided`, `allocation_ratio`, GS parameters (`k`, `timing`, `sfu`, `sfl`, `test.type`), and an optional `operational` block (see below).
 
-| Tool | R backend |
-|---|---|
-| `design_gs_binary` | `gsDesign::gsDesign` + `nBinomial` (super / NI) |
-| `design_gs_continuous` | `gsDesign::gsDesign` + `nNormal` (super / NI) |
-| `design_gs_survival_ph` | `gsDesign::gsSurv` (super / NI) |
-| `design_gs_survival_nph_combo` | `gsDesign2::gs_design_combo` / `gs_design_wlr` / `gs_design_ahr` (superiority only) |
+### Operational kernel
 
-### Meta (3)
+Any design tool accepts an `operational` block that solves the simple relations `accrual_rate × accrual_duration = sample_size_total` and `total_trial_duration = accrual_duration + follow_up_duration` (plus `target_events = sample_size_total × cumulative_event_rate(...)` for survival, via `uniroot` over the closed-form pooled exponential-PH event probability — same kernel `gsDesign::nSurv` uses internally).
+
+Supply any **0–4 of** `{accrual_rate, accrual_duration, follow_up_duration, total_trial_duration}` inside the block. The solver fills in the missing values and returns an audit trail (`given`, `derived`). This collapses what was previously a back-and-forth — call the design tool, then translate the answer into accrual feasibility — into a single round trip.
+
+### Meta tools (3)
 
 | Tool | Purpose |
 |---|---|
@@ -101,7 +97,7 @@ R -e 'install.packages(c("gsDesign","gsDesign2","jsonlite"))'
 
 #### Tested dependency versions
 
-`clinical-trial-design` v0.0.6 was developed and tested against the versions below. The R package's `DESCRIPTION` file pins minimum versions matching this set — older versions are not supported. CRAN's latest is usually fine; pin to these floors only if you hit a version-skew issue.
+`clinical-trial-design` v0.0.7 was developed and tested against the versions below. The R package's `DESCRIPTION` file pins minimum versions matching this set — older versions are not supported. CRAN's latest is usually fine; pin to these floors only if you hit a version-skew issue.
 
 | Layer | Dependency | Tested version |
 |---|---|---|
@@ -136,7 +132,7 @@ R -e 'install.packages(c("gsDesign","gsDesign2","jsonlite"))'
 ```bash
 claude plugin marketplace add /full/path/to/clinical-trial-design
 claude plugin install clinical-trial-design@wei-ai-lab
-claude plugin list   # confirm: clinical-trial-design@wei-ai-lab, version 0.0.6, enabled
+claude plugin list   # confirm: clinical-trial-design@wei-ai-lab, version 0.0.7, enabled
 ```
 
 Both methods do the same thing. Pick one. If anything goes wrong, `claude plugin validate /full/path/to/clinical-trial-design` will tell you whether the marketplace + plugin manifests parse cleanly.
@@ -151,7 +147,7 @@ This is for iterating on the plugin itself, not for end-user installs.
 
 ### Environment overrides
 
-If `Rscript` isn't on your `PATH`, set `DESIGNR_RSCRIPT=/full/path/to/Rscript` in your shell. To override the R launcher path (rare), set `DESIGNR_LAUNCHER=/full/path/to/launcher.R`. The MCP server reads both env vars when spawning R. (The `DESIGNR_*` prefix is preserved as the wire-format contract — see [CHANGELOG](CHANGELOG.md) for v0.0.6 notes.)
+If `Rscript` isn't on your `PATH`, set `DESIGNR_RSCRIPT=/full/path/to/Rscript` in your shell. To override the R launcher path (rare), set `DESIGNR_LAUNCHER=/full/path/to/launcher.R`. The MCP server reads both env vars when spawning R. (The `DESIGNR_*` prefix is preserved as the wire-format contract across the v0.0.6 rebrand and the v0.0.7 schema break — see [CHANGELOG](CHANGELOG.md).)
 
 ## Standalone MCP server (without Claude Code)
 
@@ -227,17 +223,19 @@ Three conversational prompts you can paste into Claude Code once the plugin is i
 
 1. **Fixed binary superiority (CAPTURE-style)**
    > *"Design a trial for refractory unstable angina. Control 30-day event rate ≈ 15%, hoped-for treatment rate ≈ 9%, two-sided α = 0.05, power 80%, 1:1 allocation."*
-   Expect `design_fixed_binary` with N ≈ 1,100.
+   Expect `design_binary` (`design_class = "fixed"`) with N ≈ 1,100.
 
 2. **TTE PH group-sequential (PARADIGM-HF-style)**
    > *"I need a 2-analysis GS design for a CV outcome trial. Control median OS ≈ 30 months, target HR = 0.75, accrual 100/month over 30 months, 24 months minimum follow-up, OBF spending, α = 0.025 one-sided, power 90%."*
-   Expect `design_gs_survival_ph` with events ≈ 380 at final analysis.
+   Expect `design_survival` (`model = "ph"`, `design_class = "group-sequential"`) with events ≈ 380 at final analysis.
 
 3. **TTE NPH MaxCombo (KEYNOTE-024-style)**
-   > *"Design an immunotherapy trial with delayed effect: 4-month delay, post-delay HR 0.60, control median 10 months, accrual 20/month for 18 months, 30-month study duration, α = 0.025, power 90%."*
-   Expect `design_fixed_survival_maxcombo` with a MaxCombo design summary.
+   > *"Design an immunotherapy trial with delayed effect: 4-month delay, post-delay HR 0.60, control median 10 months, accrual 20/month for 18 months, 12 months follow-up, α = 0.025, power 90%."*
+   Expect `design_survival` (`model = "maxcombo"`, `design_class = "fixed"`) with a MaxCombo design summary.
 
-See `mcp-server/SMOKE.md` for the full 13-prompt smoke matrix.
+For an end-to-end example that exercises the operational kernel: append *"and we can enroll 80 patients/month with at least 3 months of post-accrual follow-up — size the accrual window for me too"* to prompt 1. The agent should pass an `operational` block containing `{accrual_rate: 80, follow_up_duration: 3}`, and the response will include a derived accrual duration and total trial duration alongside the headline N.
+
+See `mcp-server/SMOKE.md` for the full 14-prompt smoke matrix.
 
 ## Roadmap
 

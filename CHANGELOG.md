@@ -7,6 +7,76 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.7] — 2026-04-25
+
+Pre-1.0 schema break. Collapses the ten endpoint-shaped MCP tools and
+their R wrappers into three endpoint-typed tools, and lifts the
+operational kernel into the public surface.
+
+### Changed
+
+- **Tool surface collapsed 10 → 3** for endpoint design, reducing the
+  total tool count from 13 to 6 (including `validate_against_benchmark`,
+  `verify_design`, `design_report`):
+  - `design_fixed_binary`, `design_gs_binary` → `design_binary` with
+    `design_class ∈ {"fixed", "group-sequential"}`.
+  - `design_fixed_continuous`, `design_gs_continuous` →
+    `design_continuous` with the same `design_class` axis.
+  - `design_fixed_survival_ph`, `design_gs_survival_ph`,
+    `design_fixed_survival_maxcombo`, `design_fixed_survival_rmst`,
+    `design_fixed_survival_milestone`, `design_gs_survival_nph_combo`
+    → `design_survival` with `design_class` × `model ∈ {"ph",
+    "maxcombo", "rmst", "milestone", "wlr", "ahr"}`.
+- **Survival accrual API standardized** on `accrual_duration` +
+  `followup_duration` for every model; total study duration is now a
+  derived field (`study_duration` in `result.timing`), never an input.
+  Fixed-NPH wrappers that previously took `study_duration` now take
+  `followup_duration` instead.
+- **R package** consolidated to three exported `design_*` functions
+  plus the new `solve_operational()` helper. The wire-format
+  identifiers (`designr_dispatch`, `designr_input_error:`,
+  `DESIGNR_RSCRIPT` / `DESIGNR_LAUNCHER`) are intentionally preserved
+  for backward compatibility; the public R API is the only schema
+  break.
+
+### Added
+
+- **Operational kernel** (`solve_operational()`, exposed through every
+  design tool's `operational` block). Supply any 0–4 of
+  `{accrual_rate, accrual_duration, follow_up_duration,
+  total_trial_duration}` and the solver derives the rest from
+  `accrual_rate × accrual_duration = sample_size` and
+  `total_trial_duration = accrual_duration + follow_up_duration`. For
+  survival, `target_events` ties the system: supplying just
+  `accrual_rate` lets the solver pin `follow_up_duration` via
+  `uniroot()` over the closed-form pooled exponential-PH event
+  probability (mirrors `gsDesign::nSurv`'s kernel). Returns an audit
+  trail (`given`, `derived`).
+- **Cumulative event-rate helpers** (`R/utils_operational.R`):
+  closed-form pooled event probability under exponential PH with
+  uniform accrual + exponential dropout.
+- **13 new operational unit tests** in
+  `tests/testthat/test-operational.R` — covering single-free,
+  two-free, zero-free, over-specified consistent, over-specified
+  inconsistent, and end-to-end design-`*`-+-operational threading.
+
+### Schema break notes
+
+This is a **0.0.x pre-1.0 break** — callers pinned to v0.0.6 must
+update their tool names and (for survival) replace `study_duration`
+with `followup_duration`. The R-side wire-format identifiers and the
+JSON dispatcher symbol are preserved, so MCP-bridge tooling that
+introspects the dispatch surface keeps working.
+
+### Engineering
+
+- 184 / 184 testthat tests pass (was 137 in v0.0.6).
+- `R CMD check` reports zero errors / zero warnings; one benign NOTE
+  about checking source vs built tarball.
+- `node mcp-server/scripts/smoke.mjs` reports 14 / 0 / 14 against the
+  new tool surface.
+- MCP server bundle: `dist/index.js` 724 KB (esbuild).
+
 ## [0.0.6] — 2026-04-25
 
 Rebrand release. No new design wrappers, no behavior changes, no new MCP
