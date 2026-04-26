@@ -10,6 +10,9 @@ The canonical package is published from `mcp-server/`. The `prepublishOnly` scri
 npm whoami                    # confirm logged in (else: npm login)
 cd mcp-server
 npm publish --access public
+# If your account has 2FA enforced, npm returns E403 on the bare
+# command. Pass a fresh OTP from your authenticator app:
+#   npm publish --access public --otp=123456
 ```
 
 Verify:
@@ -29,10 +32,11 @@ Three redirect aliases get published so users searching for related terms (`tria
 
 ```bash
 cd mcp-server/aliases
-bash publish-aliases.sh
+bash publish-aliases.sh                   # 2FA off
+bash publish-aliases.sh --otp 123456      # 2FA on — pass a fresh OTP
 ```
 
-The script publishes all three (`trial-design`, `sample-size-calculator`, `study-design`) and then deprecates them. It fails fast on the first conflict — if a name is already taken on npm, edit the `ALIASES=(...)` list in the script, drop the conflict, and rerun.
+The script publishes all three (`trial-design`, `sample-size-calculator`, `study-design`) and then deprecates them. It fails fast on the first conflict — if a name is already taken on npm, edit the `ALIASES=(...)` list in the script, drop the conflict, and rerun. A single OTP usually covers the full run (3 publishes + 3 deprecates ≈ a few seconds total, well under the 30-second OTP window).
 
 ## 3. MCP registry submission
 
