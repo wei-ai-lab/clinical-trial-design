@@ -1,6 +1,7 @@
 test_that("design_report renders a fixed binary design", {
-  d <- design_fixed_binary(
+  d <- design_binary(
     p_control = 0.15, p_treatment = 0.09,
+    design_class = "fixed",
     alpha = 0.05, power = 0.8, sided = 2
   )
   md <- design_report(d)
@@ -17,8 +18,9 @@ test_that("design_report renders a fixed binary design", {
 })
 
 test_that("design_report renders a fixed continuous design", {
-  d <- design_fixed_continuous(
+  d <- design_continuous(
     mean_diff = 30, sd = 70,
+    design_class = "fixed",
     alpha = 0.05, power = 0.8, sided = 2
   )
   md <- design_report(d)
@@ -28,7 +30,8 @@ test_that("design_report renders a fixed continuous design", {
 })
 
 test_that("design_report renders a fixed PH survival design with events", {
-  d <- design_fixed_survival_ph(
+  d <- design_survival(
+    model = "ph", design_class = "fixed",
     control_median = 30, hazard_ratio = 0.75,
     accrual_rate = 100, accrual_duration = 30, followup_duration = 24,
     alpha = 0.025, power = 0.9, sided = 1
@@ -41,7 +44,8 @@ test_that("design_report renders a fixed PH survival design with events", {
 })
 
 test_that("design_report renders a GS PH survival design with boundaries + timing", {
-  d <- design_gs_survival_ph(
+  d <- design_survival(
+    model = "ph", design_class = "group-sequential",
     control_median = 30, hazard_ratio = 0.75,
     accrual_rate = 100, accrual_duration = 30, followup_duration = 24,
     k = 2, sfu = "LDOF",
@@ -56,9 +60,10 @@ test_that("design_report renders a GS PH survival design with boundaries + timin
 })
 
 test_that("design_report renders a NPH MaxCombo design", {
-  d <- design_fixed_survival_maxcombo(
+  d <- design_survival(
+    model = "maxcombo", design_class = "fixed",
     control_median = 10, delay_months = 4, post_delay_hr = 0.6,
-    accrual_rate = 20, accrual_duration = 18, study_duration = 30,
+    accrual_rate = 20, accrual_duration = 18, followup_duration = 12,
     alpha = 0.025, power = 0.9
   )
   md <- design_report(d)

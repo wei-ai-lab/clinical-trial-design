@@ -99,3 +99,22 @@ check_spending_fn <- function(sf, field) {
   }
   sf
 }
+
+check_design_class <- function(design_class) {
+  allowed <- c("fixed", "group-sequential")
+  if (!is.character(design_class) || length(design_class) != 1L ||
+      !(design_class %in% allowed)) {
+    designr_stop("design_class",
+                 paste0("must be one of ", paste(allowed, collapse = ", ")))
+  }
+  design_class
+}
+
+check_survival_model <- function(model) {
+  allowed <- c("ph", "maxcombo", "rmst", "milestone", "wlr", "ahr")
+  if (!is.character(model) || length(model) != 1L || !(model %in% allowed)) {
+    designr_stop("model",
+                 paste0("must be one of ", paste(allowed, collapse = ", ")))
+  }
+  model
+}

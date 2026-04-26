@@ -15,7 +15,8 @@
 #'   (e.g. `"1997_CAPTURE_abciximab"`).
 #' @param tool Optional — override the design tool dispatched. If NULL
 #'   (default), inferred from the case's `design.family` / `endpoint_type`
-#'   fields.
+#'   fields. Must be one of `design_binary`, `design_continuous`,
+#'   `design_survival`.
 #' @return A list with `case_id`, `tool`, `computed`, `expected`, `tolerance`,
 #'   and `within_tolerance` (logical).
 #' @export
@@ -32,11 +33,17 @@ validate_against_benchmark <- function(family, id, tool = NULL) {
   }
   case <- yaml::read_yaml(yaml_path)
 
-  if (is.null(tool)) tool <- .infer_tool(case, family)
+  inferred <- .infer_tool(case, family)
+  if (is.null(tool)) {
+    tool <- inferred$tool
+    extra <- inferred$extra
+  } else {
+    extra <- inferred$extra
+  }
   fn <- .tool_registry[[tool]]
   if (is.null(fn)) designr_stop("tool", sprintf("unknown design tool '%s'", tool))
 
-  args <- .case_to_args(case, tool)
+  args <- .case_to_args(case, tool, extra)
   computed <- do.call(fn, args)
   expected <- case$expected %||% list()
   tolerance <- expected$tolerance %||% case$tolerance %||% list()
@@ -98,6 +105,9 @@ validate_against_benchmark <- function(family, id, tool = NULL) {
                "could not locate benchmarks/; set DESIGNR_BENCHMARK_ROOT")
 }
 
+# Maps a benchmark case to (tool, extra args). `extra` is the set of
+# axis-selecting parameters injected on top of `.case_to_args` so the unified
+# entry points dispatch to the right backend.
 .infer_tool <- function(case, family) {
   fam <- case$family %||% case$design$family %||% family
   ep  <- case$design$endpoint$type %||% case$design$endpoint_type %||% case$endpoint_type
@@ -111,25 +121,44 @@ validate_against_benchmark <- function(family, id, tool = NULL) {
                else fam
   key <- paste(fam_class, ep, sep = ":")
   switch(key,
-    "fixed:binary"         = "design_fixed_binary",
-    "fixed:continuous"     = "design_fixed_continuous",
-    "fixed:survival-ph"    = "design_fixed_survival_ph",
-    "fixed:tte-ph"         = "design_fixed_survival_ph",
-    "fixed:survival-nph"   = "design_fixed_survival_maxcombo",
-    "fixed:tte-nph"        = "design_fixed_survival_maxcombo",
-    "fixed:survival-rmst"  = "design_fixed_survival_rmst",
-    "fixed:survival-milestone" = "design_fixed_survival_milestone",
-    "gs-ph:binary"     = "design_gs_binary",
-    "gs-ph:continuous" = "design_gs_continuous",
-    "gs-ph:survival-ph" = "design_gs_survival_ph",
-    "gs-ph:tte-ph"      = "design_gs_survival_ph",
-    "gs-nph:survival-nph" = "design_gs_survival_nph_combo",
-    "gs-nph:tte-nph"      = "design_gs_survival_nph_combo",
+    "fixed:binary"            = list(tool = "design_binary",
+                                     extra = list(design_class = "fixed")),
+    "gs-ph:binary"            = list(tool = "design_binary",
+                                     extra = list(design_class = "group-sequential")),
+
+    "fixed:continuous"        = list(tool = "design_continuous",
+                                     extra = list(design_class = "fixed")),
+    "gs-ph:continuous"        = list(tool = "design_continuous",
+                                     extra = list(design_class = "group-sequential")),
+
+    "fixed:survival-ph"       = list(tool = "design_survival",
+                                     extra = list(design_class = "fixed", model = "ph")),
+    "fixed:tte-ph"            = list(tool = "design_survival",
+                                     extra = list(design_class = "fixed", model = "ph")),
+    "gs-ph:survival-ph"       = list(tool = "design_survival",
+                                     extra = list(design_class = "group-sequential", model = "ph")),
+    "gs-ph:tte-ph"            = list(tool = "design_survival",
+                                     extra = list(design_class = "group-sequential", model = "ph")),
+
+    "fixed:survival-nph"      = list(tool = "design_survival",
+                                     extra = list(design_class = "fixed", model = "maxcombo")),
+    "fixed:tte-nph"           = list(tool = "design_survival",
+                                     extra = list(design_class = "fixed", model = "maxcombo")),
+    "fixed:survival-rmst"     = list(tool = "design_survival",
+                                     extra = list(design_class = "fixed", model = "rmst")),
+    "fixed:survival-milestone"= list(tool = "design_survival",
+                                     extra = list(design_class = "fixed", model = "milestone")),
+
+    "gs-nph:survival-nph"     = list(tool = "design_survival",
+                                     extra = list(design_class = "group-sequential", model = "maxcombo")),
+    "gs-nph:tte-nph"          = list(tool = "design_survival",
+                                     extra = list(design_class = "group-sequential", model = "maxcombo")),
+
     designr_stop("tool", sprintf("no wrapper mapped for '%s'", key))
   )
 }
 
-.case_to_args <- function(case, tool) {
+.case_to_args <- function(case, tool, extra = list()) {
   d <- case$design %||% list()
   e <- d$effect %||% case$effect %||% list()
   sided <- d$sidedness %||% d$sided %||% 2
@@ -137,30 +166,38 @@ validate_against_benchmark <- function(family, id, tool = NULL) {
   power <- d$power %||% 0.9
   comparison <- d$comparison %||% "superiority"
   ratio <- d$allocation_ratio %||% 1
-  switch(tool,
-    "design_fixed_binary" = list(
+  base <- switch(tool,
+    "design_binary" = list(
       p_control   = e$control_rate %||% e$p_control,
       p_treatment = e$treatment_rate %||% e$p_treatment,
       alpha = alpha, power = power, sided = sided,
       allocation_ratio = ratio, comparison = comparison,
       ni_margin = d$ni_margin, equiv_margin = d$equiv_margin
     ),
-    "design_fixed_continuous" = list(
+    "design_continuous" = list(
       mean_diff = e$mean_diff, sd = e$sd,
       alpha = alpha, power = power, sided = sided,
       allocation_ratio = ratio, comparison = comparison,
       ni_margin = d$ni_margin, equiv_margin = d$equiv_margin
     ),
-    "design_fixed_survival_ph" = list(
-      control_median = e$control_median, hazard_ratio = e$hazard_ratio,
-      accrual_rate = e$accrual_rate %||% d$accrual$rate,
+    "design_survival" = list(
+      control_median   = e$control_median,
+      hazard_ratio     = e$hazard_ratio,
+      delay_months     = e$delay_months %||% 0,
+      post_delay_hr    = e$post_delay_hr %||% e$hazard_ratio,
+      accrual_rate     = e$accrual_rate %||% d$accrual$rate,
       accrual_duration = e$accrual_duration %||% d$accrual$duration_months,
       followup_duration = e$followup_duration %||% d$followup_duration_months,
-      dropout_rate = e$dropout_rate %||% 0.001,
-      alpha = alpha, power = power,
-      sided = if (sided == 2) 1 else sided,
-      allocation_ratio = ratio
+      dropout_rate     = e$dropout_rate %||% 0.001,
+      tau              = e$tau,
+      alpha            = alpha, power = power,
+      sided            = if (sided == 2) 1 else sided,
+      allocation_ratio = ratio,
+      comparison       = comparison,
+      ni_hr            = d$ni_hr %||% e$ni_hr
     ),
     as.list(e)
   )
+  base <- base[!vapply(base, is.null, logical(1))]
+  utils::modifyList(base, extra)
 }

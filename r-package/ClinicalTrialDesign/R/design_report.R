@@ -183,7 +183,9 @@ design_report <- function(result, format = c("markdown", "text")) {
                                     collapse = ", ")))
     if (!is.null(t$accrual_duration))
       rows <- c(rows, sprintf("- **Accrual / follow-up:** %.1f / %.1f months (total %.1f)",
-                              t$accrual_duration, t$followup_duration, t$total_duration))
+                              t$accrual_duration,
+                              t$followup_duration %||% NA_real_,
+                              t$study_duration   %||% t$total_duration %||% NA_real_))
   }
   if (length(rows) == 0) "_(none)_" else paste(rows, collapse = "\n")
 }

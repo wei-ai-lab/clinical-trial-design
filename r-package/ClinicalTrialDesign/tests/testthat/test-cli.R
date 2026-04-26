@@ -1,6 +1,6 @@
 test_that("designr_dispatch returns ok for a valid tool call", {
   input <- jsonlite::toJSON(
-    list(tool = "design_fixed_binary",
+    list(tool = "design_binary",
          args = list(p_control = 0.15, p_treatment = 0.09,
                      alpha = 0.05, sided = 2, power = 0.8)),
     auto_unbox = TRUE
@@ -15,7 +15,7 @@ test_that("designr_dispatch returns ok for a valid tool call", {
 
 test_that("designr_dispatch emits structured input_error for bad inputs", {
   input <- jsonlite::toJSON(
-    list(tool = "design_fixed_binary",
+    list(tool = "design_binary",
          args = list(p_control = -0.1, p_treatment = 0.09)),
     auto_unbox = TRUE
   )

@@ -21,7 +21,7 @@ test_that("validate_against_benchmark: runs on CAPTURE fixed-binary case", {
   )
   expect_true(is.list(res))
   expect_equal(res$case_id, "1997_CAPTURE_abciximab")
-  expect_equal(res$tool, "design_fixed_binary")
+  expect_equal(res$tool, "design_binary")
   expect_true(!is.null(res$computed$sample_size_total))
   expect_equal(res$expected$sample_size_total, 1400)
   expect_true(!is.null(res$diffs$sample_size_total))

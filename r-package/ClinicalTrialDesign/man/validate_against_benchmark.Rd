@@ -15,7 +15,8 @@ validate_against_benchmark(family, id, tool = NULL)
 
 \item{tool}{Optional — override the design tool dispatched. If NULL
 (default), inferred from the case's `design.family` / `endpoint_type`
-fields.}
+fields. Must be one of `design_binary`, `design_continuous`,
+`design_survival`.}
 }
 \value{
 A list with `case_id`, `tool`, `computed`, `expected`, `tolerance`,

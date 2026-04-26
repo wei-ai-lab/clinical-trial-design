@@ -38,13 +38,10 @@ points for power, ±0.5 pp for Type I error) borrowed from
 `RConsortium/pharma-skills`'s `lrsim()` convention.
 }
 \details{
-Supported families in v0.0.2:
-- `design_fixed_binary` (superiority, non-inferiority)
-- `design_fixed_continuous` (superiority, non-inferiority)
-- `design_fixed_survival_ph` (superiority, non-inferiority)
-- `design_gs_binary` (superiority, non-inferiority)
-- `design_gs_continuous` (superiority, non-inferiority)
-- `design_gs_survival_ph` (superiority, non-inferiority)
+Supported result shapes:
+- `design_binary` (fixed / GS, superiority and non-inferiority)
+- `design_continuous` (fixed / GS, superiority and non-inferiority)
+- `design_survival` with `model = "ph"` (fixed / GS, superiority and non-inferiority)
 
 Deferred to a future release: equivalence (TOST), NPH endpoints
 (MaxCombo / RMST / milestone), GS NPH combo. Calling `verify_design`

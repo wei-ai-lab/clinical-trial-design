@@ -93,17 +93,10 @@ designr_dispatch <- function(con = file("stdin", "r")) {
 }
 
 .tool_registry <- list(
-  design_fixed_binary             = function(...) design_fixed_binary(...),
-  design_fixed_continuous         = function(...) design_fixed_continuous(...),
-  design_fixed_survival_ph        = function(...) design_fixed_survival_ph(...),
-  design_fixed_survival_maxcombo  = function(...) design_fixed_survival_maxcombo(...),
-  design_fixed_survival_rmst      = function(...) design_fixed_survival_rmst(...),
-  design_fixed_survival_milestone = function(...) design_fixed_survival_milestone(...),
-  design_gs_binary                = function(...) design_gs_binary(...),
-  design_gs_continuous            = function(...) design_gs_continuous(...),
-  design_gs_survival_ph           = function(...) design_gs_survival_ph(...),
-  design_gs_survival_nph_combo    = function(...) design_gs_survival_nph_combo(...),
-  validate_against_benchmark      = function(...) validate_against_benchmark(...),
-  verify_design                   = function(...) verify_design(...),
-  design_report                   = function(...) design_report(...)
+  design_binary              = function(...) design_binary(...),
+  design_continuous          = function(...) design_continuous(...),
+  design_survival            = function(...) design_survival(...),
+  validate_against_benchmark = function(...) validate_against_benchmark(...),
+  verify_design              = function(...) verify_design(...),
+  design_report              = function(...) design_report(...)
 )
