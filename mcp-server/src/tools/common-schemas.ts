@@ -98,3 +98,60 @@ export const OperationalBlockSchema = z
       "A + F = T (plus target_events for survival). Result is attached as " +
       "result.operational with audit fields (given, derived)."
   );
+
+// Reasoning chain — structured citation trail. The LLM (or user) populates
+// each entry with its source. Allowed source_type values:
+//   llm_precedent       — public-trial precedent the agent surfaced
+//   fda_guidance        — citation to a specific FDA guidance document
+//   ich_guidance        — citation to ICH E9 / E9-R1 / etc.
+//   user_supplied       — the user told the agent this directly
+//   package_default     — fell out of a tool's default value
+//   sponsor_confidential — internal data (Phase 2 readout, pipeline)
+// The package validates the shape and surfaces sponsor_confidential entries
+// in design_report() as a redaction prompt before external sharing.
+export const ReasoningSourceTypeEnum = z
+  .enum([
+    "llm_precedent",
+    "fda_guidance",
+    "ich_guidance",
+    "user_supplied",
+    "package_default",
+    "sponsor_confidential",
+  ])
+  .describe(
+    "Provenance tag for a reasoning-chain entry. Drives the design_report " +
+      "redaction prompt (sponsor_confidential entries flagged before sharing)."
+  );
+
+export const ReasoningEntrySchema = z
+  .object({
+    decision: z
+      .string()
+      .min(1)
+      .describe("Short label for the design choice (e.g., 'alpha', 'hazard_ratio')."),
+    value: z
+      .union([z.number(), z.string(), z.boolean(), z.null()])
+      .describe("The chosen value (numeric, string, or boolean)."),
+    justification: z
+      .string()
+      .describe("One sentence explaining why this value was chosen."),
+    source_type: ReasoningSourceTypeEnum,
+    source_ref: z
+      .string()
+      .optional()
+      .describe(
+        "Free-text reference (citation, NCT id, internal protocol number). Optional but encouraged for non-default entries."
+      ),
+  })
+  .describe(
+    "One reasoning-chain entry — a single design decision with its provenance. The LLM and user fill the content; the package validates the shape."
+  );
+
+export const ReasoningChainSchema = z
+  .array(ReasoningEntrySchema)
+  .optional()
+  .describe(
+    "Optional structured citation trail. Each entry: {decision, value, " +
+      "justification, source_type, source_ref?}. design_report() renders " +
+      "this inline; sponsor_confidential entries trigger a redaction prompt."
+  );

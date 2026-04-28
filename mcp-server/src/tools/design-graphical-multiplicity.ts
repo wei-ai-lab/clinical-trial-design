@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { runR } from "../r-bridge.js";
+import { ReasoningChainSchema } from "./common-schemas.js";
 
 const HypothesisSpecSchema = z
   .object({
@@ -54,6 +55,7 @@ export const schema = {
         "sample-size sizing. Default: max(initial_weight_i, fallback) where " +
         "fallback = smallest non-zero initial weight."
     ),
+  reasoning_chain: ReasoningChainSchema,
 };
 
 export const description =

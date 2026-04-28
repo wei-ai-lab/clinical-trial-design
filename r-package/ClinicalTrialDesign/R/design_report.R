@@ -24,8 +24,20 @@ design_report <- function(result, format = c("markdown", "text")) {
   inp <- result$inputs
 
   lines <- character(0)
-  lines <- c(lines, sprintf("# %s", .report_title(fam, inp)),
-             "",
+  lines <- c(lines, sprintf("# %s", .report_title(fam, inp)), "")
+
+  # Sponsor-confidential redaction warning at the top — surfaces clearly
+  # before the user copies the report into a deck or sends it externally.
+  if (reasoning_has_confidential(result$reasoning_chain)) {
+    lines <- c(lines,
+               "> ⚠️ **Sponsor-confidential content.** This design's",
+               "> reasoning chain contains entries tagged",
+               "> `source_type: sponsor_confidential`. Review and redact",
+               "> before sharing externally.",
+               "")
+  }
+
+  lines <- c(lines,
              "## Design overview", "",
              .report_overview(fam, inp),
              "",
@@ -41,6 +53,12 @@ design_report <- function(result, format = c("markdown", "text")) {
                .report_analysis_plan(result),
                "")
   }
+  if (!is.null(result$reasoning_chain) && length(result$reasoning_chain) > 0L) {
+    lines <- c(lines,
+               "## Reasoning chain", "",
+               .report_reasoning(result$reasoning_chain),
+               "")
+  }
   lines <- c(lines,
              "## Method & version", "",
              sprintf("- **Method:** `%s`", result$method),
@@ -49,6 +67,37 @@ design_report <- function(result, format = c("markdown", "text")) {
                      tryCatch(as.character(utils::packageVersion("ClinicalTrialDesign")),
                               error = function(e) "loaded")))
   paste(lines, collapse = "\n")
+}
+
+# Render the reasoning chain as a markdown table. Each row: decision,
+# value, justification, source_type (with the sponsor_confidential tag
+# rendered emphatically), source_ref. Long justifications are kept in
+# place — markdown tables don't paginate, but the table is readable in
+# both a rendered viewer and as plain text.
+.report_reasoning <- function(rc) {
+  if (is.null(rc) || length(rc) == 0L) return("_(empty)_")
+  src_label <- function(st) {
+    if (identical(st, "sponsor_confidential"))
+      return("`sponsor_confidential` ⚠️")
+    sprintf("`%s`", st)
+  }
+  fmt_value <- function(v) {
+    if (is.null(v)) return("—")
+    if (is.numeric(v)) return(sprintf("%g", v))
+    if (is.logical(v)) return(if (v) "true" else "false")
+    as.character(v)
+  }
+  rows <- vapply(rc, function(e) {
+    sprintf("| %s | %s | %s | %s | %s |",
+            e$decision,
+            fmt_value(e$value),
+            e$justification,
+            src_label(e$source_type),
+            if (is.null(e$source_ref)) "—" else e$source_ref)
+  }, character(1))
+  c("| Decision | Value | Justification | Source | Reference |",
+    "|---|---|---|---|---|",
+    rows)
 }
 
 .report_family <- function(method) {

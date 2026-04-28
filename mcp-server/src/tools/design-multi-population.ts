@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { runR } from "../r-bridge.js";
+import { ReasoningChainSchema } from "./common-schemas.js";
 
 const PopulationSpecSchema = z
   .object({
@@ -69,6 +70,7 @@ export const schema = {
     .array(z.string().min(1))
     .optional()
     .describe("For strategy='fixed-sequence' only. Population names in test order."),
+  reasoning_chain: ReasoningChainSchema,
 };
 
 export const description =
