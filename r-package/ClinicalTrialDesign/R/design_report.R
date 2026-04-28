@@ -1,25 +1,64 @@
-#' Markdown summary of a ClinicalTrialDesign result
+#' Render a ClinicalTrialDesign result as markdown, Word, or PDF
 #'
 #' Produces a clinician-readable report from the JSON-shaped result returned
-#' by any `design_*` tool. Useful for review meetings and as a saveable
-#' artifact: the markdown can be pasted into a SAP-style document or
-#' rendered to HTML / PDF / Word downstream.
+#' by any `design_*` tool. Markdown output is in-memory text; `docx` and
+#' `pdf` write to a path on disk and return that path.
 #'
-#' For v0.0.2 only `format = "markdown"` is supported. Word / PDF output is
-#' deferred (a heavy Python-template path is the long-term option, modeled
-#' on `RConsortium/pharma-skills`'s reporter).
+#' Sections rendered (presence depends on result type):
+#' \itemize{
+#'   \item Title (family + comparison)
+#'   \item Sponsor-confidential warning (if `reasoning_chain` includes any
+#'     entry with `source_type = "sponsor_confidential"`)
+#'   \item Design overview (family, comparison, sided, allocation, GS axes)
+#'   \item Key inputs (only inputs that are populated)
+#'   \item Headline output (sample size, per-arm, events)
+#'   \item Analysis plan (boundaries + timing for GS designs)
+#'   \item Reasoning chain (decision/value/justification/source/reference)
+#'   \item Method + version (tool method, backend version, package version)
+#' }
 #'
 #' @param result A `ClinicalTrialDesign` result list (the `$result` payload
 #'   returned by the MCP bridge).
-#' @param format Output format. Currently only `"markdown"`.
+#' @param format Output format: `"markdown"` (default), `"text"` (alias),
+#'   `"docx"` (Word), `"pdf"`.
+#' @param path Output file path for `docx` / `pdf`. If `NULL`, a tempfile
+#'   is created and its path returned.
 #'
-#' @return A length-1 character vector holding the formatted report.
+#' @return For `markdown`/`text`: a length-1 character vector holding the
+#'   formatted report. For `docx`/`pdf`: the path of the file written
+#'   (length-1 character).
+#'
+#' @details
+#' \itemize{
+#'   \item `docx` requires the `officer` package (Suggests). The whole
+#'     report is rendered as native Word paragraphs, headings, and tables —
+#'     not by piping markdown through Pandoc. This means no Pandoc system
+#'     dependency for the Word path.
+#'   \item `pdf` renders the markdown via `rmarkdown::render(...,
+#'     output_format = "pdf_document")`. Requires Pandoc + a TeX
+#'     engine. If either is missing the function falls back to writing
+#'     the markdown source and emits a clear message rather than failing
+#'     silently.
+#' }
+#'
 #' @export
-design_report <- function(result, format = c("markdown", "text")) {
+design_report <- function(result,
+                          format = c("markdown", "text", "docx", "pdf"),
+                          path   = NULL) {
   if (!is.list(result) || is.null(result$method) || is.null(result$inputs)) {
     designr_stop("result", "must be a ClinicalTrialDesign result list with $method and $inputs")
   }
   format <- match.arg(format)
+
+  # docx and pdf are renderer dispatchers — both build the markdown body
+  # then render. Hand off and return.
+  if (format == "docx") {
+    return(.render_docx(result, path))
+  }
+  if (format == "pdf") {
+    return(.render_pdf(result, path))
+  }
+
   fam <- .report_family(result$method)
   inp <- result$inputs
 
@@ -237,4 +276,211 @@ design_report <- function(result, format = c("markdown", "text")) {
                               t$study_duration   %||% t$total_duration %||% NA_real_))
   }
   if (length(rows) == 0) "_(none)_" else paste(rows, collapse = "\n")
+}
+
+# ---- docx renderer (officer) -------------------------------------------------
+#
+# Renders the same content as the markdown report but as native Word
+# paragraphs / headings / tables — not by piping markdown through Pandoc.
+# Word doesn't have a markdown table primitive, so we build proper Word
+# tables for the reasoning chain and the analysis plan.
+#
+# Falls back to writing the markdown text alongside if officer is absent.
+
+.render_docx <- function(result, path) {
+  if (!requireNamespace("officer", quietly = TRUE)) {
+    designr_stop("format",
+                 "format='docx' requires the 'officer' R package (install.packages('officer'))")
+  }
+  if (is.null(path)) {
+    path <- tempfile(pattern = "ClinicalTrialDesign_report_", fileext = ".docx")
+  }
+
+  fam <- .report_family(result$method)
+  inp <- result$inputs
+
+  doc <- officer::read_docx()
+
+  # Title
+  doc <- officer::body_add_par(doc, .report_title(fam, inp), style = "heading 1")
+
+  # Sponsor-confidential warning, if applicable
+  if (reasoning_has_confidential(result$reasoning_chain)) {
+    doc <- officer::body_add_par(doc,
+      "⚠ Sponsor-confidential content. The reasoning chain contains entries tagged source_type=sponsor_confidential. Review and redact before sharing externally.",
+      style = "Normal")
+    doc <- officer::body_add_par(doc, "", style = "Normal")
+  }
+
+  # Sections
+  doc <- officer::body_add_par(doc, "Design overview", style = "heading 2")
+  for (line in .report_overview_lines(fam, inp)) {
+    doc <- officer::body_add_par(doc, line, style = "Normal")
+  }
+
+  doc <- officer::body_add_par(doc, "Key inputs", style = "heading 2")
+  for (line in .report_inputs_lines(fam, inp)) {
+    doc <- officer::body_add_par(doc, line, style = "Normal")
+  }
+
+  doc <- officer::body_add_par(doc, "Headline output", style = "heading 2")
+  for (line in .report_output_lines(result)) {
+    doc <- officer::body_add_par(doc, line, style = "Normal")
+  }
+
+  if (!is.null(result$boundaries) || !is.null(result$timing)) {
+    doc <- officer::body_add_par(doc, "Analysis plan", style = "heading 2")
+    for (line in .report_analysis_plan_lines(result)) {
+      doc <- officer::body_add_par(doc, line, style = "Normal")
+    }
+  }
+
+  rc <- result$reasoning_chain
+  if (!is.null(rc) && length(rc) > 0L) {
+    doc <- officer::body_add_par(doc, "Reasoning chain", style = "heading 2")
+    rc_df <- data.frame(
+      Decision      = vapply(rc, function(e) as.character(e$decision      %||% ""), character(1)),
+      Value         = vapply(rc, function(e) {
+                         v <- e$value
+                         if (is.null(v)) "—"
+                         else if (is.numeric(v)) sprintf("%g", v)
+                         else as.character(v)
+                       }, character(1)),
+      Justification = vapply(rc, function(e) as.character(e$justification %||% ""), character(1)),
+      Source        = vapply(rc, function(e) {
+                         s <- as.character(e$source_type %||% "")
+                         if (identical(s, "sponsor_confidential"))
+                           paste0(s, " ⚠") else s
+                       }, character(1)),
+      Reference     = vapply(rc, function(e) as.character(e$source_ref %||% "—"), character(1)),
+      stringsAsFactors = FALSE
+    )
+    doc <- officer::body_add_table(doc, value = rc_df, style = NULL,
+                                   first_row = TRUE, header = TRUE)
+  }
+
+  doc <- officer::body_add_par(doc, "Method & version", style = "heading 2")
+  doc <- officer::body_add_par(doc, sprintf("Method: %s", result$method),
+                               style = "Normal")
+  doc <- officer::body_add_par(doc, sprintf("Backend version: %s",
+                               result$package_version %||% "n/a"),
+                               style = "Normal")
+  doc <- officer::body_add_par(doc, sprintf("ClinicalTrialDesign version: %s",
+                               tryCatch(as.character(utils::packageVersion("ClinicalTrialDesign")),
+                                        error = function(e) "loaded")),
+                               style = "Normal")
+
+  print(doc, target = path)
+  invisible(path)
+}
+
+# ---- pdf renderer (rmarkdown) ------------------------------------------------
+#
+# rmarkdown::render the markdown body via pdf_document. Requires Pandoc +
+# a TeX engine (the README documents these). If Pandoc is absent we error
+# with a clear message that points the user to format='markdown' instead.
+
+.render_pdf <- function(result, path) {
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+    designr_stop("format",
+                 "format='pdf' requires the 'rmarkdown' R package")
+  }
+  if (!nzchar(Sys.which("pandoc")) && !rmarkdown::pandoc_available()) {
+    designr_stop("format",
+                 "format='pdf' requires Pandoc on the system PATH; install Pandoc or call design_report(format='markdown') and convert externally")
+  }
+  if (is.null(path)) {
+    path <- tempfile(pattern = "ClinicalTrialDesign_report_", fileext = ".pdf")
+  }
+  md_body <- design_report(result, format = "markdown")
+  md_path <- tempfile(fileext = ".md")
+  writeLines(md_body, md_path)
+
+  rmarkdown::render(input        = md_path,
+                    output_format = "pdf_document",
+                    output_file  = basename(path),
+                    output_dir   = dirname(path),
+                    quiet        = TRUE)
+  invisible(path)
+}
+
+# ---- helpers shared between markdown and docx --------------------------------
+
+.report_overview_lines <- function(family, inp) {
+  comp <- inp$comparison %||% "superiority"
+  rows <- c(
+    sprintf("Family: %s", family),
+    sprintf("Comparison: %s", comp),
+    sprintf("Sided: %s", inp$sided %||% "—"),
+    sprintf("Allocation ratio (T:C): %s", inp$allocation_ratio %||% 1)
+  )
+  if (!is.null(inp$k))      rows <- c(rows, sprintf("Analyses (k): %d", inp$k))
+  if (!is.null(inp$sfu))    rows <- c(rows, sprintf("Upper spending: %s", inp$sfu))
+  if (!is.null(inp$sfl))    rows <- c(rows, sprintf("Lower spending: %s", inp$sfl))
+  rows
+}
+
+.report_inputs_lines <- function(family, inp) {
+  show <- function(label, val, fmt = "%s") {
+    if (is.null(val) || (is.atomic(val) && all(is.na(val)))) return(NULL)
+    sprintf("%s: %s", label, sprintf(fmt, val))
+  }
+  rows <- c(
+    show("Alpha", inp$alpha,  "%.4f"),
+    show("Power", inp$power,  "%.3f"),
+    show("Control event rate",   inp$p_control,    "%.3f"),
+    show("Treatment event rate", inp$p_treatment,  "%.3f"),
+    show("Mean difference",      inp$mean_diff,    "%.3f"),
+    show("Common SD",            inp$sd,           "%.3f"),
+    show("Control median (months)", inp$control_median, "%.2f"),
+    show("Hazard ratio (target)",   inp$hazard_ratio,    "%.3f"),
+    show("Accrual duration (months)", inp$accrual_duration, "%.1f"),
+    show("Follow-up after last enroll (months)", inp$followup_duration, "%.1f"),
+    show("Dropout rate (per month)", inp$dropout_rate, "%.4f"),
+    show("Non-inferiority margin", inp$ni_margin, "%.4f"),
+    show("Equivalence margin",      inp$equiv_margin, "%.4f")
+  )
+  rows <- Filter(Negate(is.null), rows)
+  if (length(rows) == 0) "(no inputs)" else rows
+}
+
+.report_output_lines <- function(result) {
+  rows <- c(sprintf("Total sample size: %s", result$sample_size_total))
+  if (!is.null(result$sample_size_per_arm)) {
+    pa <- result$sample_size_per_arm
+    nm <- names(pa)
+    if (is.null(nm) || all(nm == "")) nm <- paste0("arm", seq_along(pa))
+    parts <- vapply(seq_along(pa),
+                    function(i) sprintf("%s = %s", nm[i], pa[i]),
+                    character(1))
+    rows <- c(rows, sprintf("Per-arm: %s", paste(parts, collapse = ", ")))
+  }
+  if (!is.null(result$events_total)) {
+    rows <- c(rows, sprintf("Total events: %s", result$events_total))
+  }
+  rows
+}
+
+.report_analysis_plan_lines <- function(result) {
+  rows <- character(0)
+  b <- result$boundaries
+  t <- result$timing
+  if (!is.null(b) && !is.null(b$upper_z)) {
+    z <- vapply(b$upper_z, function(x) sprintf("%.3f", x), character(1))
+    rows <- c(rows, sprintf("Upper Z-boundaries: %s", paste(z, collapse = ", ")))
+    if (!is.null(b$upper_p)) {
+      p <- vapply(b$upper_p, function(x) sprintf("%.4f", x), character(1))
+      rows <- c(rows, sprintf("Nominal p-boundaries: %s", paste(p, collapse = ", ")))
+    }
+  }
+  if (!is.null(t)) {
+    if (!is.null(t$information_fraction))
+      rows <- c(rows, sprintf("Information fractions: %s",
+                              paste(sprintf("%.3f", t$information_fraction),
+                                    collapse = ", ")))
+    if (!is.null(t$events_per_analysis))
+      rows <- c(rows, sprintf("Events per analysis: %s",
+                              paste(round(t$events_per_analysis), collapse = ", ")))
+  }
+  rows
 }

@@ -22,6 +22,8 @@ Imports:
     graphicalMCP (>= 0.2.5),
     jsonlite (>= 1.8.0)
 Suggests:
+    officer (>= 0.6.0),
+    rmarkdown (>= 2.20),
     rpact (>= 4.0.0),
     simtrial (>= 1.0.0),
     testthat (>= 3.0.0),

@@ -46,10 +46,15 @@ export const schema = {
 };
 
 export const description =
-  "Two-arm continuous-endpoint trial design (gsDesign::nNormal / gsDesign). " +
-  "Supports superiority, non-inferiority, and equivalence (TOST). Set " +
-  "design_class='group-sequential' for interim analyses with alpha-spending " +
-  "(equivalence is fixed-sample only).";
+  "Use when the user wants two-arm Phase 2/3 sample size with a CONTINUOUS " +
+  "primary endpoint — change from baseline in a measured score (HAM-D-17, " +
+  "PANSS, HbA1c reduction, eGFR slope, BP), QoL scale, biomarker level. " +
+  "Provide mean_diff (assumed treatment - control mean) and the common " +
+  "within-arm sd. Set comparison='superiority' (default), 'non-inferiority' " +
+  "(provide ni_margin), or 'equivalence' (provide equiv_margin; fixed-sample " +
+  "only). Set design_class='group-sequential' for interim analyses with " +
+  "alpha-spending. Supports the same `operational` block as design_binary " +
+  "and design_survival. For multi-endpoint designs, use design_co_primary.";
 
 export const handler = async (args: z.infer<z.ZodObject<typeof schema>>) => {
   const { test_type, ...rest } = args;

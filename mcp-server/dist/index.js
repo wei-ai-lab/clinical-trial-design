@@ -21228,7 +21228,7 @@ var schema = {
   test_type: TestTypeSchema,
   operational: OperationalBlockSchema
 };
-var description = "Two-arm binary-endpoint trial design (gsDesign::nBinomial / gsDesign). Supports superiority, non-inferiority, and equivalence (TOST). Set design_class='group-sequential' for interim analyses with alpha-spending (equivalence is fixed-sample only). Optionally fills the operational kernel (accrual + follow-up timing) when an `operational` block is supplied.";
+var description = "Use when the user wants two-arm Phase 2/3 sample size with a BINARY primary endpoint \u2014 responder rate, fixed-time mortality, ORR, ACR20, remission/cure, anything that resolves to event-or-no-event per subject. Set comparison='superiority' (default), 'non-inferiority' (then provide ni_margin), or 'equivalence' (then provide equiv_margin; fixed-sample only). Set design_class='group-sequential' for interim analyses with alpha-spending. Supply an optional `operational` block (any 0\u20134 of accrual_rate, accrual_duration, follow_up_duration, total_trial_duration) and the kernel fills in the rest. For two or more co-primary binary endpoints with multiplicity control, use design_co_primary instead.";
 var handler = async (args) => {
   const { test_type, ...rest } = args;
   return runR(toolName, { ...rest, "test.type": test_type });
@@ -21263,7 +21263,7 @@ var schema2 = {
   test_type: TestTypeSchema,
   operational: OperationalBlockSchema
 };
-var description2 = "Two-arm continuous-endpoint trial design (gsDesign::nNormal / gsDesign). Supports superiority, non-inferiority, and equivalence (TOST). Set design_class='group-sequential' for interim analyses with alpha-spending (equivalence is fixed-sample only).";
+var description2 = "Use when the user wants two-arm Phase 2/3 sample size with a CONTINUOUS primary endpoint \u2014 change from baseline in a measured score (HAM-D-17, PANSS, HbA1c reduction, eGFR slope, BP), QoL scale, biomarker level. Provide mean_diff (assumed treatment - control mean) and the common within-arm sd. Set comparison='superiority' (default), 'non-inferiority' (provide ni_margin), or 'equivalence' (provide equiv_margin; fixed-sample only). Set design_class='group-sequential' for interim analyses with alpha-spending. Supports the same `operational` block as design_binary and design_survival. For multi-endpoint designs, use design_co_primary.";
 var handler2 = async (args) => {
   const { test_type, ...rest } = args;
   return runR(toolName2, { ...rest, "test.type": test_type });
@@ -21316,7 +21316,7 @@ var schema3 = {
   operational: OperationalBlockSchema,
   reasoning_chain: ReasoningChainSchema
 };
-var description3 = "Two-arm time-to-event trial design. Pick `model` for the test statistic (ph, maxcombo, rmst, milestone, wlr, ahr) and `design_class` (fixed, group-sequential). PH backends are gsDesign::nSurv / gsSurv; NPH backends are gsDesign2::fixed_design_* / gs_design_*. Returns total events, total N, per-arm N, accrual / follow-up timing, and (for GS) interim boundaries. Optionally solves the operational kernel via the `operational` block.";
+var description3 = "Use when the user wants Phase 2/3 sample size with a TIME-TO-EVENT primary endpoint \u2014 overall survival, PFS, time to first hospitalization, time to progression, time to a CV composite, etc. Choose the test statistic via `model`: 'ph' (default \u2014 log-rank under proportional hazards, gsDesign::nSurv / gsSurv), 'maxcombo' (delayed effect / non-proportional hazards via Fleming-Harrington combo), 'rmst' (restricted mean survival to landmark tau), 'milestone' (survival probability at landmark t*), 'wlr' / 'ahr' (weighted log-rank / average HR for GS NPH). Set design_class='group-sequential' for interim analyses with alpha-spending. Always provide control_median + the relevant effect parameter (hazard_ratio for PH; delay_months + post_delay_hr for NPH models). The `operational` block can solve any 0\u20134 of {accrual_rate, accrual_duration, followup_duration, total_trial_duration} via the events-tied uniroot. For two co-primary TTE endpoints (PFS+OS) use design_co_primary; for nested PD-L1 strata or biomarker subgroup + ITT use design_multi_population.";
 var handler3 = async (args) => {
   const { test_type, ...rest } = args;
   return runR(toolName3, { ...rest, "test.type": test_type });
@@ -21499,9 +21499,14 @@ var schema9 = {
   result: external_exports.record(external_exports.unknown()).describe(
     "A designr result object as returned by any design_* tool (the JSON payload, including $method, $inputs, and (for GS) $boundaries / $timing)."
   ),
-  format: external_exports.enum(["markdown", "text"]).optional().describe("Output format. Currently only 'markdown' is implemented; 'text' is reserved.")
+  format: external_exports.enum(["markdown", "text", "docx", "pdf"]).optional().describe(
+    "Output format. 'markdown' (default) returns the report as text. 'docx' writes a native Word document via the officer R package; 'pdf' renders via rmarkdown + Pandoc (requires Pandoc + a TeX engine on the system PATH). 'docx' / 'pdf' return the path of the file written."
+  ),
+  path: external_exports.string().optional().describe(
+    "For format='docx' or 'pdf': output file path. If omitted, a tempfile is created and its path returned in the result."
+  )
 };
-var description9 = "Render a clinician-readable summary of any designr result. Produces a markdown document with sections: Design overview, Key inputs, Headline output, Analysis plan (when GS boundaries / timing are present), and Method & version. Suitable to paste into a SAP-style document or render to HTML / PDF / Word downstream.";
+var description9 = "Render a clinician-readable design summary in markdown, Word, or PDF. Reasoning chain (when populated on the result) appears as a table; sponsor_confidential entries trigger a redaction warning at the top. Sections: title, design overview, key inputs, headline output, GS analysis plan, reasoning chain, method + version. Default output is markdown text; format='docx' returns a native Word file path (officer); format='pdf' renders via rmarkdown + Pandoc.";
 var handler9 = async (args) => runR(toolName9, args);
 
 // src/index.ts
