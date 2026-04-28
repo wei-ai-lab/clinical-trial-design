@@ -19,24 +19,40 @@ Status of pending publishes (oldest first — release ceremony was paused at v0.
 |---|---|---|---|---|
 | v0.0.7 | ✅ 2026-04-26 | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.8 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
-| v0.0.9 | ⏳ in-flight | ⏳ pending | ⏳ pending | ⏳ pending |
-| v0.0.10 | not tagged | — | — | — |
+| v0.0.9 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
+| v0.0.10 | ⏳ in-flight | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.11 | not tagged | — | — | — |
 | v0.0.12 | not tagged | — | — | — |
 
 The 7 redirect-package aliases (`designr`, `phase3-trial`, `trial-design`, `sample-size-calculator`, `gsdesign-mcp`, `mcp-clinical-trial`, `study-design`) were a one-time publish at v0.0.6 and don't need re-publishing.
 
-## v0.0.10 — multi-vendor LLM benchmarking
+## v0.0.10 — LLM benchmark suite (eval/ shipped, runs deferred)
 
-I'll run the harness against the Claude family (Opus 4.7, Sonnet 4.6, Haiku 4.5) using your existing creds. For cross-vendor coverage, set one or more of these in your environment:
+The `eval/` harness is shipped (scenarios, scoring rubric, run scripts, aggregator). The first end-to-end run requires you to drive the harness — I cannot exercise `claude -p` non-interactively from inside another Claude session. To populate `MODEL_GUIDANCE.md`:
 
 ```bash
-export OPENAI_API_KEY="..."        # for GPT-5 / o-series
-export GEMINI_API_KEY="..."        # for Gemini 2.x or 3.x
-export OLLAMA_BASE_URL="http://localhost:11434"   # for a local Llama-3.x or Qwen
+cd ~/clinical-trial-design
+
+# Confirm the plugin is in your default Claude profile
+claude plugin list | grep clinical-trial-design
+
+# Optional: cross-vendor coverage (Claude is the default)
+export OPENAI_API_KEY="..."             # GPT-5 / o-series
+export GEMINI_API_KEY="..."             # Gemini 2.x or 3.x
+export OLLAMA_BASE_URL="http://localhost:11434"  # local Llama-3.x or Qwen
+
+# Full suite (3 Claude models × 11 scenarios = ~2 hours, ~$10-30)
+bash eval/harness/run_all.sh
+python3 eval/harness/aggregate_scores.py    # rewrites MODEL_GUIDANCE.md
+
+# Or one scenario × one model (~3-5 min, ~$0.50)
+bash eval/harness/run_one.sh \
+    --scenario eval/scenarios/01_fixed_binary_superiority.yaml \
+    --model claude-opus-4-7
+python3 eval/harness/score.py --run-dir <RUN_DIR_FROM_ABOVE>
 ```
 
-If none are set, `MODEL_GUIDANCE.md` ships with a "Claude family scored; cross-vendor pending" note and the harness shape ready for you to run yourself.
+Adapter scripts for OpenAI / Gemini / Ollama are stubbed at `eval/harness/adapters/*.py` (per-vendor, not yet implemented). Without them the suite skips those vendors gracefully and writes a note in `MODEL_GUIDANCE.md`. If you want cross-vendor coverage before beta, the adapters are a 1-2 hour lift each.
 
 ## v0.0.11 — discoverability + reporting deliverables
 
