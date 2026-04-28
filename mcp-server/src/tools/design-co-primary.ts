@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { runR } from "../r-bridge.js";
+import { ReasoningChainSchema } from "./common-schemas.js";
 
 const EndpointTypeEnum = z.enum(["binary", "continuous", "survival"]);
 
@@ -65,6 +66,7 @@ export const schema = {
       "For strategy='fixed-sequence' only. Endpoint names in test order. " +
         "Default: order in which `endpoints` was supplied."
     ),
+  reasoning_chain: ReasoningChainSchema,
 };
 
 export const description =

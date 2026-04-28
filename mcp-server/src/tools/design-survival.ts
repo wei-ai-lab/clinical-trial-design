@@ -8,6 +8,7 @@ import {
   KSchema,
   OperationalBlockSchema,
   PowerSchema,
+  ReasoningChainSchema,
   SpendingFnEnum,
   SurvivalModelEnum,
   TestTypeSchema,
@@ -98,6 +99,7 @@ export const schema = {
   allocation_ratio: AllocationRatioSchema,
   comparison: ComparisonEnum.default("superiority"),
   operational: OperationalBlockSchema,
+  reasoning_chain: ReasoningChainSchema,
 };
 
 export const description =

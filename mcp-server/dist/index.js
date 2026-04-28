@@ -21176,6 +21176,30 @@ var OperationalBlockSchema = external_exports.object({
 }).optional().describe(
   "Optional operational kernel inputs. Supply any 0-4 of {accrual_rate, accrual_duration, follow_up_duration, total_trial_duration}; the solver fills in the missing values from rate*duration = N and A + F = T (plus target_events for survival). Result is attached as result.operational with audit fields (given, derived)."
 );
+var ReasoningSourceTypeEnum = external_exports.enum([
+  "llm_precedent",
+  "fda_guidance",
+  "ich_guidance",
+  "user_supplied",
+  "package_default",
+  "sponsor_confidential"
+]).describe(
+  "Provenance tag for a reasoning-chain entry. Drives the design_report redaction prompt (sponsor_confidential entries flagged before sharing)."
+);
+var ReasoningEntrySchema = external_exports.object({
+  decision: external_exports.string().min(1).describe("Short label for the design choice (e.g., 'alpha', 'hazard_ratio')."),
+  value: external_exports.union([external_exports.number(), external_exports.string(), external_exports.boolean(), external_exports.null()]).describe("The chosen value (numeric, string, or boolean)."),
+  justification: external_exports.string().describe("One sentence explaining why this value was chosen."),
+  source_type: ReasoningSourceTypeEnum,
+  source_ref: external_exports.string().optional().describe(
+    "Free-text reference (citation, NCT id, internal protocol number). Optional but encouraged for non-default entries."
+  )
+}).describe(
+  "One reasoning-chain entry \u2014 a single design decision with its provenance. The LLM and user fill the content; the package validates the shape."
+);
+var ReasoningChainSchema = external_exports.array(ReasoningEntrySchema).optional().describe(
+  "Optional structured citation trail. Each entry: {decision, value, justification, source_type, source_ref?}. design_report() renders this inline; sponsor_confidential entries trigger a redaction prompt."
+);
 
 // src/tools/design-binary.ts
 var ProbSchema = external_exports.number().gt(0).lt(1);
@@ -21289,7 +21313,8 @@ var schema3 = {
   sided: external_exports.literal(1).default(1).describe("TTE designs are one-sided."),
   allocation_ratio: AllocationRatioSchema,
   comparison: ComparisonEnum.default("superiority"),
-  operational: OperationalBlockSchema
+  operational: OperationalBlockSchema,
+  reasoning_chain: ReasoningChainSchema
 };
 var description3 = "Two-arm time-to-event trial design. Pick `model` for the test statistic (ph, maxcombo, rmst, milestone, wlr, ahr) and `design_class` (fixed, group-sequential). PH backends are gsDesign::nSurv / gsSurv; NPH backends are gsDesign2::fixed_design_* / gs_design_*. Returns total events, total N, per-arm N, accrual / follow-up timing, and (for GS) interim boundaries. Optionally solves the operational kernel via the `operational` block.";
 var handler3 = async (args) => {
@@ -21328,7 +21353,8 @@ var schema4 = {
   ),
   ordering: external_exports.array(external_exports.string().min(1)).optional().describe(
     "For strategy='fixed-sequence' only. Endpoint names in test order. Default: order in which `endpoints` was supplied."
-  )
+  ),
+  reasoning_chain: ReasoningChainSchema
 };
 var description4 = "Multi-endpoint co-primary trial design with multiplicity control. Use when a confirmatory trial requires positive results on two or more primary endpoints (oncology PFS+OS, CV death+HHF, etc.). Strategies: fixed-sequence (hierarchical, full alpha per test, the canonical approach for ordered co-primary), alpha-split (partition alpha by weights), bonferroni (equal alpha-split). Each endpoint is sized at its effective alpha via the matching design_<type> wrapper; total N is the max across endpoints. For graphical multiplicity (Maurer-Bretz with alpha recycling), use `design_graphical_multiplicity` instead.";
 var handler4 = async (args) => {
@@ -21371,7 +21397,8 @@ var schema5 = {
   power: external_exports.number().gt(0).lt(1).default(0.8),
   allocation_ratio: external_exports.number().positive().default(1),
   alpha_weights: external_exports.record(external_exports.string().min(1), external_exports.number().nonnegative()).optional().describe("For strategy='alpha-split' only. Names match `populations`; sum to 1."),
-  ordering: external_exports.array(external_exports.string().min(1)).optional().describe("For strategy='fixed-sequence' only. Population names in test order.")
+  ordering: external_exports.array(external_exports.string().min(1)).optional().describe("For strategy='fixed-sequence' only. Population names in test order."),
+  reasoning_chain: ReasoningChainSchema
 };
 var description5 = "Multi-population (subgroup) trial design with multiplicity control. Use when a confirmatory trial tests the same endpoint in multiple populations \u2014 biomarker-positive subgroup + ITT, nested PD-L1 strata, etc. Pick relation='nested' (the canonical case: TPS\u226550 \u2282 TPS\u226520 \u2282 ITT, all patients enroll into the broadest, total N driven by largest implied-enrolled across strata) or 'disjoint' (strata enrolled separately, total N = sum). Strategies: fixed-sequence (hierarchical), alpha-split, bonferroni. For graphical multiplicity (Maurer-Bretz with alpha recycling between populations), use design_graphical_multiplicity.";
 var handler5 = async (args) => {
@@ -21409,7 +21436,8 @@ var schema6 = {
   allocation_ratio: external_exports.number().positive().default(1),
   worst_case_weights: external_exports.record(external_exports.string().min(1), external_exports.number().nonnegative()).optional().describe(
     "Optional override of the per-hypothesis worst-case weight used for sample-size sizing. Default: max(initial_weight_i, fallback) where fallback = smallest non-zero initial weight."
-  )
+  ),
+  reasoning_chain: ReasoningChainSchema
 };
 var description6 = "Graphical multiplicity (Maurer-Bretz) trial design with alpha recycling. Use when a confirmatory trial has 2+ hypotheses (mixed primary + secondary, dose-response, parent + derived endpoints) where a graph-based procedure preserves family-wise alpha better than Bonferroni. Validates the transition matrix (Rule-3 + row sums) and constructs a graphicalMCP graph object. Sizes each hypothesis at its worst-case alpha; total N is the max across hypotheses. For simpler co-primary or multi-population designs use design_co_primary or design_multi_population instead.";
 var handler6 = async (args) => {

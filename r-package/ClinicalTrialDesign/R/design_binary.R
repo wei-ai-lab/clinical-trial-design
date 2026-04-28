@@ -43,8 +43,10 @@ design_binary <- function(p_control,
                           sfupar           = NULL,
                           sflpar           = NULL,
                           test.type        = 1,
-                          operational      = NULL) {
-  design_class <- check_design_class(design_class)
+                          operational      = NULL,
+                          reasoning_chain  = NULL) {
+  design_class    <- check_design_class(design_class)
+  reasoning_chain <- check_reasoning_chain(reasoning_chain)
   res <- if (design_class == "fixed") {
     .design_binary_fixed(p_control, p_treatment, alpha, power, sided,
                          allocation_ratio, comparison, ni_margin, equiv_margin)
@@ -60,6 +62,7 @@ design_binary <- function(p_control,
              allocation_ratio = allocation_ratio),
         operational))
   }
+  res$reasoning_chain <- reasoning_chain
   res
 }
 

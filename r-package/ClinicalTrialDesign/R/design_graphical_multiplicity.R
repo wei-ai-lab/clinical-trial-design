@@ -69,11 +69,13 @@ design_graphical_multiplicity <- function(hypotheses,
                                           sided              = 1,
                                           power              = 0.80,
                                           allocation_ratio   = 1,
-                                          worst_case_weights = NULL) {
+                                          worst_case_weights = NULL,
+                                          reasoning_chain    = NULL) {
 
   if (!requireNamespace("graphicalMCP", quietly = TRUE)) {
     stop("designr_input_error: hypotheses: package 'graphicalMCP' is required for graphical multiplicity")
   }
+  reasoning_chain <- check_reasoning_chain(reasoning_chain)
 
   # --- coerce JSON-roundtripped inputs into native R shapes ---------------
   # MCP/JSON converts named numeric vectors into named lists and 2D arrays
@@ -293,6 +295,7 @@ design_graphical_multiplicity <- function(hypotheses,
     boundaries          = NULL,
     timing              = NULL,
     operational         = NULL,
+    reasoning_chain     = reasoning_chain,
     inputs              = inputs,
     method              = "design_graphical_multiplicity[graphicalMCP]",
     package_version     = .pkg_version("graphicalMCP"),

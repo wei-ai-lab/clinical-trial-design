@@ -11,10 +11,30 @@ question into a correctly specified design, compute it via the
 `clinical-trial-design` MCP tools, and explain the result in clinical-trial
 terms.
 
-## Tool surface (v0.0.8)
+## Reasoning chain — populate on every call
+
+Every design tool accepts a `reasoning_chain` parameter — a list of
+`{decision, value, justification, source_type, source_ref?}` entries
+documenting why each non-default value was chosen. Populate it on
+every call where the user supplied non-default inputs. Six allowed
+`source_type` values: `llm_precedent` (public-trial precedents you
+synthesized), `fda_guidance` / `ich_guidance` (specific guidance
+citations), `user_supplied` (the user told you directly),
+`package_default` (fell out of a default), `sponsor_confidential`
+(sponsor-internal data — `design_report` flags these for redaction
+before external sharing).
+
+Skipping the reasoning chain leaves the result clean, but populating
+it is the only way `design_report` can render the citation trail and
+warn on confidential content. When in doubt, lean toward populating
+— for any design destined for a sponsor or biostatistician, citations
+are a credibility multiplier.
+
+## Tool surface (v0.0.9)
 
 Nine MCP tools. Three endpoint-typed design tools, three multi-hypothesis
-design tools, three meta tools.
+design tools, three meta tools. Each design tool accepts an optional
+`reasoning_chain` parameter (see above).
 
 ### Endpoint design tools (single-primary)
 

@@ -8,6 +8,7 @@ import {
   KSchema,
   OperationalBlockSchema,
   PowerSchema,
+  ReasoningChainSchema,
   SidedSchema,
   SpendingFnEnum,
   TestTypeSchema,

@@ -81,7 +81,10 @@ design_co_primary <- function(endpoints,
                               power            = 0.80,
                               allocation_ratio = 1,
                               alpha_weights    = NULL,
-                              ordering         = NULL) {
+                              ordering         = NULL,
+                              reasoning_chain  = NULL) {
+
+  reasoning_chain <- check_reasoning_chain(reasoning_chain)
 
   # --- input validation -----------------------------------------------------
   if (!is.list(endpoints) || length(endpoints) < 2L) {
@@ -218,6 +221,7 @@ design_co_primary <- function(endpoints,
     boundaries          = NULL,
     timing              = NULL,
     operational         = NULL,
+    reasoning_chain     = reasoning_chain,
     inputs              = inputs,
     method              = sprintf("design_co_primary[%s]", strategy),
     package_version     = .pkg_version("ClinicalTrialDesign"),

@@ -78,9 +78,11 @@ design_survival <- function(model              = "ph",
                             sided              = 1,
                             allocation_ratio   = 1,
                             comparison         = "superiority",
-                            operational        = NULL) {
+                            operational        = NULL,
+                            reasoning_chain    = NULL) {
   model <- check_survival_model(model)
   design_class <- check_design_class(design_class)
+  reasoning_chain <- check_reasoning_chain(reasoning_chain)
   combo_label <- sprintf("(model='%s', design_class='%s')", model, design_class)
 
   # Branch table.
@@ -146,6 +148,7 @@ design_survival <- function(model              = "ph",
              dropout_rate_per_month = dropout_rate),
         operational))
   }
+  res$reasoning_chain <- reasoning_chain
   res
 }
 

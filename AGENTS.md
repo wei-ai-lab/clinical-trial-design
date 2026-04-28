@@ -208,6 +208,55 @@ cases that have `r_packages` referencing a CRAN function for which we
 ship no wrapper, or that test a `comparison` type our wrapper does
 not yet cover. These are the highest-leverage new wrapper targets.
 
+## Reasoning chain — citation conventions
+
+Every design tool's result has an optional `reasoning_chain` field — a
+structured list of `{decision, value, justification, source_type,
+source_ref?}` entries that the LLM (or user) populates with citation
+provenance. The package validates the shape; the agent fills the
+content. `design_report()` renders the chain as a markdown table and
+flags `sponsor_confidential` entries with a redaction warning at the
+top of the report.
+
+When you call any `design_*` MCP tool from a session where the user
+has supplied non-default inputs, populate `reasoning_chain` with one
+entry per design choice you made on the user's behalf. Use these
+`source_type` tags consistently:
+
+| `source_type` | When to use |
+|---|---|
+| `llm_precedent` | A value you chose by synthesizing public-trial precedents — e.g. "HR ≈ 0.65 from KEYNOTE-189 + KEYNOTE-407 pooled". Always populate `source_ref` with the trial names or NCT ids. |
+| `fda_guidance` | A value pulled from a specific FDA guidance document. `source_ref` = guidance title + year. |
+| `ich_guidance` | A value from ICH E9 / E9-R1 / E10 / etc. `source_ref` = guidance code (e.g., `ICH E9 (1998)`). |
+| `user_supplied` | The user told the agent this value directly in the conversation. `source_ref` is the user's own justification if any. |
+| `package_default` | The value fell out of the tool's default — i.e., the user did not specify and the agent did not choose. `source_ref` is usually `—`. |
+| `sponsor_confidential` | The value comes from sponsor-internal data (Phase 2 readout, pipeline assumptions, sponsor risk tolerance). `source_ref` is the internal study or document name. **The renderer flags these for redaction** before external sharing. |
+
+A complete reasoning chain looks like:
+
+```r
+reasoning_chain = list(
+  list(decision = "alpha", value = 0.025,
+       justification = "Two-sided 0.05 standard for confirmatory survival",
+       source_type  = "fda_guidance",
+       source_ref   = "FDA Guidance E9 (1998)"),
+  list(decision = "hazard_ratio", value = 0.65,
+       justification = "Pooled estimate from KEYNOTE-189 and KEYNOTE-407 pembrolizumab + chemotherapy in 1L NSCLC",
+       source_type  = "llm_precedent",
+       source_ref   = "NCT02578680, NCT02775435"),
+  list(decision = "control_median", value = 4.7,
+       justification = "Internal Phase 2 readout, study P3-A1",
+       source_type  = "sponsor_confidential")
+)
+```
+
+**What you should NOT put in the reasoning chain:**
+- Values the user did not give you and that you did not synthesize (don't fabricate citations).
+- Values you guessed without precedent — flag those to the user instead.
+- Implementation details (e.g. "R backend version") — those are already in `result$package_version`.
+
+Skipping `reasoning_chain` is allowed (it stays `NULL` in the result and the report omits the section), but for any design that will be shared with a sponsor or biostatistician, populating it is a credibility multiplier — and the only way `design_report` can flag sponsor-confidential content for redaction.
+
 ## Test gates
 
 A change is mergeable when all of these pass on CI:

@@ -94,7 +94,10 @@ design_multi_population <- function(endpoint_type,
                                     power            = 0.80,
                                     allocation_ratio = 1,
                                     alpha_weights    = NULL,
-                                    ordering         = NULL) {
+                                    ordering         = NULL,
+                                    reasoning_chain  = NULL) {
+
+  reasoning_chain <- check_reasoning_chain(reasoning_chain)
 
   # --- input validation -----------------------------------------------------
   if (!endpoint_type %in% c("binary", "continuous", "survival")) {
@@ -260,6 +263,7 @@ design_multi_population <- function(endpoint_type,
     boundaries          = NULL,
     timing              = NULL,
     operational         = NULL,
+    reasoning_chain     = reasoning_chain,
     inputs              = inputs,
     method              = sprintf("design_multi_population[%s,%s]", relation, strategy),
     package_version     = .pkg_version("ClinicalTrialDesign"),
