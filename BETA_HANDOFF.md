@@ -1,10 +1,10 @@
 # Beta handoff — actions you need to take
 
-This file tracks the human-only actions accumulating across v0.0.8 → v0.0.12. The autonomous loop ships engineering deliverables; everything below requires your credentials, your judgment, or external counterparties. Updated continuously as releases ship.
+`clinical-trial-design` is at **pre-beta** as of v0.0.12 (2026-04-28). Engineering deliverables for v0.0.8 → v0.0.12 are shipped; what's left to reach the v0.5.0 beta tag is human-only work tracked here.
 
 ## Per-release: npm publish + registry resubmissions
 
-Each minor release needs two manual steps after the git tag is pushed:
+After each tagged release, run:
 
 ```bash
 cd ~/clinical-trial-design/mcp-server
@@ -13,7 +13,7 @@ mcp-publisher publish                             # MCP official registry, gated
 npx @smithery/cli publish                          # Smithery, gated on npm-publish
 ```
 
-Status of pending publishes (oldest first — release ceremony was paused at v0.0.7 for the M3+M4 evaluation work; resumes at v0.0.8 ship):
+Status of pending publishes:
 
 | Release | Tagged | npm published | MCP registry | Smithery |
 |---|---|---|---|---|
@@ -21,10 +21,10 @@ Status of pending publishes (oldest first — release ceremony was paused at v0.
 | v0.0.8 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.9 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.10 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
-| v0.0.11 | ⏳ in-flight | ⏳ pending | ⏳ pending | ⏳ pending |
-| v0.0.12 | not tagged | — | — | — |
+| v0.0.11 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
+| v0.0.12 | ⏳ in-flight | ⏳ pending | ⏳ pending | ⏳ pending |
 
-The 7 redirect-package aliases (`designr`, `phase3-trial`, `trial-design`, `sample-size-calculator`, `gsdesign-mcp`, `mcp-clinical-trial`, `study-design`) were a one-time publish at v0.0.6 and don't need re-publishing.
+The 7 redirect-package aliases (`designr`, `phase3-trial`, `trial-design`, `sample-size-calculator`, `gsdesign-mcp`, `mcp-clinical-trial`, `study-design`) were a one-time publish at v0.0.6 and don't republish per release.
 
 ## v0.0.10 — LLM benchmark suite (eval/ shipped, runs deferred)
 
@@ -62,11 +62,17 @@ Word + PDF reporting are SHIPPED in v0.0.11 (`design_report(format="docx")` via 
 2. **Preprint draft** — Outlined at `docs/preprint-draft.md` (~6,000 words across 8 sections). You populate Section 6 (LLM benchmark scores) once the eval suite has been run, then submit to arXiv stat.ME and consider a stat methodology venue.
 3. **`awesome-claude-code` listing** — Per their CONTRIBUTING.md, web-form-only, human-only. Submit at https://github.com/hesreallyhim/awesome-claude-code/issues/new?template=recommend-resource.yml when ready.
 
-## v0.0.12 — conference outreach
+## v0.0.12 — conference outreach (abstracts drafted)
 
-I'll draft talk abstracts for R/Pharma, JSM, useR! covering the MCP-as-trial-design-interface + benchmark methodology. You review and submit per each conference's CFP deadline (these are real-world dates — flag if any are about to expire).
+Three talk abstracts at `docs/talk-abstracts.md` — R/Pharma (biostat audience), JSM (Statistical Computing), useR! (R community). Each frames the same work for the venue. Submit per each conference's CFP timing:
 
-Cross-plugin recommendation outreach (regulatory affairs, biomarker analysis adjacent skills) — I'll write a list of candidate skills/plugins to reach out to. You DM their maintainers.
+| Conference | Typical CFP deadline |
+|---|---|
+| R/Pharma | mid-summer (May–July) |
+| JSM | early February for August conference |
+| useR! | February–March for July |
+
+Cross-plugin recommendation outreach (regulatory affairs, biomarker analysis adjacent skills) — DM-based, you decide which to reach out to. Suggested first set: any clinical-protocol skill that wraps gsDesign, the Anthropic `clinical-trial-protocol-skill` (their orchestrator could call our MCP at the sample-size step).
 
 ## v0.5.0 beta gate (your call)
 
@@ -77,20 +83,33 @@ When pre-beta is ready, the four gate items are explicitly your judgment:
 3. **Final review of pre-beta deliverables.** I stop at v0.0.12 tagged + this file complete; you do the end-to-end review before promoting to v0.5.0.
 4. **Zero open `priority:beta-blocker` issues** at the time of the v0.5.0 tag.
 
+## Pre-beta release inventory
+
+What shipped in v0.0.8 → v0.0.12 across the engineering surface:
+
+| Release | Headline |
+|---|---|
+| v0.0.8 | 3 multi-hypothesis tools (co_primary, multi_population, graphical) + 3 benchmark families |
+| v0.0.9 | reasoning_chain schema + sponsor_confidential redaction in design_report |
+| v0.0.10 | eval/ benchmark harness — 11 scenarios, six-dimension scoring, MODEL_GUIDANCE.md |
+| v0.0.11 | design_report(docx/pdf) + tool-description rewrite + 9-step skill orchestration + waypoints + demo-video script + preprint outline |
+| v0.0.12 | release-gate CI + API_STABILITY.md + 5-trial examples gallery + talk abstracts |
+
+Test totals as of v0.0.12: **263/263 testthat, 18/18 MCP smoke, 11 eval scenarios validate, 5 examples run end-to-end clean.**
+
 ## Open architectural decisions parked from M3+M4 eval
 
-These came out of the comparison vs `RConsortium/pharma-skills` (documented in private `clinical-trial-design-eval` repo). They are NOT v0.0.8 scope — they're parked for a future release window:
+These came out of the comparison vs `RConsortium/pharma-skills` (documented in private `clinical-trial-design-eval` repo). Parked for v0.0.12+ — could be a v0.0.12.1 patch or roll into v0.5.0 beta polish:
 
 - **Events anti-conservatism (~1 pp under nominal power) on `design_survival(model="ph", design_class="group-sequential")`.** Two valid event-computation paths (Schoenfeld+OBF inflation vs gsSurv internal) differ by ~3% on canonical eval issue-27. Fix: add `events_calc = c("schoenfeld","gssurv")` parameter; default to `"schoenfeld"` to match regulatory expectation.
 - **`feasibility_warnings` field** on results when user-supplied operational constraints (`max_n`, `max_duration`) are violated.
 - **Median ↔ hazard rate input** for survival (accept `control_hazard_rate` or `control_event_rate_py` as alternative to `control_median`).
-- **Word reporter `design_report(format="docx")`** via `officer`. Already scheduled v0.0.11.
-- **NPH evaluation step** (design under PH, evaluate under NPH, report both power values).
+- **NPH evaluation step** (design under PH, evaluate under NPH, report both power values) — pharma-skills' workflow gate.
 - **Piecewise control hazard** for `design_survival` (currently scalar exponential only).
 - **`verify_design` for NPH GS** (currently fixed binary/continuous/PH-survival and GS binary/continuous/PH-survival).
-
-These could be bundled into a v0.0.8.1 patch or pulled into v0.0.9 — your call.
 
 ## How to use this file
 
 This file is **not in the master plan** (master plan stays at `~/.openclaw/workspace-office-claw-1/projects/designr/MASTER_PLAN.md`, private). It's a public-facing handoff document that ships in the repo. Each release adds an entry; nothing here gets deleted — completed items get a check mark and a date.
+
+When the user is satisfied that all four beta-gate items are met, tag v0.5.0 directly on `main` with a beta-acceptance message, push the tag, and announce on the project's discoverability surfaces (README, plugin marketplace, awesome-claude-code, MCP registry, npm).
