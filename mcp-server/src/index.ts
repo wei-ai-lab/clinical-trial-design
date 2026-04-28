@@ -6,6 +6,7 @@ import * as designBinary from "./tools/design-binary.js";
 import * as designContinuous from "./tools/design-continuous.js";
 import * as designSurvival from "./tools/design-survival.js";
 import * as designCoPrimary from "./tools/design-co-primary.js";
+import * as designMultiPopulation from "./tools/design-multi-population.js";
 import * as validateBenchmark from "./tools/validate-benchmark.js";
 import * as verifyDesign from "./tools/verify-design.js";
 import * as designReport from "./tools/design-report.js";
@@ -16,6 +17,7 @@ const tools = [
   designContinuous,
   designSurvival,
   designCoPrimary,
+  designMultiPopulation,
   validateBenchmark,
   verifyDesign,
   designReport,
