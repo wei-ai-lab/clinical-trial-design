@@ -75,6 +75,27 @@ design_graphical_multiplicity <- function(hypotheses,
     stop("designr_input_error: hypotheses: package 'graphicalMCP' is required for graphical multiplicity")
   }
 
+  # --- coerce JSON-roundtripped inputs into native R shapes ---------------
+  # MCP/JSON converts named numeric vectors into named lists and 2D arrays
+  # into list-of-lists. Coerce both shapes here so the rest of the body
+  # can assume native vector/matrix.
+  if (is.list(initial_weights) && !is.null(names(initial_weights))) {
+    initial_weights <- unlist(initial_weights)
+  }
+  if (is.list(transition_matrix)) {
+    if (length(transition_matrix) > 0 && all(vapply(transition_matrix, is.list, logical(1)))) {
+      # list-of-lists shape from JSON: list(list(0,1), list(1,0))
+      transition_matrix <- do.call(rbind,
+        lapply(transition_matrix, function(row) unlist(row)))
+    } else if (length(transition_matrix) > 0 && all(vapply(transition_matrix, is.numeric, logical(1)))) {
+      transition_matrix <- do.call(rbind, transition_matrix)
+    }
+  }
+  if (!is.null(worst_case_weights) && is.list(worst_case_weights) &&
+      !is.null(names(worst_case_weights))) {
+    worst_case_weights <- unlist(worst_case_weights)
+  }
+
   # --- input validation -----------------------------------------------------
   if (!is.list(hypotheses) || length(hypotheses) < 2L) {
     stop("designr_input_error: hypotheses: must be a named list of length >= 2")
