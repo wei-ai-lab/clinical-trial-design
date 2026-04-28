@@ -1,0 +1,135 @@
+name: release-gate
+
+# Pre-merge gates for clinical-trial-design. Runs on every PR and on
+# pushes to main/dev. Three jobs run in parallel:
+#   - r-tests:      install CRAN deps, devtools::test(), expect 0 fails
+#   - r-cmd-check:  R CMD check --as-cran on the package
+#   - mcp-build:    npm install + npm run build, then run the smoke
+#                   matrix (smoke.mjs) against the bundled R sources
+#
+# These complement security-grep.yml (statelessness CI gate) — together
+# they form the four CI gates documented in AGENTS.md "Test gates".
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  r-tests:
+    name: R — testthat
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.5.3'
+          use-public-rspm: true
+
+      - name: Cache R library
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-r-4.5.3-${{ hashFiles('r-package/ClinicalTrialDesign/DESCRIPTION') }}
+
+      - name: Install package dependencies
+        shell: Rscript {0}
+        run: |
+          install.packages(c("devtools", "remotes", "testthat", "officer",
+                             "rmarkdown", "yaml"))
+          remotes::install_deps("r-package/ClinicalTrialDesign",
+                                dependencies = TRUE)
+
+      - name: Run testthat
+        shell: Rscript {0}
+        run: |
+          setwd("r-package/ClinicalTrialDesign")
+          devtools::test(stop_on_failure = TRUE)
+
+  r-cmd-check:
+    name: R — CMD check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.5.3'
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          working-directory: r-package/ClinicalTrialDesign
+          extra-packages: |
+            any::rcmdcheck
+            any::officer
+            any::rmarkdown
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          working-directory: r-package/ClinicalTrialDesign
+          upload-snapshots: true
+          error-on: '"error"'
+
+  mcp-build:
+    name: MCP — build + smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.5.3'
+          use-public-rspm: true
+
+      - name: Install R deps for the launcher
+        shell: Rscript {0}
+        run: |
+          install.packages(c("gsDesign", "gsDesign2", "graphicalMCP",
+                             "jsonlite", "yaml"))
+
+      - name: npm install + build
+        working-directory: mcp-server
+        run: |
+          npm install
+          npm run build
+
+      - name: Smoke matrix
+        working-directory: mcp-server
+        run: |
+          node scripts/smoke.mjs
+
+  scenarios-validate:
+    name: eval scenarios — schema validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pyyaml jsonschema
+      - name: Validate every scenario YAML against the schema
+        run: |
+          python3 - <<'PY'
+          import yaml, glob, sys
+          ok = 0
+          fail = 0
+          for f in sorted(glob.glob("eval/scenarios/[0-9]*.yaml")):
+              try:
+                  s = yaml.safe_load(open(f))
+                  assert "id" in s and "prompt" in s and "expected" in s, f"missing required keys"
+                  assert "tool" in s["expected"], f"missing expected.tool"
+                  print(f"OK  {s['id']}")
+                  ok += 1
+              except Exception as e:
+                  print(f"FAIL {f}: {e}")
+                  fail += 1
+          print(f"--- {ok} pass, {fail} fail ---")
+          sys.exit(0 if fail == 0 else 1)
+          PY
