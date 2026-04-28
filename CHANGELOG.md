@@ -7,6 +7,68 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.8] — 2026-04-28
+
+Adds multi-hypothesis design tools — co-primary endpoints, multi-population
+(biomarker / subgroup) designs, and graphical multiplicity (Maurer-Bretz with
+alpha recycling). The single-primary surface from v0.0.7 is unchanged; this
+release is purely additive.
+
+### Added
+
+- **`design_co_primary`** — Two or more co-primary endpoints with one of
+  three multiplicity-control strategies: `fixed-sequence` (hierarchical, the
+  canonical co-primary pattern — full alpha per test, gating preserves
+  family-wise alpha by closed testing), `alpha-split` (partition alpha by
+  user-supplied weights), `bonferroni` (equal-weight alpha-split). Per
+  endpoint dispatches to `design_binary` / `design_continuous` /
+  `design_survival` at its effective alpha; total N = max across endpoints.
+  Anchor: KEYNOTE-189-style hierarchical PFS + OS in oncology.
+- **`design_multi_population`** — Same endpoint tested across multiple
+  populations. `relation = "nested"` (subgroups overlap, e.g. TPS≥50 ⊂
+  TPS≥20 ⊂ ITT — total N driven by largest implied-enrolled across strata
+  via prevalence inflation) or `"disjoint"` (separate enrollment, total N
+  is sum). Multiplicity strategies match `design_co_primary`. Anchor:
+  KEYNOTE-042-style nested PD-L1 strata.
+- **`design_graphical_multiplicity`** — Graphical multiplicity (Maurer-
+  Bretz) wrapping `graphicalMCP::graph_create`. Validates the transition
+  matrix (Rule-3 + row sums ≤ 1 + no self-loops) and `gate_prereqs`
+  (every named prerequisite must have a non-zero transition into the
+  gated hypothesis). Sizes each hypothesis at its worst-case alpha;
+  total N = max across hypotheses. Anchor: Bretz–Maurer 2009 canonical
+  4-hypothesis example.
+- **Three new benchmark families** under `benchmarks/`:
+  `multiplicity-co-primary/` (KEYNOTE-189 anchor),
+  `multiplicity-multi-population/` (KEYNOTE-042 anchor),
+  `multiplicity-graphical/` (Maurer-Bretz anchor). Each with README +
+  one curated case (`.md` + `.yaml`).
+- **Schema extensions** (`benchmarks/schema/design.schema.json`):
+  - New family enum values: `multiplicity-co-primary`,
+    `multiplicity-multi-population`, `multiplicity-graphical`.
+  - New optional `endpoints` array (multi-hypothesis), `populations`
+    array (multi-population), and `multiplicity` block (strategy,
+    alpha_allocation, ordering, transition_matrix, gate_prereqs).
+  - `endpoint` (singular) is now optional (was required); at least one
+    of `endpoint` or `endpoints` must be present.
+  - Relaxed `id` regex to allow underscores in slug (matches existing
+    corpus convention used by e.g. `2017_PACIFIC_durvalumab_nsclc`).
+
+### Changed
+
+- `DESCRIPTION` Imports: added `graphicalMCP (>= 0.2.5)`.
+- Skill `SKILL.md` advertises the three new multi-hypothesis tools and
+  documents common multiplicity mistakes (alpha-splitting hierarchical
+  designs; summing N across co-primary endpoints; not validating
+  transition matrices).
+- Smoke matrix expanded from 14 to 17 prompts (one per new tool).
+
+### Test coverage
+
+- 235/235 testthat assertions pass (was 184/184 in v0.0.7 + 51 new across
+  the three multi-hypothesis tools).
+- 17/17 smoke prompts pass against the bundled MCP server.
+- All three new corpus cases validate against the extended schema.
+
 ## [0.0.7] — 2026-04-25
 
 Pre-1.0 schema break. Collapses the ten endpoint-shaped MCP tools and

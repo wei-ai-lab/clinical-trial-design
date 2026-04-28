@@ -1,6 +1,6 @@
 ---
 name: clinical-trial-design
-description: Clinical trial design assistant covering Phase 2 and Phase 3 confirmatory trials. Invoke when the user asks about sample size, power, group-sequential boundaries, non-inferiority margins, time-to-event design (PH or NPH — MaxCombo / RMST / milestone / WLR / AHR), accrual planning, Monte-Carlo verification, or producing a markdown design report.
+description: Clinical trial design assistant covering Phase 2 and Phase 3 confirmatory trials. Invoke when the user asks about sample size, power, group-sequential boundaries, non-inferiority margins, time-to-event design (PH or NPH — MaxCombo / RMST / milestone / WLR / AHR), accrual planning, multi-hypothesis multiplicity (co-primary endpoints, multi-population subgroup, Maurer-Bretz graphical), Monte-Carlo verification, or producing a markdown design report.
 ---
 
 # clinical-trial-design skill
@@ -11,11 +11,12 @@ question into a correctly specified design, compute it via the
 `clinical-trial-design` MCP tools, and explain the result in clinical-trial
 terms.
 
-## Tool surface (v0.0.7)
+## Tool surface (v0.0.8)
 
-Six MCP tools. Three endpoint-typed design tools, three meta tools.
+Nine MCP tools. Three endpoint-typed design tools, three multi-hypothesis
+design tools, three meta tools.
 
-### Design tools
+### Endpoint design tools (single-primary)
 
 | Tool | Endpoint | Selectors |
 |---|---|---|
@@ -34,6 +35,21 @@ All three accept:
 `delay_months` + `post_delay_hr` (NPH), accrual / follow-up parameters,
 and model-specific extras (`tau` for RMST/milestone, `rho`/`gamma`/`tau_fh`
 for FH-weighted statistics, `analysis_times` for NPH GS).
+
+### Multi-hypothesis design tools
+
+| Tool | When to use | Strategies |
+|---|---|---|
+| `design_co_primary` | Two or more primary endpoints sharing alpha (PFS+OS, CV death+HHF, mixed binary+continuous) | `fixed-sequence` (hierarchical, default — full alpha per test), `alpha-split` (weighted), `bonferroni` |
+| `design_multi_population` | Same endpoint tested in multiple populations (biomarker subgroup + ITT, nested PD-L1 strata) | Same three strategies; `relation ∈ {"nested", "disjoint"}` |
+| `design_graphical_multiplicity` | Multi-hypothesis with alpha recycling (Maurer-Bretz) — mixed primary+secondary, dose-response | Graphical procedure with user-supplied `transition_matrix` and `initial_weights`; transition matrix Rule-3 validator built in |
+
+Common co-primary mistakes: splitting alpha when the design is hierarchical
+(use `fixed-sequence`, not Bonferroni); summing N across endpoints (total
+N = max across endpoints, not sum). Common multi-population mistake:
+splitting alpha across nested subgroups (use `fixed-sequence` strongest
+→ broadest). Common graphical mistake: not validating that the transition
+matrix routes alpha into gated hypotheses.
 
 ### Operational kernel
 

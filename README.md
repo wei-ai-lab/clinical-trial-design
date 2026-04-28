@@ -4,7 +4,7 @@
 
 `clinical-trial-design` helps biostatisticians and clinical trialists design Phase 2 and Phase 3 confirmatory studies through a conversational interface, backed by validated R statistical packages (`gsDesign`, `gsDesign2`).
 
-> **v0.0.7 alpha.** Pre-1.0 schema break. The ten endpoint-shaped design tools collapse into three endpoint-typed tools (`design_binary`, `design_continuous`, `design_survival`) with `design_class ∈ {"fixed", "group-sequential"}` and (for survival) `model ∈ {"ph", "maxcombo", "rmst", "milestone", "wlr", "ahr"}` as parameters — total tool count drops 13 → 6. Same release lifts the operational kernel into the public surface: any design tool can take an `operational` block that solves `accrual_rate × accrual_duration = N` and `total_trial_duration = accrual_duration + follow_up_duration` (plus a `uniroot`-based event-probability tie for survival). Survival accrual API standardized on `accrual_duration` + `followup_duration` for every model. 184/184 R tests pass; 14/14 smoke. Slash commands and the wire-format identifiers (`designr_dispatch`, `DESIGNR_RSCRIPT`/`DESIGNR_LAUNCHER`) are preserved. v0.0.6 was the rebrand from `designr` → `clinical-trial-design`; v0.0.5 was an agent-friendliness + trust-boundary release; v0.0.4 made the plugin self-contained at runtime; v0.0.3 introduced the marketplace-based install flow; v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`). The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
+> **v0.0.8 alpha.** Pre-1.0 schema break. The ten endpoint-shaped design tools collapse into three endpoint-typed tools (`design_binary`, `design_continuous`, `design_survival`) with `design_class ∈ {"fixed", "group-sequential"}` and (for survival) `model ∈ {"ph", "maxcombo", "rmst", "milestone", "wlr", "ahr"}` as parameters — total tool count drops 13 → 6. Same release lifts the operational kernel into the public surface: any design tool can take an `operational` block that solves `accrual_rate × accrual_duration = N` and `total_trial_duration = accrual_duration + follow_up_duration` (plus a `uniroot`-based event-probability tie for survival). Survival accrual API standardized on `accrual_duration` + `followup_duration` for every model. 184/184 R tests pass; 14/14 smoke. Slash commands and the wire-format identifiers (`designr_dispatch`, `DESIGNR_RSCRIPT`/`DESIGNR_LAUNCHER`) are preserved. v0.0.6 was the rebrand from `designr` → `clinical-trial-design`; v0.0.5 was an agent-friendliness + trust-boundary release; v0.0.4 made the plugin self-contained at runtime; v0.0.3 introduced the marketplace-based install flow; v0.0.2 added Monte Carlo verification (`verify_design`) and markdown reporting (`design_report`). The current release covers fixed-sample and group-sequential designs (see [MVP tool surface](#mvp-tool-surface)). Adaptive / MAMS / platform / Bayesian / recurrent-events / count-rate wrappers are roadmap, not shipped — see [Roadmap](#roadmap). Full change history in [CHANGELOG.md](CHANGELOG.md).
 
 ## What it is
 
@@ -55,9 +55,9 @@ The benchmark corpus has cases across all of the above (~176 cases / 21 family d
 
 ## MVP tool surface
 
-Six MCP tools — three endpoint-typed design tools and three meta tools. The endpoint axis (binary / continuous / survival) is the *tool*; everything else — hypothesis type, fixed vs group-sequential, survival statistical model, accrual / follow-up timing — is a *parameter*. That keeps the surface small and predictable, and makes the JSON shape consistent across families.
+Nine MCP tools — three endpoint-typed design tools, three multi-hypothesis design tools, and three meta tools. Single-primary tools are organized by endpoint axis (binary / continuous / survival); multi-hypothesis tools are organized by *which* multiplicity pattern they encode (co-primary, multi-population, graphical). Everything else — hypothesis type, fixed vs group-sequential, survival statistical model, multiplicity strategy, accrual / follow-up timing — is a *parameter*.
 
-### Design tools (3)
+### Single-primary design tools (3)
 
 | Tool | Endpoint | Selectors | R backends |
 |---|---|---|---|
@@ -66,6 +66,14 @@ Six MCP tools — three endpoint-typed design tools and three meta tools. The en
 | `design_survival` | time-to-event | `design_class` × `model ∈ {"ph", "maxcombo", "rmst", "milestone", "wlr", "ahr"}` | `gsDesign::nSurv`/`gsSurv` (PH); `gsDesign2::fixed_design_*` and `gs_design_combo`/`gs_design_wlr`/`gs_design_ahr` (NPH) |
 
 All three accept `comparison ∈ {"superiority", "non-inferiority", "equivalence"}` (equivalence on binary / continuous fixed-sample only — survival wrappers don't support equivalence margins), `alpha`, `power`, `sided`, `allocation_ratio`, GS parameters (`k`, `timing`, `sfu`, `sfl`, `test.type`), and an optional `operational` block (see below).
+
+### Multi-hypothesis design tools (3) — added v0.0.8
+
+| Tool | When to use | Strategies | R backends |
+|---|---|---|---|
+| `design_co_primary` | Two or more primary endpoints sharing alpha (PFS+OS, CV death+HHF, mixed binary+continuous) | `fixed-sequence` (hierarchical, default — full alpha per test, gating preserves family-wise alpha by closed testing), `alpha-split` (weighted), `bonferroni` | Dispatches per-endpoint to `design_binary` / `design_continuous` / `design_survival` at the appropriate effective alpha; total N = max across endpoints |
+| `design_multi_population` | Same endpoint tested across multiple populations (biomarker subgroup + ITT, nested PD-L1 strata) | Same three strategies; `relation ∈ {"nested", "disjoint"}` | Same per-population dispatch; for `nested`, total N driven by largest implied-enrolled-N (events / prevalence); for `disjoint`, total N is the sum |
+| `design_graphical_multiplicity` | Multi-hypothesis with alpha recycling (Maurer-Bretz) — mixed primary+secondary, dose-response | Graphical procedure with user-supplied initial weights and transition matrix; built-in Rule-3 validator for transition matrix + gate prerequisites | `graphicalMCP::graph_create`; per-hypothesis sample-size at worst-case alpha (`max(initial_weight_i, fallback)` × family alpha) |
 
 ### Operational kernel
 
@@ -90,20 +98,21 @@ Prerequisites: R ≥ 4.2, Node ≥ 18. No `npm install` step (the MCP server shi
 ```bash
 git clone https://github.com/wei-ai-lab/clinical-trial-design
 cd clinical-trial-design
-R -e 'install.packages(c("gsDesign","gsDesign2","jsonlite"))'
+R -e 'install.packages(c("gsDesign","gsDesign2","graphicalMCP","jsonlite"))'
 ```
 
 `gsDesign`, `gsDesign2`, and `jsonlite` are CRAN packages the R launcher imports at runtime. Install them once into your R user library; they don't need to be reinstalled on plugin updates.
 
 #### Tested dependency versions
 
-`clinical-trial-design` v0.0.7 was developed and tested against the versions below. The R package's `DESCRIPTION` file pins minimum versions matching this set — older versions are not supported. CRAN's latest is usually fine; pin to these floors only if you hit a version-skew issue.
+`clinical-trial-design` v0.0.8 was developed and tested against the versions below. The R package's `DESCRIPTION` file pins minimum versions matching this set — older versions are not supported. CRAN's latest is usually fine; pin to these floors only if you hit a version-skew issue.
 
 | Layer | Dependency | Tested version |
 |---|---|---|
 | R runtime | R | 4.5.3 (works on R ≥ 4.2) |
 | R imports | `gsDesign` | 3.9.0 |
 |  | `gsDesign2` | 1.1.8 |
+|  | `graphicalMCP` | 0.2.9 |
 |  | `jsonlite` | 2.0.0 |
 | R suggests | `simtrial` | 1.0.2 |
 |  | `rpact` | 4.4.0 |
@@ -147,7 +156,7 @@ This is for iterating on the plugin itself, not for end-user installs.
 
 ### Environment overrides
 
-If `Rscript` isn't on your `PATH`, set `DESIGNR_RSCRIPT=/full/path/to/Rscript` in your shell. To override the R launcher path (rare), set `DESIGNR_LAUNCHER=/full/path/to/launcher.R`. The MCP server reads both env vars when spawning R. (The `DESIGNR_*` prefix is preserved as the wire-format contract across the v0.0.6 rebrand and the v0.0.7 schema break — see [CHANGELOG](CHANGELOG.md).)
+If `Rscript` isn't on your `PATH`, set `DESIGNR_RSCRIPT=/full/path/to/Rscript` in your shell. To override the R launcher path (rare), set `DESIGNR_LAUNCHER=/full/path/to/launcher.R`. The MCP server reads both env vars when spawning R. (The `DESIGNR_*` prefix is preserved as the wire-format contract across the v0.0.6 rebrand and the v0.0.8 schema break — see [CHANGELOG](CHANGELOG.md).)
 
 ## Standalone MCP server (without Claude Code)
 
@@ -255,7 +264,7 @@ Each row above already has ≥ 7 curated benchmark cases ready as regression anc
 
 ## Related work
 
-[`RConsortium/pharma-skills`](https://github.com/RConsortium/pharma-skills) is a complementary R Consortium working group skill collection. It goes deeper than `clinical-trial-design` on a single vertical — survival group-sequential designs with co-primary endpoints, multi-population (biomarker + ITT), Maurer–Bretz graphical multiplicity, and a Word-report deliverable backed by a Python template. Where `clinical-trial-design` is broad and MCP-native (one plugin, validated tools across the gsDesign / gsDesign2 surface, no local R session needed), `pharma-skills` is a single deep skill that runs in the user's local R session and requires `lrsim()` simulation pass before declaring a design done. The two solve adjacent problems with different shapes.
+[`RConsortium/pharma-skills`](https://github.com/RConsortium/pharma-skills) is a complementary R Consortium working group skill collection focused on survival group-sequential designs with deep multi-hypothesis support and a Word-report deliverable backed by a Python template. As of v0.0.8, `clinical-trial-design` ships its own multi-hypothesis tools — `design_co_primary`, `design_multi_population`, and `design_graphical_multiplicity` — covering hierarchical alpha-control, biomarker subgroup + ITT patterns, and Maurer–Bretz alpha recycling. The two projects still solve adjacent problems with different shapes: `clinical-trial-design` is broad and MCP-native (validated tools across the gsDesign / gsDesign2 / graphicalMCP surface, no local R session needed), while `pharma-skills` runs in the user's local R session and requires `lrsim()` simulation pass before declaring a design done.
 
 `clinical-trial-design`'s `verify_design` tool adopts the same simulation-verification convention (±2 pp power / ±0.5 pp Type I tolerance) so a design produced here can be subjected to the same credibility floor.
 

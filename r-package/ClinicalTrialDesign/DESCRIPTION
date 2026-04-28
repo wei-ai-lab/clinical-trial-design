@@ -1,7 +1,7 @@
 Package: ClinicalTrialDesign
 Type: Package
 Title: Unified Interface for Clinical Trial Design
-Version: 0.0.7.0
+Version: 0.0.8.0
 Authors@R: person(given = "Wei", family = "Fu", email = "wei.ai.lab@outlook.com", role = c("aut", "cre"))
 Author: Wei Fu [aut, cre]
 Maintainer: Wei Fu <wei.ai.lab@outlook.com>
@@ -19,6 +19,7 @@ Depends:
 Imports:
     gsDesign (>= 3.9.0),
     gsDesign2 (>= 1.1.8),
+    graphicalMCP (>= 0.2.5),
     jsonlite (>= 1.8.0)
 Suggests:
     rpact (>= 4.0.0),
