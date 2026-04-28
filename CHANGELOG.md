@@ -7,6 +7,69 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.11] — 2026-04-28
+
+The "deliverable + discoverability" release. Adds Word + PDF reporting,
+rewrites the MCP tool descriptions for LLM-selection clarity, expands
+the skill into the explicit 9-step Phase 3 orchestration workflow, and
+ships demo + preprint scaffolding for the v0.0.12 final discoverability
+push.
+
+### Added
+
+- **`design_report(format = "docx")`** via `officer` — native Word output
+  with proper headings, paragraphs, and a real Word table for the
+  reasoning chain. No Pandoc dependency for the Word path.
+  `sponsor_confidential` entries flagged at the top of the document.
+- **`design_report(format = "pdf")`** via `rmarkdown::render` — Pandoc
+  + TeX engine required (documented). Falls back to a clear
+  `designr_input_error` if Pandoc is absent rather than failing
+  silently.
+- **`path` argument on `design_report`** for explicit Word/PDF output
+  location. Returns the path of the file written.
+- **9-step Phase 3 orchestration workflow in `SKILL.md`** — clinical
+  context → endpoint → effect size → error rates → design class →
+  compute → operational → sensitivity + simulation → deliverable, with
+  who-leads-each-step (LLM / user / package) annotations.
+- **Waypoints pattern** documented in `SKILL.md`: agents save
+  intermediate JSON to `waypoints/{01..09}*.json` after each major
+  step so a long cross-functional design conversation can pause and
+  resume across sessions.
+- **`docs/demo-video-script.md`** — 2-minute walkthrough script + shot
+  list for the README header / plugin marketplace listing / conference
+  talks.
+- **`docs/preprint-draft.md`** — outlined 8-section preprint targeting
+  arXiv stat.ME / Stat in Medicine / BMC Med Res Methodology.
+
+### Changed
+
+- **MCP tool descriptions rewritten** for `design_binary`,
+  `design_continuous`, `design_survival` as decision-aiding text — lead
+  with WHEN to use the tool (clinical signals: "responder rate",
+  "change from baseline", "time to event"), then WHAT it covers
+  (comparison types, design_class, key parameters), then pointers to
+  the multi-hypothesis tools when applicable. This is the
+  highest-leverage discoverability change for agent-as-user — LLM
+  tool routing is sensitive to these strings.
+- **`design_report` MCP description** rewritten to advertise the docx
+  / pdf paths and the reasoning-chain rendering.
+- **`DESCRIPTION` Suggests:** `officer (>= 0.6.0)`, `rmarkdown (>= 2.20)`
+  added (markdown-only users don't pay the install cost).
+
+### Test coverage
+
+- 263/263 testthat (was 256 + 7 new for docx/pdf).
+- 18/18 MCP smoke (unchanged, but exercises the new format options).
+
+### Notes
+
+- Word output uses native officer primitives — not markdown-via-Pandoc —
+  because the reasoning-chain table renders better in Word as a real
+  table and because dropping the Pandoc requirement on the Word path
+  matters for sponsor environments where Pandoc isn't preinstalled.
+- The video and preprint are *scripts* — the actual recording and
+  submission are human-action items tracked in `BETA_HANDOFF.md`.
+
 ## [0.0.10] — 2026-04-28
 
 Adds the LLM-benchmarking eval harness. Tests how well a host LLM uses

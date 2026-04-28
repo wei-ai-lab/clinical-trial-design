@@ -1,6 +1,6 @@
 {
   "name": "clinical-trial-design",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "MCP server for clinical trial design. Computes sample size, power, group-sequential boundaries, NPH (MaxCombo / RMST / milestone), Monte Carlo verification, and markdown reporting via the gsDesign / gsDesign2 R packages. Covers Phase 2 and Phase 3 confirmatory designs.",
   "mcpName": "io.github.wei-ai-lab/clinical-trial-design",
   "type": "module",

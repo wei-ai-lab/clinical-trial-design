@@ -78,3 +78,51 @@ test_that("design_report rejects malformed input", {
   expect_error(design_report("not a list"),
                "designr_input_error: result:")
 })
+
+test_that("design_report(format='docx') writes a Word file when officer is available", {
+  skip_if_not_installed("officer")
+  res <- design_binary(p_control = 0.30, p_treatment = 0.20,
+                       alpha = 0.025, power = 0.80, sided = 1,
+                       reasoning_chain = list(
+                         list(decision = "alpha", value = 0.025,
+                              justification = "FDA standard",
+                              source_type = "fda_guidance"),
+                         list(decision = "p_control", value = 0.30,
+                              justification = "Internal P2 readout",
+                              source_type = "sponsor_confidential")
+                       ))
+  out <- design_report(res, format = "docx")
+  expect_true(file.exists(out))
+  expect_true(file.info(out)$size > 5000)
+  expect_true(grepl("\\.docx$", out))
+  file.remove(out)
+})
+
+test_that("design_report(format='docx') accepts an explicit path argument", {
+  skip_if_not_installed("officer")
+  res <- design_binary(p_control = 0.30, p_treatment = 0.20,
+                       alpha = 0.025, power = 0.80, sided = 1)
+  path <- file.path(tempdir(), "ctd_test.docx")
+  out <- design_report(res, format = "docx", path = path)
+  expect_equal(normalizePath(out, mustWork = FALSE),
+               normalizePath(path, mustWork = FALSE))
+  expect_true(file.exists(path))
+  file.remove(path)
+})
+
+test_that("design_report(format='pdf') errors clearly when Pandoc is absent", {
+  skip_if_not_installed("rmarkdown")
+  res <- design_binary(p_control = 0.30, p_treatment = 0.20,
+                       alpha = 0.025, power = 0.80, sided = 1)
+  if (rmarkdown::pandoc_available()) {
+    skip("Pandoc available — full PDF rendering tested manually")
+  }
+  expect_error(design_report(res, format = "pdf"),
+               "designr_input_error: format")
+})
+
+test_that("design_report rejects unknown format", {
+  res <- design_binary(p_control = 0.30, p_treatment = 0.20,
+                       alpha = 0.025, power = 0.80, sided = 1)
+  expect_error(design_report(res, format = "unknown"))
+})

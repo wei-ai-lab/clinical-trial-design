@@ -52,11 +52,17 @@ export const schema = {
 };
 
 export const description =
-  "Two-arm binary-endpoint trial design (gsDesign::nBinomial / gsDesign). " +
-  "Supports superiority, non-inferiority, and equivalence (TOST). Set " +
-  "design_class='group-sequential' for interim analyses with alpha-spending " +
-  "(equivalence is fixed-sample only). Optionally fills the operational " +
-  "kernel (accrual + follow-up timing) when an `operational` block is supplied.";
+  "Use when the user wants two-arm Phase 2/3 sample size with a BINARY " +
+  "primary endpoint — responder rate, fixed-time mortality, ORR, ACR20, " +
+  "remission/cure, anything that resolves to event-or-no-event per " +
+  "subject. Set comparison='superiority' (default), 'non-inferiority' " +
+  "(then provide ni_margin), or 'equivalence' (then provide equiv_margin; " +
+  "fixed-sample only). Set design_class='group-sequential' for interim " +
+  "analyses with alpha-spending. Supply an optional `operational` block " +
+  "(any 0–4 of accrual_rate, accrual_duration, follow_up_duration, " +
+  "total_trial_duration) and the kernel fills in the rest. For two or " +
+  "more co-primary binary endpoints with multiplicity control, use " +
+  "design_co_primary instead.";
 
 export const handler = async (args: z.infer<z.ZodObject<typeof schema>>) => {
   const { test_type, ...rest } = args;

@@ -91,7 +91,40 @@ audit trail (`given`, `derived`).
 |---|---|
 | `validate_against_benchmark` | Re-runs a curated benchmark case and diffs against expected. |
 | `verify_design` | Monte-Carlo cross-check of a design's empirical power and Type I error. |
-| `design_report` | Markdown summary suitable for handing to a clinician/sponsor. |
+| `design_report` | Render a clinician-readable design summary in markdown, Word (`format="docx"` via officer), or PDF (`format="pdf"` via rmarkdown + Pandoc). |
+
+## Orchestrated workflow (the 9-step Phase 3 design path)
+
+A real Phase 3 design follows the same 9 steps regardless of indication. Walk the user through them in order; do not skip ahead. Each step says *who leads* (LLM, user, or this package).
+
+1. **Clinical context** [LLM]. Indication → standard-of-care, target population, regulatory pathway. Compound → mechanism class, prior phases.
+2. **Endpoint choice** [LLM, with FDA guidance citations]. HFpEF → CV death + HHF composite; oncology → PFS or OS; T2D → HbA1c; IBD → clinical remission. Cite the precedent in the `reasoning_chain`.
+3. **Effect-size assumption** [LLM proposes from public precedents → user overrides]. The LLM finds public trials and synthesizes a baseline. The user almost always shifts this with internal Phase 2 data — accept the override and tag with `source_type: sponsor_confidential`.
+4. **Error rates** [user; default α=0.025 one-sided]. Sponsor picks 80% vs 90% power based on cost / risk tolerance.
+5. **Design class** [LLM proposes, user confirms]. Fixed vs group-sequential vs adaptive. Judgment call (sponsor risk appetite, ethical concerns, cost of delay).
+6. **Compute target N or events** [package]. Call the matching `design_<endpoint>` tool. For TTE, target events is primary.
+7. **Operational plan** [package — `operational` block]. Supply the user's site / enrollment / deadline constraints; the solver fills in the rest with audit trail.
+8. **Sensitivity + simulation** [package — `verify_design`]. Monte-Carlo cross-check. Plus a canned sensitivity sweep: re-run with **90% power** and with **effect size −10%** as a uniform "is the design robust" check.
+9. **Deliverable** [package — `design_report`]. Markdown for the conversation, Word (`format="docx"`) or PDF (`format="pdf"`) for the sponsor. Reasoning chain populated end-to-end so every assumption carries its source tag.
+
+## Waypoints — pause/resume on long design conversations
+
+Real Phase 3 designs span days or weeks of cross-functional review. To support pause/resume across sessions, save intermediate JSON to a `waypoints/` directory in the user's working directory after each major step:
+
+```
+waypoints/
+  01_clinical_context.json     # indication, population, regulatory path
+  02_endpoint.json             # endpoint type, measurement, source
+  03_effect_size.json          # HR / Δ / rate-diff + provenance
+  04_error_rates.json          # alpha, sided, power
+  05_design_class.json         # fixed / GS / adaptive
+  06_compute.json              # the design tool's full result
+  07_operational.json          # solved accrual + follow-up + duration
+  08_verify.json               # verify_design output + sensitivity sweep
+  09_report.docx               # the deliverable
+```
+
+When resuming a conversation, look for the most recent `waypoints/*.json` and surface it to the user before re-asking. Use the Write tool to save; use Read at session start to detect.
 
 ## Workflow
 

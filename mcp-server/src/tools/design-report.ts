@@ -10,16 +10,32 @@ export const schema = {
       "including $method, $inputs, and (for GS) $boundaries / $timing)."
     ),
   format: z
-    .enum(["markdown", "text"])
+    .enum(["markdown", "text", "docx", "pdf"])
     .optional()
-    .describe("Output format. Currently only 'markdown' is implemented; 'text' is reserved."),
+    .describe(
+      "Output format. 'markdown' (default) returns the report as text. " +
+        "'docx' writes a native Word document via the officer R package; " +
+        "'pdf' renders via rmarkdown + Pandoc (requires Pandoc + a TeX " +
+        "engine on the system PATH). 'docx' / 'pdf' return the path of the " +
+        "file written."
+    ),
+  path: z
+    .string()
+    .optional()
+    .describe(
+      "For format='docx' or 'pdf': output file path. If omitted, a tempfile " +
+        "is created and its path returned in the result."
+    ),
 };
 
 export const description =
-  "Render a clinician-readable summary of any designr result. Produces a markdown document " +
-  "with sections: Design overview, Key inputs, Headline output, Analysis plan (when GS " +
-  "boundaries / timing are present), and Method & version. Suitable to paste into a SAP-style " +
-  "document or render to HTML / PDF / Word downstream.";
+  "Render a clinician-readable design summary in markdown, Word, or PDF. " +
+  "Reasoning chain (when populated on the result) appears as a table; " +
+  "sponsor_confidential entries trigger a redaction warning at the top. " +
+  "Sections: title, design overview, key inputs, headline output, GS " +
+  "analysis plan, reasoning chain, method + version. Default output is " +
+  "markdown text; format='docx' returns a native Word file path " +
+  "(officer); format='pdf' renders via rmarkdown + Pandoc.";
 
 export const handler = async (args: z.infer<z.ZodObject<typeof schema>>) =>
   runR(toolName, args);

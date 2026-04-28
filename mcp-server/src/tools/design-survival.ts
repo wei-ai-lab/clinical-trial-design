@@ -103,12 +103,21 @@ export const schema = {
 };
 
 export const description =
-  "Two-arm time-to-event trial design. Pick `model` for the test statistic " +
-  "(ph, maxcombo, rmst, milestone, wlr, ahr) and `design_class` (fixed, " +
-  "group-sequential). PH backends are gsDesign::nSurv / gsSurv; NPH backends " +
-  "are gsDesign2::fixed_design_* / gs_design_*. Returns total events, total N, " +
-  "per-arm N, accrual / follow-up timing, and (for GS) interim boundaries. " +
-  "Optionally solves the operational kernel via the `operational` block.";
+  "Use when the user wants Phase 2/3 sample size with a TIME-TO-EVENT primary " +
+  "endpoint — overall survival, PFS, time to first hospitalization, time to " +
+  "progression, time to a CV composite, etc. Choose the test statistic via " +
+  "`model`: 'ph' (default — log-rank under proportional hazards, gsDesign::" +
+  "nSurv / gsSurv), 'maxcombo' (delayed effect / non-proportional hazards via " +
+  "Fleming-Harrington combo), 'rmst' (restricted mean survival to landmark " +
+  "tau), 'milestone' (survival probability at landmark t*), 'wlr' / 'ahr' " +
+  "(weighted log-rank / average HR for GS NPH). Set design_class='group-" +
+  "sequential' for interim analyses with alpha-spending. Always provide " +
+  "control_median + the relevant effect parameter (hazard_ratio for PH; " +
+  "delay_months + post_delay_hr for NPH models). The `operational` block " +
+  "can solve any 0–4 of {accrual_rate, accrual_duration, followup_duration, " +
+  "total_trial_duration} via the events-tied uniroot. For two co-primary " +
+  "TTE endpoints (PFS+OS) use design_co_primary; for nested PD-L1 strata or " +
+  "biomarker subgroup + ITT use design_multi_population.";
 
 export const handler = async (args: z.infer<z.ZodObject<typeof schema>>) => {
   const { test_type, ...rest } = args;

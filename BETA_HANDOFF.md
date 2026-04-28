@@ -20,8 +20,8 @@ Status of pending publishes (oldest first — release ceremony was paused at v0.
 | v0.0.7 | ✅ 2026-04-26 | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.8 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.9 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
-| v0.0.10 | ⏳ in-flight | ⏳ pending | ⏳ pending | ⏳ pending |
-| v0.0.11 | not tagged | — | — | — |
+| v0.0.10 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
+| v0.0.11 | ⏳ in-flight | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.12 | not tagged | — | — | — |
 
 The 7 redirect-package aliases (`designr`, `phase3-trial`, `trial-design`, `sample-size-calculator`, `gsdesign-mcp`, `mcp-clinical-trial`, `study-design`) were a one-time publish at v0.0.6 and don't need re-publishing.
@@ -54,13 +54,13 @@ python3 eval/harness/score.py --run-dir <RUN_DIR_FROM_ABOVE>
 
 Adapter scripts for OpenAI / Gemini / Ollama are stubbed at `eval/harness/adapters/*.py` (per-vendor, not yet implemented). Without them the suite skips those vendors gracefully and writes a note in `MODEL_GUIDANCE.md`. If you want cross-vendor coverage before beta, the adapters are a 1-2 hour lift each.
 
-## v0.0.11 — discoverability + reporting deliverables
+## v0.0.11 — discoverability + reporting deliverables (scripts shipped)
 
-Three artifacts that need a human:
+Word + PDF reporting are SHIPPED in v0.0.11 (`design_report(format="docx")` via officer, `format="pdf"` via rmarkdown). Three downstream artifacts need a human:
 
-1. **2-minute demo video** — I'll prepare a script + recording shot list (`docs/demo-video-script.md`). You record + upload to YouTube/Loom and paste the link into README + plugin marketplace listing.
-2. **Preprint draft** — I'll draft `docs/preprint/preprint-draft.md` using the benchmark corpus + LLM benchmark scores. You review → submit to arXiv stat.ME or a stat methodology venue.
-3. **`awesome-claude-code` listing** — Per their CONTRIBUTING.md, web-form-only, human-only. Submit at https://github.com/hesreallyhim/awesome-claude-code/issues/new?template=recommend-resource.yml when v0.0.11 ships.
+1. **2-minute demo video** — Script + shot list at `docs/demo-video-script.md`. You record + upload to YouTube/Loom and paste the link into README + plugin marketplace listing.
+2. **Preprint draft** — Outlined at `docs/preprint-draft.md` (~6,000 words across 8 sections). You populate Section 6 (LLM benchmark scores) once the eval suite has been run, then submit to arXiv stat.ME and consider a stat methodology venue.
+3. **`awesome-claude-code` listing** — Per their CONTRIBUTING.md, web-form-only, human-only. Submit at https://github.com/hesreallyhim/awesome-claude-code/issues/new?template=recommend-resource.yml when ready.
 
 ## v0.0.12 — conference outreach
 
