@@ -1,0 +1,38 @@
+id: 07_operational_kernel
+family: tte-ph
+source:
+  citation: "Operational-feasibility solver — accrual constraint + duration cap"
+prompt: |
+  Time-to-event design with control median 14 months, target HR 0.70,
+  2.5% one-sided alpha, 80% power, 1:1 randomization. We have a hard
+  budget cap of 32 months total trial duration (accrual + minimum
+  follow-up combined) and a known site-level enrollment of 22
+  patients per month based on existing site contracts. How long does
+  enrollment have to run, and how long is minimum follow-up, to hit
+  the events target?
+expected:
+  tool: design_survival
+  parameters:
+    model: ph
+    design_class: fixed
+    control_median: 14
+    hazard_ratio: 0.70
+    alpha: 0.025
+    power: 0.80
+    sided: 1
+  parameters_required:
+    - operational
+  result_check:
+    events_total: { range: [200, 300] }
+  interpretation_keys: ["accrual", "follow-up", "duration", "events"]
+  reasoning_chain:
+    must_have_source_types: ["user_supplied"]
+  tolerances:
+    events_pct: 10
+    sample_size_pct: 15
+notes: |
+  Tests the operational kernel. The agent must populate the
+  `operational` block with at least accrual_rate=22 and
+  total_trial_duration=32, then let the solver back-fill
+  accrual_duration and follow_up_duration. Scoring on
+  parameters_required: agent must invoke operational, not just N.

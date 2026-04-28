@@ -1,0 +1,37 @@
+id: 10_graphical_multiplicity
+family: multiplicity-graphical
+source:
+  citation: "Bretz, Maurer, Brannath, Posch (2009) Stat Med 28:586-604"
+prompt: |
+  Design a 3-arm dose-finding trial with a graphical multiplicity
+  procedure. Two doses (low, high) vs placebo; two endpoints (A
+  primary, B secondary). Hypotheses:
+    H1: dose-low vs placebo, endpoint A
+    H2: dose-high vs placebo, endpoint A
+    H3: dose-low vs placebo, endpoint B
+    H4: dose-high vs placebo, endpoint B
+  Initial alpha weights: H1=0.5, H2=0.5, H3=0, H4=0 (split among
+  primaries, secondaries gated). Transition matrix with 50/50
+  recycling between primaries upon rejection, 100% recycling between
+  secondaries (H3 <-> H4) upon rejection of either, and full recycling
+  from a primary to its endpoint-B secondary on rejection.
+  Effect sizes (continuous, sd=1): H1 delta=0.40, H2 delta=0.40,
+  H3 delta=0.25, H4 delta=0.35. Family alpha 2.5% one-sided,
+  80% power, balanced 1:1 vs placebo.
+expected:
+  tool: design_graphical_multiplicity
+  parameters:
+    alpha: 0.025
+    power: 0.80
+  result_check:
+    sample_size_total: { range: [500, 900] }
+    driver: H3
+  interpretation_keys: ["graphical", "transition", "alpha", "recycling"]
+  reasoning_chain:
+    must_have_source_types: ["ich_guidance", "user_supplied"]
+  tolerances:
+    sample_size_pct: 15
+notes: |
+  Tests graphical multiplicity dispatch. Agent must construct the
+  4x4 transition matrix correctly. Driver should be H3 (smallest
+  delta of the four hypotheses given equal worst-case alpha).

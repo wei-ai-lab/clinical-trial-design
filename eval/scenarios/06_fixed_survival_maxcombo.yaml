@@ -1,0 +1,39 @@
+id: 06_fixed_survival_maxcombo
+family: tte-nph
+source:
+  citation: "KEYNOTE-024-style delayed-effect immune checkpoint inhibitor pattern"
+prompt: |
+  Design a Phase 3 1L NSCLC trial with a checkpoint inhibitor vs
+  chemotherapy. We expect non-proportional hazards: a delayed effect
+  pattern where for the first 3 months the hazard ratio is essentially
+  1, then drops to about 0.55 thereafter. Control arm has a median PFS
+  of about 6 months. Use a MaxCombo test combining standard log-rank
+  with Fleming-Harrington (rho=0, gamma=1) to capture late separation.
+  2.5% one-sided alpha, 85% power, 1:1 randomization. Plan 18-month
+  accrual, 12-month follow-up. Fixed-sample.
+expected:
+  tool: design_survival
+  parameters:
+    model: maxcombo
+    design_class: fixed
+    control_median: 6
+    delay_months: 3
+    post_delay_hr: 0.55
+    accrual_duration: 18
+    followup_duration: 12
+    alpha: 0.025
+    power: 0.85
+    sided: 1
+  precedents: ["KEYNOTE-024", "pembrolizumab", "delayed effect"]
+  result_check:
+    events_total: { range: [120, 220] }
+  interpretation_keys: ["non-proportional", "MaxCombo", "delayed", "events"]
+  reasoning_chain:
+    must_have_source_types: ["llm_precedent", "user_supplied"]
+  tolerances:
+    events_pct: 12
+notes: |
+  Tests NPH MaxCombo dispatch. The agent must:
+  1. Pick model="maxcombo" (not ph)
+  2. Pass delay_months and post_delay_hr (not hazard_ratio)
+  3. Recognize the FH(0,1) weight family from "rho=0, gamma=1"
