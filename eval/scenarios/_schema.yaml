@@ -1,0 +1,72 @@
+# clinical-trial-design eval scenario — schema reference
+#
+# Each scenario file is a YAML doc with these top-level keys.
+# Validate at run time via harness/score.py — required keys missing
+# raises a clear error rather than silently scoring the absent dimension
+# as 0.
+
+id: <year>_<trial-or-author>_<focus-slug>     # snake-case, unique
+family: <benchmark-family>                    # matches a benchmarks/<family>/ directory
+source:
+  citation: <full citation>
+  doi: <optional>
+  nct_id: <optional>
+
+prompt: |
+  Free-text clinical brief — what an agent would receive in conversation.
+  Avoid spoilering the expected tool name. Describe the trial in clinical
+  terms (indication, comparison, endpoint, error rates, etc.).
+
+# What the agent should produce. Fields are optional except `tool`.
+expected:
+  tool: design_<binary|continuous|survival|co_primary|multi_population|graphical_multiplicity>
+
+  # Per-parameter expected values. Numeric values can be exact (require
+  # equality) or { range: [lo, hi] } (require lo <= value <= hi).
+  parameters:
+    alpha: 0.025
+    power: 0.80
+    sided: 1
+    # …
+
+  # For tte / multi-hypothesis tools — optional flags
+  parameters_required:
+    - reasoning_chain        # the agent must populate this
+
+  # Precedent-synthesis dimension (LLM-judge). The agent's narrative
+  # should cite at least one of these (if listed). Empty list = skip.
+  precedents:
+    - NCT02578680
+    - KEYNOTE-189
+
+  # End-to-end design check
+  result_check:
+    sample_size_total: { range: [<lo>, <hi>] }
+    events_total:      { range: [<lo>, <hi>] }
+    boundaries:                              # optional, for GS designs
+      upper_z_first: { abs_tol: 0.05, expected: 2.963 }
+    driver: <name>                           # for multi-hypothesis only
+
+  # Result-interpretation dimension (LLM-judge). The narrative must
+  # mention each of these tokens (case-insensitive substring match).
+  interpretation_keys:
+    - sample size
+    - events
+    - boundary
+
+  # Reasoning-chain quality dimension. List of source_types the chain
+  # MUST contain at least one entry of.
+  reasoning_chain:
+    must_have_source_types:
+      - llm_precedent
+      - user_supplied
+
+  # Per-dimension tolerances for end-to-end scoring.
+  tolerances:
+    sample_size_pct: 10        # |scored - expected| / expected <= this
+    events_pct: 8
+
+# Free-text notes for the human reviewer / future scenario maintainer.
+notes: |
+  Anything a future maintainer should know — caveats, edge cases,
+  reasons this scenario was chosen.

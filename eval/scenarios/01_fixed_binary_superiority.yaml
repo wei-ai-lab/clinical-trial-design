@@ -1,0 +1,34 @@
+id: 01_fixed_binary_superiority
+family: fixed-superiority
+source:
+  citation: "CAPTURE Investigators 1997, Lancet 349:1429-1435 (NCT pre-NCT era)"
+prompt: |
+  Design a Phase 3 cardiovascular trial. We're comparing a new
+  glycoprotein IIb/IIIa inhibitor against placebo in patients with
+  refractory unstable angina who are already going to have PCI within
+  24 hours. Primary endpoint is a 30-day composite of death, MI, or
+  urgent reintervention. Assume placebo gives a 15% event rate; we
+  expect 9% with the active drug. Standard 5% two-sided alpha,
+  80% power, 1:1 randomization. What sample size do we need?
+expected:
+  tool: design_binary
+  parameters:
+    p_control: 0.15
+    p_treatment: 0.09
+    design_class: fixed
+    comparison: superiority
+    alpha: 0.025          # one-sided 0.025 = two-sided 0.05
+    power: 0.80
+  precedents: ["CAPTURE", "abciximab"]
+  result_check:
+    sample_size_total: { range: [900, 1300] }
+  interpretation_keys: ["sample size", "per arm", "event rate"]
+  reasoning_chain:
+    must_have_source_types: ["llm_precedent", "user_supplied"]
+  tolerances:
+    sample_size_pct: 15
+notes: |
+  Classic binary superiority. Tests that the agent recognizes the
+  alpha=0.025 one-sided convention from "5% two-sided" and picks
+  design_binary with design_class="fixed" rather than over-engineering
+  a GS design when none was requested.

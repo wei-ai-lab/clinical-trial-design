@@ -1,0 +1,32 @@
+id: 08_co_primary_hierarchical
+family: multiplicity-co-primary
+source:
+  citation: "KEYNOTE-189 (Gandhi 2018, NEJM 378:2078); NCT02578680"
+prompt: |
+  Phase 3 1L metastatic non-squamous NSCLC, comparing pembrolizumab +
+  pemetrexed/platinum vs placebo + pemetrexed/platinum, 2:1
+  randomization. We have two co-primary endpoints: PFS by BICR and
+  overall survival, tested hierarchically — PFS first at full alpha,
+  then if PFS rejected, OS at full alpha. Both at 2.5% one-sided,
+  80% power per endpoint. PFS HR 0.50 (control median PFS ~4.7 mo);
+  OS HR 0.70 (control median OS ~17 mo). Assume 20-month accrual,
+  12-month follow-up for PFS / 24-month for OS, 5%/year dropout.
+expected:
+  tool: design_co_primary
+  parameters:
+    strategy: fixed-sequence
+    alpha: 0.025
+    power: 0.80
+    allocation_ratio: 2
+    sided: 1
+  result_check:
+    sample_size_total: { range: [400, 800] }
+    driver: OS
+  interpretation_keys: ["co-primary", "hierarchical", "PFS", "OS", "alpha"]
+  reasoning_chain:
+    must_have_source_types: ["llm_precedent", "user_supplied"]
+  tolerances:
+    sample_size_pct: 25
+notes: |
+  Tests the agent recognizes co-primary + hierarchical = fixed-sequence
+  (NOT alpha-split, common mistake). OS should drive the total N.

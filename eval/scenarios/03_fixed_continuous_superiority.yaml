@@ -1,0 +1,31 @@
+id: 03_fixed_continuous_superiority
+family: fixed-superiority
+source:
+  citation: "Generic depression / HAM-D pattern"
+prompt: |
+  Design a Phase 3 trial of a novel SSRI in major depressive disorder.
+  Primary endpoint is change from baseline in HAM-D-17 at week 8. The
+  active drug is expected to reduce HAM-D by 3 points more than
+  placebo on average; common within-arm SD around the change is about
+  7 points. Targeting 90% power at the conventional 5% two-sided
+  alpha, balanced randomization, fixed-sample design.
+expected:
+  tool: design_continuous
+  parameters:
+    mean_diff: 3
+    sd: 7
+    design_class: fixed
+    comparison: superiority
+    alpha: 0.025
+    power: 0.90
+  precedents: ["SSRI", "HAM-D"]
+  result_check:
+    sample_size_total: { range: [200, 350] }
+  interpretation_keys: ["sample size", "per arm", "mean difference"]
+  reasoning_chain:
+    must_have_source_types: ["llm_precedent", "user_supplied"]
+  tolerances:
+    sample_size_pct: 15
+notes: |
+  Tests continuous-endpoint dispatch. Agent must recognize mean_diff
+  (not delta — common gotcha) and pass sd.

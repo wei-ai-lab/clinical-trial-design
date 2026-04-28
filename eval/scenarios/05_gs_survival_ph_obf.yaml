@@ -1,0 +1,46 @@
+id: 05_gs_survival_ph_obf
+family: group-sequential
+source:
+  citation: "Standard 3-look OBF group-sequential survival design"
+prompt: |
+  Phase 3 oncology trial, single primary OS endpoint. 1L therapy in
+  metastatic disease. We expect median OS of 11 months in control and
+  17 months in treatment (HR ~ 0.65). 2:1 randomization favoring
+  treatment. 5% two-sided alpha, 80% power. We want a group-sequential
+  design with three analyses: 50%, 75%, and 100% of events. Use the
+  O'Brien-Fleming alpha-spending function (Lan-DeMets approximation,
+  i.e., LDOF). No futility. Assume 25 patients/month accrual, 12-month
+  minimum follow-up, 5% per year dropout.
+expected:
+  tool: design_survival
+  parameters:
+    model: ph
+    design_class: group-sequential
+    control_median: 11
+    hazard_ratio: 0.6471      # 11/17, approximately
+    allocation_ratio: 2
+    k: 3
+    timing: [0.5, 0.75, 1.0]
+    sfu: LDOF
+    accrual_rate: 25
+    followup_duration: 12
+    alpha: 0.025
+    power: 0.80
+    sided: 1
+  precedents: ["KEYNOTE", "checkpoint inhibitor"]
+  result_check:
+    events_total: { range: [160, 220] }
+    boundaries:
+      upper_z_first: { abs_tol: 0.05, expected: 2.963 }
+  interpretation_keys: ["interim", "boundary", "events", "alpha-spending"]
+  reasoning_chain:
+    must_have_source_types: ["user_supplied"]
+  tolerances:
+    events_pct: 10
+    sample_size_pct: 25
+notes: |
+  Tests GS survival PH with explicit timing + spending. The boundary
+  Z's (2.963, 2.359, 2.014) are well-known for this design and the
+  agent should reproduce them within ±0.05. Driver issue surfaced in
+  M3 evaluation — gsSurv-internal events count is ~1pp under nominal,
+  but within the [160, 220] window.

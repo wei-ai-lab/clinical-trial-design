@@ -1,0 +1,40 @@
+id: 04_fixed_survival_ph
+family: fixed-superiority
+source:
+  citation: "PARADIGM-HF-style cardiovascular survival design"
+prompt: |
+  We're sizing a Phase 3 cardiovascular outcomes trial in chronic
+  heart failure with reduced ejection fraction. The primary endpoint
+  is time to first occurrence of cardiovascular death or hospitalization
+  for heart failure. Standard of care gives a control event rate
+  corresponding to a median time to first composite event of about
+  2.5 years (30 months). The new drug is expected to give a hazard
+  ratio of 0.80 (20% relative reduction). Use 2.5% one-sided alpha,
+  80% power, 1:1 randomization. Plan a fixed-sample design with no
+  interim analyses; assume 36 months of accrual and 6 months of
+  additional minimum follow-up; about 1% per month dropout.
+expected:
+  tool: design_survival
+  parameters:
+    model: ph
+    design_class: fixed
+    control_median: 30
+    hazard_ratio: 0.80
+    accrual_duration: 36
+    followup_duration: 6
+    alpha: 0.025
+    power: 0.80
+    sided: 1
+  precedents: ["PARADIGM-HF", "cardiovascular outcomes"]
+  result_check:
+    events_total: { range: [600, 800] }
+  interpretation_keys: ["events", "hazard ratio", "accrual"]
+  reasoning_chain:
+    must_have_source_types: ["user_supplied", "llm_precedent"]
+  tolerances:
+    events_pct: 10
+    sample_size_pct: 15
+notes: |
+  Tests fixed-sample PH survival. Agent must NOT add a GS layer
+  when the user said "no interim analyses". Median 30 with HR 0.80
+  + balanced 1:1 + 80% power requires ~700 events.

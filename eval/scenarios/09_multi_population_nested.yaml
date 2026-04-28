@@ -1,0 +1,34 @@
+id: 09_multi_population_nested
+family: multiplicity-multi-population
+source:
+  citation: "KEYNOTE-042 (Mok 2019, Lancet 393:1819); NCT02220894"
+prompt: |
+  Phase 3 1L NSCLC trial, pembrolizumab vs investigator-choice
+  chemotherapy, 1:1 randomization. PD-L1-expressing population (TPS
+  >= 1%). Test the same OS endpoint sequentially in three nested
+  populations from strongest expected effect to broadest: TPS>=50%
+  (HR ~0.65, prevalence ~47%), TPS>=20% (HR ~0.70, prevalence ~63%),
+  TPS>=1% (HR ~0.78, prevalence 100%). 2.5% one-sided alpha at each
+  step (hierarchical), 85% power per population, control median OS
+  ~12.2 months. 25-month accrual, 12-month follow-up, 5%/year dropout.
+expected:
+  tool: design_multi_population
+  parameters:
+    endpoint_type: survival
+    relation: nested
+    strategy: fixed-sequence
+    alpha: 0.025
+    power: 0.85
+  result_check:
+    sample_size_total: { range: [900, 1500] }
+    driver: TPS_1
+  interpretation_keys: ["multi-population", "nested", "subgroup", "PD-L1"]
+  reasoning_chain:
+    must_have_source_types: ["llm_precedent", "user_supplied"]
+  tolerances:
+    sample_size_pct: 20
+notes: |
+  Tests multi-population dispatch with nested relation. Driver should
+  be the broadest stratum (TPS_1) because alpha is preserved through
+  hierarchical gating and N is driven by the slowest-event-accruing
+  population.

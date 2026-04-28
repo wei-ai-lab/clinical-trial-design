@@ -1,0 +1,33 @@
+id: 11_gs_binary
+family: group-sequential
+source:
+  citation: "Generic binary GS design with DSMB-style monitoring"
+prompt: |
+  Design a Phase 3 trial in acute myeloid leukemia. Primary endpoint
+  is response rate at 30 days post-induction. Standard of care gives
+  a 50% response rate; the new regimen is expected to reach 65%.
+  We want two looks: one interim at 50% information and a final
+  analysis. Use Lan-DeMets O'Brien-Fleming spending. 5% two-sided
+  alpha, 80% power, 1:1 randomization, no futility. Group-sequential
+  binary design.
+expected:
+  tool: design_binary
+  parameters:
+    p_control: 0.50
+    p_treatment: 0.65
+    design_class: group-sequential
+    k: 2
+    sfu: LDOF
+    alpha: 0.025
+    power: 0.80
+    sided: 1
+  result_check:
+    sample_size_total: { range: [200, 400] }
+  interpretation_keys: ["group-sequential", "interim", "boundary"]
+  reasoning_chain:
+    must_have_source_types: ["user_supplied"]
+  tolerances:
+    sample_size_pct: 15
+notes: |
+  Tests GS binary dispatch. Agent must NOT pick design_survival just
+  because the word "trial" appears — endpoint is binary response rate.
