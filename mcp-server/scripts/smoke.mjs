@@ -155,6 +155,25 @@ const cases = [
           r.raw.driver === "H3" &&
           r.method.includes("graphicalMCP")],
 
+  // --- reasoning_chain end-to-end -----------------------------------
+  ["design_binary with reasoning_chain (renders + sponsor_confidential flag)",
+   { p_control: 0.30, p_treatment: 0.20,
+     design_class: "fixed",
+     alpha: 0.025, power: 0.80, sided: 1,
+     reasoning_chain: [
+       { decision: "alpha", value: 0.025,
+         justification: "Standard for confirmatory",
+         source_type: "fda_guidance",
+         source_ref: "FDA Guidance E9 (1998)" },
+       { decision: "p_control", value: 0.30,
+         justification: "Internal P2 readout, study P3-A1",
+         source_type: "sponsor_confidential" }
+     ] },
+   "design_binary",
+   (r) => Array.isArray(r.reasoning_chain) &&
+          r.reasoning_chain.length === 2 &&
+          r.reasoning_chain[1].source_type === "sponsor_confidential"],
+
   // --- benchmark validator -------------------------------------------
   ["validate_against_benchmark CAPTURE",
    { family: "fixed-superiority", id: "1997_CAPTURE_abciximab" },

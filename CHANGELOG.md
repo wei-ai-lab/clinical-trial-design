@@ -7,6 +7,48 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.9] — 2026-04-28
+
+Adds the **reasoning chain** schema — every `design_*` tool now accepts an
+optional structured citation trail and surfaces it in `design_report`. The
+package provides the *shape*; LLMs and users fill the *content*.
+
+### Added
+
+- **`reasoning_chain` parameter on every design tool.** Each entry:
+  `{decision, value, justification, source_type, source_ref?}`. Validated
+  against the six allowed `source_type` values: `llm_precedent`,
+  `fda_guidance`, `ich_guidance`, `user_supplied`, `package_default`,
+  `sponsor_confidential`.
+- **`reasoning_chain` field on every result** — surfaced verbatim through
+  the JSON schema so downstream tools (verify, report, anything the agent
+  builds on top) can read the citation trail.
+- **`design_report` renders the reasoning chain** as a markdown table
+  (Decision / Value / Justification / Source / Reference) and flags
+  `sponsor_confidential` content with a top-of-report redaction warning.
+- **Helper functions** `check_reasoning_chain()` and
+  `reasoning_has_confidential()` exported as internal utilities.
+- **AGENTS.md "Reasoning chain" section** documents the conventions for
+  agent contributors: which `source_type` to use when, what to populate
+  vs. omit, the template for a complete chain.
+- **SKILL.md "Reasoning chain — populate on every call" section** primes
+  the in-session agent to fill the chain on every non-default design call.
+- **Smoke matrix grew 17 → 18** with one prompt that exercises
+  reasoning_chain end-to-end (validates `sponsor_confidential` round-trip
+  through the JSON shape).
+
+### Changed
+
+- Schema validators (`utils_validate.R`) gain `REASONING_SOURCE_TYPES`
+  enum + `check_reasoning_chain` + `reasoning_has_confidential`.
+- `.designr_result()` adds an optional `reasoning_chain` argument.
+
+### Test coverage
+
+- 256/256 testthat assertions pass (was 235 + 21 new in
+  `test-reasoning-chain.R`).
+- 18/18 smoke prompts pass against the bundled MCP server.
+
 ## [0.0.8] — 2026-04-28
 
 Adds multi-hypothesis design tools — co-primary endpoints, multi-population

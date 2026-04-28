@@ -18,8 +18,8 @@ Status of pending publishes (oldest first — release ceremony was paused at v0.
 | Release | Tagged | npm published | MCP registry | Smithery |
 |---|---|---|---|---|
 | v0.0.7 | ✅ 2026-04-26 | ⏳ pending | ⏳ pending | ⏳ pending |
-| v0.0.8 | ⏳ in-flight | ⏳ pending | ⏳ pending | ⏳ pending |
-| v0.0.9 | not tagged | — | — | — |
+| v0.0.8 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
+| v0.0.9 | ⏳ in-flight | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.10 | not tagged | — | — | — |
 | v0.0.11 | not tagged | — | — | — |
 | v0.0.12 | not tagged | — | — | — |
