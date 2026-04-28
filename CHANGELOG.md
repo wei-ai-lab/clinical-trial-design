@@ -7,6 +7,55 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.12] — 2026-04-28
+
+The "pre-beta polish" release. Adds CI release-gate, API stability
+commitments, a 5-trial examples gallery, and conference talk
+abstracts. Last release before the v0.5.0 beta gate; everything
+after this is beta-gate criteria the user signs off on.
+
+### Added
+
+- **`.github/workflows/release-gate.yml`** — four-job CI pipeline
+  (testthat, R CMD check, MCP build + smoke matrix, eval-scenario
+  schema validate) running on every push to main/dev and every PR.
+  Complements the existing `security-grep.yml` statelessness gate.
+- **`API_STABILITY.md`** documenting the frozen contract (MCP tool
+  names, R wire-format identifiers, result JSON top-level shape,
+  `source_type` enum, schema enums, error class names) vs flexible
+  elements (tool descriptions, raw sub-tree, defaults, internal
+  helpers). Versioning policy table for what triggers patch / minor /
+  major version steps.
+- **`examples/` gallery** with 5 end-to-end reproductions of
+  published trials:
+  - 01_capture_binary (binary fixed superiority)
+  - 02_paradigm_hf_survival (TTE PH fixed)
+  - 03_keynote024_maxcombo (TTE NPH MaxCombo, delayed effect)
+  - 04_keynote189_co_primary (co-primary PFS+OS hierarchical)
+  - 05_keynote042_multi_population (nested PD-L1 strata)
+  Each: runnable `run.R` + narrative `README.md` + populated
+  reasoning chain demonstrating the citation pattern.
+- **`docs/talk-abstracts.md`** with three drafted abstracts targeting
+  R/Pharma, JSM (Statistical Computing), and useR!. User submits to
+  each conference's CFP when open.
+
+### Test coverage
+
+- 263/263 testthat (unchanged from v0.0.11).
+- 18/18 MCP smoke (unchanged).
+- 11 eval scenarios validate.
+- 5 example reproductions run end-to-end against the installed
+  package and produce sensible numbers (within published-trial
+  tolerance, accounting for sponsor padding and operational defaults).
+
+### Notes
+
+- This is the last release before pre-beta hand-off. The user reviews
+  `BETA_HANDOFF.md` and, when satisfied, tags v0.5.0 with the four
+  beta-gate items: 3 external biostat sign-offs + 1 external agent-
+  contributor PR + final review + zero open `priority:beta-blocker`
+  issues.
+
 ## [0.0.11] — 2026-04-28
 
 The "deliverable + discoverability" release. Adds Word + PDF reporting,
