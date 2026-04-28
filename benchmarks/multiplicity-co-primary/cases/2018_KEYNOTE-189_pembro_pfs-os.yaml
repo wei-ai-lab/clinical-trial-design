@@ -1,0 +1,82 @@
+id: 2018_KEYNOTE-189_pembro_pfs-os
+family: multiplicity-co-primary
+source:
+  kind: published-trial
+  citation: "Gandhi L, Rodríguez-Abreu D, Gadgeel S, et al. Pembrolizumab plus Chemotherapy in Metastatic Non-Small-Cell Lung Cancer. N Engl J Med. 2018;378(22):2078-2092."
+  doi: "10.1056/NEJMoa1801005"
+  nct_id: "NCT02578680"
+design:
+  indication: "1L metastatic non-squamous NSCLC, no EGFR/ALK alterations"
+  population: "Treatment-naive, ECOG 0-1, no contraindication to platinum chemotherapy"
+  arms:
+    - name: "Pembrolizumab + pemetrexed + platinum"
+      allocation: 2
+    - name: "Placebo + pemetrexed + platinum"
+      allocation: 1
+  comparison: "superiority"
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  endpoints:
+    - name: "PFS"
+      type: "time-to-event"
+      description: "Progression-free survival by blinded independent central review (RECIST 1.1)"
+      effect:
+        hazard_ratio: 0.50
+        control_median: 4.7
+        scale: "months"
+    - name: "OS"
+      type: "time-to-event"
+      description: "Overall survival, all-cause mortality"
+      effect:
+        hazard_ratio: 0.70
+        control_median: 17.0
+        scale: "months"
+  multiplicity:
+    strategy: "fixed-sequence"
+    ordering: ["PFS", "OS"]
+    alpha_allocation:
+      PFS: 0.025
+      OS: 0.025
+    gate_prereqs:
+      OS: ["PFS"]
+  accrual:
+    rate_per_month: 30
+    duration_months: 20
+  dropout:
+    annual_rate: 0.05
+  interim_analyses:
+    - timing_info_fraction: [0.5, 1.0]
+      spending: "OBF"
+      hypothesis: "PFS"
+    - timing_info_fraction: [0.5, 1.0]
+      spending: "OBF"
+      hypothesis: "OS"
+expected:
+  sample_size_total: 600
+  sample_size_per_arm:
+    pembro: 400
+    placebo: 200
+  events_per_endpoint:
+    PFS: 372
+    OS: 416
+  tolerance:
+    sample_size_pct: 5
+    events_pct: 8
+  notes: "Published planned N = 600; actual enrolled 410 due to early-stop on PFS. The hierarchical design preserves the full one-sided 0.025 alpha for OS conditional on PFS rejection — no alpha discount on OS."
+r_packages:
+  - gsDesign
+  - gsDesign2
+  - graphicalMCP
+tags:
+  - co-primary
+  - hierarchical
+  - fixed-sequence
+  - tte
+  - oncology
+  - nsclc
+  - immunotherapy
+caveats: |
+  Published planned sample size (600) was set to give ~80% power for PFS at HR 0.50 and adequate power for OS at HR 0.70 conditional on PFS rejection. The actual final analysis used adaptive timing.
+  Multiplicity strategy: fixed-sequence (hierarchical) — full 2.5% one-sided alpha tested on PFS first; if PFS rejected, OS tested at full 2.5%. This preserves family-wise alpha because PFS rejection is a prerequisite for OS testing.
+  When reproducing: do NOT alpha-split between PFS and OS (that would be conservative and depart from the published design). Use a fixed-sequence procedure.

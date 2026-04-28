@@ -1,0 +1,93 @@
+id: 2009_Maurer-Bretz_graphical-five-hypothesis
+family: multiplicity-graphical
+source:
+  kind: methodology-paper
+  citation: "Bretz F, Maurer W, Brannath W, Posch M. A graphical approach to sequentially rejective multiple test procedures. Statistics in Medicine. 2009;28(4):586-604."
+  doi: "10.1002/sim.3495"
+design:
+  indication: "Methodology example — three-arm dose-finding with two endpoints"
+  population: "Generic"
+  arms:
+    - name: "Dose-low"
+      allocation: 1
+    - name: "Dose-high"
+      allocation: 1
+    - name: "Placebo"
+      allocation: 1
+  comparison: "superiority"
+  sidedness: 1
+  alpha: 0.025
+  power: 0.80
+  endpoints:
+    - name: "H1"
+      type: "continuous"
+      description: "Dose-low vs Placebo, primary endpoint A"
+      effect:
+        delta: 0.30
+        sd: 1.0
+    - name: "H2"
+      type: "continuous"
+      description: "Dose-high vs Placebo, primary endpoint A"
+      effect:
+        delta: 0.40
+        sd: 1.0
+    - name: "H3"
+      type: "continuous"
+      description: "Dose-low vs Placebo, secondary endpoint B"
+      effect:
+        delta: 0.25
+        sd: 1.0
+    - name: "H4"
+      type: "continuous"
+      description: "Dose-high vs Placebo, secondary endpoint B"
+      effect:
+        delta: 0.35
+        sd: 1.0
+  multiplicity:
+    strategy: "graphical"
+    alpha_allocation:
+      H1: 0.0125
+      H2: 0.0125
+      H3: 0.0
+      H4: 0.0
+    transition_matrix:
+      - [0.0, 0.5, 0.5, 0.0]
+      - [0.5, 0.0, 0.0, 0.5]
+      - [0.0, 0.0, 0.0, 1.0]
+      - [0.0, 0.0, 1.0, 0.0]
+    gate_prereqs:
+      H3: ["H1"]
+      H4: ["H2"]
+expected:
+  sample_size_total: 705
+  sample_size_per_arm:
+    dose_low: 235
+    dose_high: 235
+    placebo: 235
+  events_per_endpoint:
+    H1: null
+    H2: null
+    H3: null
+    H4: null
+  tolerance:
+    sample_size_pct: 10
+  notes: "Canonical Maurer-Bretz graphical example: 4 hypotheses, initial alpha-split 0.0125 / 0.0125 / 0 / 0 between primary dose comparisons; transition matrix recycles alpha to secondaries (H3, H4) and across primaries upon rejection. Sample size computed for the primary comparison at delta=0.40, alpha=0.0125 (after recycling), power 0.80."
+r_packages:
+  - graphicalMCP
+  - gMCP
+tags:
+  - graphical
+  - maurer-bretz
+  - alpha-recycling
+  - transition-matrix
+  - methodology
+  - dose-finding
+caveats: |
+  This is a methodology example, not a real trial — it tests the agent's ability to encode a canonical Maurer-Bretz transition matrix and validate it with the Rule-3 prerequisite check (H3 cannot be tested before H1; H4 cannot be tested before H2).
+  Transition matrix interpretation:
+    Row 1 (H1): if H1 rejected, recycle 0.5 of its alpha to H2 and 0.5 to H3.
+    Row 2 (H2): if H2 rejected, recycle 0.5 to H1 and 0.5 to H4.
+    Row 3 (H3): if H3 rejected, recycle 1.0 to H4.
+    Row 4 (H4): if H4 rejected, recycle 1.0 to H3.
+  Initial weights (0.0125, 0.0125, 0, 0) sum to 0.025 (the family α); secondary hypotheses (H3, H4) start at 0 and only become testable after their primary prerequisites are rejected and alpha is recycled.
+  Sample size based on the primary comparison (H2 at delta=0.40, sd=1.0, alpha=0.0125 after potential recycling, power 0.80).

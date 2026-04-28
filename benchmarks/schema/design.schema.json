@@ -9,7 +9,7 @@
     "id": {
       "type": "string",
       "description": "Stable identifier. Convention: <YYYY>_<TRIAL-OR-AUTHOR>_<slug>.",
-      "pattern": "^[0-9]{4}_[A-Za-z0-9-]+_[a-z0-9-]+$"
+      "pattern": "^[0-9]{4}_[A-Za-z0-9-]+_[a-z0-9_-]+$"
     },
     "family": {
       "type": "string",
@@ -34,6 +34,9 @@
         "umbrella",
         "crossover",
         "factorial",
+        "multiplicity-co-primary",
+        "multiplicity-multi-population",
+        "multiplicity-graphical",
         "non-standard"
       ]
     },
@@ -53,8 +56,8 @@
     },
     "design": {
       "type": "object",
-      "description": "Design inputs — what you'd hand to a biostatistician to reproduce the calculation.",
-      "required": ["endpoint", "comparison", "alpha", "power"],
+      "description": "Design inputs — what you'd hand to a biostatistician to reproduce the calculation. Single-primary cases use `endpoint` (singular); multi-hypothesis cases (co-primary, graphical) use `endpoints` (array) instead. At least one of the two must be present.",
+      "required": ["comparison", "alpha", "power"],
       "properties": {
         "indication": { "type": "string" },
         "population": { "type": "string" },
@@ -72,6 +75,7 @@
         "endpoint": {
           "type": "object",
           "required": ["type"],
+          "description": "Single-primary endpoint. Mutually exclusive with `endpoints`.",
           "properties": {
             "type": {
               "type": "string",
@@ -80,6 +84,80 @@
             "description": { "type": "string" },
             "measurement_time": { "type": "string" }
           }
+        },
+        "endpoints": {
+          "type": "array",
+          "description": "Multi-hypothesis endpoint set (co-primary, graphical multiplicity). Each item names a hypothesis and supplies its endpoint specification + assumed effect. Mutually exclusive with `endpoint`.",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["name", "type"],
+            "properties": {
+              "name": { "type": "string", "description": "Hypothesis name (H1, H2, ... or PFS, OS, etc.)" },
+              "type": {
+                "type": "string",
+                "enum": ["binary", "continuous", "time-to-event", "count-rate", "recurrent-event", "ordinal", "composite"]
+              },
+              "description": { "type": "string" },
+              "measurement_time": { "type": "string" },
+              "effect": { "type": "object", "additionalProperties": true },
+              "margin": { "additionalProperties": true }
+            },
+            "additionalProperties": true
+          }
+        },
+        "populations": {
+          "type": "array",
+          "description": "Multi-population specification (e.g., biomarker subgroup + ITT). Each item is a population stratum with its prevalence and assumed effect. Used by closed-testing and graphical procedures.",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string", "description": "Population label (e.g., 'PD-L1+', 'ITT')." },
+              "prevalence": { "type": "number", "minimum": 0, "maximum": 1, "description": "Fraction of overall population in this stratum." },
+              "effect": { "type": "object", "additionalProperties": true, "description": "Assumed effect within this stratum." }
+            },
+            "additionalProperties": true
+          }
+        },
+        "multiplicity": {
+          "type": "object",
+          "description": "Multiplicity-control strategy across `endpoints` and/or `populations`.",
+          "required": ["strategy"],
+          "properties": {
+            "strategy": {
+              "type": "string",
+              "enum": ["alpha-split", "fixed-sequence", "graphical", "bonferroni", "closed-testing"]
+            },
+            "alpha_allocation": {
+              "type": "object",
+              "description": "Per-hypothesis alpha weights for alpha-split / graphical (must sum to total alpha).",
+              "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
+            },
+            "ordering": {
+              "type": "array",
+              "description": "Hypothesis names in test order for fixed-sequence (hierarchical).",
+              "items": { "type": "string" }
+            },
+            "transition_matrix": {
+              "type": "array",
+              "description": "Square matrix of transition weights for graphical multiplicity (Maurer-Bretz). Row i column j is the weight of alpha re-allocated from H_i to H_j upon rejection of H_i. Rows must sum to <= 1 (the residual is dropped).",
+              "items": {
+                "type": "array",
+                "items": { "type": "number", "minimum": 0, "maximum": 1 }
+              }
+            },
+            "gate_prereqs": {
+              "type": "object",
+              "description": "Optional per-hypothesis prerequisites (e.g., {OS: [PFS]} means OS can only be tested after PFS rejected). Used by Rule-3 validator.",
+              "additionalProperties": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "comparison": {
           "type": "string",

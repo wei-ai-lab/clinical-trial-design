@@ -1,0 +1,82 @@
+id: 2019_KEYNOTE-042_pembro_pdl1-strata
+family: multiplicity-multi-population
+source:
+  kind: published-trial
+  citation: "Mok TSK, Wu Y-L, Kudaba I, et al. Pembrolizumab versus chemotherapy for previously untreated, PD-L1-expressing, locally advanced or metastatic non-small-cell lung cancer (KEYNOTE-042): a randomised, open-label, controlled, phase 3 trial. Lancet. 2019;393(10183):1819-1830."
+  doi: "10.1016/S0140-6736(18)32409-7"
+  nct_id: "NCT02220894"
+design:
+  indication: "1L locally advanced/metastatic NSCLC, PD-L1 expressing (TPS ≥ 1%)"
+  population: "PD-L1 TPS ≥ 1%; subgroups TPS ≥ 50%, ≥ 20%, ≥ 1%"
+  arms:
+    - name: "Pembrolizumab"
+      allocation: 1
+    - name: "Investigator-choice chemotherapy"
+      allocation: 1
+  comparison: "superiority"
+  sidedness: 1
+  alpha: 0.025
+  power: 0.85
+  endpoint:
+    type: "time-to-event"
+    description: "Overall survival, all-cause mortality"
+  populations:
+    - name: "TPS≥50"
+      prevalence: 0.47
+      effect:
+        hazard_ratio: 0.65
+        control_median: 12.2
+    - name: "TPS≥20"
+      prevalence: 0.63
+      effect:
+        hazard_ratio: 0.70
+        control_median: 12.2
+    - name: "TPS≥1"
+      prevalence: 1.0
+      effect:
+        hazard_ratio: 0.78
+        control_median: 12.2
+  multiplicity:
+    strategy: "fixed-sequence"
+    ordering: ["TPS≥50", "TPS≥20", "TPS≥1"]
+    alpha_allocation:
+      "TPS≥50": 0.025
+      "TPS≥20": 0.025
+      "TPS≥1": 0.025
+    gate_prereqs:
+      "TPS≥20": ["TPS≥50"]
+      "TPS≥1": ["TPS≥20"]
+  accrual:
+    rate_per_month: 50
+    duration_months: 25
+  dropout:
+    annual_rate: 0.05
+expected:
+  sample_size_total: 1240
+  sample_size_per_arm:
+    pembro: 620
+    chemo: 620
+  events_per_population:
+    "TPS≥50": 285
+    "TPS≥20": 462
+    "TPS≥1": 690
+  tolerance:
+    sample_size_pct: 8
+    events_pct: 10
+  notes: "Sequential subgroup testing — strongest-effect subgroup first (TPS≥50), then enrich-down. Family-wise alpha preserved by hierarchical gating; no alpha-split. Total N = 1240 driven by ITT (TPS≥1) requirement; the subgroup analyses re-use the same patients."
+r_packages:
+  - gsDesign
+  - graphicalMCP
+tags:
+  - multi-population
+  - biomarker
+  - subgroup
+  - fixed-sequence
+  - tte
+  - oncology
+  - nsclc
+  - pd-l1
+caveats: |
+  Multi-population pattern: tested in nested order from strongest expected effect (TPS≥50) to weakest (TPS≥1, the ITT-equivalent for this trial). Each test runs on its own subgroup at full α=0.025 conditional on prior rejection.
+  This is NOT alpha-split between subgroups — would be conservative and depart from the published design.
+  When the agent reproduces this: the patients overlap (TPS≥50 ⊂ TPS≥20 ⊂ TPS≥1), so total enrolled N is driven by the broadest population (TPS≥1) needing 690 events; the smaller subgroup analyses use the subset of those patients.
