@@ -22,9 +22,11 @@ Status of pending publishes:
 | v0.0.9 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.10 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.11 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
-| v0.0.12 | ⏳ in-flight | ⏳ pending | ⏳ pending | ⏳ pending |
+| v0.0.12 | ✅ 2026-04-29 | ✅ 2026-04-29 | ✅ 2026-04-29 | deferred (see below) |
 
 The 7 redirect-package aliases (`designr`, `phase3-trial`, `trial-design`, `sample-size-calculator`, `gsdesign-mcp`, `mcp-clinical-trial`, `study-design`) were a one-time publish at v0.0.6 and don't republish per release.
+
+**Smithery is deferred.** Their `mcp publish` accepts HTTP-served servers or `.mcpb` bundles, not stdio-over-npm. The official MCP registry already covers our discovery surface, so Smithery is duplicative for v0.5.x. Three paths if a user asks for Smithery later: (a) web-form manual submission at smithery.ai/new, (b) build a `.mcpb` bundle, (c) add an HTTP transport shim. None are blocking the pharma-skills comparison or beta.
 
 ## v0.0.10 — LLM benchmark suite (Claude-only scope; runs deferred)
 
