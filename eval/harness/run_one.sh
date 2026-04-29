@@ -6,7 +6,7 @@
 #   bash harness/run_one.sh \
 #       --scenario scenarios/05_gs_survival_ph_obf.yaml \
 #       --model claude-opus-4-7 \
-#       [--vendor claude]                    # claude (default), openai, gemini, ollama
+#       [--vendor claude]                    # claude (default); other vendors are stub adapters
 #       [--run-dir /tmp/eval-runs/<auto>]    # default: auto under ${TMPDIR}/clinical-trial-design-eval/
 #
 # Output:
@@ -14,10 +14,12 @@
 #   <run-dir>/scenario.yaml          (frozen copy of the input)
 #   <run-dir>/meta.json              (model, vendor, scenario id, run timestamp)
 #
-# The MCP plugin must be installed in the user's Claude profile
-# (claude plugin list | grep clinical-trial-design). For non-Claude
-# vendors, the harness uses an adapter under harness/adapters/ that
-# speaks the provider's API and exposes the same stream-json shape.
+# Vendor scope: Claude only for v0.0.10. The MCP plugin must be installed
+# in the user's Claude profile (claude plugin list | grep clinical-trial-design).
+# OpenAI / Gemini / Ollama adapters are stubbed at harness/adapters/* and
+# documented as future work — they were intentionally left out of v0.0.10
+# scope so the pharma-skills comparison runs apples-to-apples on the
+# Claude generation lineup.
 
 set -euo pipefail
 

@@ -1,79 +1,49 @@
 #!/usr/bin/env bash
-# Run every scenario × every available model. Skips vendors whose
-# environment is not configured (no API key, no Ollama endpoint).
-# Writes per-run dirs under ${EVAL_RUN_ROOT:-${TMPDIR}/clinical-trial-design-eval/}.
+# Run every scenario × every Claude model. The Claude family is the
+# canonical comparator for v0.0.10 — we measure how `clinical-trial-design`
+# performs against pharma-skills with the host model held constant
+# across the Claude generation lineup. Cross-vendor (GPT, Gemini,
+# open-weight) is documented as future work but intentionally out of
+# scope here so the pharma-skills comparison runs apples-to-apples.
 #
 # Usage:
 #   bash harness/run_all.sh
 #
 # Each (scenario × model) combination becomes one (~3-5 min) claude -p
 # session, so the full Claude-only suite (3 models × 11 scenarios) is
-# ~2 hours of wall time and ~$10-30 of compute. Plan accordingly.
+# ~2 hours of wall time and ~$10-30 of compute. To get distributional
+# evidence, use harness/run_repeats.sh which wraps this with N runs
+# per (scenario × model).
 
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCENARIOS=( "$REPO_ROOT/eval/scenarios/"[0-9]*.yaml )
 
-# Models to test, organized by vendor.
+# Models to test — Claude family only.
 CLAUDE_MODELS=( "claude-opus-4-7" "claude-sonnet-4-6" "claude-haiku-4-5" )
-OPENAI_MODELS=( "gpt-5" )
-GEMINI_MODELS=( "gemini-2-pro" )
-OLLAMA_MODELS=( "llama-3.1-8b" )
 
 run_pair() {
   local scenario="$1"
   local model="$2"
-  local vendor="$3"
-  echo "  ▶ ${scenario##*/} × $vendor:$model"
+  echo "  ▶ ${scenario##*/} × $model"
   bash "$REPO_ROOT/eval/harness/run_one.sh" \
        --scenario "$scenario" \
        --model "$model" \
-       --vendor "$vendor" || true
+       --vendor claude || true
 }
 
-echo "[run_all] ${#SCENARIOS[@]} scenarios"
+echo "[run_all] ${#SCENARIOS[@]} scenarios × ${#CLAUDE_MODELS[@]} Claude models"
 
-# Claude — uses the user's existing creds via the claude CLI.
-echo "[run_all] === Claude family ==="
 for s in "${SCENARIOS[@]}"; do
   for m in "${CLAUDE_MODELS[@]}"; do
-    run_pair "$s" "$m" claude
+    run_pair "$s" "$m"
   done
 done
 
-# OpenAI — gated on OPENAI_API_KEY.
-if [[ -n "${OPENAI_API_KEY:-}" ]]; then
-  echo "[run_all] === OpenAI family ==="
-  for s in "${SCENARIOS[@]}"; do
-    for m in "${OPENAI_MODELS[@]}"; do
-      run_pair "$s" "$m" openai
-    done
-  done
-else
-  echo "[run_all] (OPENAI_API_KEY not set — skipping OpenAI models)"
-fi
-
-if [[ -n "${GEMINI_API_KEY:-}" ]]; then
-  echo "[run_all] === Gemini family ==="
-  for s in "${SCENARIOS[@]}"; do
-    for m in "${GEMINI_MODELS[@]}"; do
-      run_pair "$s" "$m" gemini
-    done
-  done
-else
-  echo "[run_all] (GEMINI_API_KEY not set — skipping Gemini models)"
-fi
-
-if [[ -n "${OLLAMA_BASE_URL:-}" ]]; then
-  echo "[run_all] === Ollama (open-weight) ==="
-  for s in "${SCENARIOS[@]}"; do
-    for m in "${OLLAMA_MODELS[@]}"; do
-      run_pair "$s" "$m" ollama
-    done
-  done
-else
-  echo "[run_all] (OLLAMA_BASE_URL not set — skipping Ollama models)"
-fi
-
-echo "[run_all] done — score with: python3 harness/aggregate_scores.py"
+echo "[run_all] done — aggregate with: python3 harness/aggregate_scores.py"
+echo
+echo "Cross-vendor coverage (GPT, Gemini, open-weight) is intentionally out"
+echo "of v0.0.10 scope. The harness shape is preserved in run_one.sh; the"
+echo "vendor adapters under harness/adapters/ are stubs. Add an adapter to"
+echo "extend coverage in a future release."

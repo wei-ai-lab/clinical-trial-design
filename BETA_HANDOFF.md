@@ -26,33 +26,48 @@ Status of pending publishes:
 
 The 7 redirect-package aliases (`designr`, `phase3-trial`, `trial-design`, `sample-size-calculator`, `gsdesign-mcp`, `mcp-clinical-trial`, `study-design`) were a one-time publish at v0.0.6 and don't republish per release.
 
-## v0.0.10 — LLM benchmark suite (eval/ shipped, runs deferred)
+## v0.0.10 — LLM benchmark suite (Claude-only scope; runs deferred)
 
-The `eval/` harness is shipped (scenarios, scoring rubric, run scripts, aggregator). The first end-to-end run requires you to drive the harness — I cannot exercise `claude -p` non-interactively from inside another Claude session. To populate `MODEL_GUIDANCE.md`:
+The `eval/` harness is shipped (11 scenarios, six-dimension scoring rubric, run scripts, aggregator with distributional + reliability-index reporting). Cross-vendor coverage (GPT, Gemini, open-weight) is intentionally **out of scope** — the harness preserves vendor adapter hooks but Claude is the only target for v0.0.10 so the planned pharma-skills comparison runs apples-to-apples on one model lineup.
+
+### Recommended: distributional run (multi-run, for the pharma-skills comparison)
 
 ```bash
 cd ~/clinical-trial-design
+claude plugin list | grep clinical-trial-design     # confirm plugin active
 
-# Confirm the plugin is in your default Claude profile
-claude plugin list | grep clinical-trial-design
+# Full suite, 10 repeats per (scenario × model)
+# 3 Claude models × 11 scenarios × 10 repeats = 330 runs ≈ 6-10h wall, ~$150-250
+bash eval/harness/run_repeats.sh --all --n 10
+python3 eval/harness/aggregate_scores.py            # writes MODEL_GUIDANCE.md
+```
 
-# Optional: cross-vendor coverage (Claude is the default)
-export OPENAI_API_KEY="..."             # GPT-5 / o-series
-export GEMINI_API_KEY="..."             # Gemini 2.x or 3.x
-export OLLAMA_BASE_URL="http://localhost:11434"  # local Llama-3.x or Qwen
+Output table includes:
+- Composite mean ± SD ± [min, max] per model
+- Per-dimension mean ± SD (across all repeats)
+- **Reliability index** — within each (model × scenario), fraction of pairs of sample-size answers within ±10% of each other. 1.00 = perfectly consistent; < 0.5 = the model rolls dice on this design.
 
-# Full suite (3 Claude models × 11 scenarios = ~2 hours, ~$10-30)
-bash eval/harness/run_all.sh
-python3 eval/harness/aggregate_scores.py    # rewrites MODEL_GUIDANCE.md
+### Lower-cost alternative: single-shot
 
-# Or one scenario × one model (~3-5 min, ~$0.50)
+```bash
+bash eval/harness/run_all.sh                        # 3 × 11 = 33 runs, ~2h, ~$15-30
+python3 eval/harness/aggregate_scores.py
+```
+
+Same aggregator, same MODEL_GUIDANCE.md shape — but no SD or reliability index. Useful for a smoke pass before committing to the longer run.
+
+### One scenario, one model (smoke check)
+
+```bash
 bash eval/harness/run_one.sh \
     --scenario eval/scenarios/01_fixed_binary_superiority.yaml \
     --model claude-opus-4-7
 python3 eval/harness/score.py --run-dir <RUN_DIR_FROM_ABOVE>
 ```
 
-Adapter scripts for OpenAI / Gemini / Ollama are stubbed at `eval/harness/adapters/*.py` (per-vendor, not yet implemented). Without them the suite skips those vendors gracefully and writes a note in `MODEL_GUIDANCE.md`. If you want cross-vendor coverage before beta, the adapters are a 1-2 hour lift each.
+### Cross-vendor (deferred)
+
+Out of v0.0.10 scope. Adapter scripts for OpenAI / Gemini / Ollama are stubbed at `eval/harness/adapters/*.py`. Adding a real adapter is 1–2 hours per vendor; document as a v0.5.x or v1.0 work item if cross-vendor scores are wanted later.
 
 ## v0.0.11 — discoverability + reporting deliverables (scripts shipped)
 

@@ -86,6 +86,24 @@ composite_score(model, scenario) = mean({d for d in dims if d is not None})
 
 Per-model means across all scenarios go into MODEL_GUIDANCE.md.
 
+## 7. Reliability index — across repeats on the same scenario
+
+When the same (model × scenario) is run **N > 1 times** (via `harness/run_repeats.sh`), we compute a reliability index measuring how consistently the agent reaches the same sample-size answer across the repeats:
+
+```
+pairs_within_10pct = | {(i, j) : i < j, |s_i − s_j| / max(s_i, s_j) ≤ 0.10} |
+total_pairs        = N × (N − 1) / 2
+reliability        = pairs_within_10pct / total_pairs    ∈ [0, 1]
+```
+
+- **1.00** — every repeat produces a sample-size within 10% of every other. The agent is deterministic at this scenario.
+- **0.50** — half the pairwise comparisons agree. Indicates moderate sampling-driven variation; a sponsor would not trust a single run.
+- **0.00** — no pairs agree. The agent is rolling dice on this scenario; the surface is too ambiguous or the model snapshot too unstable.
+
+This is **not** rolled into the composite score. It surfaces separately in `MODEL_GUIDANCE.md` because reliability and correctness are independent concerns: a model can be reliably *wrong* (high reliability, low composite) or unreliably *right on average* (high composite, low reliability). Both are findings.
+
+Useful framing for the comparison: a fair claim is "model X scores 0.82 ± 0.04 (composite) at 0.94 reliability" — much stronger than "model X scored 0.82 once."
+
 ## What we deliberately do NOT score
 
 - **Speed / token usage.** Captured but not scored. Token efficiency lands in a separate "operational cost" column in MODEL_GUIDANCE.md, not in the composite.
