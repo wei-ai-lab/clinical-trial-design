@@ -301,6 +301,38 @@ def score_reasoning_chain(parsed, expected):
 
 # --- composite + I/O -------------------------------------------------------
 
+def _extract_sample_size_total(run_dir: Path) -> int | None:
+    """Pull sample_size_total from the last parseable tool_result in the
+    transcript. Used for the reliability index — across N repeats on the
+    same scenario, do the agent's sample-size answers cluster?"""
+    transcript_path = run_dir / "transcript.jsonl"
+    if not transcript_path.exists():
+        return None
+    last_n = None
+    for line in transcript_path.read_text().splitlines():
+        if not line.strip():
+            continue
+        try:
+            ev = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if ev.get("type") != "user":
+            continue
+        for blk in ev.get("message", {}).get("content", []) or []:
+            if not isinstance(blk, dict) or blk.get("type") != "tool_result":
+                continue
+            for c in blk.get("content", []) or []:
+                if isinstance(c, dict) and c.get("type") == "text":
+                    try:
+                        parsed = json.loads(c.get("text", ""))
+                        n = parsed.get("sample_size_total")
+                        if isinstance(n, (int, float)):
+                            last_n = int(n)
+                    except json.JSONDecodeError:
+                        pass
+    return last_n
+
+
 def score_run(run_dir: Path) -> dict:
     scenario = yaml.safe_load((run_dir / "scenario.yaml").read_text())
     parsed   = parse_transcript(run_dir / "transcript.jsonl")
@@ -316,6 +348,10 @@ def score_run(run_dir: Path) -> dict:
 
     scored = [(k, v[0]) for k, v in dims.items() if v[0] is not None]
     composite = (sum(s for _, s in scored) / len(scored)) if scored else None
+
+    # Extract sample_size_total from the last successful tool_result so
+    # the aggregator's reliability index can compare across repeats.
+    sample_size_total = _extract_sample_size_total(run_dir)
 
     out = {
         "scenario": scenario["id"],
@@ -336,9 +372,10 @@ def score_run(run_dir: Path) -> dict:
                 + 5.0  * parsed["tokens_output"]
                 + 1.25 * parsed["tokens_cache_creation"]
                 + 0.10 * parsed["tokens_cache_read"],
-            "cost_usd":   parsed["cost_usd"],
-            "num_turns":  parsed["num_turns"],
-            "is_error":   parsed["is_error"],
+            "cost_usd":           parsed["cost_usd"],
+            "num_turns":          parsed["num_turns"],
+            "is_error":           parsed["is_error"],
+            "sample_size_total":  sample_size_total,
         },
     }
     (run_dir / "score.json").write_text(json.dumps(out, indent=2))

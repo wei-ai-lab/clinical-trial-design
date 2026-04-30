@@ -72,7 +72,7 @@ json.dump({
     "scenario_path": "$SCENARIO",
     "model": "$MODEL",
     "vendor": "$VENDOR",
-    "started_at": datetime.datetime.utcnow().isoformat() + "Z",
+    "started_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
 }, open(sys.argv[1], "w"), indent=2)
 EOF
 

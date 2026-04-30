@@ -50,11 +50,22 @@ run_one_with_repeats() {
   echo "[run_repeats] $sid × $model — N=$N runs"
   for i in $(seq 1 "$N"); do
     printf "  [%d/%d] " "$i" "$N"
-    bash "$REPO_ROOT/eval/harness/run_one.sh" \
+    # run_one.sh prints the run-dir path in its trailing log line; capture
+    # it so we can immediately score the run instead of leaving score.py
+    # for the user to remember.
+    local out; out="$(bash "$REPO_ROOT/eval/harness/run_one.sh" \
          --scenario "$scenario" \
          --model "$model" \
-         --vendor "$VENDOR" \
-      | tail -1
+         --vendor "$VENDOR")"
+    local run_dir; run_dir="$(echo "$out" | sed -nE 's|.*--run-dir ([^ ]+).*|\1|p' | tail -1)"
+    if [[ -n "$run_dir" && -d "$run_dir" ]]; then
+      python3 "$REPO_ROOT/eval/harness/score.py" --run-dir "$run_dir" > /dev/null 2>&1 \
+        && echo "scored ($run_dir)" \
+        || echo "score.py failed for $run_dir"
+    else
+      echo "run_one.sh did not report a run-dir; output was:"
+      echo "$out" | sed 's/^/      /'
+    fi
   done
 }
 
