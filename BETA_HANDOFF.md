@@ -23,6 +23,7 @@ Status of pending publishes:
 | v0.0.10 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.11 | ✅ 2026-04-28 | ⏳ pending | ⏳ pending | ⏳ pending |
 | v0.0.12 | ✅ 2026-04-29 | ✅ 2026-04-29 | ✅ 2026-04-29 | deferred (see below) |
+| v0.0.13 | ⏳ in-flight | ⏳ pending | ⏳ pending | deferred (same reason) |
 
 The 7 redirect-package aliases (`designr`, `phase3-trial`, `trial-design`, `sample-size-calculator`, `gsdesign-mcp`, `mcp-clinical-trial`, `study-design`) were a one-time publish at v0.0.6 and don't republish per release.
 
@@ -116,11 +117,14 @@ Test totals as of v0.0.12: **263/263 testthat, 18/18 MCP smoke, 11 eval scenario
 
 ## Open architectural decisions parked from M3+M4 eval
 
-These came out of the comparison vs `RConsortium/pharma-skills` (documented in private `clinical-trial-design-eval` repo). Parked for v0.0.12+ — could be a v0.0.12.1 patch or roll into v0.5.0 beta polish:
+These came out of the comparison vs `RConsortium/pharma-skills` (documented in private `clinical-trial-design-eval` repo).
 
-- **Events anti-conservatism (~1 pp under nominal power) on `design_survival(model="ph", design_class="group-sequential")`.** Two valid event-computation paths (Schoenfeld+OBF inflation vs gsSurv internal) differ by ~3% on canonical eval issue-27. Fix: add `events_calc = c("schoenfeld","gssurv")` parameter; default to `"schoenfeld"` to match regulatory expectation.
-- **`feasibility_warnings` field** on results when user-supplied operational constraints (`max_n`, `max_duration`) are violated.
-- **Median ↔ hazard rate input** for survival (accept `control_hazard_rate` or `control_event_rate_py` as alternative to `control_median`).
+**Closed in v0.0.13** (2026-04-30):
+- ✅ **Events anti-conservatism** — `events_calc` parameter on PH GS designs; default now Schoenfeld (matches arm A's M4 path). NI auto-falls-back to LachinFoulkes since Schoenfeld requires `hr0 = 1`.
+- ✅ **`feasibility_warnings` field** — operational block accepts `max_n` / `max_duration`; structured warnings surfaced when violated.
+- ✅ **Median ↔ hazard rate input** — `control_hazard_rate` (annualized event rate) accepted as alternative to `control_median`. Closes github-issue-39 (CVOT).
+
+**Still parked** (v0.0.14 or later):
 - **NPH evaluation step** (design under PH, evaluate under NPH, report both power values) — pharma-skills' workflow gate.
 - **Piecewise control hazard** for `design_survival` (currently scalar exponential only).
 - **`verify_design` for NPH GS** (currently fixed binary/continuous/PH-survival and GS binary/continuous/PH-survival).

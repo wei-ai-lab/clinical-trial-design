@@ -56,7 +56,9 @@ solve_operational <- function(target_n,
                               control_median          = NULL,
                               hazard_ratio            = NULL,
                               allocation_ratio        = 1,
-                              dropout_rate_per_month  = 0) {
+                              dropout_rate_per_month  = 0,
+                              max_n                   = NULL,
+                              max_duration            = NULL) {
   endpoint_type <- match.arg(endpoint_type)
   if (!is.numeric(target_n) || length(target_n) != 1L || is.na(target_n) ||
       target_n <= 0) {
@@ -233,5 +235,44 @@ solve_operational <- function(target_n,
                        "follow_up_duration", "total_trial_duration"), given)
   out$given   <- given
   out$derived <- derived
+
+  # Feasibility warnings — surface violations of user-supplied operational
+  # constraints rather than silently returning a design that exceeds them.
+  # Closes the M3 finding on github-issue-21 (N=878 silently exceeded a
+  # stated cap of 450). Each warning entry: {field, value, limit, message}.
+  warnings <- list()
+  if (!is.null(max_n)) {
+    check_pos(max_n, "max_n")
+    if (target_n > max_n) {
+      warnings[[length(warnings) + 1L]] <- list(
+        field   = "sample_size_total",
+        value   = as.numeric(target_n),
+        limit   = as.numeric(max_n),
+        message = sprintf(
+          "design requires N=%.0f but the user-supplied max_n cap is %.0f (over by %.1f%%). The design will not enroll within the stated constraint; consider relaxing the effect-size assumption, raising max_n, or accepting reduced power.",
+          target_n, max_n, 100 * (target_n - max_n) / max_n
+        )
+      )
+    }
+  }
+  if (!is.null(max_duration)) {
+    check_pos(max_duration, "max_duration")
+    if (out$total_trial_duration > max_duration) {
+      warnings[[length(warnings) + 1L]] <- list(
+        field   = "total_trial_duration",
+        value   = as.numeric(out$total_trial_duration),
+        limit   = as.numeric(max_duration),
+        message = sprintf(
+          "design requires total trial duration %.1f months but the user-supplied max_duration cap is %.1f months (over by %.1f%%). Either raise the cap, increase accrual rate, or relax the effect-size assumption.",
+          out$total_trial_duration, max_duration,
+          100 * (out$total_trial_duration - max_duration) / max_duration
+        )
+      )
+    }
+  }
+  if (length(warnings) > 0L) {
+    out$feasibility_warnings <- warnings
+  }
+
   out
 }
