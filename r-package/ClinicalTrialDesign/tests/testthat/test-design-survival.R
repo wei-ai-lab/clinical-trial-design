@@ -261,3 +261,123 @@ test_that("design_survival rejects unsupported (model, design_class) combos", {
     "designr_input_error: model"
   )
 })
+
+# v0.0.13: events_calc selector — Schoenfeld vs LachinFoulkes vs Freedman.
+# Anchor: M4 issue-27 reproduction (median 11 vs 17, alpha 0.025 1-sided,
+# 80% power, 2:1, OBF, k=3 timing 0.5/0.75/1.0). Schoenfeld should produce
+# ~190 events (matching arm A's 191); LachinFoulkes (gsSurv default) ~185.
+test_that("events_calc='schoenfeld' default reproduces M4 arm-A events count", {
+  res <- design_survival(
+    model = "ph", design_class = "group-sequential",
+    control_median = 11, hazard_ratio = 11/17,
+    accrual_rate = 20, accrual_duration = 18, followup_duration = 12,
+    dropout_rate = -log(0.85)/12,
+    k = 3, timing = c(0.5, 0.75, 1.0), sfu = "LDOF",
+    alpha = 0.025, power = 0.80, sided = 1, allocation_ratio = 2
+  )
+  # Schoenfeld is the default
+  expect_match(res$method, "events=schoenfeld")
+  # Within ±3 of arm A's 191 events (M4 finding)
+  expect_true(res$events_total >= 188 && res$events_total <= 194,
+              info = sprintf("events_total = %d", res$events_total))
+  # Boundaries should match published expected (2.963, 2.359, 2.014)
+  bz <- res$boundaries$upper_z
+  expect_equal(bz[1], 2.963, tolerance = 0.01)
+  expect_equal(bz[2], 2.359, tolerance = 0.01)
+  expect_equal(bz[3], 2.014, tolerance = 0.01)
+})
+
+test_that("events_calc='lachin-foulkes' preserves pre-v0.0.13 behavior", {
+  res <- design_survival(
+    model = "ph", design_class = "group-sequential",
+    control_median = 11, hazard_ratio = 11/17,
+    accrual_rate = 20, accrual_duration = 18, followup_duration = 12,
+    dropout_rate = -log(0.85)/12,
+    k = 3, timing = c(0.5, 0.75, 1.0), sfu = "LDOF",
+    alpha = 0.025, power = 0.80, sided = 1, allocation_ratio = 2,
+    events_calc = "lachin-foulkes"
+  )
+  expect_match(res$method, "events=lachin-foulkes")
+  # LachinFoulkes gives ~185, lower than Schoenfeld
+  expect_true(res$events_total >= 182 && res$events_total <= 188,
+              info = sprintf("events_total = %d", res$events_total))
+})
+
+test_that("events_calc='schoenfeld' silently falls back for non-inferiority", {
+  res <- design_survival(
+    model = "ph", design_class = "group-sequential",
+    control_median = 12, hazard_ratio = 1.0,
+    accrual_rate = 50, accrual_duration = 24, followup_duration = 18,
+    k = 2, sfu = "LDOF",
+    comparison = "non-inferiority", hr_null = 1.3,
+    alpha = 0.025, power = 0.80, sided = 1
+  )
+  # Default is schoenfeld but NI forces lachin-foulkes
+  expect_match(res$method, "events=lachin-foulkes")
+  expect_equal(res$inputs$events_calc, "lachin-foulkes")
+  expect_true(res$events_total > 0)
+})
+
+# v0.0.13: control_hazard_rate as alternative to control_median.
+# Annualized event rate is the natural CVOT input (e.g., 2.5%/yr).
+# Conversion: median_months = 12 * log(2) / hazard_rate_per_year.
+
+test_that("control_hazard_rate produces the same design as the equivalent median", {
+  hr_rate <- 0.05    # 5%/yr — matches a contemporary HFrEF outcomes trial
+  median_equiv <- 12 * log(2) / hr_rate
+  res_a <- design_survival(
+    model = "ph", design_class = "fixed",
+    control_hazard_rate = hr_rate,
+    hazard_ratio = 0.80,
+    accrual_duration = 36, followup_duration = 12,
+    alpha = 0.025, power = 0.80, sided = 1
+  )
+  res_b <- design_survival(
+    model = "ph", design_class = "fixed",
+    control_median = median_equiv,
+    hazard_ratio = 0.80,
+    accrual_duration = 36, followup_duration = 12,
+    alpha = 0.025, power = 0.80, sided = 1
+  )
+  expect_equal(res_a$events_total, res_b$events_total)
+  expect_equal(res_a$sample_size_total, res_b$sample_size_total)
+})
+
+test_that("supplying both control_median and control_hazard_rate raises", {
+  expect_error(
+    design_survival(
+      model = "ph", design_class = "fixed",
+      control_median = 30, control_hazard_rate = 0.05,
+      hazard_ratio = 0.80,
+      accrual_duration = 24, followup_duration = 12,
+      alpha = 0.025, power = 0.80, sided = 1
+    ),
+    "designr_input_error: control_hazard_rate"
+  )
+})
+
+test_that("supplying neither control_median nor control_hazard_rate raises", {
+  expect_error(
+    design_survival(
+      model = "ph", design_class = "fixed",
+      hazard_ratio = 0.80,
+      accrual_duration = 24, followup_duration = 12,
+      alpha = 0.025, power = 0.80, sided = 1
+    ),
+    "designr_input_error: control_median"
+  )
+})
+
+test_that("events_calc rejects unknown values", {
+  expect_error(
+    design_survival(
+      model = "ph", design_class = "group-sequential",
+      control_median = 11, hazard_ratio = 0.65,
+      accrual_rate = 20, accrual_duration = 18, followup_duration = 12,
+      k = 2, sfu = "LDOF",
+      alpha = 0.025, power = 0.80, sided = 1, allocation_ratio = 1,
+      events_calc = "bogus"
+    ),
+    "designr_input_error: events_calc"
+  )
+})

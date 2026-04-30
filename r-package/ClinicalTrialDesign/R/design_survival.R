@@ -50,7 +50,8 @@
 #' @export
 design_survival <- function(model              = "ph",
                             design_class       = "fixed",
-                            control_median,
+                            control_median     = NULL,
+                            control_hazard_rate = NULL,
                             hazard_ratio       = NULL,
                             hr_null            = NULL,
                             ni_hr              = NULL,
@@ -79,11 +80,30 @@ design_survival <- function(model              = "ph",
                             allocation_ratio   = 1,
                             comparison         = "superiority",
                             operational        = NULL,
-                            reasoning_chain    = NULL) {
+                            reasoning_chain    = NULL,
+                            events_calc        = "schoenfeld") {
   model <- check_survival_model(model)
   design_class <- check_design_class(design_class)
   reasoning_chain <- check_reasoning_chain(reasoning_chain)
   combo_label <- sprintf("(model='%s', design_class='%s')", model, design_class)
+
+  # control_median XOR control_hazard_rate. Convert hazard rate (annualized,
+  # events per patient-year, the natural CVOT input) to median (months,
+  # the gsDesign convention). Under exponential survival,
+  # lambda_per_year = -log(0.5) / median_years = log(2) / (median_months / 12),
+  # so median_months = 12 * log(2) / control_hazard_rate.
+  if (is.null(control_median) && is.null(control_hazard_rate)) {
+    designr_stop("control_median",
+                 "supply either control_median (months) or control_hazard_rate (annualized event rate, e.g. 0.025 per patient-year for a CVOT)")
+  }
+  if (!is.null(control_median) && !is.null(control_hazard_rate)) {
+    designr_stop("control_hazard_rate",
+                 "supply either control_median or control_hazard_rate, not both")
+  }
+  if (!is.null(control_hazard_rate)) {
+    check_pos(control_hazard_rate, "control_hazard_rate")
+    control_median <- 12 * log(2) / control_hazard_rate
+  }
 
   # Branch table.
   res <- if (model == "ph" && design_class == "fixed") {
@@ -93,7 +113,8 @@ design_survival <- function(model              = "ph",
                               allocation_ratio, comparison)
 
   } else if (model == "ph" && design_class == "group-sequential") {
-    .design_survival_ph_gs(control_median, hazard_ratio, accrual_rate,
+    .design_survival_ph_gs(events_calc = events_calc,
+                           control_median, hazard_ratio, accrual_rate,
                            accrual_duration, followup_duration, dropout_rate,
                            k, timing, sfu, sfl, sfupar, sflpar, test.type,
                            alpha, power, sided, allocation_ratio,
@@ -236,7 +257,36 @@ design_survival <- function(model              = "ph",
                                    dropout_rate, k, timing, sfu, sfl,
                                    sfupar, sflpar, test.type,
                                    alpha, power, sided, allocation_ratio,
-                                   comparison, ni_hr, hr_null) {
+                                   comparison, ni_hr, hr_null,
+                                   events_calc = "schoenfeld") {
+  # events_calc selects gsSurv's `method` argument:
+  #   "schoenfeld"     — gsSurv method = "Schoenfeld" (regulatory convention,
+  #                      matches Schoenfeld + OBF inflation; default for
+  #                      superiority designs)
+  #   "lachin-foulkes" — gsSurv method = "LachinFoulkes" (gsSurv's own default,
+  #                      slightly anti-conservative on events count by ~3%
+  #                      vs Schoenfeld; preserves pre-v0.0.13 behavior;
+  #                      auto-selected for non-inferiority since Schoenfeld
+  #                      requires hr0 = 1)
+  #   "freedman"       — gsSurv method = "Freedman" (anti-conservative;
+  #                      rarely used; included for completeness)
+  if (!events_calc %in% c("schoenfeld", "lachin-foulkes", "freedman")) {
+    designr_stop("events_calc",
+      "must be one of 'schoenfeld' (default), 'lachin-foulkes', 'freedman'")
+  }
+  # Schoenfeld in gsDesign only supports hr0 = 1 (superiority). Non-
+  # inferiority designs auto-fall-back to LachinFoulkes; the result's
+  # method label records what was actually used so the user can see the
+  # substitution.
+  effective_events_calc <- events_calc
+  if (events_calc == "schoenfeld" && comparison != "superiority") {
+    effective_events_calc <- "lachin-foulkes"
+  }
+  events_method <- switch(effective_events_calc,
+    "schoenfeld"     = "Schoenfeld",
+    "lachin-foulkes" = "LachinFoulkes",
+    "freedman"       = "Freedman"
+  )
   check_pos(control_median, "control_median")
   if (is.null(hazard_ratio)) designr_stop("hazard_ratio", "required for PH model")
   check_pos(hazard_ratio, "hazard_ratio")
@@ -293,7 +343,8 @@ design_survival <- function(model              = "ph",
     lambdaC = lambdaC, hr = hazard_ratio, hr0 = hr0,
     eta = dropout_rate, gamma = accrual_rate,
     R = accrual_duration, T = study_T, minfup = followup_duration,
-    ratio = allocation_ratio
+    ratio = allocation_ratio,
+    method = events_method
   )
 
   n_control_by_analysis <- as.numeric(gs$eNC[, 1])
@@ -338,9 +389,11 @@ design_survival <- function(model              = "ph",
       sfu = sfu_name, sfl = sfl_name, test.type = test.type,
       alpha = alpha, power = power, sided = sided,
       allocation_ratio = allocation_ratio,
-      comparison = comparison
+      comparison = comparison,
+      events_calc = effective_events_calc
     ),
-    method          = sprintf("gsDesign::gsSurv (PH, %s)", comparison),
+    method          = sprintf("gsDesign::gsSurv (PH, %s, events=%s)",
+                              comparison, effective_events_calc),
     package_version = .pkg_version("gsDesign")
   )
 }

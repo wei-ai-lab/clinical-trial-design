@@ -89,6 +89,26 @@ export const OperationalBlockSchema = z
     accrual_duration: z.number().positive().optional(),
     follow_up_duration: z.number().nonnegative().optional(),
     total_trial_duration: z.number().positive().optional(),
+    max_n: z
+      .number()
+      .positive()
+      .optional()
+      .describe(
+        "Optional sample-size cap. If the design exceeds it, a structured " +
+          "feasibility_warnings entry is attached to result.operational " +
+          "explaining the over-by-X% gap. Does NOT change the design — the " +
+          "agent uses the warning to suggest tradeoffs (relax effect size, " +
+          "raise the cap, accept reduced power)."
+      ),
+    max_duration: z
+      .number()
+      .positive()
+      .optional()
+      .describe(
+        "Optional total-trial-duration cap (months). Same warning shape as " +
+          "max_n. Useful when the trial has a hard business deadline that " +
+          "the design must respect."
+      ),
   })
   .optional()
   .describe(
@@ -96,7 +116,9 @@ export const OperationalBlockSchema = z
       "{accrual_rate, accrual_duration, follow_up_duration, total_trial_duration}; " +
       "the solver fills in the missing values from rate*duration = N and " +
       "A + F = T (plus target_events for survival). Result is attached as " +
-      "result.operational with audit fields (given, derived)."
+      "result.operational with audit fields (given, derived). Supply max_n " +
+      "and/or max_duration to surface feasibility warnings rather than " +
+      "silently returning a design that violates user-stated caps."
   );
 
 // Reasoning chain — structured citation trail. The LLM (or user) populates

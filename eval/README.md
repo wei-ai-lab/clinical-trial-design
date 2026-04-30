@@ -17,17 +17,11 @@ For each scenario, the agent receives a clinical brief and must produce a comple
 
 A composite score per (model, scenario) is `mean(d_1, d_2, ..., d_6)` with each dimension on `[0, 1]`. Per-model means across scenarios go into `MODEL_GUIDANCE.md`.
 
-## Models tested
+## Models tested (v0.0.10 scope: Claude family only)
 
-The default suite runs against the **Claude family** (Opus 4.7, Sonnet 4.6, Haiku 4.5) using the user's existing Anthropic credentials. Cross-vendor coverage is opt-in via environment variables:
+The default suite runs against the **Claude family** — Opus 4.7, Sonnet 4.6, Haiku 4.5 — using the user's existing Anthropic credentials. This is a deliberate v0.0.10 scope decision so the planned pharma-skills comparison runs apples-to-apples across one model lineup rather than mixing vendors.
 
-```bash
-export OPENAI_API_KEY="..."         # GPT-5 / o-series
-export GEMINI_API_KEY="..."         # Gemini 2.x or 3.x
-export OLLAMA_BASE_URL="http://..." # local Llama-3.x or Qwen
-```
-
-If a key/endpoint is absent, that model family is skipped and `MODEL_GUIDANCE.md` notes the gap.
+Cross-vendor coverage (GPT, Gemini, open-weight) is **out of v0.0.10 scope**. The harness preserves vendor adapter hooks at `harness/adapters/` (stubs only); adding a real adapter is a 1–2 hour lift per vendor and is documented as future work in `BETA_HANDOFF.md`. Treat single-vendor first as a feature, not a limitation: the relevant question for the comparison is "does our MCP help the host LLM produce a correct design more reliably and cheaply than skill-only", and that answer is uncoupled from the host LLM family.
 
 ## How to run
 

@@ -21172,9 +21172,15 @@ var OperationalBlockSchema = external_exports.object({
   accrual_rate: external_exports.number().positive().optional(),
   accrual_duration: external_exports.number().positive().optional(),
   follow_up_duration: external_exports.number().nonnegative().optional(),
-  total_trial_duration: external_exports.number().positive().optional()
+  total_trial_duration: external_exports.number().positive().optional(),
+  max_n: external_exports.number().positive().optional().describe(
+    "Optional sample-size cap. If the design exceeds it, a structured feasibility_warnings entry is attached to result.operational explaining the over-by-X% gap. Does NOT change the design \u2014 the agent uses the warning to suggest tradeoffs (relax effect size, raise the cap, accept reduced power)."
+  ),
+  max_duration: external_exports.number().positive().optional().describe(
+    "Optional total-trial-duration cap (months). Same warning shape as max_n. Useful when the trial has a hard business deadline that the design must respect."
+  )
 }).optional().describe(
-  "Optional operational kernel inputs. Supply any 0-4 of {accrual_rate, accrual_duration, follow_up_duration, total_trial_duration}; the solver fills in the missing values from rate*duration = N and A + F = T (plus target_events for survival). Result is attached as result.operational with audit fields (given, derived)."
+  "Optional operational kernel inputs. Supply any 0-4 of {accrual_rate, accrual_duration, follow_up_duration, total_trial_duration}; the solver fills in the missing values from rate*duration = N and A + F = T (plus target_events for survival). Result is attached as result.operational with audit fields (given, derived). Supply max_n and/or max_duration to surface feasibility warnings rather than silently returning a design that violates user-stated caps."
 );
 var ReasoningSourceTypeEnum = external_exports.enum([
   "llm_precedent",
@@ -21281,7 +21287,12 @@ var toolName3 = "design_survival";
 var schema3 = {
   model: SurvivalModelEnum.default("ph"),
   design_class: DesignClassEnum.default("fixed"),
-  control_median: external_exports.number().positive().describe("Control-arm median survival (months)."),
+  control_median: external_exports.number().positive().optional().describe(
+    "Control-arm median survival (months). Mutually exclusive with control_hazard_rate; supply exactly one."
+  ),
+  control_hazard_rate: external_exports.number().positive().optional().describe(
+    "Annualized control-arm event rate, in events per patient-year (e.g., 0.025 for a 2.5%/year CVOT control rate). Useful when the trial characterizes the control arm by hazard rather than median time-to-event. Internally converted to median = 12 * log(2) / control_hazard_rate. Mutually exclusive with control_median."
+  ),
   hazard_ratio: external_exports.number().positive().optional().describe(
     "Target HR (PH only). < 1 favors treatment. For NI with hr_null > 1, the assumed true HR is often 1."
   ),
@@ -21314,7 +21325,10 @@ var schema3 = {
   allocation_ratio: AllocationRatioSchema,
   comparison: ComparisonEnum.default("superiority"),
   operational: OperationalBlockSchema,
-  reasoning_chain: ReasoningChainSchema
+  reasoning_chain: ReasoningChainSchema,
+  events_calc: external_exports.enum(["schoenfeld", "lachin-foulkes", "freedman"]).optional().describe(
+    "PH group-sequential only. Selects gsSurv's events-calculation method: 'schoenfeld' (default) matches Schoenfeld + OBF inflation, the regulatory convention; 'lachin-foulkes' is gsSurv's pre-v0.0.13 default (slightly anti-conservative on events, ~3% lower); 'freedman' is conservative-leaning, rarely used. Non-inferiority designs auto-fall-back to lachin-foulkes (Schoenfeld requires hr0 = 1)."
+  )
 };
 var description3 = "Use when the user wants Phase 2/3 sample size with a TIME-TO-EVENT primary endpoint \u2014 overall survival, PFS, time to first hospitalization, time to progression, time to a CV composite, etc. Choose the test statistic via `model`: 'ph' (default \u2014 log-rank under proportional hazards, gsDesign::nSurv / gsSurv), 'maxcombo' (delayed effect / non-proportional hazards via Fleming-Harrington combo), 'rmst' (restricted mean survival to landmark tau), 'milestone' (survival probability at landmark t*), 'wlr' / 'ahr' (weighted log-rank / average HR for GS NPH). Set design_class='group-sequential' for interim analyses with alpha-spending. Always provide control_median + the relevant effect parameter (hazard_ratio for PH; delay_months + post_delay_hr for NPH models). The `operational` block can solve any 0\u20134 of {accrual_rate, accrual_duration, followup_duration, total_trial_duration} via the events-tied uniroot. For two co-primary TTE endpoints (PFS+OS) use design_co_primary; for nested PD-L1 strata or biomarker subgroup + ITT use design_multi_population.";
 var handler3 = async (args) => {

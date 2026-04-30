@@ -19,7 +19,25 @@ export const toolName = "design_survival";
 export const schema = {
   model: SurvivalModelEnum.default("ph"),
   design_class: DesignClassEnum.default("fixed"),
-  control_median: z.number().positive().describe("Control-arm median survival (months)."),
+  control_median: z
+    .number()
+    .positive()
+    .optional()
+    .describe(
+      "Control-arm median survival (months). Mutually exclusive with " +
+        "control_hazard_rate; supply exactly one."
+    ),
+  control_hazard_rate: z
+    .number()
+    .positive()
+    .optional()
+    .describe(
+      "Annualized control-arm event rate, in events per patient-year (e.g., " +
+        "0.025 for a 2.5%/year CVOT control rate). Useful when the trial " +
+        "characterizes the control arm by hazard rather than median time-to-" +
+        "event. Internally converted to median = 12 * log(2) / control_hazard_rate. " +
+        "Mutually exclusive with control_median."
+    ),
   hazard_ratio: z
     .number()
     .positive()
@@ -100,6 +118,17 @@ export const schema = {
   comparison: ComparisonEnum.default("superiority"),
   operational: OperationalBlockSchema,
   reasoning_chain: ReasoningChainSchema,
+  events_calc: z
+    .enum(["schoenfeld", "lachin-foulkes", "freedman"])
+    .optional()
+    .describe(
+      "PH group-sequential only. Selects gsSurv's events-calculation method: " +
+        "'schoenfeld' (default) matches Schoenfeld + OBF inflation, the " +
+        "regulatory convention; 'lachin-foulkes' is gsSurv's pre-v0.0.13 " +
+        "default (slightly anti-conservative on events, ~3% lower); 'freedman' " +
+        "is conservative-leaning, rarely used. Non-inferiority designs " +
+        "auto-fall-back to lachin-foulkes (Schoenfeld requires hr0 = 1)."
+    ),
 };
 
 export const description =

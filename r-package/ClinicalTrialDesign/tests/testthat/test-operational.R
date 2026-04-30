@@ -187,3 +187,60 @@ test_that("design_survival threads operational into result with cumulative event
   expect_equal(res$operational$accrual_duration,
                res$sample_size_total / 20)
 })
+
+# v0.0.13: feasibility_warnings — silent caps from M3 issue-21 finding.
+
+test_that("feasibility_warnings: max_n exceeded surfaces a warning", {
+  res <- design_binary(
+    p_control = 0.15, p_treatment = 0.09,
+    design_class = "fixed", alpha = 0.025, power = 0.80, sided = 1,
+    operational = list(accrual_rate = 80, follow_up_duration = 3,
+                       max_n = 500)
+  )
+  expect_true(!is.null(res$operational$feasibility_warnings))
+  warns <- res$operational$feasibility_warnings
+  expect_equal(length(warns), 1L)
+  expect_equal(warns[[1]]$field, "sample_size_total")
+  expect_true(warns[[1]]$value > warns[[1]]$limit)
+  expect_match(warns[[1]]$message, "max_n cap is 500")
+})
+
+test_that("feasibility_warnings: max_duration exceeded surfaces a warning", {
+  res <- design_survival(
+    model = "ph", design_class = "fixed",
+    control_median = 30, hazard_ratio = 0.80,
+    accrual_duration = 36, followup_duration = 6,
+    alpha = 0.025, power = 0.80, sided = 1,
+    operational = list(accrual_rate = 50, follow_up_duration = 6,
+                       max_duration = 24)
+  )
+  expect_true(!is.null(res$operational$feasibility_warnings))
+  warns <- res$operational$feasibility_warnings
+  expect_true(any(vapply(warns, function(w) w$field == "total_trial_duration",
+                         logical(1))))
+})
+
+test_that("feasibility_warnings: no warnings when caps not violated", {
+  res <- design_binary(
+    p_control = 0.15, p_treatment = 0.09,
+    design_class = "fixed", alpha = 0.025, power = 0.80, sided = 1,
+    operational = list(accrual_rate = 80, follow_up_duration = 3,
+                       max_n = 5000)
+  )
+  expect_null(res$operational$feasibility_warnings)
+})
+
+test_that("feasibility_warnings: both caps violated produces two warnings", {
+  res <- design_survival(
+    model = "ph", design_class = "fixed",
+    control_median = 30, hazard_ratio = 0.80,
+    accrual_duration = 36, followup_duration = 6,
+    alpha = 0.025, power = 0.80, sided = 1,
+    operational = list(accrual_rate = 50, follow_up_duration = 6,
+                       max_n = 100, max_duration = 12)
+  )
+  warns <- res$operational$feasibility_warnings
+  expect_equal(length(warns), 2L)
+  fields <- vapply(warns, `[[`, character(1), "field")
+  expect_setequal(fields, c("sample_size_total", "total_trial_duration"))
+})

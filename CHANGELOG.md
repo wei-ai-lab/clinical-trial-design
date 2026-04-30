@@ -7,6 +7,82 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.13] — 2026-04-30
+
+Tightens three parked architectural items surfaced by the M3+M4 pharma-
+skills comparison: events anti-conservatism (~1pp under-power risk on
+PH GS designs), missing hazard-rate input (blocks CVOT-style scenarios),
+and silent-cap behavior (M3 issue-21 finding: N=878 silently exceeded
+a stated max=450). Patch release; no new tools, no schema changes.
+
+### Added
+
+- **`events_calc` parameter on `design_survival(model="ph",
+  design_class="group-sequential")`.** Selects gsSurv's events-
+  calculation method:
+  - `"schoenfeld"` (new default) — matches Schoenfeld + OBF inflation,
+    the regulatory convention; produces the events count arm A
+    computed in M4 (within ±3 of 191 on issue-27).
+  - `"lachin-foulkes"` — gsSurv's prior default; preserves pre-v0.0.13
+    behavior. Auto-selected for non-inferiority designs (Schoenfeld
+    requires `hr0 = 1`, so NI cases silently fall back).
+  - `"freedman"` — anti-conservative; rarely used; included for
+    completeness.
+  Boundary Z-values are identical across methods (they're determined
+  by the spending function + timing); only the events count and
+  derived sample size differ. Closes the ~1pp empirical-power gap on
+  PH GS designs documented in `clinical-trial-design-eval/docs/correctness-overlap.md`.
+
+- **`control_hazard_rate` as alternative to `control_median` on
+  `design_survival`.** Annualized control-arm event rate (events per
+  patient-year, e.g. `0.025` for a 2.5%/year CVOT). Mutually exclusive
+  with `control_median`; supply exactly one. Internal conversion:
+  `median_months = 12 * log(2) / control_hazard_rate`. Closes
+  github-issue-39 (CVOT eval) for the comparison.
+
+- **`feasibility_warnings` field on operational results.** Two new
+  optional caps in the operational block: `max_n` and `max_duration`.
+  When the design exceeds either, a structured warning entry is
+  attached to `result.operational.feasibility_warnings`:
+
+  ```json
+  {
+    "field":   "sample_size_total",
+    "value":   878,
+    "limit":   450,
+    "message": "design requires N=878 but the user-supplied max_n cap is 450 (over by 95.1%). The design will not enroll within the stated constraint; consider relaxing the effect-size assumption, raising max_n, or accepting reduced power."
+  }
+  ```
+
+  The cap does NOT change the design — the agent uses the warning to
+  suggest tradeoffs. Closes the M3 finding that github-issue-21 (which
+  states `N ≤ 450`) returned an over-cap design silently.
+
+### Changed
+
+- **Default events-calculation method on PH GS** is now Schoenfeld
+  (matches regulatory convention + arm A's M4 path). Per
+  `API_STABILITY.md`, default-value changes are tracked here for
+  downstream callers who pass values implicitly.
+
+### Test coverage
+
+- 288/288 testthat (was 263/263 in v0.0.12 + 25 new across the three
+  features).
+- 18/18 MCP smoke.
+- 11 eval scenarios validate.
+- 5 examples run end-to-end.
+
+### Notes
+
+- Existing scripts that called `design_survival(model="ph",
+  design_class="group-sequential", ...)` will see ~3% more events
+  starting v0.0.13. To preserve pre-v0.0.13 behavior exactly, pass
+  `events_calc = "lachin-foulkes"` explicitly.
+- `max_n` and `max_duration` go inside the `operational` block, not
+  at the top level. They're optional; supplying them only changes
+  whether warnings appear, not the design.
+
 ## [0.0.12] — 2026-04-28
 
 The "pre-beta polish" release. Adds CI release-gate, API stability
