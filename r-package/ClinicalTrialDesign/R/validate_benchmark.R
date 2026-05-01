@@ -94,9 +94,17 @@ validate_against_benchmark <- function(family, id, tool = NULL) {
   if (!is.na(env) && dir.exists(env)) return(normalizePath(env))
   pkg_root <- tryCatch(
     system.file(package = "ClinicalTrialDesign"), error = function(e) "")
+  cwd <- tryCatch(getwd(), error = function(e) "")
+  # Walk likely candidate paths in order:
+  #   1. <pkg_root>/../../../benchmarks (installed-package layout)
+  #   2. <cwd>/benchmarks               (running from the repo root)
+  #   3. <cwd>/../benchmarks            (running from mcp-server/, eval/, etc.)
+  #   4. <cwd>/../../benchmarks         (running from a deeper subdir)
   candidates <- c(
     file.path(pkg_root, "..", "..", "..", "benchmarks"),
-    "/home/weiai/designr/benchmarks"
+    file.path(cwd, "benchmarks"),
+    file.path(cwd, "..", "benchmarks"),
+    file.path(cwd, "..", "..", "benchmarks")
   )
   for (c in candidates) {
     if (isTRUE(dir.exists(c))) return(normalizePath(c))

@@ -103,6 +103,8 @@ jobs:
 
       - name: Smoke matrix
         working-directory: mcp-server
+        env:
+          DESIGNR_BENCHMARK_ROOT: ${{ github.workspace }}/benchmarks
         run: |
           node scripts/smoke.mjs
 
