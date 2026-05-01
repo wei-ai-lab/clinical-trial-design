@@ -1,17 +1,23 @@
 # clinical-trial-design MCP server — smoke matrix
 
-Twelve prompts covering every MCP tool on the v0.0.7 unified surface. Each
+Eighteen prompts covering every MCP tool on the v0.0.13 surface. Each
 should invoke the named MCP tool once and return a result without error.
 Values are expected-order-of-magnitude checks, not strict regression targets
 (the R-side benchmark regression lives in
-`r-package/ClinicalTrialDesign/tests/testthat/`).
+`r-package/ClinicalTrialDesign/tests/testthat/` — 288/288 at v0.0.13).
 
 ## How to run
 
 With the plugin installed in Claude Code, paste each prompt into a fresh
 chat, watch the MCP log for the expected tool call, and confirm the headline
-number is in the stated range. Or run `node mcp-server/scripts/smoke.mjs`
-for a non-interactive 14-case pass.
+number is in the stated range. Or run a non-interactive pass against the
+bundled R via `scripts/smoke.mjs`:
+
+```bash
+cd mcp-server
+npm run build:dev      # tsc → build/r-bridge.js (smoke imports from here)
+node scripts/smoke.mjs # expected: 18 pass / 0 fail / 18 total
+```
 
 ## 1. `design_binary` — fixed superiority
 

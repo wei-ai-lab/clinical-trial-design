@@ -19,7 +19,7 @@ Verify:
 
 ```bash
 npm view clinical-trial-design version
-# → 0.0.6
+# → 0.0.13
 
 npx clinical-trial-design     # spawns the MCP server on stdio
 ```
@@ -54,11 +54,11 @@ Smithery (https://smithery.ai) auto-discovers MCP servers from npm. After step 1
 
 ## 5. After publish — release tag
 
-Once steps 1–4 are confirmed (npm view returns 0.0.6, registry shows the package), the v0.0.6 release tag goes onto `main`:
+Once steps 1–4 are confirmed (npm view returns 0.0.13, registry shows the package), the v0.0.13 release tag goes onto `main`:
 
 ```bash
 git checkout main
 git merge --ff-only dev
-git tag -a v0.0.6 -m "v0.0.6: rebrand to clinical-trial-design"
+git tag -a v0.0.13 -m "v0.0.13: events_calc + control_hazard_rate + feasibility_warnings"
 git push origin main --follow-tags
 ```
