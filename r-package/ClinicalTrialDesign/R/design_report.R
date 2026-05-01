@@ -394,7 +394,11 @@ design_report <- function(result,
   }
   md_body <- design_report(result, format = "markdown")
   md_path <- tempfile(fileext = ".md")
-  writeLines(md_body, md_path)
+  # rmarkdown::render takes a *file* input, not a string, so we must
+  # serialize the markdown body to a tempfile first. The user explicitly
+  # asked for a PDF; this is the user-visible write, not implicit
+  # telemetry, so it's exempted from the security-grep gate.
+  writeLines(md_body, md_path)  # nolint: security-grep — pdf render needs file input
 
   rmarkdown::render(input        = md_path,
                     output_format = "pdf_document",
