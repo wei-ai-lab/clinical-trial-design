@@ -1,6 +1,6 @@
 # Beta handoff — actions you need to take
 
-`clinical-trial-design` is at **pre-beta** as of v0.0.12 (2026-04-28). Engineering deliverables for v0.0.8 → v0.0.12 are shipped; what's left to reach the v0.5.0 beta tag is human-only work tracked here.
+`clinical-trial-design` is at **pre-beta** as of v0.0.13 (2026-04-30). Engineering deliverables for v0.0.8 → v0.0.13 are shipped, including the architectural fixes from the M3+M4 pharma-skills comparison (events anti-conservatism, hazard-rate input, feasibility warnings). What's left to reach the v0.5.0 beta tag is human-only work tracked here.
 
 ## Per-release: npm publish + registry resubmissions
 
@@ -98,12 +98,12 @@ When pre-beta is ready, the four gate items are explicitly your judgment:
 
 1. **Three external biostatisticians sign-off** on real-trial output. I cannot recruit reviewers. Suggested approach: the agents-as-reviewers protocol from AGENTS.md plus targeted outreach to colleagues in the R Consortium WG / pharma biostat networks.
 2. **At least one external agent-contributor PR merged.** AGENTS.md and the 5 issue templates make this discoverable; you decide when one lands cleanly enough to count.
-3. **Final review of pre-beta deliverables.** I stop at v0.0.12 tagged + this file complete; you do the end-to-end review before promoting to v0.5.0.
+3. **Final review of pre-beta deliverables.** I stop at v0.0.13 tagged + this file complete; you do the end-to-end review before promoting to v0.5.0.
 4. **Zero open `priority:beta-blocker` issues** at the time of the v0.5.0 tag.
 
 ## Pre-beta release inventory
 
-What shipped in v0.0.8 → v0.0.12 across the engineering surface:
+What shipped in v0.0.8 → v0.0.13 across the engineering surface:
 
 | Release | Headline |
 |---|---|
@@ -112,8 +112,9 @@ What shipped in v0.0.8 → v0.0.12 across the engineering surface:
 | v0.0.10 | eval/ benchmark harness — 11 scenarios, six-dimension scoring, MODEL_GUIDANCE.md |
 | v0.0.11 | design_report(docx/pdf) + tool-description rewrite + 9-step skill orchestration + waypoints + demo-video script + preprint outline |
 | v0.0.12 | release-gate CI + API_STABILITY.md + 5-trial examples gallery + talk abstracts |
+| v0.0.13 | events_calc on PH GS (Schoenfeld default; closes the M4 ~1pp anti-conservatism) + control_hazard_rate input + feasibility_warnings on operational caps |
 
-Test totals as of v0.0.12: **263/263 testthat, 18/18 MCP smoke, 11 eval scenarios validate, 5 examples run end-to-end clean.**
+Test totals as of v0.0.13: **288/288 testthat, 18/18 MCP smoke, 11 eval scenarios validate, 5 examples run end-to-end clean.**
 
 ## Open architectural decisions parked from M3+M4 eval
 

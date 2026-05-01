@@ -10,4 +10,4 @@ npx clinical-trial-design
 
 Project home: https://github.com/wei-ai-lab/clinical-trial-design
 
-Computes sample size, power, and group-sequential boundaries for binary, continuous, and time-to-event endpoints (PH log-rank, NPH MaxCombo / RMST / milestone) via the `gsDesign` and `gsDesign2` R packages. Exposes 13 MCP tools.
+Computes sample size, power, group-sequential boundaries, and multi-hypothesis multiplicity (co-primary, multi-population, Maurer-Bretz graphical) for binary, continuous, and time-to-event endpoints (PH log-rank, NPH MaxCombo / RMST / milestone / WLR / AHR) via the `gsDesign`, `gsDesign2`, and `graphicalMCP` R packages. Exposes 9 MCP tools, Word/PDF reporting, and Monte-Carlo verification.

@@ -76,7 +76,7 @@ clinical lead, regulatory affairs, operations, and leadership each
 review and revise the design over multiple sessions. The persisted
 transcript — including every tool call's inputs and outputs — is
 the audit log of *why* the design landed where it did. The
-v0.0.8 reasoning-chain schema makes that audit log structured
+v0.0.9 reasoning-chain schema makes that audit log structured
 rather than free-text: each assumption carries a `source_type` tag
 (LLM-precedent, FDA-guidance, user-supplied, sponsor-confidential,
 package-default) and a `source_ref` (paper, guidance doc, or

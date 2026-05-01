@@ -107,7 +107,7 @@ spectrum, with no plugin-side configuration:
   cross-functional effort and the persisted transcript is the
   decision audit log.
 - `clinical-trial-design`'s structured output (the `reasoning_chain` schema landing
-  in v0.0.8) is designed to make that retained transcript a
+  in v0.0.9) is designed to make that retained transcript a
   high-quality audit record automatically: every assumption tagged
   with its `source_type` (LLM-precedent, FDA-guidance, user-supplied,
   sponsor-confidential, package-default) and its `source_ref`.
