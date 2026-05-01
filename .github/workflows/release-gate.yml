@@ -98,7 +98,8 @@ jobs:
         working-directory: mcp-server
         run: |
           npm install
-          npm run build
+          npm run build       # esbuild → dist/index.js (the publish artifact)
+          npm run build:dev   # tsc → build/*.js per-file (smoke.mjs imports build/r-bridge.js)
 
       - name: Smoke matrix
         working-directory: mcp-server
