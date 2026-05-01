@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Plugins from wei-ai-lab. Currently hosts clinical-trial-design, an end-to-end clinical trial design assistant.",
-    "version": "0.0.6"
+    "version": "0.0.13"
   },
   "plugins": [
     {
       "name": "clinical-trial-design",
       "source": "./",
-      "description": "End-to-end clinical trial design assistant. R-backed computation (gsDesign / gsDesign2), 13 MCP tools, Monte Carlo verification, markdown reporting. Covers Phase 2 and Phase 3 confirmatory designs.",
-      "version": "0.0.6",
+      "description": "End-to-end clinical trial design assistant. R-backed computation (gsDesign / gsDesign2 / graphicalMCP). 9 MCP tools across single-primary endpoint design, multi-hypothesis multiplicity (co-primary, multi-population, Maurer-Bretz), Monte-Carlo verification, and Word/PDF reporting. Covers Phase 2 and Phase 3 confirmatory designs.",
+      "version": "0.0.13",
       "author": {
         "name": "Wei Fu",
         "email": "wei.ai.lab@outlook.com"
@@ -26,6 +26,8 @@
         "biostatistics",
         "sample-size",
         "group-sequential",
+        "multi-hypothesis",
+        "graphicalmcp",
         "gsdesign",
         "r"
       ]
