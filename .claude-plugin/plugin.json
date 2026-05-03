@@ -1,6 +1,6 @@
 {
   "name": "clinical-trial-design",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "End-to-end clinical trial design assistant. R-backed computation, MCP tools, skill for design reasoning. Covers Phase 2 and Phase 3 confirmatory designs.",
   "author": {
     "name": "Wei Fu",

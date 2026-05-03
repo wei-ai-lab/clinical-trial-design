@@ -7,6 +7,29 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.14] — 2026-05-03
+
+Patch release. Fixes a bug reported in [issue #1](https://github.com/wei-ai-lab/clinical-trial-design/issues/1) where the MCP server fails to spawn `Rscript` in Claude Code instances launched from sandboxed environments — Posit Workbench, RStudio Server, VS Code Remote, and similar — that don't pass the user's shell environment to the Claude Code process. Setting `DESIGNR_RSCRIPT` in the user's shell wasn't enough because the MCP subprocess never saw the variable.
+
+### Added
+
+- **Auto-discovery of `Rscript`** when neither `DESIGNR_RSCRIPT` nor PATH resolves. The bridge now tries `which Rscript` first, then walks a list of common install locations:
+  - `/opt/R/<version>/bin/` (Posit Workbench / RStudio Server / rig — preferred lexicographically latest version)
+  - `/usr/local/lib/R/bin`, `/usr/lib/R/bin`, `/usr/lib64/R/bin`
+  - `/usr/local/bin`, `/usr/bin`, `/opt/homebrew/bin`
+  - `/Library/Frameworks/R.framework/Resources/bin` (macOS CRAN install)
+  Resolved at module load — adds no per-call overhead.
+
+### Changed
+
+- **`rscript_spawn_failed` error message rewritten** to point at `~/.claude/settings.json`'s `env` block as the right place to set `DESIGNR_RSCRIPT` for sandboxed Claude Code installs. The previous "set DESIGNR_RSCRIPT in your shell" guidance was wrong for the most common failure mode.
+- The error now also reports what auto-discovery checked, so a user sees at a glance whether their R install is in a non-standard place.
+
+### Notes
+
+- This is purely a robustness / discoverability fix. No statistical-engine changes; no schema changes; no behavior change for environments where `Rscript` is on `PATH` or `DESIGNR_RSCRIPT` is set.
+- Test totals unchanged: 288/288 testthat, 18/18 MCP smoke.
+
 ## [0.0.13] — 2026-04-30
 
 Tightens three parked architectural items surfaced by the M3+M4 pharma-

@@ -21032,11 +21032,52 @@ __export(design_binary_exports, {
 });
 
 // src/r-bridge.ts
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync, statSync } from "node:fs";
 var DEFAULT_TIMEOUT_MS = 6e4;
+var FALLBACK_RSCRIPT_DIRS = [
+  "/opt/R",
+  // Posit Workbench / RStudio Server / rig
+  "/usr/local/lib/R/bin",
+  "/usr/lib/R/bin",
+  "/usr/lib64/R/bin",
+  "/usr/local/bin",
+  "/usr/bin",
+  "/opt/homebrew/bin",
+  "/Library/Frameworks/R.framework/Resources/bin"
+  // macOS CRAN install
+];
+function discoverRscript() {
+  try {
+    const which = spawnSync("which", ["Rscript"], { encoding: "utf8" });
+    if (which.status === 0) {
+      const found = which.stdout.trim().split("\n")[0];
+      if (found && existsSync(found))
+        return found;
+    }
+  } catch {
+  }
+  for (const dir of FALLBACK_RSCRIPT_DIRS) {
+    if (!existsSync(dir))
+      continue;
+    try {
+      const direct = `${dir}/Rscript`;
+      if (existsSync(direct) && statSync(direct).isFile())
+        return direct;
+      const entries = readdirSync(dir).sort().reverse();
+      for (const ver of entries) {
+        const candidate = `${dir}/${ver}/bin/Rscript`;
+        if (existsSync(candidate))
+          return candidate;
+      }
+    } catch {
+    }
+  }
+  return null;
+}
+var DISCOVERED_RSCRIPT = discoverRscript();
 var HERE = dirname(fileURLToPath(import.meta.url));
 var BUNDLED_LAUNCHER = resolve(HERE, "..", "r", "inst", "launcher.R");
 var REPO_LAUNCHER = resolve(
@@ -21060,7 +21101,7 @@ var DesignrToolError = class extends Error {
   }
 };
 async function runR(tool, args, opts = {}) {
-  const rscript = opts.rscript ?? process.env.DESIGNR_RSCRIPT ?? "Rscript";
+  const rscript = opts.rscript ?? process.env.DESIGNR_RSCRIPT ?? DISCOVERED_RSCRIPT ?? "Rscript";
   const launcher = opts.launcher ?? process.env.DESIGNR_LAUNCHER ?? DEFAULT_LAUNCHER;
   const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const payload = JSON.stringify({ tool, args });
@@ -21093,7 +21134,16 @@ async function runR(tool, args, opts = {}) {
       reject(
         new DesignrToolError({
           class: "rscript_spawn_failed",
-          message: `Failed to spawn Rscript at '${rscript}' (launcher '${launcher}'): ${err.message}. Set DESIGNR_RSCRIPT to the full Rscript path or DESIGNR_LAUNCHER to override the launcher.`
+          message: `Failed to spawn Rscript at '${rscript}' (launcher '${launcher}'): ${err.message}.
+
+If R is installed but Claude Code can't see it, the most likely cause is that Claude Code's MCP subprocess doesn't inherit your shell's environment. Set DESIGNR_RSCRIPT in Claude Code's settings (NOT just your shell):
+
+  ~/.claude/settings.json:
+    {
+      "env": { "DESIGNR_RSCRIPT": "/opt/R/4.5.1/bin/Rscript" }
+    }
+
+Or set DESIGNR_LAUNCHER to override the launcher path. Auto-discovery checked: ` + (DISCOVERED_RSCRIPT ? `${DISCOVERED_RSCRIPT} (found but spawn failed \u2014 permissions?)` : `nothing in /opt/R, /usr/local/lib/R/bin, /usr/lib/R/bin, /usr/lib64/R/bin, /usr/local/bin, /usr/bin, /opt/homebrew/bin, /Library/Frameworks/R.framework`) + `.`
         })
       );
     });

@@ -152,7 +152,26 @@ claude --plugin-dir ~/clinical-trial-design
 
 ### Environment overrides
 
-If `Rscript` isn't on your `PATH`, set `DESIGNR_RSCRIPT=/full/path/to/Rscript`. To override the R launcher path (rare), set `DESIGNR_LAUNCHER=/full/path/to/launcher.R`. The MCP server reads both env vars when spawning R. (The `DESIGNR_*` prefix is preserved as a wire-format contract; see [API_STABILITY.md](API_STABILITY.md).)
+The MCP server auto-discovers `Rscript` in the usual locations (`/opt/R/<version>/bin/`, `/usr/local/lib/R/bin`, `/usr/lib/R/bin`, `/usr/lib64/R/bin`, `/usr/local/bin`, `/usr/bin`, `/opt/homebrew/bin`, `/Library/Frameworks/R.framework/Resources/bin`). For non-standard installs, override:
+
+- `DESIGNR_RSCRIPT=/full/path/to/Rscript` — explicit path to your R binary.
+- `DESIGNR_LAUNCHER=/full/path/to/launcher.R` — override the R launcher (rare).
+
+#### Posit Workbench, RStudio Server, VS Code Remote, and other sandboxed Claude Code hosts
+
+Claude Code in these environments doesn't always inherit your shell's environment when it spawns the MCP server. **Set the env var in `~/.claude/settings.json`** (NOT just `~/.bashrc`):
+
+```json
+{
+  "env": {
+    "DESIGNR_RSCRIPT": "/opt/R/4.5.1/bin/Rscript"
+  }
+}
+```
+
+As of v0.0.14, the auto-discovery walk usually finds Posit Workbench's managed installs at `/opt/R/<version>/bin/Rscript` automatically, so the env override is only needed for non-standard setups. If you still see `rscript_spawn_failed`, the error message now reports exactly which paths were checked.
+
+(The `DESIGNR_*` prefix is preserved as a wire-format contract; see [API_STABILITY.md](API_STABILITY.md).)
 
 ## Standalone MCP server (without Claude Code)
 
